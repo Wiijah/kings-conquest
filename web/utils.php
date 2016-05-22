@@ -17,12 +17,18 @@ function hashPass($pass) {
   return password_hash($pass, PASSWORD_BCRYPT);
 }
 
-//ekko is echo but supports undeclared variables
+//ekko is an extension to echo, supporting undeclared variables
 function ekko(&$str) {
   if (!isset($str)) echo "";
   echo $str;
 }
 
+//check if a string contains a substring
+function contains($haystack, $needle) {
+  return strpos($haystack, $needle) !== false;
+}
+
+//check if both variables $a and $b are set and equal to each other
 function setAndEquals(&$a, &$b) {
   return isset($a) && isset($b) && $a == $b;
 }

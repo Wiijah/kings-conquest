@@ -129,8 +129,8 @@ $(document).ready(function(){
                                     <?php ekko($login_errorHTML).ekko($login_successHTML); ?>
 				                    <form role="form" action="" method="post" class="login-form">
 				                    	<div class="form-group">
-				                    		<label class="sr-only" for="form-email">Email</label>
-				                        	<input type="email" name="email" placeholder="Email" class="form-email form-control" id="form-username" required>
+				                    		<label class="sr-only" for="form-email">Username/Email</label>
+				                        	<input type="text" name="email" placeholder="Username or Email" class="form-email form-control" id="form-username" required>
 				                        </div>
 				                        <div class="form-group">
 				                        	<label class="sr-only" for="form-password">Password</label>

@@ -5,8 +5,7 @@ if (isset($_POST['register'])) {
   $errors = array();
   $successes = array();
   
-  $firstName = secureStr($_POST['firstname']);
-  $lastName = secureStr($_POST['lastname']);
+  $username = secureStr($_POST['username']);
   
   $email = secureStr($_POST['email']);
   $email2 = secureStr($_POST['email2']);
@@ -42,14 +41,17 @@ if (isset($_POST['register'])) {
   $gender = secureStr($_POST['gender']);
   */
 
-  
+  /* Check if email exists */
   $email_exists = "SELECT * FROM users WHERE email = '{$email}'";
   $result = $db->query($email_exists);
-  
   if ($result->num_rows > 0) $errors[] = "A user has already signed up with that email address. Please use another email.";
   
-  if (!isStrLenCorrect($firstName, 1, 32)) $errors[] = "Your first name must be between 1 to 32 characters.";
-  if (!isStrLenCorrect($lastName, 1, 32)) $errors[] = "Your last name must be between 1 to 32 characters.";
+  /* Check if username exists */
+  $username_exists = "SELECT * FROM users WHERE email = '{$email}'";
+  $result = $db->query($username_exists);
+  if ($result->num_rows > 0) $errors[] = "A user has already signed up with that username. Please pick another username.";
+
+  if (!isStrLenCorrect($username, 3, 16)) $errors[] = "Your username must be between 3 to 16 characters.";
 
   if (!isValidEmail($email)) $errors[] = "You have entered an invalid email address.";
   
@@ -60,8 +62,8 @@ if (isset($_POST['register'])) {
   if (empty($errors)) { //no error occurred so far, so attempt to create user account
     $password = hashPass($password);
     
-    $query = "INSERT INTO users (firstname, lastname, email, password) VALUES
-    ('{$firstName}', '{$lastName}', '{$email}', '{$password}')";
+    $query = "INSERT INTO users (username, email, password) VALUES
+    ('{$username}', '{$email}', '{$password}')";
 
     if (!$db->query($query)) {
       $errors[] = "An error occurred with creating your account. Please try again.";

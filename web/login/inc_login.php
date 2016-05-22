@@ -6,8 +6,9 @@ if (isset($_POST['login'])) {
   
   $email = secureStr($_POST['email']);
   $password = secureStr($_POST['password']);
-  
-  $query = "SELECT * FROM users WHERE email = '".$email."'";
+  $id_type = contains($email, '@') ? "email" : "username";
+
+  $query = "SELECT * FROM users WHERE {$id_type} = '{$email}'";
   
   if (!$result = $db->query($query)) {
     $login_errorHTML = errorMessage("An error occurred. Please try again.");

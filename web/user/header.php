@@ -5,7 +5,7 @@ if (!isset($_SESSION['id'])) {
   header ("Location: ../{$LOGIN_FORM_DIR}");
   die();
 }
-$FULL_NAME = $user->firstname. " ".$user->lastname;
+//$FULL_NAME = $user->firstname. " ".$user->lastname;
 ?>
 <!DOCTYPE html>
 <html>
@@ -98,14 +98,14 @@ $FULL_NAME = $user->firstname. " ".$user->lastname;
                             </ul>
                         </li>
                         <li class="dropdown profile">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><?php echo $FULL_NAME; ?> <span class="caret"></span></a>
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><?php echo $user->username; ?> <span class="caret"></span></a>
                             <ul class="dropdown-menu animated fadeInDown">
                                 <li class="profile-img">
                                     <img src="images/blank_avatar.png" class="profile-img">
                                 </li>
                                 <li>
                                     <div class="profile-info">
-                                        <h4 class="username"><?php echo $FULL_NAME; ?></h4>
+                                        <h4 class="username"><?php echo $user->username; ?></h4>
                                         <p><?php echo $user->email; ?></p>
                                         <div class="btn-group margin-bottom-2x" role="group">
                                             <button type="button" class="btn btn-default"><i class="fa fa-user"></i> Profile</button>
