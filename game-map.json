@@ -11,7 +11,7 @@
 	},
 	"characters": {
 		"archer": {
-			"address": "graphics/unit/player.png",
+			"address": "graphics/unit/king/king!.png",
 			"x" : "0",
 			"y" : "2",
 			"moveRange" : "3"

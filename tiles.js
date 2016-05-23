@@ -7,12 +7,12 @@ $.getJSON('game-map.json', function(data) {
 	mapWidth = parseInt(data.map_dimensions.width);
 	// console.log(mapHeight + "blah" + mapWidth);
 	
-	console.log(that.mapData.length);
 	that.drawMap(that.mapData);
 
 	$.each(data.characters, function(i, value) {
 		player = new createjs.Bitmap(value.address);
 		player.addEventListener("click", function(event) {
+			selectedCharacter = player;
 			drawRange(findReachableTiles(parseInt(value.x), parseInt(value.y), parseInt(value.moveRange), true));
 		});
 		player.x = originX +  (value.y - value.x) * 65;
@@ -37,6 +37,46 @@ function drawRange(reachable) {
 	});
 }
 
+function animateMoves(deltas) {
+	var i = 0;
+	var inter = setInterval(function() {
+		animateMove(deltas[i]);
+		i++;	
+	}, 1000);
+	setTimeout(function() {
+		clearInterval(inter);
+	}, deltas.length * 1000);
+}
+
+function animateMove(value) {
+	var deltaX;
+	var deltaY;
+	if (value[0] == 0 && value[1] == 1) {
+		deltaX = 0.325;
+		deltaY = 0.1625;
+		// x += 0.1, y+=0.1
+	} else if (value[0] == 0 && value[1] == -1) {
+		deltaX = -0.325;
+		deltaY = -0.1625;
+	} else if (value[0] == 1 && value[1] == 0) {
+		deltaX = -0.325;
+		deltaY = 0.1625;
+	} else if (value[0] == -1 && value[1] == 0) {
+		deltaX = 0.325;
+		deltaY = -0.1625;
+	} else if (value[0] == 0 && value[1] == 0) {
+		deltaX = deltaY = 0;
+	} else  {
+		// error
+	}
+	var inter = setInterval(function() {
+		selectedCharacter.x += deltaX;
+		selectedCharacter.y += deltaY;
+	}, 5);
+	setTimeout(function() {
+		clearInterval(inter);
+	}, 1000);
+}
 
 
 // A call back function that highlights all the possible definitions 
