@@ -13,7 +13,7 @@ $.getJSON('game-map.json', function(data) {
 	$.each(data.characters, function(i, value) {
 		player = new createjs.Bitmap(value.address);
 		player.addEventListener("click", function(event) {
-			findReachableTiles(parseInt(value.x), parseInt(value.y), parseInt(value.moveRange));
+			drawRange(findReachableTiles(parseInt(value.x), parseInt(value.y), parseInt(value.moveRange), true));
 		});
 		player.x = originX +  (value.y - value.x) * 65;
 		player.y = value.y * 32.5 + originY + value.x * 32.5;
@@ -24,6 +24,18 @@ $.getJSON('game-map.json', function(data) {
 		stage.addChild(player);
 	})
 });
+
+function drawRange(reachable) {
+	$.each(reachable, function(i, value) {
+		img = "graphics/green_tile.png";
+		bmp = new createjs.Bitmap(img);
+		bmp.x = (value[1]-value[0]) * 65 + 540;
+		bmp.y = (value[1]+value[0]) * 32.5 + 220;
+		bmp.regX = 65;
+		bmp.regY = 32.5;
+		stage.addChild(bmp);
+	});
+}
 
 
 
@@ -76,7 +88,7 @@ function findReachableTiles(x, y, range, isMoving) {
 		var x = Math.floor(coord / mapWidth);
 		var y = coord % mapWidth;
 		marked[i] = [x, y];
-		// console.log(marked[i]);
+		//console.log(marked[i]);
 	});
 
 	return marked;

@@ -12,8 +12,8 @@
 	"characters": {
 		"archer": {
 			"address": "graphics/unit/player.png",
-			"x" : "3",
-			"y" : "3",
+			"x" : "0",
+			"y" : "2",
 			"moveRange" : "3"
 		}
 	}
