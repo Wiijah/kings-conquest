@@ -10,7 +10,20 @@
 table {
   border-collapse: collapse;
 }
-
+.clear {
+  clear: both;
+}
+/* Footer */
+.white_line {
+  height: 1px;
+  background-color: rgba(255, 255, 255, 0.5);
+  margin: 20px 20px 20px 20px;
+}
+.footer {
+  text-align: center;
+  font-size: 20px;
+  margin: 20px 0 20px 0;
+}
 
 body {
   position: relative;
@@ -24,8 +37,8 @@ body {
 /* Logout and top-right corner welcome back message */
 .logout_container {
   position: absolute;
-  top: 13px;
-  left: 13px;
+  top: 20px;
+  left: 20px;
   color: #FFF;
   font-size: 25px;
 }
@@ -60,29 +73,26 @@ body {
 
 /* Play */
 .play_container {
-  padding: 30px;
+  padding: 20px;
   box-sizing: border-box;
   width: 100%;
 }
 .play_left {
   float: left;
-  width: 70%;
-  margin-right: 30px;
+  width: 65%;
+  margin-right: 20px;
 }
 .play_right {
 }
 .play_lobby {}
 .play_table {
-  font-size: 20px;
+  font-size: 21px;
   width: 100%;
   text-align: center;
 }
 .play_table th {
   font-family: BebasNeueRegular;
-  background-color: rgba(0, 0, 0, 0.7);
-}
-.play_table td {
-  background-color: rgba(0, 0, 0, 0.3);
+  background-color: rgba(0, 0, 0, 0.5);
 }
 .play_table td, .play_table th {
   border: 1px solid rgba(255, 255, 255, .2);
@@ -96,6 +106,12 @@ body {
 .play_avatar img {
   width: 60%;
   margin: 0 auto;
+}
+.play_btn {
+  overflow: auto;
+  text-align: center;
+  margin-bottom: 12px;
+  font-size: 30px;
 }
 
 /* Small */

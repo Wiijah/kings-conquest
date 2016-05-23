@@ -30,6 +30,13 @@ while ($fetch = $result->fetch_object()) {
 </div> <!-- play_left -->
 
 <div class="play_right">
+
+<div class="play_btn btn">Create Game</div>
+<div class="play_btn btn">How To Play</div>
+<div class="play_btn btn">Options</div>
+<div class="play_btn btn">Highscores</div>
+
+
 <div class="play_profile box">
 <table class="play_table">
 <tr><th colspan="2">Your Profile</th></tr>
@@ -39,11 +46,18 @@ while ($fetch = $result->fetch_object()) {
 <tr><th>Email</th><td><?php echo $user->email; ?> </td></tr>
 <tr><th>Games Won</th><td><?php echo number_format($user->wins); ?> </td></tr>
 <tr><th>Games Lost</th><td><?php echo number_format($user->losses); ?> </td></tr>
+<tr><th>Win/Loss Ratio</th><td><?php echo ratio($user->wins, $user->losses); ?> </td></tr>
 </table>
-</div>
+</div> <!-- play_profile box -->
+
 </div> <!-- play_right -->
 
 </div> <!-- play_container -->
 
+<div class="clear"></div>
+<div class="footer">
+<div class="white_line"></div>
+&copy; 2016 Kings' Conquest
+</div>
 </body>
 </html>
