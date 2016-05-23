@@ -13,10 +13,43 @@ table {
 .clear {
   clear: both;
 }
-/* Footer */
+
+/* Line Header */
+h1 {
+  position: relative;
+  display: inline-block;
+  padding: 0 15px;
+}
+h1:before, h1:after {
+  display: block;
+  position: absolute;
+  top: 50%;
+  height: 1px;
+  width: 1920px;
+  background-color: rgba(255, 255, 255, 0.5);
+  content: "";
+}
+h1:before {
+  right: 100%;
+}
+h1:after {
+  left: 100%;
+}
+.title {
+  font-size: 20px;
+  font-family: BebasNeueBook;
+  overflow: hidden;
+  text-align: center;
+}
+
+/* Lines */
 .white_line {
   height: 1px;
   background-color: rgba(255, 255, 255, 0.5);
+}
+
+/* Footer */
+.footer_line {
   margin: 20px 20px 20px 20px;
 }
 .footer {
@@ -29,6 +62,7 @@ body {
   position: relative;
   background-image: url("images/bg_blue_red.jpg");
   background-position: top center; 
+  background-attachment: fixed;
   font-family: BebasNeueLight;
   color: #FFF;
   width: 100%;

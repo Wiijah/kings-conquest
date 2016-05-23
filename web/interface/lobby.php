@@ -1,6 +1,10 @@
 <?php
 $title = "Game Lobby";
 include 'header.php';
+
+function genTitle($title) {
+  return "<div class='title'><h1>{$title}</h1></div>";
+}
 ?>
 <body>
 <?php
@@ -16,6 +20,9 @@ include 'logout_container.php';
 <div class="small_container">
 
 <div class="play_left">
+
+
+<?php echo genTitle("Lobby"); ?>
 <div class="play_lobby box">
 <table class="play_table lobby">
 <tr><th>Room Owner</th><th>Map</th><th>Mode</th><th>Join</th></tr>
@@ -31,15 +38,16 @@ while ($fetch = $result->fetch_object()) {
 
 <div class="play_right">
 
+<?php echo genTitle("Actions"); ?>
 <div class="play_btn btn">Create Game</div>
 <div class="play_btn btn">How To Play</div>
 <div class="play_btn btn">Options</div>
 <div class="play_btn btn">Highscores</div>
 
 
+<?php echo genTitle("Your Profile"); ?>
 <div class="play_profile box">
 <table class="play_table">
-<tr><th colspan="2">Your Profile</th></tr>
 <tr><td class="play_avatar" colspan="2"><img src="images/default_avatar.png" /></td></tr>
 <tr><th>Username</th><td><?php echo $user->username; ?> </td></tr>
 
@@ -57,7 +65,7 @@ while ($fetch = $result->fetch_object()) {
 
 <div class="clear"></div>
 <div class="footer">
-<div class="white_line"></div>
+<div class="white_line footer_line"></div>
 &copy; 2016 Kings' Conquest
 </div>
 </body>
