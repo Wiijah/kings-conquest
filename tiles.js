@@ -23,7 +23,6 @@ $.getJSON('game-map.json', function(data) {
 		player.scaleY = 0.7;
 		stage.addChild(player);
 	});
-	// findPath(0, 0, 2, 0);
 });
 
 function drawRange(reachable) {
@@ -86,7 +85,7 @@ function animateMove(value) {
 
 function findPath(fromX, fromY, toX, toY) {
 
-	var action = new Array(mapWidth * mapHeight);
+	var parent = new Array(mapWidth * mapHeight);
 	var vis = new Array(mapWidth * mapHeight);
 	var q = [];
 	q.push([fromX, fromY]);
@@ -119,20 +118,20 @@ function findPath(fromX, fromY, toX, toY) {
 				if (vis[nx * mapWidth + ny] === false) {
 					vis[nx * mapWidth + ny] = true;
 					q.push([nx, ny]);
-					action[nx * mapWidth + ny] = [dx, dy];
+					parent[nx * mapWidth + ny] = [coord[0], coord[1]];
 				}
 				
 			}
 		}
 	}
 
-	result = [];
+	result = [[toX, toY]];
 	var currX = toX;
 	var currY = toY;
 	while (currX != fromX || currY != fromY) {
-		result.unshift(action[currX * mapWidth + currY]);
-		currX -= result[0][0];
-		currY -= result[0][1];
+		result.unshift(parent[currX * mapWidth + currY]);
+		currX = result[0][0];
+		currY = result[0][1];
 	}
 
 	for (i = 0; i < result.length; i++) {
@@ -217,6 +216,7 @@ function drawMap(data) {
 }
 
 createjs.Ticker.addEventListener("tick", update);
+
 function update() {
 	stage.update();
 }
