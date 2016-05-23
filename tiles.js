@@ -3,10 +3,18 @@ var stage = new createjs.Stage("demoCanvas");
 var that = this;
 $.getJSON('game-map.json', function(data) {
 	that.mapData = data['main'];
+	mapHeight = parseInt(data.map_dimensions.height);
+	mapWidth = parseInt(data.map_dimensions.width);
+	// console.log(mapHeight + "blah" + mapWidth);
+	
+	console.log(that.mapData.length);
 	that.drawMap(that.mapData);
 
 	$.each(data.characters, function(i, value) {
 		player = new createjs.Bitmap(value.address);
+		player.addEventListener("click", function(event) {
+			findReachableTiles(parseInt(value.x), parseInt(value.y), parseInt(value.moveRange));
+		});
 		player.x = originX +  (value.y - value.x) * 65;
 		player.y = value.y * 32.5 + originY + value.x * 32.5;
 		player.regX = 56.5;
@@ -16,6 +24,64 @@ $.getJSON('game-map.json', function(data) {
 		stage.addChild(player);
 	})
 });
+
+
+
+// A call back function that highlights all the possible definitions 
+// when a character is clicked.
+function findReachableTiles(x, y, range, isMoving) {
+	var q = [];
+	var start = [x, y, 0];
+	var marked = [];
+	marked.push(x * mapWidth + y);
+	q.push(start);
+
+	// Breadth first search to find all possible destinations
+	while (q.length > 0) {
+		pair = q.splice(0, 1)[0];
+		// console.log(pair[0] + " " + pair[1]);
+
+		// Move range check
+		if (pair[2] >= range) continue;
+
+		// Enumerate all possible moves
+		for (dx = -1; dx <= 1; dx++) {
+			for (dy = -1; dy <= 1; dy++) {
+
+				// Make sure only vertical or horizontal moves
+				if (dx != 0 && dy != 0) continue;
+
+				var nx = pair[0] + dx;
+				var ny = pair[1] + dy;
+				var d = pair[2] + 1;
+
+				// Bounds check
+				if (nx < 0 || nx >= mapHeight || ny < 0 || ny >= mapWidth) continue;
+
+				// Terrain check
+				if (parseInt(that.mapData[nx][ny]) == 2 && isMoving) continue;
+
+				// bounds and obstacle check here
+				if ($.inArray(nx * mapWidth + ny, marked) === -1) {
+					marked.push(nx * mapWidth + ny);
+					q.push([nx, ny, d]);
+				}
+				
+			}
+		}	
+		
+	}
+
+	$.each(marked, function(i, coord) {
+		var x = Math.floor(coord / mapWidth);
+		var y = coord % mapWidth;
+		marked[i] = [x, y];
+		// console.log(marked[i]);
+	});
+
+	return marked;
+
+}
 
 function drawMap(data) {
 	originX = 540;
