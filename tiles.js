@@ -39,14 +39,15 @@ function drawRange(reachable) {
 }
 
 function animateMoves(deltas) {
-	var i = 0;
+	var i = 1;
+	animateMove(deltas[0]);
 	var inter = setInterval(function() {
 		animateMove(deltas[i]);
 		i++;	
 	}, 1000);
 	setTimeout(function() {
 		clearInterval(inter);
-	}, deltas.length * 1000);
+	}, (deltas.length - 1) * 1000);
 }
 
 function animateMove(value) {
