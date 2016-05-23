@@ -23,6 +23,16 @@ function ekko(&$str) {
   echo $str;
 }
 
+function percent($a, $b) {
+  $percent = 100 * $a / ($a + $b);
+  return round($percent, 2);
+}
+
+function ratio($a, $b) {
+  $percent = $a / $b;
+  return round($percent, 2);
+}
+
 //check if a string contains a substring
 function contains($haystack, $needle) {
   return strpos($haystack, $needle) !== false;

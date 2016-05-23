@@ -8,7 +8,6 @@ include 'logout_container.php';
 <img src="images/menu_top.png" class="menu_top" />
 
 
-
 <div class="menu_top_margin"></div>
 
 
