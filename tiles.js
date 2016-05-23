@@ -22,8 +22,8 @@ $.getJSON('game-map.json', function(data) {
 		player.scaleX = 0.7;
 		player.scaleY = 0.7;
 		stage.addChild(player);
-	})
-	findPath(0, 0, 2, 0);
+	});
+	// findPath(0, 0, 2, 0);
 });
 
 function drawRange(reachable) {
@@ -40,14 +40,16 @@ function drawRange(reachable) {
 
 function animateMoves(deltas) {
 	var i = 1;
+	var j = 1;
 	animateMove(deltas[0]);
 	var inter = setInterval(function() {
+		if (j>=deltas.length-1) {
+			clearInterval(inter);
+		}
 		animateMove(deltas[i]);
-		i++;	
+		i++;
+		j++;
 	}, 1000);
-	setTimeout(function() {
-		clearInterval(inter);
-	}, (deltas.length - 1) * 1000);
 }
 
 function animateMove(value) {
@@ -71,13 +73,15 @@ function animateMove(value) {
 	} else  {
 		// error
 	}
+	var i = 0;
 	var inter = setInterval(function() {
+		if (i == 198) {
+			clearInterval(inter);
+		}
 		selectedCharacter.x += deltaX;
 		selectedCharacter.y += deltaY;
+		i++;
 	}, 5);
-	setTimeout(function() {
-		clearInterval(inter);
-	}, 1000);
 }
 
 function findPath(fromX, fromY, toX, toY) {
