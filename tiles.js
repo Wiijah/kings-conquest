@@ -1,4 +1,5 @@
 var stage = new createjs.Stage("demoCanvas");
+var shouldMove = false;
 
 var that = this;
 $.getJSON('game-map.json', function(data) {
@@ -217,6 +218,7 @@ function drawMap(data) {
 }
 
 createjs.Ticker.addEventListener("tick", update);
+createjs.Ticker.setFPS(40);
 function update() {
 	stage.update();
 }
