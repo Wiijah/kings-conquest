@@ -13,14 +13,14 @@ include 'logout_container.php';
 
 <div class="small_top_margin"></div>
 
-<div class="play_container">
+<div class="small_container">
 
 <div class="play_left">
 <div class="play_lobby box">
-<table class="play_table">
+<table class="play_table lobby">
 <tr><th>Room Owner</th><th>Map</th><th>Mode</th><th>Join</th></tr>
 <?php
-$result = $db->query("SELECT * FROM games INNER JOIN users ON games.user = users.id ORDER BY created DESC");
+$result = $db->query("SELECT * FROM games INNER JOIN users ON games.user = users.id ORDER BY games.created DESC");
 while ($fetch = $result->fetch_object()) {
   for ($i = 0; $i < 10; $i++) echo "<tr><td>{$fetch->username}</td><td>Dark Forest</td><td>Regicide</td><td>Join</td></tr>";
 }
@@ -47,6 +47,7 @@ while ($fetch = $result->fetch_object()) {
 <tr><th>Games Won</th><td><?php echo number_format($user->wins); ?> </td></tr>
 <tr><th>Games Lost</th><td><?php echo number_format($user->losses); ?> </td></tr>
 <tr><th>Win/Loss Ratio</th><td><?php echo ratio($user->wins, $user->losses); ?> </td></tr>
+<tr><th>Sign Up Date</th><td><?php echo formatSQLDate($user->created); ?> </td></tr>
 </table>
 </div> <!-- play_profile box -->
 

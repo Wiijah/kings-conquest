@@ -1,4 +1,5 @@
 <?php
+header ("Location: play");
 include 'header.php';
 ?>
 <body>

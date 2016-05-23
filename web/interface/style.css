@@ -71,12 +71,6 @@ body {
   background-clip: padding-box;
 }
 
-/* Play */
-.play_container {
-  padding: 20px;
-  box-sizing: border-box;
-  width: 100%;
-}
 .play_left {
   float: left;
   width: 65%;
@@ -92,12 +86,18 @@ body {
 }
 .play_table th {
   font-family: BebasNeueRegular;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgba(0, 0, 0, .65);
 }
 .play_table td, .play_table th {
   border: 1px solid rgba(255, 255, 255, .2);
   margin: 0;
   padding: 5px 5px 2px 5px;
+}
+.play_table tr:nth-child(even) {
+  background-color: rgba(0, 0, 0, .2);
+}
+.lobby tr:not(thead):hover {
+  background-color: rgba(0, 0, 0, .7);
 }
 
 .play_profile {
@@ -115,6 +115,12 @@ body {
 }
 
 /* Small */
+/* Play */
+.small_container {
+  padding: 20px;
+  box-sizing: border-box;
+  width: 100%;
+}
 .small_top {
   position: absolute;
   top: 0;
