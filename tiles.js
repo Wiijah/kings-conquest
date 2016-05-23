@@ -1,6 +1,7 @@
 var stage = new createjs.Stage("demoCanvas");
 
 var that = this;
+var path = [];
 $.getJSON('game-map.json', function(data) {
 	that.mapData = data['main'];
 	mapHeight = parseInt(data.map_dimensions.height);
@@ -125,20 +126,19 @@ function findPath(fromX, fromY, toX, toY) {
 		}
 	}
 
-	result = [[toX, toY]];
+	path = [];
+	path = [[toX, toY]];
 	var currX = toX;
 	var currY = toY;
 	while (currX != fromX || currY != fromY) {
-		result.unshift(parent[currX * mapWidth + currY]);
-		currX = result[0][0];
-		currY = result[0][1];
+		path.unshift(parent[currX * mapWidth + currY]);
+		currX = path[0][0];
+		currY = path[0][1];
 	}
 
-	for (i = 0; i < result.length; i++) {
-		console.log(result[i]);
+	for (i = 0; i < path.length; i++) {
+		console.log(path[i]);
 	}
-
-	return result;
 
 }
 
