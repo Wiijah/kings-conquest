@@ -1,6 +1,7 @@
 var stage = new createjs.Stage("demoCanvas");
 
 var that = this;
+var path = [];
 $.getJSON('game-map.json', function(data) {
 	that.mapData = data['main'];
 	mapHeight = parseInt(data.map_dimensions.height);
@@ -22,8 +23,7 @@ $.getJSON('game-map.json', function(data) {
 		player.scaleX = 0.7;
 		player.scaleY = 0.7;
 		stage.addChild(player);
-	})
-	findPath(0, 0, 2, 0);
+	});
 });
 
 function drawRange(reachable) {
@@ -40,14 +40,16 @@ function drawRange(reachable) {
 
 function animateMoves(deltas) {
 	var i = 1;
+	var j = 1;
 	animateMove(deltas[0]);
 	var inter = setInterval(function() {
+		if (j>=deltas.length-1) {
+			clearInterval(inter);
+		}
 		animateMove(deltas[i]);
-		i++;	
+		i++;
+		j++;
 	}, 1000);
-	setTimeout(function() {
-		clearInterval(inter);
-	}, (deltas.length - 1) * 1000);
 }
 
 function animateMove(value) {
@@ -71,18 +73,20 @@ function animateMove(value) {
 	} else  {
 		// error
 	}
+	var i = 0;
 	var inter = setInterval(function() {
+		if (i == 198) {
+			clearInterval(inter);
+		}
 		selectedCharacter.x += deltaX;
 		selectedCharacter.y += deltaY;
+		i++;
 	}, 5);
-	setTimeout(function() {
-		clearInterval(inter);
-	}, 1000);
 }
 
 function findPath(fromX, fromY, toX, toY) {
 
-	var action = new Array(mapWidth * mapHeight);
+	var parent = new Array(mapWidth * mapHeight);
 	var vis = new Array(mapWidth * mapHeight);
 	var q = [];
 	q.push([fromX, fromY]);
@@ -115,27 +119,26 @@ function findPath(fromX, fromY, toX, toY) {
 				if (vis[nx * mapWidth + ny] === false) {
 					vis[nx * mapWidth + ny] = true;
 					q.push([nx, ny]);
-					action[nx * mapWidth + ny] = [dx, dy];
+					parent[nx * mapWidth + ny] = [coord[0], coord[1]];
 				}
 				
 			}
 		}
 	}
 
-	result = [];
+	path = [];
+	path = [[toX, toY]];
 	var currX = toX;
 	var currY = toY;
 	while (currX != fromX || currY != fromY) {
-		result.unshift(action[currX * mapWidth + currY]);
-		currX -= result[0][0];
-		currY -= result[0][1];
+		path.unshift(parent[currX * mapWidth + currY]);
+		currX = path[0][0];
+		currY = path[0][1];
 	}
 
-	for (i = 0; i < result.length; i++) {
-		console.log(result[i]);
+	for (i = 0; i < path.length; i++) {
+		console.log(path[i]);
 	}
-
-	return result;
 
 }
 
@@ -213,6 +216,7 @@ function drawMap(data) {
 }
 
 createjs.Ticker.addEventListener("tick", update);
+
 function update() {
 	stage.update();
 }
