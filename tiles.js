@@ -2,6 +2,7 @@ var stage = new createjs.Stage("demoCanvas");
 
 var that = this;
 var path = [];
+var movingPlayer = false;
 $.getJSON('game-map.json', function(data) {
 	that.mapData = data['main'];
 	mapHeight = parseInt(data.map_dimensions.height);
@@ -26,6 +27,21 @@ $.getJSON('game-map.json', function(data) {
 	});
 });
 
+// Start moving the player
+function move() {
+	movingPlayer = true;
+}
+
+// Convert row/column to actual coordinates
+function rcToCoord(x, y) {
+
+	var result = [0, 0];
+	result[0] = originX + (y - x) * 65;
+	result[1] = originY + (y + x) * 32.5;
+		
+	return result;
+}
+
 function drawRange(reachable) {
 	$.each(reachable, function(i, value) {
 		img = "graphics/green_tile.png";
@@ -34,8 +50,43 @@ function drawRange(reachable) {
 		bmp.y = (value[1]+value[0]) * 32.5 + 220;
 		bmp.regX = 65;
 		bmp.regY = 32.5;
+		bmp.addEventListener("click", function(event) {
+			// just for testing, always goes from 0,2 to 2,0 
+			findPath(0, 2, 2, 0);
+			move();
+		});
 		stage.addChild(bmp);
 	});
+}
+
+// Move the player by a fixed amount
+function movePlayer() {
+  var playerX = selectedCharacter.x,
+      playerY = selectedCharacter.y,
+      destX = path[0][0],
+      destY = path[0][1];
+
+  if (playerX < destX && playerY < destY) {
+    selectedCharacter.x += 6.5;
+    selectedCharacter.y += 3.25;
+  } else if (playerX > destX && playerY > destY) {
+    selectedCharacter.x -= 6.5;
+    selectedCharacter.y -= 3.25;
+  } else if (playerX < destX && playerY > destY) {
+    selectedCharacter.x += 6.5;
+    selectedCharacter.y -= 3.25;
+  } else if (playerX > destX && playerY < destY){
+  	selectedCharacter.x -= 6.5;
+  	selectedCharacter.y += 3.25;
+  }
+
+  if ((playerX === destX) && (playerY === destY)) {
+      path.splice(0,1);
+      if (path.length == 0) {
+        movingPlayer = false;
+      }
+  }
+  stage.update();
 }
 
 function animateMoves(deltas) {
@@ -137,7 +188,7 @@ function findPath(fromX, fromY, toX, toY) {
 	}
 
 	for (i = 0; i < path.length; i++) {
-		console.log(path[i]);
+		path[i] = rcToCoord(path[i][0], path[i][1]);
 	}
 
 }
@@ -218,6 +269,9 @@ function drawMap(data) {
 createjs.Ticker.addEventListener("tick", update);
 
 function update() {
+	if (movingPlayer === true) {
+		movePlayer();
+	}
 	stage.update();
 }
 
