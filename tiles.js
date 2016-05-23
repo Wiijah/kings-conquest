@@ -7,12 +7,12 @@ $.getJSON('game-map.json', function(data) {
 	mapWidth = parseInt(data.map_dimensions.width);
 	// console.log(mapHeight + "blah" + mapWidth);
 	
-	console.log(that.mapData.length);
 	that.drawMap(that.mapData);
 
 	$.each(data.characters, function(i, value) {
 		player = new createjs.Bitmap(value.address);
 		player.addEventListener("click", function(event) {
+			selectedCharacter = player;
 			drawRange(findReachableTiles(parseInt(value.x), parseInt(value.y), parseInt(value.moveRange), true));
 		});
 		player.x = originX +  (value.y - value.x) * 65;
@@ -23,6 +23,7 @@ $.getJSON('game-map.json', function(data) {
 		player.scaleY = 0.7;
 		stage.addChild(player);
 	})
+	findPath(0, 0, 2, 0);
 });
 
 function drawRange(reachable) {
@@ -37,6 +38,106 @@ function drawRange(reachable) {
 	});
 }
 
+function animateMoves(deltas) {
+	var i = 1;
+	animateMove(deltas[0]);
+	var inter = setInterval(function() {
+		animateMove(deltas[i]);
+		i++;	
+	}, 1000);
+	setTimeout(function() {
+		clearInterval(inter);
+	}, (deltas.length - 1) * 1000);
+}
+
+function animateMove(value) {
+	var deltaX;
+	var deltaY;
+	if (value[0] == 0 && value[1] == 1) {
+		deltaX = 0.325;
+		deltaY = 0.1625;
+		// x += 0.1, y+=0.1
+	} else if (value[0] == 0 && value[1] == -1) {
+		deltaX = -0.325;
+		deltaY = -0.1625;
+	} else if (value[0] == 1 && value[1] == 0) {
+		deltaX = -0.325;
+		deltaY = 0.1625;
+	} else if (value[0] == -1 && value[1] == 0) {
+		deltaX = 0.325;
+		deltaY = -0.1625;
+	} else if (value[0] == 0 && value[1] == 0) {
+		deltaX = deltaY = 0;
+	} else  {
+		// error
+	}
+	var inter = setInterval(function() {
+		selectedCharacter.x += deltaX;
+		selectedCharacter.y += deltaY;
+	}, 5);
+	setTimeout(function() {
+		clearInterval(inter);
+	}, 1000);
+}
+
+function findPath(fromX, fromY, toX, toY) {
+
+	var action = new Array(mapWidth * mapHeight);
+	var vis = new Array(mapWidth * mapHeight);
+	var q = [];
+	q.push([fromX, fromY]);
+	for (i = 0; i < vis.length; i++) vis[i] = false;
+	vis[fromX * mapWidth + fromY] = true;
+
+	// Breadth first search
+	while (q.length > 0) {
+		coord = q.splice(0, 1)[0];
+
+		if (coord[0] == toX && coord[1] == toY) {
+			break;				
+		}
+		for (dx = -1; dx <= 1; dx++) {
+			for (dy = -1; dy <= 1; dy++) {
+
+				// Make sure only vertical or horizontal moves
+				if (dx != 0 && dy != 0) continue;
+
+				var nx = coord[0] + dx;
+				var ny = coord[1] + dy;
+
+				// Bounds check
+				if (nx < 0 || nx >= mapHeight || ny < 0 || ny >= mapWidth) continue;
+
+				// Terrain check
+				if (parseInt(that.mapData[nx][ny]) == 2) continue;
+
+				// bounds and obstacle check here
+				if (vis[nx * mapWidth + ny] === false) {
+					vis[nx * mapWidth + ny] = true;
+					q.push([nx, ny]);
+					action[nx * mapWidth + ny] = [dx, dy];
+				}
+				
+			}
+		}
+	}
+
+	result = [];
+	var currX = toX;
+	var currY = toY;
+	while (currX != fromX || currY != fromY) {
+		result.unshift(action[currX * mapWidth + currY]);
+		currX -= result[0][0];
+		currY -= result[0][1];
+	}
+
+	for (i = 0; i < result.length; i++) {
+		console.log(result[i]);
+	}
+
+	return result;
+
+}
 
 
 // A call back function that highlights all the possible definitions 
