@@ -6,6 +6,7 @@
   box-sizing: border-box;
   -moz-box-sizing: border-box;
   -webkit-box-sizing: border-box;
+  background-clip: padding-box;
 }
 table {
   border-collapse: collapse;
@@ -13,6 +14,50 @@ table {
 .clear {
   clear: both;
 }
+
+/* Input styles */
+
+/* Chatroom */
+.play_chatroom {
+  margin-bottom: 10px;
+}
+#play_chatroom_messages {
+  padding: 5px;
+  height: 150px;
+  overflow-y: scroll;
+  font-size: 20px;
+}
+.play_chatroom_footer {
+  overflow: auto;
+  padding: 4px;
+}
+.play_chatroom_user {
+  font-family: BebasNeueRegular;
+  padding-right: 5px;
+}
+#play_chatroom_send {
+  float: right;
+
+}
+#play_chatroom_msg {
+  width: 100%;
+  font-family: BebasNeueBook;
+  border-style:solid;
+  padding:5px;
+  font-size:17px;
+  text-align:left;
+  border-radius:4px;
+  background-color: rgba(0, 0, 0, .5);
+  color:#ffffff;
+  box-shadow: 0px 0px 6px 0px rgba(0,0,0,.70);
+  border: 3px solid;
+  border-color: rgba(255, 255, 255, .2);
+} 
+#play_chatroom_msg:focus {
+  outline:none;
+  background-color: rgba(0, 0, 0, 0.7);
+  border-color: rgba(255, 255, 255, .5);
+} 
 
 /* Line Header */
 h1 {
@@ -93,6 +138,7 @@ body {
   padding: 0.8vw 1vw 0.3vw 1.2vw;
 }
 .btn:hover {
+  box-shadow: 0 0 3px #888;
   text-shadow: 0 0 2px #FFF, 0 0 1px #FFF, 1px 1px 7px #FFF, 0 0 0 #FFF;
   background-image: url("images/btn_bg_hover.png");
   border-color: rgba(255,255,255,.3);

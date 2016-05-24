@@ -20,6 +20,7 @@ if (!isset($_SESSION['token'])) {
 }
 $TOKEN = $_SESSION['token'];
 
+/* Security utility functions */
 function verifyToken(&$token) {
   global $TOKEN;
   return isset($token) && $TOKEN == $token;
@@ -31,5 +32,9 @@ function secureStr(&$str) {
   $str = htmlentities($str);
   $str = $db->real_escape_string($str);
   return $str;
+}
+
+function secureInt(&$input) {
+  return preg_replace("/[^0-9]/", "", $input);
 }
 ?>

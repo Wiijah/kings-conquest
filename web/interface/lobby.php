@@ -21,6 +21,21 @@ include 'logout_container.php';
 
 <div class="play_left">
 
+<?php echo genTitle("Chatroom"); ?>
+<div class="play_chatroom box">
+<div id="play_chatroom_messages">
+<?php
+for ($i = 0; $i < 50; $i++) {
+  //echo "<span class='play_chatroom_user'>xXDragonSlayer52:</span> <span class='play_chatroom_text'>Hello everyone! I am a new player!</span><br />";
+}
+?>
+</div> <!-- play_chatroom_messages -->
+<div class="play_chatroom_footer">
+<input type="text" id="play_chatroom_msg" placeholder="Type your message here and press enter to send." />
+</div>
+</div> <!-- play_chatroom -->
+
+
 
 <?php echo genTitle("Lobby"); ?>
 <div class="play_lobby box">
