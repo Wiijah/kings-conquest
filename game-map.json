@@ -16,7 +16,11 @@
 			"max_hp" : "80",
 			"x" : "0",
 			"y" : "2",
-			"moveRange" : "3"
+			"moveRange" : "3",
+			"attackRange" : "4",
+			"canMove" : "1",
+			"canAttack" : "1",
+			"skillCoolDown" : "3"
 		}
 	}
 }

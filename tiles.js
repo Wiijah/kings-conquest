@@ -250,7 +250,7 @@ function drawMap(data) {
 }
 
 createjs.Ticker.addEventListener("tick", update);
-createjs.Ticker.setFPS(40);
+createjs.Ticker.setFPS(30);
 
 function update() {
 	if (movingPlayer === true) {
