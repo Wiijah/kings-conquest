@@ -2,9 +2,9 @@ var stage = new createjs.Stage("demoCanvas");
 var shouldMove = false;
 
 var that = this;
-var path = [];
 var movingPlayer = false;
-
+var path = [];
+var highlighted = [];
 var units = [];
 
 $.getJSON('game-map.json', function(data) {
