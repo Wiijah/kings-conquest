@@ -4,4 +4,8 @@
 header('Access-Control-Allow-Origin: *');
 
 require_once '../../dbcon.php';
+
+if (!isset($_SESSION['id'])) {
+  die('[{"Session": "Expired"}]');
+}
 ?>
