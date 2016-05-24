@@ -6,6 +6,8 @@ var movingPlayer = false;
 var path = [];
 var highlighted = [];
 var units = [];
+var ICON_SCALE_FACTOR = 0.3;
+var MOVEMENT_STEP = 6.5
 
 var changed = false;
 
@@ -20,11 +22,14 @@ $.getJSON('game-map.json', function(data) {
 	units = [];
 
 	$.each(data.characters, function(i, value) {
-		player = new createjs.Bitmap(value.address);
+		var player = new createjs.Bitmap(value.address);
 		player.addEventListener("click", function(event) {
 			selectedCharacter = player;
-			drawRange(findReachableTiles(parseInt(value.x), parseInt(value.y), parseInt(value.moveRange), true));
+			showActionMenuNextToPlayer(player);
+			// drawRange(findReachableTiles(parseInt(value.x), parseInt(value.y), parseInt(value.moveRange), true));
 		});
+
+		// Configure unit coordinates
 		player.row = parseInt(value.y);
 		player.column = parseInt(value.x);
 		player.x = originX +  (value.y - value.x) * 65;
@@ -34,20 +39,52 @@ $.getJSON('game-map.json', function(data) {
 		player.scaleX = 0.7;
 		player.scaleY = 0.7;
 
+		// Configure the hp bar of the unit
 		hp_bar = new createjs.Shape();
 		hp_bar.graphics.beginFill("#ff0000").drawRect(player.x - 40, player.y - 120, 80, 10);
 		hp_bar.graphics.beginFill("#00ff00").drawRect(player.x - 40, player.y - 120, (parseInt(value.hp)/parseInt(value.max_hp)) * 80, 10);
-
 		player.hp_bar = hp_bar;
 
+
+		// Configure move and attack range of the unit
+		player.moveRange = parseInt(value.moveRange);
+		player.attackRange = parseInt(value.attackRange);
+
+		// Configure action control informations
+		player.canMove = parseInt(value.canMove);
+		player.canAttack = parseInt(value.canAttack);
+		player.skillCoolDown = parseInt(value.skillCoolDown);
+
+		// Adding the unit to the list of units in the game
 		units.push(player);
 
+		// Add the unit and its hp bar to the stage
 		stage.addChild(player);
 		stage.addChild(hp_bar);
 	});
 
 	changed = true;
 });
+
+
+// Show the action menu next to a player (when selected)
+function showActionMenuNextToPlayer(unit) {
+	var moveButton = unit.canMove == 1 ? new createjs.Bitmap("graphics/ingame_menu/move.png")
+										 : new createjs.Bitmap("graphics/ingame_menu/move_gray.png");
+    moveButton.addEventListener("click", function() {
+    	drawRange(findReachableTiles(unit.x, unit.y, unit.moveRange, true));
+    });
+
+    moveButton.x = unit.x + 50;
+    moveButton.y = unit.y - 100;
+
+    moveButton.scaleX = 0.3;
+    moveButton.scaleY = 0.3;
+
+    stage.addChild(moveButton);
+    stage.update();
+
+}		
 
 // Start moving the player
 function move() {
