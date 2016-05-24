@@ -34,4 +34,11 @@ $(document).ready(function() {
     }
   });
 });
+
+/* Function that does nothing, useful for passing callback functions that do nothing. */
 function nothing() {}
+
+/* Function that checks if a string's length is between two numbers. */
+function isStrLenCorrect(str, min, max) {
+  return str.length >= min && str.length <= max;
+}

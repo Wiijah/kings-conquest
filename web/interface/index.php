@@ -1,37 +1,74 @@
 <?php
-header ("Location: lobby");
-include 'header.php';
+$title = "Lobby";
+include 'includes/header.php';
+include 'includes/logout_container.php';
+include 'includes/logo.php';
 ?>
-<body>
+
+<div class="small_container">
+<div class="play_left">
+
+<?php echo genTitle("Lobby Chat"); ?>
+<div class="play_chatroom box">
+<div id="play_chatroom_messages">
 <?php
-include 'logout_container.php';
+for ($i = 0; $i < 50; $i++) {
+  //echo "<span class='play_chatroom_user'>xXDragonSlayer52:</span> <span class='play_chatroom_text'>Hello everyone! I am a new player!</span><br />";
+}
 ?>
-<img src="images/menu_top.png" class="menu_top" />
-
-
-<div class="menu_top_margin"></div>
-
-
-<div class="menu_btn_container">
-
-<!-- play button -->
-<div class="menu_btn"><img src="images/btn_circle.png" class="menu_btn_bg" />
-  <img src="images/white_sword.png" class="menu_btn_img" />
-  <div class="menu_btn_txt">Play Game</div>
+</div> <!-- play_chatroom_messages -->
+<div class="play_chatroom_footer">
+<input type="text" id="play_chatroom_msg" placeholder="Type your message here and press enter to send." />
 </div>
+</div> <!-- play_chatroom -->
 
-<div class="menu_btn"><img src="images/btn_circle.png" class="menu_btn_bg" />
-  <img src="images/white_book.png" class="menu_btn_img" />
-  <div class="menu_btn_txt">How To Play</div>
+
+
+<?php echo genTitle("Join A Game"); ?>
+<div class="play_lobby box">
+<table class="play_table lobby">
+<tr><th>Room Owner</th><th>Map</th><th>Mode</th><th>Join</th></tr>
+<?php
+$result = $db->query("SELECT * FROM games INNER JOIN users ON games.user = users.id ORDER BY games.created DESC");
+while ($fetch = $result->fetch_object()) {
+  for ($i = 0; $i < 10; $i++) echo "<tr><td>{$fetch->username}</td><td>Dark Forest</td><td>Regicide</td><td>Join</td></tr>";
+}
+?>
+</table>
+</div> <!-- play_lobby box -->
+</div> <!-- play_left -->
+
+<div class="play_right">
+
+<?php echo genTitle("Actions"); ?>
+<div class="play_btn btn lightbox_open" data-lb="create_game">Create Game</div>
+<div class="play_btn btn">How To Play</div>
+<div class="play_btn btn">Options</div>
+<div class="play_btn btn">Highscores</div>
+
+
+<?php echo genTitle("Your Profile"); ?>
+<div class="play_profile box">
+<table class="play_table">
+<tr><td class="play_avatar" colspan="2"><img src="images/default_avatar.png" /></td></tr>
+<tr><th>Username</th><td><?php echo $user->username; ?> </td></tr>
+
+<tr><th>Email</th><td><?php echo $user->email; ?> </td></tr>
+<tr><th>Games Won</th><td><?php echo number_format($user->wins); ?> </td></tr>
+<tr><th>Games Lost</th><td><?php echo number_format($user->losses); ?> </td></tr>
+<tr><th>Win/Loss Ratio</th><td><?php echo ratio($user->wins, $user->losses); ?> </td></tr>
+<tr><th>Sign Up Date</th><td><?php echo formatSQLDate($user->created); ?> </td></tr>
+</table>
+</div> <!-- play_profile box -->
+
+</div> <!-- play_right -->
+
+</div> <!-- play_container -->
+
+<div class="clear"></div>
+<div class="footer">
+<div class="white_line footer_line"></div>
+&copy; 2016 Kings' Conquest
 </div>
-
-<div class="menu_btn"><img src="images/btn_circle.png" class="menu_btn_bg" />
-  <img src="images/white_spanner.png" class="menu_btn_img" />
-  <div class="menu_btn_txt">Options</div>
-</div>
-
-
-</div> <!-- menu_btn_container -->
-
 </body>
 </html>
