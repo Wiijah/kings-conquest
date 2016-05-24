@@ -8,7 +8,7 @@ $id = secureInt($_POST['id']);
 
 $out = "[";
 
-$query = "SELECT * FROM chat INNER JOIN users ON chat.user = users.id WHERE chat_id > '{$id}'";
+$query = "SELECT * FROM chat INNER JOIN users ON chat.user = users.id WHERE chat_id > '{$id}' ORDER BY id ASC";
 $result = $db->query($query);
 while ($fetch = $result->fetch_object()) {
   $message = $fetch->message;
@@ -16,7 +16,7 @@ while ($fetch = $result->fetch_object()) {
   if ($out != "[") $out .= ",";
   $out .= '{
    "id":"'.$fetch->chat_id.'",
-   "username":"'.$id.$fetch->username.'",
+   "username":"'.$fetch->username.'",
    "message":"'.$message.'"}
   ';
 }
