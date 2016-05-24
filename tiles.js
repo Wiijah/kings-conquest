@@ -2,6 +2,8 @@ var stage = new createjs.Stage("demoCanvas");
 var shouldMove = false;
 
 var that = this;
+var path = [];
+var movingPlayer = false;
 $.getJSON('game-map.json', function(data) {
 	that.mapData = data['main'];
 	mapHeight = parseInt(data.map_dimensions.height);
@@ -16,16 +18,40 @@ $.getJSON('game-map.json', function(data) {
 			selectedCharacter = player;
 			drawRange(findReachableTiles(parseInt(value.x), parseInt(value.y), parseInt(value.moveRange), true));
 		});
+		player.row = parseInt(value.y);
+		player.column = parseInt(value.x);
 		player.x = originX +  (value.y - value.x) * 65;
 		player.y = value.y * 32.5 + originY + value.x * 32.5;
 		player.regX = 56.5;
 		player.regY = 130;
 		player.scaleX = 0.7;
 		player.scaleY = 0.7;
+
+		hp_bar = new createjs.Shape();
+		hp_bar.graphics.beginFill("#ff0000").drawRect(player.x - 40, player.y - 120, 80, 10);
+		hp_bar.graphics.beginFill("#00ff00").drawRect(player.x - 40, player.y - 120, (parseInt(value.hp)/parseInt(value.max_hp)) * 80, 10);
+
+		player.hp_bar = hp_bar;
+
 		stage.addChild(player);
+		stage.addChild(hp_bar);
 	});
-	// findPath(0, 0, 2, 0);
 });
+
+// Start moving the player
+function move() {
+	movingPlayer = true;
+}
+
+// Convert row/column to actual coordinates
+function rcToCoord(x, y) {
+
+	var result = [0, 0];
+	result[0] = originX + (y - x) * 65;
+	result[1] = originY + (y + x) * 32.5;
+		
+	return result;
+}
 
 function drawRange(reachable) {
 	$.each(reachable, function(i, value) {
@@ -35,59 +61,66 @@ function drawRange(reachable) {
 		bmp.y = (value[1]+value[0]) * 32.5 + 220;
 		bmp.regX = 65;
 		bmp.regY = 32.5;
+		bmp.addEventListener("click", function(event) {
+			var fromX = selectedCharacter.column;
+			var fromY = selectedCharacter.row;
+			findPath(fromX, fromY, value[0], value[1]);
+			move();
+			selectedCharacter.column = value[0];
+			selectedCharacter.row = value[1];
+		});
 		stage.addChild(bmp);
 	});
 }
 
-function animateMoves(deltas) {
-	var i = 1;
-	var j = 1;
-	animateMove(deltas[0]);
-	var inter = setInterval(function() {
-		if (j>=deltas.length-1) {
-			clearInterval(inter);
-		}
-		animateMove(deltas[i]);
-		i++;
-		j++;
-	}, 1000);
-}
+// Move the player by a fixed amount
+function movePlayer() {
+  var playerX = selectedCharacter.x,
+      playerY = selectedCharacter.y,
+      destX = path[0][0],
+      destY = path[0][1];
 
-function animateMove(value) {
-	var deltaX;
-	var deltaY;
-	if (value[0] == 0 && value[1] == 1) {
-		deltaX = 0.325;
-		deltaY = 0.1625;
-		// x += 0.1, y+=0.1
-	} else if (value[0] == 0 && value[1] == -1) {
-		deltaX = -0.325;
-		deltaY = -0.1625;
-	} else if (value[0] == 1 && value[1] == 0) {
-		deltaX = -0.325;
-		deltaY = 0.1625;
-	} else if (value[0] == -1 && value[1] == 0) {
-		deltaX = 0.325;
-		deltaY = -0.1625;
-	} else if (value[0] == 0 && value[1] == 0) {
-		deltaX = deltaY = 0;
-	} else  {
-		// error
-	}
-	var i = 0;
-	var inter = setInterval(function() {
-		if (i == 198) {
-			clearInterval(inter);
-		}
-		selectedCharacter.x += deltaX;
-		selectedCharacter.y += deltaY;
-		i++;
-	}, 5);
+  if (playerX < destX && playerY < destY) {
+    selectedCharacter.x += 6.5;
+    selectedCharacter.y += 3.25;
+
+    selectedCharacter.hp_bar.x += 6.5;
+    selectedCharacter.hp_bar.y += 3.25;
+  } else if (playerX > destX && playerY > destY) {
+    selectedCharacter.x -= 6.5;
+    selectedCharacter.y -= 3.25;
+
+
+    selectedCharacter.hp_bar.x -= 6.5;
+    selectedCharacter.hp_bar.y -= 3.25;
+  } else if (playerX < destX && playerY > destY) {
+    selectedCharacter.x += 6.5;
+    selectedCharacter.y -= 3.25;
+
+
+    selectedCharacter.hp_bar.x += 6.5;
+    selectedCharacter.hp_bar.y -= 3.25;
+  } else if (playerX > destX && playerY < destY){
+  	selectedCharacter.x -= 6.5;
+  	selectedCharacter.y += 3.25;
+
+
+    selectedCharacter.hp_bar.x -= 6.5;
+    selectedCharacter.hp_bar.y += 3.25;
+  }
+
+  if ((playerX === destX) && (playerY === destY)) {
+      path.splice(0,1);
+      if (path.length == 0) {
+        movingPlayer = false;
+      }
+  }
+  stage.update();
 }
 
 function findPath(fromX, fromY, toX, toY) {
 
-	var action = new Array(mapWidth * mapHeight);
+	var parent = new Array(mapWidth * mapHeight);
 	var vis = new Array(mapWidth * mapHeight);
 	var q = [];
 	q.push([fromX, fromY]);
@@ -120,27 +153,26 @@ function findPath(fromX, fromY, toX, toY) {
 				if (vis[nx * mapWidth + ny] === false) {
 					vis[nx * mapWidth + ny] = true;
 					q.push([nx, ny]);
-					action[nx * mapWidth + ny] = [dx, dy];
+					parent[nx * mapWidth + ny] = [coord[0], coord[1]];
 				}
 				
 			}
 		}
 	}
 
-	result = [];
+	path = [];
+	path = [[toX, toY]];
 	var currX = toX;
 	var currY = toY;
 	while (currX != fromX || currY != fromY) {
-		result.unshift(action[currX * mapWidth + currY]);
-		currX -= result[0][0];
-		currY -= result[0][1];
+		path.unshift(parent[currX * mapWidth + currY]);
+		currX = path[0][0];
+		currY = path[0][1];
 	}
 
-	for (i = 0; i < result.length; i++) {
-		console.log(result[i]);
+	for (i = 0; i < path.length; i++) {
+		path[i] = rcToCoord(path[i][0], path[i][1]);
 	}
-
-	return result;
 
 }
 
@@ -219,7 +251,11 @@ function drawMap(data) {
 
 createjs.Ticker.addEventListener("tick", update);
 createjs.Ticker.setFPS(40);
+
 function update() {
+	if (movingPlayer === true) {
+		movePlayer();
+	}
 	stage.update();
 }
 

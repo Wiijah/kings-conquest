@@ -12,6 +12,8 @@
 	"characters": {
 		"archer": {
 			"address": "graphics/unit/king/king!.png",
+			"hp" : "20",
+			"max_hp" : "80",
 			"x" : "0",
 			"y" : "2",
 			"moveRange" : "3"
