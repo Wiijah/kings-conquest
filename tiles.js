@@ -108,26 +108,55 @@ function drawGame() {
 
 initGame();
 
+function createClickableImage(imgSource, x, y, callBack) {
+	button = new createjs.Bitmap(imgSource);
+
+	button.x = x;
+	button.y = y;
+
+
+	button.addEventListener("click", callBack);
+	return button;
+
+}
+
 
 // Show the action menu next to a player (when selected)
 function showActionMenuNextToPlayer(unit) {
-	moveButton = unit.canMove == 1 ? new createjs.Bitmap("graphics/ingame_menu/move.png")
-								   : new createjs.Bitmap("graphics/ingame_menu/move_gray.png");
-  
-	moveButton.addEventListener("click", function() {
-		if (!isInHighlight && unit.canMove) {
+	moveSource = unit.canMove === 1 ? "graphics/ingame_menu/move.png"
+								   : "graphics/ingame_menu/move_gray.png";
+	moveButton = createClickableImage(moveSource, unit.x + 50, unit.y - 100, function() {
+		if (unit.canMove) {
 			drawRange(findReachableTiles(unit.column, unit.row, unit.moveRange, true));
 		}
 	});
 
+	attackSource = unit.canAttacl === 1 ? "graphics/ingame_menu/attack.png"
+								   : "graphics/ingame_menu/attack_gray.png";
+	attackButton = createClickableImage(attackSource, unit.x + 50, unit.y - 120, function() {
+		if (unit.canMove) {
+			drawRange(findReachableTiles(unit.column, unit.row, unit.moveRange, false));
+		}
+	});
 
-    moveButton.x = unit.x + 50;
-    moveButton.y = unit.y - 100;
+	// moveButton = unit.canMove == 1 ? new createjs.Bitmap("graphics/ingame_menu/move.png")
+	// 							   : new createjs.Bitmap("graphics/ingame_menu/move_gray.png");
+  
+	// moveButton.addEventListener("click", function() {
+	// 	if (!isInHighlight && unit.canMove) {
+	// 		drawRange(findReachableTiles(unit.column, unit.row, unit.moveRange, true));
+	// 	}
+	// });
 
-    moveButton.scaleX = 0.3;
-    moveButton.scaleY = 0.3;
 
-    stage.addChild(moveButton);
+ //    moveButton.x = unit.x + 50;
+ //    moveButton.y = unit.y - 100;
+
+ //    moveButton.scaleX = 0.3;
+ //    moveButton.scaleY = 0.3;
+
+    // stage.addChild(moveButton);
+    stage.addChild(attackButton);
     isDisplayingMenu = true;
     stage.update();
 
@@ -149,6 +178,7 @@ function rcToCoord(x, y) {
 }
 
 function drawRange(reachable) {
+
 	$.each(reachable, function(i, value) {
 		img = "graphics/green_tile.png";
 		bmp = new createjs.Bitmap(img);
