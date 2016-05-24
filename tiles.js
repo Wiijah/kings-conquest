@@ -4,11 +4,13 @@ var shouldMove = false;
 var that = this;
 var path = [];
 var movingPlayer = false;
+var team = 1;
 
 var units = [];
 
 var changed = false;
 
+var statsDisplay = new createjs.Container();
 
 resize();
 
@@ -16,6 +18,7 @@ function resize() {
 	stage.canvas.width = window.innerWidth;
 	stage.canvas.height = window.innerHeight;
 	drawGame();
+	drawStatsDisplay();
 }
 
 function initGame() {
@@ -34,6 +37,7 @@ function initGame() {
 			player.addEventListener("click", function(event) {
 				selectedCharacter = player;
 				drawRange(findReachableTiles(parseInt(value.x), parseInt(value.y), parseInt(value.moveRange), true));
+				displayStats(value);
 			});
 			player.row = parseInt(value.y);
 			player.column = parseInt(value.x);
@@ -56,10 +60,53 @@ function initGame() {
 			stage.addChild(hp_bar);
 		});
 
-		changed = true;
 	});
 
+
+	var box = new createjs.Shape();
+	box.graphics.beginFill("#a6a6a6").drawRect(0, 0, 600, 250);
+	statsDisplay.addChild(box);
+
+	stage.canvas.width = window.innerWidth;
+	stage.canvas.height = window.innerHeight;
+	
+	drawStatsDisplay();
+	changed = true;
+
 	window.addEventListener('resize', resize, false);
+}
+
+function drawStatsDisplay() {
+	statsDisplay.x = stage.canvas.width - 600;
+	statsDisplay.y = stage.canvas.height - 250;
+
+	stage.addChild(statsDisplay);
+}
+
+function displayStats(unit) {
+	var bmp = new createjs.Bitmap(unit.address);
+	bmp.scaleX = 1.6;
+	bmp.scaleY = 1.6;
+
+	bmp.y = 0;
+	bmp.x = 15; // 226
+
+	var text = unit.team == team ? new createjs.Text("HP : " + unit.hp + "/" + unit.max_hp + "\n" +
+		"ATK : "  + unit.attack + "    " + "RNG : " + unit.attack_range + "\n" +
+		"SKILL : " + unit.skill + "  ( CD " + unit.skill_cd + " )" + "\n" +
+		"MOV. RANGE : " + unit.moveRange + "\n" +
+		"LCK : " + unit.luck, "20px '04b_19'", "#000000")
+	: new createjs.Text("HP : " + unit.hp + "/" + unit.max_hp + "\n" +
+		"ATK : "  + "???" + "    " + "RNG : " + "???" + "\n" +
+		"SKILL : " + "???" + "  ( CD " + "???" + " )" + "\n" +
+		"MOV. RANGE : " + "???" + "\n" +
+		"LCK : " + "???", "20px '04b_19'", "#000000");
+	text.y = 30;
+	text.x = 226;
+	text.textBasline = "alphabetic";
+
+	statsDisplay.addChild(bmp);
+	statsDisplay.addChild(text);
 }
 
 function drawGame() {
@@ -83,7 +130,7 @@ function move() {
 	movingPlayer = true;
 }
 
-// Convert row/column to actual coordinates
+// Convert row/column to actual coordinates	
 function rcToCoord(x, y) {
 
 	var result = [0, 0];
@@ -113,6 +160,7 @@ function drawRange(reachable) {
 		$.each(units, function(i, value) {
 			if (stage.getChildIndex(value) < stage.getChildIndex(bmp)) {
 				stage.swapChildren(bmp, value);
+				stage.swapChildren(bmp, value.hp_bar);
 			}
 		});
 	});
