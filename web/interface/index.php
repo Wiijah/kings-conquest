@@ -4,6 +4,12 @@ include 'includes/header.php';
 include 'includes/logout_container.php';
 include 'includes/logo.php';
 ?>
+<script>
+<!--
+var room_id = 0;
+-->
+</script>
+<script src="js/chatroom.js"></script>
 
 <div class="small_container">
 <div class="play_left">

@@ -11,7 +11,7 @@ $(document).ready(function() {
       var message = $(this).val();
       $(this).val("");
       console.log("Message: "+ message);
-      $.quickPost("ajax/chatroom_send", {message: message}, function(data, status){
+      $.quickPost("ajax/chatroom_send", {message: message, room: room_id}, function(data, status){
         chatroom_refresh_messages();
       });
     }
@@ -23,7 +23,7 @@ function chatroom_refresh_messages_periodically() {
   setTimeout("chatroom_refresh_messages_periodically()", 1000);
 }
 function chatroom_refresh_messages() {
-  $.quickPost("ajax/chatroom_get", {id: lastID}, function(data, status){
+  $.quickPost("ajax/chatroom_get", {id: lastID, room: room_id}, function(data, status){
     for (var i = 0; i < data.length; i++) {
         concatToChatroom(data[i]);
     }

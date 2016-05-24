@@ -20,7 +20,12 @@ $max_players = 2;
 
 $isOwner = $room->user = $user->id;
 ?>
-
+<script>
+var room_id = <?php echo $room->game_id; ?>;
+var max_players = <?php echo $max_players; ?>;
+</script>
+<script src="js/chatroom.js"></script>
+<script src="js/room.js"></script>
 <div class="small_container">
 
 <div class="play_left">
@@ -43,16 +48,8 @@ for ($i = 0; $i < 50; $i++) {
 
 <?php echo genTitle("Players In Room"); ?>
 <div class="box room_players_box">
-<table class="play_table">
+<table class="play_table" id="room_players">
 <tr><th>#</th><th>Player</th><th>Colour</th></tr>
-<?php
-$result = $db->query("SELECT * FROM game_participants JOIN users ON game_participants.user = users.id WHERE game_id = '{$room->game_id}' ORDER BY id ASC");
-$i = 0;
-while ($player = $result->fetch_object()) {
-  $i++;
-  echo "<tr><td>{$i}</td><td>{$player->username}</td><td>{$player->colour}</td></tr>";
-}
-?>
 </table>
 </div> <!-- play_lobby box -->
 </div> <!-- play_left -->

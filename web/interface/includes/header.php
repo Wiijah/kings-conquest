@@ -24,7 +24,6 @@ function genTitle($title) {
   <!-- JS -->
   <script src="../utils/jquery.js"></script>
   <script src="js/common.js"></script>
-  <script src="js/chatroom.js"></script>
   <script src="js/lightbox.js"></script>
 </head>
 <body>
