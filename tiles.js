@@ -13,7 +13,9 @@ var moveButton;
 var attackButton;
 var skillButton;
 var cancelButton;
-var menu;
+var menuBackground;
+
+
 var isDisplayingMenu = false;
 var isInHighlight = false;
 var changed = false;
@@ -68,6 +70,7 @@ function initGame() {
 			unit.canMove = parseInt(value.canMove);
 			unit.canAttack = parseInt(value.canAttack);
 			unit.skillCoolDown = parseInt(value.skillCoolDown);
+			unit.outOfMoves = parseInt(value.outOfMoves);
 
 			// Adding the unit to the list of units in the game
 			units.push(unit);
@@ -124,36 +127,52 @@ function createClickableImage(imgSource, x, y, callBack) {
 
 // Show the action menu next to a player (when selected)
 function showActionMenuNextToPlayer(unit) {
-	moveSource = unit.canMove === 1 ? "graphics/ingame_menu/move.png"
-								   : "graphics/ingame_menu/move_gray.png";
-	moveButton = createClickableImage(moveSource, unit.x + 50, unit.y - 120, function() {
+
+
+	menuBackground = new createjs.Bitmap("graphics/ingame_menu/ingame_menu_background.png");
+	menuBackground.x = unit.x + 43;
+	menuBackground.y = unit.y - 150;
+	menuBackground.scaleX = 0.6;
+    menuBackground.scaleY = 0.6;
+
+	moveSource = unit.canMove === 1 && unit.outOfMoves === 0 ? "graphics/ingame_menu/move.png"
+								    : "graphics/ingame_menu/move_gray.png";
+	moveButton = createClickableImage(moveSource, unit.x + 45, unit.y - 140, function() {
 		if (unit.canMove) {
+			undoHighlights();
 			drawRange(findReachableTiles(unit.column, unit.row, unit.moveRange, true), true);
 		}
 	});
 
-	attackSource = unit.canAttack === 1 ? "graphics/ingame_menu/attack.png"
+	attackSource = unit.canAttack === 1 && unit.outOfMoves === 0 ? "graphics/ingame_menu/attack.png"
 								   : "graphics/ingame_menu/attack_gray.png";
-	attackButton = createClickableImage(attackSource, unit.x + 54, unit.y - 92, function() {
+	attackButton = createClickableImage(attackSource, unit.x + 49, unit.y - 111, function() {
 		if (unit.canAttack) {
+			undoHighlights();
 			drawRange(findReachableTiles(unit.column, unit.row, unit.attackRange, false), false);
 		}
-	})
+	});
 
-	skillSource = unit.skillCoolDown === 0 ? "graphics/ingame_menu/skill.png"
+	skillSource = unit.skillCoolDown === 0 && unit.outOfMoves === 0 ? "graphics/ingame_menu/skill.png"
 								   : "graphics/ingame_menu/skill_gray.png";
-	skillButton = createClickableImage(skillSource, unit.x + 54, unit.y - 72, function() {
+	skillButton = createClickableImage(skillSource, unit.x + 48, unit.y - 77, function() {
 		if (unit.skillCoolDown === 0) {
 			console.log("Casting!");
 		}
-	})
+	});
+
+	cancelSource = "graphics/ingame_menu/cancel.png";
+	cancelButton = createClickableImage(cancelSource, unit.x + 45.5, unit.y - 47, function() {
+		clearSelectionEffects();
+	});
 
 
 
-
+	stage.addChild(menuBackground);
     stage.addChild(moveButton);
     stage.addChild(attackButton);
     stage.addChild(skillButton);
+    stage.addChild(cancelButton);
     isDisplayingMenu = true;
     stage.update();
 
@@ -195,13 +214,7 @@ function drawRange(reachable, isMoving) {
 			});
 		} else {
 			bmp.addEventListener("click", function(event) {
-			// var fromX = selectedCharacter.column;
-			// var fromY = selectedCharacter.row;
-			// findPath(fromX, fromY, value[0], value[1]);
-			// move();
-			// selectedCharacter.column = value[0];
-			// selectedCharacter.row = value[1];
-			console.log("Attack!");
+			selectedCharacter.outOfMoves = 1;
 			clearSelectionEffects();
 			});
 		}
@@ -220,16 +233,23 @@ function drawRange(reachable, isMoving) {
 
 
 function clearSelectionEffects() {
-	if (isDisplayingMenu) destroyMenu();
-	if (isInHighlight) undoHighlights();
+	destroyMenu();
+    undoHighlights();
 }
 
 function destroyMenu() {
+	if (!isDisplayingMenu) return;
+	stage.removeChild(menuBackground);
 	stage.removeChild(moveButton);
+	stage.removeChild(attackButton);
+	stage.removeChild(skillButton);
+	stage.removeChild(cancelButton);
 	changed = true;
 }
 
 function undoHighlights() {
+	console.log(isInHighlight);
+	if (!isInHighlight) return;
 	$.each(highlighted, function(i, tile) {
 		stage.removeChild(tile);
 	});
@@ -431,7 +451,7 @@ function drawMap(data) {
 			bmp.regY = 32.5;
 
 			bmp.addEventListener("click", function(event) {
-				if (isDisplayingMenu) destroyMenu();
+				if (isDisplayingMenu && !isInHighlight) destroyMenu();
 			});
 			stage.addChild(bmp);
 		}
