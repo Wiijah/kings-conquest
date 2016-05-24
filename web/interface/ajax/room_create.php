@@ -3,9 +3,31 @@
 require_once 'ajax_common.php';
 
 $room_name = secureStr($_POST['room_name']);
-$password = secureStr($_POST['password']);
+$room_pass = secureStr($_POST['room_pass']);
 
-$query = "INSERT INTO rooms (name, password, user_id) VALUES
-    ('{$room_name}', '{$password}', '{$user->id}')";
-$db->query($query);
+/* Input is checked client-side before posting, however, if the client decides to modify client-side checking, then
+   an arbitrary but valid values are substituted in */
+if (!isStrLenCorrect($room_name, 3, 20)) {
+  $room_name = "Join Me";
+}
+if (!isStrLenCorrect($room_pass, 0, 20)) {
+  $room_pass = "";
+}
+
+$result = $db->query("SELECT * FROM rooms WHERE user_id = {$user->id}");
+if ($result->num_rows > 0) {
+  die('{"kc_error":"You cannot own more than one room simultaneously."}');
+}
+
+// insert new room and get the room's ID
+$result = $db->query("INSERT INTO rooms (name, password, user_id) VALUES
+    ('{$room_name}', '{$room_pass}', '{$user->id}')");
+$room_id = $db->insert_id;
+
+// automatically have the user join the room it has made
+$db->query("INSERT INTO room_participants (user_id, room_id, colour) VALUES
+    ('{$user->id}', '{$room_id}', 'red')");
+
+
+echo $AJAX_SUCCESS;
 ?>

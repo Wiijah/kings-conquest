@@ -58,20 +58,38 @@ function lightbox_close() {
 
 /* Individual Lightbox Methods */
 
-$(document).ready(function() {
-  /* Create Game */
 
+$(document).ready(function() {
+  /* Creating room */
   $('body').on('click', '#lightbox_btn_create_game', function() {
-    console.log("Hello World");
-      var room_name = $("#room_name").val();
-      var room_pass = $("#room_pass").val();
-      if (!isStrLenCorrect(room_name, 3, 20)) {
-        lightbox_error("The room name must be between 3 to 20 characters.");
-        return;
-      }
-      if (!isStrLenCorrect(room_name, 0, 20)) {
-        lightbox_error("The room password should not be longer than 20 characters.");
-        return;
-      }
+      create_room();
   });
 });
+
+  /* Create room on submitting create game lightbox form */
+function create_room() {
+  var room_name = $("#room_name").val();
+  var room_pass = $("#room_pass").val();
+
+  /* Client slide input check */
+  if (!isStrLenCorrect(room_name, 3, 20)) {
+    lightbox_error("The room name must be between 3 to 20 characters.");
+    return;
+  }
+  if (!isStrLenCorrect(room_name, 0, 20)) {
+    lightbox_error("The room password should not be longer than 20 characters.");
+    return;
+  }
+  quickPost("ajax/room_create", {room_name: room_name, room_pass: room_pass}, function(data, status){
+    if (session_expired) return;
+
+    // server side error checking
+    if (data.kc_error !== undefined) {
+      lightbox_error(data.kc_error);
+      return;
+    }
+
+    // at this point, user successfully created the room, so redirect the user to the room
+    window.location.href = 'room';
+  });
+}

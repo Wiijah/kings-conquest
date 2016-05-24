@@ -3,9 +3,11 @@
 header('Access-Control-Allow-Origin: *');
 header("Content-Type: application/json; charset=UTF-8");
 
-require_once '../../dbcon.php';
+require_once '../../common.php';
 
 if (!isset($_SESSION['id'])) {
   die('{"session_error":"session_expired"}');
 }
+
+$AJAX_SUCCESS = '{"kc_success": "The operation was successful."}';
 ?>

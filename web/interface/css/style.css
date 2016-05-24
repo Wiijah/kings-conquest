@@ -243,6 +243,8 @@ body {
   margin-right: 20px;
 }
 .play_right {
+  position: relative;
+  overflow: auto;
 }
 .play_lobby {}
 .play_table {
@@ -266,9 +268,7 @@ body {
   background-color: rgba(0, 0, 0, .7);
 }
 
-.play_profile {
-  overflow: auto;
-}
+.play_profile {}
 .play_avatar img {
   width: 60%;
   margin: 0 auto;
