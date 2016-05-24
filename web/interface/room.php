@@ -18,7 +18,7 @@ if (!$room = $result->fetch_object()) {
 
 $max_players = 2;
 
-$isOwner = $room->user = $user->id;
+$isOwner = $room->user == $user->id;
 ?>
 <script>
 var room_id = <?php echo $room->game_id; ?>;

@@ -2,7 +2,6 @@
 /* Output to the user all messages newer than the ID given */
 
 require_once 'ajax_common.php';
-header("Content-Type: application/json; charset=UTF-8");
 
 $id = secureInt($_POST['id']);
 
