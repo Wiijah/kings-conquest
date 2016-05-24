@@ -4,6 +4,9 @@ var shouldMove = false;
 var that = this;
 var path = [];
 var movingPlayer = false;
+
+var units = [];
+
 $.getJSON('game-map.json', function(data) {
 	that.mapData = data['main'];
 	mapHeight = parseInt(data.map_dimensions.height);
@@ -11,6 +14,8 @@ $.getJSON('game-map.json', function(data) {
 	// console.log(mapHeight + "blah" + mapWidth);
 	
 	that.drawMap(that.mapData);
+
+	units = [];
 
 	$.each(data.characters, function(i, value) {
 		player = new createjs.Bitmap(value.address);
@@ -32,6 +37,8 @@ $.getJSON('game-map.json', function(data) {
 		hp_bar.graphics.beginFill("#00ff00").drawRect(player.x - 40, player.y - 120, (parseInt(value.hp)/parseInt(value.max_hp)) * 80, 10);
 
 		player.hp_bar = hp_bar;
+
+		units.push(player);
 
 		stage.addChild(player);
 		stage.addChild(hp_bar);
@@ -112,10 +119,29 @@ function movePlayer() {
   if ((playerX === destX) && (playerY === destY)) {
       path.splice(0,1);
       if (path.length == 0) {
+
+      	sortIndices(selectedCharacter);
+
         movingPlayer = false;
       }
   }
+
+  sortIndices(selectedCharacter);
   stage.update();
+}
+
+function sortIndices(unit) {
+	$.each(units, function(i, value) {
+		if (unit.y > value.y) {
+			if (stage.getChildIndex(unit) < stage.getChildIndex(value)) {
+				stage.swapChildren(unit, value);
+			}
+		} else if (unit.y < value.y) {
+			if (stage.getChildIndex(unit) > stage.getChildIndex(value)) {
+				stage.swapChildren(unit, value);
+			}
+		}
+	});
 }
 
 function findPath(fromX, fromY, toX, toY) {
