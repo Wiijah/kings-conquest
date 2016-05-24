@@ -15,6 +15,44 @@ table {
   clear: both;
 }
 
+/* General Input Styles */
+
+.text {
+  width: 100%;
+  font-family: BebasNeueBook;
+  border-style: solid;
+  padding: 5px;
+  font-size: 20px;
+  text-align: left;
+  border-radius: 4px;
+  background-color: rgba(0, 0, 0, .5);
+  color: #ffffff;
+  box-shadow: 0px 0px 6px 0px rgba(0,0,0,.70);
+  border: 3px solid;
+  border-color: rgba(255, 255, 255, .2);
+} 
+.text:focus {
+  outline:none;
+  background-color: rgba(0, 0, 0, 0.7);
+  border-color: rgba(255, 255, 255, .5);
+} 
+
+
+/* Form table */
+.form_table {
+  width: 100%;
+  border: none;
+  border-collapse: collapse;
+}
+.form_table th, .form_table td {
+  padding: 10px;
+}
+.form_table th {
+  font-family: BebasNeueRegular;
+  font-size: 30px;
+  text-align: left;
+}
+
 /* Small kings top */
 #small_red_king {
   height: 72px;
@@ -121,7 +159,7 @@ h1:after {
 
 body {
   position: relative;
-  background-image: url("images/bg_blue_red.jpg");
+  background-image: url("../images/bg_blue_red.jpg");
   background-position: top center; 
   background-attachment: fixed;
   font-family: BebasNeueLight;
@@ -145,9 +183,10 @@ body {
 /* General CSS */
 /* General Button */
 .btn {
+  text-align: center;
   border-radius: 0.4vw;
   cursor: pointer;
-  background-image: url("images/btn_bg.png");
+  background-image: url("../images/btn_bg.png");
   background-clip: padding-box;
   border: 0.3vw solid;
   border-color: rgba(255,255,255,.2);
@@ -156,7 +195,7 @@ body {
 .btn:hover {
   box-shadow: 0 0 3px #888;
   text-shadow: 0 0 2px #FFF, 0 0 1px #FFF, 1px 1px 7px #FFF, 0 0 0 #FFF;
-  background-image: url("images/btn_bg_hover.png");
+  background-image: url("../images/btn_bg_hover.png");
   border-color: rgba(255,255,255,.3);
 }
 .box {

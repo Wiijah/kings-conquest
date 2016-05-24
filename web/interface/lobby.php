@@ -1,15 +1,16 @@
 <?php
 $title = "Game Lobby";
-include 'header.php';
+include 'includes/header.php';
 
-function genTitle($title) {
-  return "<div class='title'><h1>{$title}</h1></div>";
-}
+
 ?>
 <body>
 <?php
-include 'logout_container.php';
+include 'includes/logout_container.php';
 ?>
+
+
+<!-- end lightbox -->
 <img src="images/small_top.png" class="small_top" />
 <div class="small_top_subtitle">Turn-based Fantasy Multiplayer Game</div>
 
