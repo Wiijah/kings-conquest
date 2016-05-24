@@ -15,6 +15,22 @@ table {
   clear: both;
 }
 
+/* Small kings top */
+#small_red_king {
+  height: 72px;
+  position: absolute;
+  left: 50%;
+  margin-left: 195px;
+  top: 80px;
+}
+#small_blue_king {
+  height: 72px;
+  position: absolute;
+  right: 50%;
+  margin-right: 195px;
+  top: 80px;
+}
+
 /* Input styles */
 
 /* Chatroom */
