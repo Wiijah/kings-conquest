@@ -9,5 +9,9 @@ if (!isset($_SESSION['id'])) {
   die('{"session_error":"session_expired"}');
 }
 
+function ajax_success($msg) {
+  return '{"kc_success": "'.$msg.'"}';
+}
+
 $AJAX_SUCCESS = '{"kc_success": "The operation was successful."}';
 ?>

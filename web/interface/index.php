@@ -10,6 +10,7 @@ var room_id = 0;
 -->
 </script>
 <script src="js/chatroom.js"></script>
+<script src="js/lobby.js"></script>
 
 <div class="small_container">
 <div class="play_left">
@@ -32,14 +33,8 @@ for ($i = 0; $i < 50; $i++) {
 
 <?php echo genTitle("Join A Game"); ?>
 <div class="play_lobby box">
-<table class="play_table lobby">
+<table class="play_table lobby" id="rooms">
 <tr><th>Room Owner</th><th>Map</th><th>Mode</th><th>Join</th></tr>
-<?php
-$result = $db->query("SELECT * FROM rooms INNER JOIN users ON rooms.user_id = users.id ORDER BY rooms.created DESC");
-while ($fetch = $result->fetch_object()) {
-  echo "<tr><td>{$fetch->username}</td><td>Dark Forest</td><td>Regicide</td><td>Join</td></tr>";
-}
-?>
 </table>
 </div> <!-- play_lobby box -->
 </div> <!-- play_left -->

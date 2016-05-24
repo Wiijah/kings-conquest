@@ -14,9 +14,9 @@ if (!isStrLenCorrect($room_pass, 0, 20)) {
   $room_pass = "";
 }
 
-$result = $db->query("SELECT * FROM rooms WHERE user_id = {$user->id}");
+$result = $db->query("SELECT * FROM room_participants WHERE user_id = {$user->id}");
 if ($result->num_rows > 0) {
-  die('{"kc_error":"You cannot own more than one room simultaneously."}');
+  die('{"kc_error":"You cannot join a room if you are already in a room."}');
 }
 
 // insert new room and get the room's ID
