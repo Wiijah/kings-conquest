@@ -15,28 +15,35 @@
 			"hp" : "40",
 			"max_hp" : "80",
 			"attack" : "20",
-			"attack_range": "1",
 			"skill": "RUN AWAY",
-			"skill_cd": "3",
 			"luck":"50",
 			"x" : "3",
 			"y" : "2",
 			"moveRange" : "3",
-			"team": 0
+			"team": 0,
+			"attackRange" : "4",
+			"canMove" : "1",
+			"canAttack" : "1",
+			"skillCoolDown" : "0",
+			"outOfMoves" : "0"
 		},
 		"archer": {
 			"address": "graphics/unit/king/king!.png",
 			"hp" : "20",
 			"max_hp" : "80",
 			"attack" : "20",
-			"attack_range": "1",
 			"skill": "RUN AWAY",
-			"skill_cd": "3",
 			"luck":"50",
 			"x" : "0",
 			"y" : "2",
 			"moveRange" : "3", 
-			"team": "1"
+			"team": 1,
+			"moveRange" : "3",
+			"attackRange" : "4",
+			"canMove" : "1",
+			"canAttack" : "1",
+			"skillCoolDown" : "0",
+			"outOfMoves" : "0"
 		}
 	}
 }

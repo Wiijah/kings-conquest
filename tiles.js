@@ -2,17 +2,27 @@ var stage = new createjs.Stage("demoCanvas");
 var shouldMove = false;
 
 var that = this;
-var path = [];
 var movingPlayer = false;
 var team = 1;
 
-var units = [];
+var path = [];
+var highlighted = [];
+	var units = [];
+var ICON_SCALE_FACTOR = 0.65;
+var MOVEMENT_STEP = 6.5
 
-var changed = false;
+var moveButton;
+var attackButton;
+var skillButton;
+var cancelButton;
+var menuBackground;
 
 var statsDisplay = new createjs.Container();
 
-resize();
+var isDisplayingMenu = false;
+var isInHighlight = false;
+var changed = false;
+var turn = 0;
 
 function resize() {
 	stage.canvas.width = window.innerWidth;
@@ -33,30 +43,51 @@ function initGame() {
 		units = [];
 
 		$.each(data.characters, function(i, value) {
-			var player = new createjs.Bitmap(value.address);
-			player.addEventListener("click", function(event) {
-				selectedCharacter = player;
-				drawRange(findReachableTiles(parseInt(value.x), parseInt(value.y), parseInt(value.moveRange), true));
+			var unit = new createjs.Bitmap(value.address);
+			unit.addEventListener("click", function(event) {
+				if (!movingPlayer) {
+					clearSelectionEffects();
+					selectedCharacter = unit;
+					showActionMenuNextToPlayer(unit);
+				}
+				console.log(i);
+				// drawRange(findReachableTiles(parseInt(value.x), parseInt(value.y), parseInt(value.moveRange), true));
 				displayStats(value);
+				changed = true;
 			});
-			player.row = parseInt(value.y);
-			player.column = parseInt(value.x);
-			player.x = originX +  (value.y - value.x) * 65;
-			player.y = value.y * 32.5 + originY + value.x * 32.5;
-			player.regX = 56.5;
-			player.regY = 130;
-			player.scaleX = 0.7;
-			player.scaleY = 0.7;
 
+			// Configure unit coordinates
+			unit.row = parseInt(value.y);
+			unit.column = parseInt(value.x);
+			unit.x = originX +  (value.y - value.x) * 65;
+			unit.y = value.y * 32.5 + originY + value.x * 32.5;
+			unit.regX = 56.5;
+			unit.regY = 130;
+			unit.scaleX = 0.7;
+			unit.scaleY = 0.7;
+
+			// Configure the hp bar of the unit
 			hp_bar = new createjs.Shape();
-			hp_bar.graphics.beginFill("#ff0000").drawRect(player.x - 40, player.y - 120, 80, 10);
-			hp_bar.graphics.beginFill("#00ff00").drawRect(player.x - 40, player.y - 120, (parseInt(value.hp)/parseInt(value.max_hp)) * 80, 10);
+			hp_bar.graphics.beginFill("#ff0000").drawRect(unit.x - 40, unit.y - 120, 80, 10);
+			hp_bar.graphics.beginFill("#00ff00").drawRect(unit.x - 40, unit.y - 120, (parseInt(value.hp)/parseInt(value.max_hp)) * 80, 10);
+			unit.hp_bar = hp_bar;
 
-			player.hp_bar = hp_bar;
 
-			units.push(player);
+			// Configure move and attack range of the unit
+			unit.moveRange = parseInt(value.moveRange);
+			unit.attackRange = parseInt(value.attackRange);
 
-			stage.addChild(player);
+			// Configure action control informations
+			unit.canMove = parseInt(value.canMove);
+			unit.canAttack = parseInt(value.canAttack);
+			unit.skillCoolDown = parseInt(value.skillCoolDown);
+			unit.outOfMoves = parseInt(value.outOfMoves);
+
+			// Adding the unit to the list of units in the game
+			units.push(unit);
+
+			// Add the unit and its hp bar to the stage
+			stage.addChild(unit);
 			stage.addChild(hp_bar);
 		});
 
@@ -92,8 +123,8 @@ function displayStats(unit) {
 	bmp.x = 15; // 226
 
 	var text = unit.team == team ? new createjs.Text("HP : " + unit.hp + "/" + unit.max_hp + "\n" +
-		"ATK : "  + unit.attack + "    " + "RNG : " + unit.attack_range + "\n" +
-		"SKILL : " + unit.skill + "  ( CD " + unit.skill_cd + " )" + "\n" +
+		"ATK : "  + unit.attack + "    " + "RNG : " + unit.attackRange + "\n" +
+		"SKILL : " + unit.skill + "  ( CD " + unit.skillCoolDown + " )" + "\n" +
 		"MOV. RANGE : " + unit.moveRange + "\n" +
 		"LCK : " + unit.luck, "20px '04b_19'", "#000000")
 	: new createjs.Text("HP : " + unit.hp + "/" + unit.max_hp + "\n" +
@@ -125,6 +156,80 @@ function drawGame() {
 
 initGame();
 
+function createClickableImage(imgSource, x, y, callBack) {
+	button = new createjs.Bitmap(imgSource);
+
+	button.x = x;
+	button.y = y;
+    button.scaleX = ICON_SCALE_FACTOR;
+    button.scaleY = ICON_SCALE_FACTOR;
+
+	button.addEventListener("click", callBack);
+	return button;
+
+}
+
+
+// Show the action menu next to a player (when selected)
+function showActionMenuNextToPlayer(unit) {
+
+
+	menuBackground = new createjs.Bitmap("graphics/ingame_menu/ingame_menu_background.png");
+	menuBackground.x = unit.x + 43;
+	menuBackground.y = unit.y - 150;
+	menuBackground.scaleX = 0.6;
+    menuBackground.scaleY = 0.6;
+
+	moveSource = unit.canMove === 1 && unit.outOfMoves === 0 ? "graphics/ingame_menu/move.png"
+								    : "graphics/ingame_menu/move_gray.png";
+	moveButton = createClickableImage(moveSource, unit.x + 45, unit.y - 140, function() {
+		if (unit.canMove) {
+			undoHighlights();
+			drawRange(findReachableTiles(unit.column, unit.row, unit.moveRange, true), true);
+		}
+	});
+
+	attackSource = unit.canAttack === 1 && unit.outOfMoves === 0 ? "graphics/ingame_menu/attack.png"
+								   : "graphics/ingame_menu/attack_gray.png";
+	attackButton = createClickableImage(attackSource, unit.x + 49, unit.y - 111, function() {
+		if (unit.canAttack) {
+			undoHighlights();
+			drawRange(findReachableTiles(unit.column, unit.row, unit.attackRange, false), false);
+		}
+	});
+
+	skillSource = unit.skillCoolDown === 0 && unit.outOfMoves === 0 ? "graphics/ingame_menu/skill.png"
+								   : "graphics/ingame_menu/skill_gray.png";
+	skillButton = createClickableImage(skillSource, unit.x + 48, unit.y - 77, function() {
+		if (unit.skillCoolDown === 0) {
+			console.log("Casting!");
+		}
+	});
+
+	cancelSource = "graphics/ingame_menu/cancel.png";
+	cancelButton = createClickableImage(cancelSource, unit.x + 45.5, unit.y - 47, function() {
+		clearSelectionEffects();
+	});
+
+	var min = moveButton;
+	min = stage.getChildIndex(attackButton) < stage.getChildIndex(min) ? attackButton : min;
+	min = stage.getChildIndex(skillButton) < stage.getChildIndex(min) ? skillButton : min;
+	min = stage.getChildIndex(cancelButton) < stage.getChildIndex(min) ? cancelButton : min;
+
+	if (stage.getChildIndex(menuBackground) > stage.getChildIndex(min)) {
+		stage.swapChildren(menuBackground, min);
+	}
+
+	stage.addChild(menuBackground);
+    stage.addChild(moveButton);
+    stage.addChild(attackButton);
+    stage.addChild(skillButton);
+    stage.addChild(cancelButton);
+    isDisplayingMenu = true;
+    changed = true;
+
+}		
+
 // Start moving the player
 function move() {
 	movingPlayer = true;
@@ -140,23 +245,36 @@ function rcToCoord(x, y) {
 	return result;
 }
 
-function drawRange(reachable) {
+function drawRange(reachable, isMoving) {
+
+	destroyMenu();
+
 	$.each(reachable, function(i, value) {
-		img = "graphics/green_tile.png";
+		img = isMoving ? "graphics/green_tile.png" : "graphics/red_tile.png";
 		bmp = new createjs.Bitmap(img);
 		bmp.x = (value[1]-value[0]) * 65 + 540;
 		bmp.y = (value[1]+value[0]) * 32.5 + 220;
 		bmp.regX = 65;
 		bmp.regY = 32.5;
-		bmp.addEventListener("click", function(event) {
+		if (isMoving) {
+			bmp.addEventListener("click", function(event) {
 			var fromX = selectedCharacter.column;
 			var fromY = selectedCharacter.row;
 			findPath(fromX, fromY, value[0], value[1]);
 			move();
 			selectedCharacter.column = value[0];
 			selectedCharacter.row = value[1];
-		});
+			clearSelectionEffects();
+			});
+		} else {
+			bmp.addEventListener("click", function(event) {
+			selectedCharacter.outOfMoves = 1;
+			clearSelectionEffects();
+			});
+		}
+		
 		stage.addChild(bmp);
+		highlighted.push(bmp);
 		$.each(units, function(i, value) {
 			if (stage.getChildIndex(value) < stage.getChildIndex(bmp)) {
 				stage.swapChildren(bmp, value);
@@ -164,6 +282,43 @@ function drawRange(reachable) {
 			}
 		});
 	});
+	isInHighlight = true;
+	changed = true;
+}
+
+
+function clearSelectionEffects() {
+	destroyMenu();
+    undoHighlights();
+    destroyStats();
+}
+
+function destroyStats() {
+	statsDisplay.removeChildAt(2,3);
+
+	var box = new createjs.Shape();
+	box.graphics.beginFill("#a6a6a6").drawRect(0, 0, 600, 250);
+	statsDisplay.addChild(box);
+	changed = true;
+}
+
+function destroyMenu() {
+	if (!isDisplayingMenu) return;
+	stage.removeChild(menuBackground);
+	stage.removeChild(moveButton);
+	stage.removeChild(attackButton);
+	stage.removeChild(skillButton);
+	stage.removeChild(cancelButton);
+	changed = true;
+}
+
+function undoHighlights() {
+	console.log(isInHighlight);
+	if (!isInHighlight) return;
+	$.each(highlighted, function(i, tile) {
+		stage.removeChild(tile);
+	});
+	isInHighlight = false;
 	changed = true;
 }
 
@@ -175,32 +330,32 @@ function movePlayer() {
       destY = path[0][1];
 
   if (playerX < destX && playerY < destY) {
-    selectedCharacter.x += 6.5;
-    selectedCharacter.y += 3.25;
+    selectedCharacter.x += MOVEMENT_STEP;
+    selectedCharacter.y += MOVEMENT_STEP / 2;
 
-    selectedCharacter.hp_bar.x += 6.5;
-    selectedCharacter.hp_bar.y += 3.25;
+    selectedCharacter.hp_bar.x += MOVEMENT_STEP;
+    selectedCharacter.hp_bar.y += MOVEMENT_STEP / 2;
   } else if (playerX > destX && playerY > destY) {
-    selectedCharacter.x -= 6.5;
-    selectedCharacter.y -= 3.25;
+    selectedCharacter.x -= MOVEMENT_STEP;
+    selectedCharacter.y -= MOVEMENT_STEP / 2;
 
 
-    selectedCharacter.hp_bar.x -= 6.5;
-    selectedCharacter.hp_bar.y -= 3.25;
+    selectedCharacter.hp_bar.x -= MOVEMENT_STEP;
+    selectedCharacter.hp_bar.y -= MOVEMENT_STEP / 2;
   } else if (playerX < destX && playerY > destY) {
-    selectedCharacter.x += 6.5;
-    selectedCharacter.y -= 3.25;
+    selectedCharacter.x += MOVEMENT_STEP;
+    selectedCharacter.y -= MOVEMENT_STEP / 2;
 
 
-    selectedCharacter.hp_bar.x += 6.5;
-    selectedCharacter.hp_bar.y -= 3.25;
+    selectedCharacter.hp_bar.x += MOVEMENT_STEP;
+    selectedCharacter.hp_bar.y -= MOVEMENT_STEP / 2;
   } else if (playerX > destX && playerY < destY){
-  	selectedCharacter.x -= 6.5;
-  	selectedCharacter.y += 3.25;
+  	selectedCharacter.x -= MOVEMENT_STEP;
+  	selectedCharacter.y += MOVEMENT_STEP / 2;
 
 
-    selectedCharacter.hp_bar.x -= 6.5;
-    selectedCharacter.hp_bar.y += 3.25;
+    selectedCharacter.hp_bar.x -= MOVEMENT_STEP;
+    selectedCharacter.hp_bar.y += MOVEMENT_STEP / 2;
   }
 
   if ((playerX === destX) && (playerY === destY)) {
@@ -208,8 +363,10 @@ function movePlayer() {
       if (path.length == 0) {
 
       	sortIndices(selectedCharacter);
-
         movingPlayer = false;
+        selectedCharacter.canMove = 0;
+
+		showActionMenuNextToPlayer(selectedCharacter);
       }
   }
 
@@ -231,6 +388,7 @@ function sortIndices(unit) {
 		}
 	});
 }
+
 
 function findPath(fromX, fromY, toX, toY) {
 
@@ -358,13 +516,17 @@ function drawMap(data) {
 			bmp.y = (j+i) * 32.5 + 220;
 			bmp.regX = 65;
 			bmp.regY = 32.5;
+
+			bmp.addEventListener("click", function(event) {
+				if (isDisplayingMenu && !isInHighlight) destroyMenu();
+			});
 			stage.addChild(bmp);
 		}
 	}
 }
 
 createjs.Ticker.addEventListener("tick", update);
-createjs.Ticker.setFPS(40);
+createjs.Ticker.setFPS(30);
 
 function update() {
 	if (movingPlayer === true) {

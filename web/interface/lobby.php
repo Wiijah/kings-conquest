@@ -4,7 +4,6 @@ include 'includes/header.php';
 
 
 ?>
-<body>
 <?php
 include 'includes/logout_container.php';
 ?>
@@ -56,7 +55,7 @@ while ($fetch = $result->fetch_object()) {
 <div class="play_right">
 
 <?php echo genTitle("Actions"); ?>
-<div class="play_btn btn">Create Game</div>
+<div class="play_btn btn lightbox_open" data-lb="create_game">Create Game</div>
 <div class="play_btn btn">How To Play</div>
 <div class="play_btn btn">Options</div>
 <div class="play_btn btn">Highscores</div>
