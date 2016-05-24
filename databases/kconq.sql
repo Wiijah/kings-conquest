@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: May 24, 2016 at 07:59 PM
+-- Generation Time: May 24, 2016 at 11:05 PM
 -- Server version: 10.1.10-MariaDB
 -- PHP Version: 7.0.2
 
@@ -30,132 +30,120 @@ CREATE TABLE `chat` (
   `chat_id` int(11) NOT NULL,
   `created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `user` int(11) NOT NULL,
-  `message` text NOT NULL
+  `message` text NOT NULL,
+  `room_id` int(11) NOT NULL,
+  `chat_type` set('message','event') NOT NULL DEFAULT 'message'
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `chat`
 --
 
-INSERT INTO `chat` (`chat_id`, `created`, `user`, `message`) VALUES
-(1, '2016-05-23 22:32:34', 6, 'Hi there, I''m a new player!'),
-(2, '2016-05-23 22:32:49', 7, 'Cool, nice to see you! xD :D'),
-(50, '2016-05-24 01:16:01', 9, 'hey, my name is wumpus, please to meet you guys!'),
-(51, '2016-05-24 01:49:32', 9, 'oh baby!'),
-(52, '2016-05-24 01:59:23', 9, 'anyone wanna game?'),
-(53, '2016-05-24 09:54:11', 9, 'yeah'),
-(54, '2016-05-24 09:54:20', 9, 'fdg'),
-(55, '2016-05-24 09:54:21', 9, 'fag'),
-(56, '2016-05-24 09:54:27', 9, 'sdfs'),
-(57, '2016-05-24 09:54:49', 7, 'yea'),
-(58, '2016-05-24 09:54:52', 9, 'noice'),
-(59, '2016-05-24 12:54:37', 9, 'yo'),
-(60, '2016-05-24 12:54:39', 9, 'how'),
-(61, '2016-05-24 12:54:40', 9, 'are you guys'),
-(62, '2016-05-24 12:54:42', 9, 'i don''t know'),
-(63, '2016-05-24 12:54:44', 9, 'how  am i'),
-(64, '2016-05-24 12:54:46', 9, 'asoijdioasjd '),
-(65, '2016-05-24 12:54:53', 9, 'testing one two three @&quot;@&quot;&quot;@&quot;&quot;&quot;''''''''X:D&quot;LZ&quot;:XLC&quot;:ZXLC'),
-(66, '2016-05-24 12:54:57', 9, '&lt;b&gt;sdfjsidof&lt;/b&gt;'),
-(67, '2016-05-24 12:55:14', 9, '''; delete table users; --'),
-(68, '2016-05-24 14:25:20', 9, 'i like dark forest'),
-(69, '2016-05-24 14:25:22', 9, 'can we play that'),
-(70, '2016-05-24 14:25:23', 9, 'thanks!'),
-(71, '2016-05-24 14:25:25', 9, 'in advacne ;]'),
-(73, '2016-05-24 15:43:57', 9, 'hi'),
-(74, '2016-05-24 15:43:59', 9, 'so'),
-(75, '2016-05-24 15:44:02', 9, 'i'),
-(76, '2016-05-24 15:44:04', 9, 'need'),
-(77, '2016-05-24 15:44:05', 9, 'some food'),
-(78, '2016-05-24 15:44:06', 9, 'right now'),
-(80, '2016-05-24 15:44:09', 9, 'yea'),
-(82, '2016-05-24 15:57:40', 9, 'oki doki'),
-(83, '2016-05-24 15:57:50', 9, 'i herd u liek mudkipz'),
-(84, '2016-05-24 15:57:58', 9, 'sdfg'),
-(85, '2016-05-24 15:57:58', 9, ']fsd'),
-(86, '2016-05-24 15:57:58', 9, 'gsd'),
-(87, '2016-05-24 15:57:58', 9, 'f'),
-(88, '2016-05-24 15:57:59', 9, 'gsd'),
-(89, '2016-05-24 15:57:59', 9, 'fg'),
-(90, '2016-05-24 15:57:59', 9, 'sdf'),
-(91, '2016-05-24 15:57:59', 9, 'gsd'),
-(92, '2016-05-24 15:57:59', 9, 'fg'),
-(93, '2016-05-24 15:57:59', 9, 'sdf'),
-(94, '2016-05-24 15:58:00', 9, 'g'),
-(95, '2016-05-24 15:58:00', 9, 'sdf'),
-(96, '2016-05-24 15:58:00', 9, 'gs'),
-(97, '2016-05-24 15:58:00', 9, 'dfg'),
-(98, '2016-05-24 15:58:02', 9, 'a'),
-(99, '2016-05-24 15:58:02', 9, 'b'),
-(100, '2016-05-24 15:58:02', 9, 'c'),
-(101, '2016-05-24 15:58:02', 9, 'd'),
-(102, '2016-05-24 15:58:03', 9, 'e'),
-(103, '2016-05-24 15:58:03', 9, 'f'),
-(104, '2016-05-24 15:58:05', 9, 'g'),
-(105, '2016-05-24 15:58:05', 9, 'h'),
-(106, '2016-05-24 15:58:05', 9, 'i'),
-(107, '2016-05-24 15:58:06', 9, 'q'),
-(108, '2016-05-24 15:58:06', 9, 'w'),
-(109, '2016-05-24 15:58:06', 9, 'e'),
-(110, '2016-05-24 15:58:06', 9, 'r'),
-(111, '2016-05-24 15:58:07', 9, 't'),
-(112, '2016-05-24 15:58:07', 9, 'y'),
-(113, '2016-05-24 15:58:07', 9, 'u'),
-(114, '2016-05-24 15:58:07', 9, 'i'),
-(115, '2016-05-24 15:58:08', 9, 'o'),
-(116, '2016-05-24 15:58:08', 9, 'p'),
-(117, '2016-05-24 17:53:33', 9, 'a'),
-(118, '2016-05-24 17:53:33', 9, 's'),
-(119, '2016-05-24 17:53:34', 9, 'a'),
-(120, '2016-05-24 17:53:36', 9, 'q'),
-(121, '2016-05-24 17:53:36', 9, 'w'),
-(122, '2016-05-24 17:53:36', 9, 'e'),
-(123, '2016-05-24 17:53:36', 9, 'r'),
-(124, '2016-05-24 17:53:36', 9, 't'),
-(125, '2016-05-24 17:53:37', 9, 'y');
-
--- --------------------------------------------------------
-
---
--- Table structure for table `games`
---
-
-CREATE TABLE `games` (
-  `game_id` int(11) NOT NULL,
-  `user` int(11) NOT NULL,
-  `joiner` int(11) NOT NULL,
-  `created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `name` varchar(20) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
---
--- Dumping data for table `games`
---
-
-INSERT INTO `games` (`game_id`, `user`, `joiner`, `created`, `name`) VALUES
-(1, 9, 0, '2016-05-24 14:38:49', 'Epic Game'),
-(2, 7, 0, '2016-05-23 16:25:02', '');
-
--- --------------------------------------------------------
-
---
--- Table structure for table `game_participants`
---
-
-CREATE TABLE `game_participants` (
-  `part_id` int(11) NOT NULL,
-  `user` int(11) NOT NULL,
-  `game_id` int(11) NOT NULL,
-  `colour` set('red','blue') NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
---
--- Dumping data for table `game_participants`
---
-
-INSERT INTO `game_participants` (`part_id`, `user`, `game_id`, `colour`) VALUES
-(1, 9, 1, 'red'),
-(2, 7, 1, 'blue');
+INSERT INTO `chat` (`chat_id`, `created`, `user`, `message`, `room_id`, `chat_type`) VALUES
+(1, '2016-05-24 19:52:41', 6, 'Hi there, I''m a new player!', 0, 'message'),
+(2, '2016-05-24 19:52:41', 7, 'Cool, nice to see you! xD :D', 0, 'message'),
+(50, '2016-05-24 19:52:41', 9, 'hey, my name is wumpus, please to meet you guys!', 0, 'message'),
+(51, '2016-05-24 19:52:41', 9, 'oh baby!', 0, 'message'),
+(52, '2016-05-24 19:52:41', 9, 'anyone wanna game?', 0, 'message'),
+(53, '2016-05-24 19:52:41', 9, 'yeah', 0, 'message'),
+(54, '2016-05-24 19:52:41', 9, 'fdg', 0, 'message'),
+(55, '2016-05-24 19:52:41', 9, 'fag', 0, 'message'),
+(56, '2016-05-24 19:52:41', 9, 'sdfs', 0, 'message'),
+(57, '2016-05-24 19:52:41', 7, 'yea', 0, 'message'),
+(58, '2016-05-24 19:52:41', 9, 'noice', 0, 'message'),
+(59, '2016-05-24 19:52:41', 9, 'yo', 0, 'message'),
+(60, '2016-05-24 19:52:41', 9, 'how', 0, 'message'),
+(61, '2016-05-24 19:52:41', 9, 'are you guys', 0, 'message'),
+(62, '2016-05-24 19:52:41', 9, 'i don''t know', 0, 'message'),
+(63, '2016-05-24 19:52:41', 9, 'how  am i', 0, 'message'),
+(64, '2016-05-24 19:52:41', 9, 'asoijdioasjd ', 0, 'message'),
+(65, '2016-05-24 19:52:41', 9, 'testing one two three @&quot;@&quot;&quot;@&quot;&quot;&quot;''''''''X:D&quot;LZ&quot;:XLC&quot;:ZXLC', 0, 'message'),
+(66, '2016-05-24 19:52:41', 9, '&lt;b&gt;sdfjsidof&lt;/b&gt;', 0, 'message'),
+(67, '2016-05-24 19:52:41', 9, '''; delete table users; --', 0, 'message'),
+(68, '2016-05-24 19:52:41', 9, 'i like dark forest', 0, 'message'),
+(69, '2016-05-24 19:52:41', 9, 'can we play that', 0, 'message'),
+(70, '2016-05-24 19:52:41', 9, 'thanks!', 0, 'message'),
+(71, '2016-05-24 19:52:41', 9, 'in advacne ;]', 0, 'message'),
+(73, '2016-05-24 19:52:41', 9, 'hi', 0, 'message'),
+(74, '2016-05-24 19:52:41', 9, 'so', 0, 'message'),
+(75, '2016-05-24 19:52:41', 9, 'i', 0, 'message'),
+(76, '2016-05-24 19:52:41', 9, 'need', 0, 'message'),
+(77, '2016-05-24 19:52:41', 9, 'some food', 0, 'message'),
+(78, '2016-05-24 19:52:41', 9, 'right now', 0, 'message'),
+(80, '2016-05-24 19:52:41', 9, 'yea', 0, 'message'),
+(82, '2016-05-24 19:52:41', 9, 'oki doki', 0, 'message'),
+(83, '2016-05-24 19:52:41', 9, 'i herd u liek mudkipz', 0, 'message'),
+(84, '2016-05-24 19:52:41', 9, 'sdfg', 0, 'message'),
+(85, '2016-05-24 19:52:41', 9, ']fsd', 0, 'message'),
+(86, '2016-05-24 19:52:41', 9, 'gsd', 0, 'message'),
+(87, '2016-05-24 19:52:41', 9, 'f', 0, 'message'),
+(88, '2016-05-24 19:52:41', 9, 'gsd', 0, 'message'),
+(89, '2016-05-24 19:52:41', 9, 'fg', 0, 'message'),
+(90, '2016-05-24 19:52:41', 9, 'sdf', 0, 'message'),
+(91, '2016-05-24 19:52:41', 9, 'gsd', 0, 'message'),
+(92, '2016-05-24 19:52:41', 9, 'fg', 0, 'message'),
+(93, '2016-05-24 19:52:41', 9, 'sdf', 0, 'message'),
+(94, '2016-05-24 19:52:41', 9, 'g', 0, 'message'),
+(95, '2016-05-24 19:52:41', 9, 'sdf', 0, 'message'),
+(96, '2016-05-24 19:52:41', 9, 'gs', 0, 'message'),
+(97, '2016-05-24 19:52:41', 9, 'dfg', 0, 'message'),
+(98, '2016-05-24 19:52:41', 9, 'a', 0, 'message'),
+(99, '2016-05-24 19:52:41', 9, 'b', 0, 'message'),
+(100, '2016-05-24 19:52:41', 9, 'c', 0, 'message'),
+(101, '2016-05-24 19:52:41', 9, 'd', 0, 'message'),
+(102, '2016-05-24 19:52:41', 9, 'e', 0, 'message'),
+(103, '2016-05-24 19:52:41', 9, 'f', 0, 'message'),
+(104, '2016-05-24 19:52:41', 9, 'g', 0, 'message'),
+(105, '2016-05-24 19:52:41', 9, 'h', 0, 'message'),
+(106, '2016-05-24 19:52:41', 9, 'i', 0, 'message'),
+(107, '2016-05-24 19:52:41', 9, 'q', 0, 'message'),
+(108, '2016-05-24 19:52:41', 9, 'w', 0, 'message'),
+(109, '2016-05-24 19:52:41', 9, 'e', 0, 'message'),
+(110, '2016-05-24 19:52:41', 9, 'r', 0, 'message'),
+(111, '2016-05-24 19:52:41', 9, 't', 0, 'message'),
+(112, '2016-05-24 19:52:41', 9, 'y', 0, 'message'),
+(113, '2016-05-24 19:52:41', 9, 'u', 0, 'message'),
+(114, '2016-05-24 19:52:41', 9, 'i', 0, 'message'),
+(115, '2016-05-24 19:52:41', 9, 'o', 0, 'message'),
+(116, '2016-05-24 19:52:41', 9, 'p', 0, 'message'),
+(117, '2016-05-24 19:52:41', 9, 'a', 0, 'message'),
+(118, '2016-05-24 19:52:41', 9, 's', 0, 'message'),
+(119, '2016-05-24 19:52:41', 9, 'a', 0, 'message'),
+(120, '2016-05-24 19:52:41', 9, 'q', 0, 'message'),
+(121, '2016-05-24 19:52:41', 9, 'w', 0, 'message'),
+(122, '2016-05-24 19:52:41', 9, 'e', 0, 'message'),
+(123, '2016-05-24 19:52:41', 9, 'r', 0, 'message'),
+(124, '2016-05-24 19:52:41', 9, 't', 0, 'message'),
+(125, '2016-05-24 19:52:41', 9, 'y', 0, 'message'),
+(126, '2016-05-24 19:52:41', 7, 'yo', 0, 'message'),
+(127, '2016-05-24 19:52:41', 9, 'whassup', 0, 'message'),
+(128, '2016-05-24 19:52:41', 7, 'not much', 0, 'message'),
+(129, '2016-05-24 19:52:41', 9, 'really', 0, 'message'),
+(130, '2016-05-24 19:52:41', 7, 'okay', 0, 'message'),
+(131, '2016-05-24 19:52:41', 9, 'meh', 0, 'message'),
+(132, '2016-05-24 19:52:41', 7, 'eorijg', 0, 'message'),
+(133, '2016-05-24 19:52:41', 7, 'enough', 0, 'message'),
+(134, '2016-05-24 19:52:41', 9, 'whahaaaa', 0, 'message'),
+(135, '2016-05-24 19:52:41', 7, 'sieojfiose', 0, 'message'),
+(136, '2016-05-24 19:52:41', 7, 'dfgdf', 0, 'message'),
+(137, '2016-05-24 19:52:41', 9, 'yo', 0, 'message'),
+(138, '2016-05-24 19:52:41', 9, 'sdf', 1, 'message'),
+(139, '2016-05-24 19:52:41', 9, 'sdf', 0, 'message'),
+(140, '2016-05-24 19:52:41', 9, 'yo', 0, 'message'),
+(141, '2016-05-24 19:52:41', 9, 'hiya there', 0, 'message'),
+(142, '2016-05-24 19:52:41', 9, 'yo', 1, 'message'),
+(143, '2016-05-24 19:52:41', 9, 'what is up', 1, 'message'),
+(144, '2016-05-24 19:52:41', 7, 'what is up', 0, 'message'),
+(145, '2016-05-24 19:52:41', 7, 'i dont know', 1, 'message'),
+(146, '2016-05-24 19:52:41', 9, 'why', 1, 'message'),
+(147, '2016-05-24 19:52:41', 9, 'fgh', 1, 'message'),
+(148, '2016-05-24 19:52:41', 9, 'dfg', 1, 'message'),
+(149, '2016-05-24 19:52:41', 9, 'dfg', 1, 'message'),
+(150, '2016-05-24 19:52:41', 9, 'hi', 1, 'message'),
+(151, '2016-05-24 19:52:41', 9, 'sdf', 0, 'message'),
+(152, '2016-05-24 19:52:41', 9, 'im not sure', 0, 'message'),
+(153, '2016-05-24 19:52:41', 7, 'umm', 1, 'message'),
+(154, '2016-05-24 19:52:41', 9, 'sdf', 0, 'message');
 
 -- --------------------------------------------------------
 
@@ -175,6 +163,64 @@ CREATE TABLE `login` (
 
 INSERT INTO `login` (`userid`, `socialid`, `type`) VALUES
 (6, '1071989516156754', 'Facebook');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `rooms`
+--
+
+CREATE TABLE `rooms` (
+  `room_id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `joiner` int(11) NOT NULL,
+  `created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `name` varchar(20) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `rooms`
+--
+
+INSERT INTO `rooms` (`room_id`, `user_id`, `joiner`, `created`, `name`) VALUES
+(1, 9, 0, '2016-05-24 14:38:49', 'Epic Game'),
+(2, 7, 0, '2016-05-23 16:25:02', '');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `room_participants`
+--
+
+CREATE TABLE `room_participants` (
+  `part_id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `room_id` int(11) NOT NULL,
+  `colour` set('red','blue') NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `room_participants`
+--
+
+INSERT INTO `room_participants` (`part_id`, `user_id`, `room_id`, `colour`) VALUES
+(1, 9, 1, 'red'),
+(2, 7, 1, 'blue');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `units`
+--
+
+CREATE TABLE `units` (
+  `unit_id` int(11) NOT NULL,
+  `unit_type_id` int(11) NOT NULL,
+  `health` int(11) NOT NULL,
+  `max_health` int(11) NOT NULL,
+  `movement` int(11) NOT NULL,
+  `attack_range` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
 
@@ -215,22 +261,28 @@ ALTER TABLE `chat`
   ADD PRIMARY KEY (`chat_id`);
 
 --
--- Indexes for table `games`
---
-ALTER TABLE `games`
-  ADD PRIMARY KEY (`game_id`);
-
---
--- Indexes for table `game_participants`
---
-ALTER TABLE `game_participants`
-  ADD PRIMARY KEY (`part_id`);
-
---
 -- Indexes for table `login`
 --
 ALTER TABLE `login`
   ADD PRIMARY KEY (`socialid`,`type`);
+
+--
+-- Indexes for table `rooms`
+--
+ALTER TABLE `rooms`
+  ADD PRIMARY KEY (`room_id`);
+
+--
+-- Indexes for table `room_participants`
+--
+ALTER TABLE `room_participants`
+  ADD PRIMARY KEY (`part_id`);
+
+--
+-- Indexes for table `units`
+--
+ALTER TABLE `units`
+  ADD PRIMARY KEY (`unit_id`);
 
 --
 -- Indexes for table `users`
@@ -248,17 +300,22 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `chat`
 --
 ALTER TABLE `chat`
-  MODIFY `chat_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=126;
+  MODIFY `chat_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=155;
 --
--- AUTO_INCREMENT for table `games`
+-- AUTO_INCREMENT for table `rooms`
 --
-ALTER TABLE `games`
-  MODIFY `game_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+ALTER TABLE `rooms`
+  MODIFY `room_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 --
--- AUTO_INCREMENT for table `game_participants`
+-- AUTO_INCREMENT for table `room_participants`
 --
-ALTER TABLE `game_participants`
+ALTER TABLE `room_participants`
   MODIFY `part_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+--
+-- AUTO_INCREMENT for table `units`
+--
+ALTER TABLE `units`
+  MODIFY `unit_id` int(11) NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT for table `users`
 --

@@ -35,7 +35,7 @@ for ($i = 0; $i < 50; $i++) {
 <table class="play_table lobby">
 <tr><th>Room Owner</th><th>Map</th><th>Mode</th><th>Join</th></tr>
 <?php
-$result = $db->query("SELECT * FROM games INNER JOIN users ON games.user = users.id ORDER BY games.created DESC");
+$result = $db->query("SELECT * FROM rooms INNER JOIN users ON rooms.user_id = users.id ORDER BY rooms.created DESC");
 while ($fetch = $result->fetch_object()) {
   for ($i = 0; $i < 10; $i++) echo "<tr><td>{$fetch->username}</td><td>Dark Forest</td><td>Regicide</td><td>Join</td></tr>";
 }

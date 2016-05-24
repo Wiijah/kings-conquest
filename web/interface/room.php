@@ -4,13 +4,13 @@ include 'includes/header.php';
 include 'includes/logout_container.php';
 include 'includes/logo.php';
 
-$result = $db->query("SELECT * FROM game_participants WHERE user = '{$user->id}'");
+$result = $db->query("SELECT * FROM room_participants WHERE user_id = '{$user->id}'");
 if (!$participant = $result->fetch_object()) {
   header ("Location: index");
   die();
 }
 
-$result = $db->query("SELECT * FROM games INNER JOIN users ON games.user = users.id WHERE game_id = '{$participant->game_id}'");
+$result = $db->query("SELECT * FROM rooms INNER JOIN users ON rooms.user_id = users.id WHERE room_id = '{$participant->room_id}'");
 if (!$room = $result->fetch_object()) {
   header ("Location: index");
   die();
@@ -18,10 +18,10 @@ if (!$room = $result->fetch_object()) {
 
 $max_players = 2;
 
-$isOwner = $room->user == $user->id;
+$isOwner = $room->user_id == $user->id;
 ?>
 <script>
-var room_id = <?php echo $room->game_id; ?>;
+var room_id = <?php echo $room->room_id; ?>;
 var max_players = <?php echo $max_players; ?>;
 </script>
 <script src="js/chatroom.js"></script>
