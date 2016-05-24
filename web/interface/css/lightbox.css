@@ -1,6 +1,7 @@
 /* Lightbox */
 
 #lightbox_behind {
+  display: none;
   background-color: rgba(0,0,0,.8);
   position: fixed;
   width: 100%;
@@ -17,6 +18,7 @@
   margin: 10px auto 10px auto;
 }
 .lightbox_container {
+  display: none;
   overflow: auto;
   z-index: 1200;
   position: fixed;
@@ -31,5 +33,17 @@
   padding: 10px;
   border: 4px solid;
   border-color: rgba(255, 255, 255, .2);
+  background-clip: padding-box;
+}
+
+.lightbox_error {
+  display: none;
+  background-color: rgba(45, 0, 0, 0.5);
+  border-radius: 4px;
+  padding: 10px;
+  border: 4px solid;
+  font-family: BebasNeueRegular;
+  font-size: 20px;
+  border-color: rgba(255, 0, 0, .2);
   background-clip: padding-box;
 }
