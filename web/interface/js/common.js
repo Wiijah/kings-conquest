@@ -1,3 +1,6 @@
+/* Globally defined js variables */
+var FADE_SP = 300;
+
 $(document).ready(function() {
   /* Custom jQuery Post functions */
   jQuery.extend({
