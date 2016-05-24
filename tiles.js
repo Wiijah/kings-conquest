@@ -7,6 +7,8 @@ var path = [];
 var highlighted = [];
 var units = [];
 
+var step = 13.0;
+
 $.getJSON('game-map.json', function(data) {
 	that.mapData = data['main'];
 	mapHeight = parseInt(data.map_dimensions.height);
@@ -88,32 +90,32 @@ function movePlayer() {
       destY = path[0][1];
 
   if (playerX < destX && playerY < destY) {
-    selectedCharacter.x += 6.5;
-    selectedCharacter.y += 3.25;
+    selectedCharacter.x += step;
+    selectedCharacter.y += step / 2;
 
-    selectedCharacter.hp_bar.x += 6.5;
-    selectedCharacter.hp_bar.y += 3.25;
+    selectedCharacter.hp_bar.x += step;
+    selectedCharacter.hp_bar.y += step / 2;
   } else if (playerX > destX && playerY > destY) {
-    selectedCharacter.x -= 6.5;
-    selectedCharacter.y -= 3.25;
+    selectedCharacter.x -= step;
+    selectedCharacter.y -= step / 2;
 
 
-    selectedCharacter.hp_bar.x -= 6.5;
-    selectedCharacter.hp_bar.y -= 3.25;
+    selectedCharacter.hp_bar.x -= step;
+    selectedCharacter.hp_bar.y -= step / 2;
   } else if (playerX < destX && playerY > destY) {
-    selectedCharacter.x += 6.5;
-    selectedCharacter.y -= 3.25;
+    selectedCharacter.x += step;
+    selectedCharacter.y -= step / 2;
 
 
-    selectedCharacter.hp_bar.x += 6.5;
-    selectedCharacter.hp_bar.y -= 3.25;
+    selectedCharacter.hp_bar.x += step;
+    selectedCharacter.hp_bar.y -= step / 2;
   } else if (playerX > destX && playerY < destY){
-  	selectedCharacter.x -= 6.5;
-  	selectedCharacter.y += 3.25;
+  	selectedCharacter.x -= step;
+  	selectedCharacter.y += step / 2;
 
 
-    selectedCharacter.hp_bar.x -= 6.5;
-    selectedCharacter.hp_bar.y += 3.25;
+    selectedCharacter.hp_bar.x -= step;
+    selectedCharacter.hp_bar.y += step / 2;
   }
 
   if ((playerX === destX) && (playerY === destY)) {
