@@ -21,3 +21,10 @@
     font-family: BebasNeueBold;
     src: url('BebasNeue Bold.otf');
 }
+
+/* Font shortcuts */
+.light { font-family: BebasNeueLight; }
+.regular { font-family: BebasNeueRegular; }
+.thin { font-family: BebasNeueThin; }
+.book { font-family: BebasNeueBook; }
+.bold { font-family: BebasNeueBold; }

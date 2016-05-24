@@ -24,15 +24,16 @@ function ekko(&$str) {
 }
 
 function percent($a, $b) {
-  $percent = 100 * $a / ($a + $b);
-  return round($percent, 2);
+  return round(100 * $a / ($a + $b), 2);
 }
 
 function ratio($a, $b) {
-  $percent = $a / $b;
-  return round($percent, 2);
+  return round($a / $b, 2);
 }
 
+function formatSQLDate($date) {
+  return date('d<\s\u\p>S</\s\u\p> F Y', strtotime($date));
+}
 //check if a string contains a substring
 function contains($haystack, $needle) {
   return strpos($haystack, $needle) !== false;

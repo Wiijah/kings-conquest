@@ -6,6 +6,7 @@
   box-sizing: border-box;
   -moz-box-sizing: border-box;
   -webkit-box-sizing: border-box;
+  background-clip: padding-box;
 }
 table {
   border-collapse: collapse;
@@ -13,10 +14,103 @@ table {
 .clear {
   clear: both;
 }
-/* Footer */
+
+/* Small kings top */
+#small_red_king {
+  height: 72px;
+  position: absolute;
+  left: 50%;
+  margin-left: 195px;
+  top: 80px;
+}
+#small_blue_king {
+  height: 72px;
+  position: absolute;
+  right: 50%;
+  margin-right: 195px;
+  top: 80px;
+}
+
+/* Input styles */
+
+/* Chatroom */
+.play_chatroom {
+  margin-bottom: 10px;
+}
+#play_chatroom_messages {
+  padding: 5px;
+  height: 150px;
+  overflow-y: scroll;
+  font-size: 20px;
+}
+.play_chatroom_footer {
+  overflow: auto;
+  padding: 4px;
+}
+.play_chatroom_user {
+  font-family: BebasNeueRegular;
+  padding-right: 5px;
+}
+#play_chatroom_send {
+  float: right;
+
+}
+#play_chatroom_msg {
+  width: 100%;
+  font-family: BebasNeueBook;
+  border-style:solid;
+  padding:5px;
+  font-size:17px;
+  text-align:left;
+  border-radius:4px;
+  background-color: rgba(0, 0, 0, .5);
+  color:#ffffff;
+  box-shadow: 0px 0px 6px 0px rgba(0,0,0,.70);
+  border: 3px solid;
+  border-color: rgba(255, 255, 255, .2);
+} 
+#play_chatroom_msg:focus {
+  outline:none;
+  background-color: rgba(0, 0, 0, 0.7);
+  border-color: rgba(255, 255, 255, .5);
+} 
+
+/* Line Header */
+h1 {
+  position: relative;
+  display: inline-block;
+  padding: 0 15px;
+}
+h1:before, h1:after {
+  display: block;
+  position: absolute;
+  top: 50%;
+  height: 1px;
+  width: 1920px;
+  background-color: rgba(255, 255, 255, 0.5);
+  content: "";
+}
+h1:before {
+  right: 100%;
+}
+h1:after {
+  left: 100%;
+}
+.title {
+  font-size: 20px;
+  font-family: BebasNeueBook;
+  overflow: hidden;
+  text-align: center;
+}
+
+/* Lines */
 .white_line {
   height: 1px;
   background-color: rgba(255, 255, 255, 0.5);
+}
+
+/* Footer */
+.footer_line {
   margin: 20px 20px 20px 20px;
 }
 .footer {
@@ -29,6 +123,7 @@ body {
   position: relative;
   background-image: url("images/bg_blue_red.jpg");
   background-position: top center; 
+  background-attachment: fixed;
   font-family: BebasNeueLight;
   color: #FFF;
   width: 100%;
@@ -59,6 +154,7 @@ body {
   padding: 0.8vw 1vw 0.3vw 1.2vw;
 }
 .btn:hover {
+  box-shadow: 0 0 3px #888;
   text-shadow: 0 0 2px #FFF, 0 0 1px #FFF, 1px 1px 7px #FFF, 0 0 0 #FFF;
   background-image: url("images/btn_bg_hover.png");
   border-color: rgba(255,255,255,.3);
@@ -71,12 +167,6 @@ body {
   background-clip: padding-box;
 }
 
-/* Play */
-.play_container {
-  padding: 20px;
-  box-sizing: border-box;
-  width: 100%;
-}
 .play_left {
   float: left;
   width: 65%;
@@ -92,12 +182,18 @@ body {
 }
 .play_table th {
   font-family: BebasNeueRegular;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgba(0, 0, 0, .65);
 }
 .play_table td, .play_table th {
   border: 1px solid rgba(255, 255, 255, .2);
   margin: 0;
   padding: 5px 5px 2px 5px;
+}
+.play_table tr:nth-child(even) {
+  background-color: rgba(0, 0, 0, .2);
+}
+.lobby tr:not(thead):hover {
+  background-color: rgba(0, 0, 0, .7);
 }
 
 .play_profile {
@@ -115,6 +211,12 @@ body {
 }
 
 /* Small */
+/* Play */
+.small_container {
+  padding: 20px;
+  box-sizing: border-box;
+  width: 100%;
+}
 .small_top {
   position: absolute;
   top: 0;

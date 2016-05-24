@@ -1,4 +1,5 @@
 <?php
+header ("Location: lobby");
 include 'header.php';
 ?>
 <body>
