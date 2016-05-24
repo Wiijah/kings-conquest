@@ -7,7 +7,7 @@ var path = [];
 var highlighted = [];
 var units = [];
 
-var step = 13.0;
+var changed = false;
 
 $.getJSON('game-map.json', function(data) {
 	that.mapData = data['main'];
@@ -45,6 +45,8 @@ $.getJSON('game-map.json', function(data) {
 		stage.addChild(player);
 		stage.addChild(hp_bar);
 	});
+
+	changed = true;
 });
 
 // Start moving the player
@@ -80,6 +82,7 @@ function drawRange(reachable) {
 		});
 		stage.addChild(bmp);
 	});
+	changed = true;
 }
 
 // Move the player by a fixed amount
@@ -90,32 +93,32 @@ function movePlayer() {
       destY = path[0][1];
 
   if (playerX < destX && playerY < destY) {
-    selectedCharacter.x += step;
-    selectedCharacter.y += step / 2;
+    selectedCharacter.x += 6.5;
+    selectedCharacter.y += 3.25;
 
-    selectedCharacter.hp_bar.x += step;
-    selectedCharacter.hp_bar.y += step / 2;
+    selectedCharacter.hp_bar.x += 6.5;
+    selectedCharacter.hp_bar.y += 3.25;
   } else if (playerX > destX && playerY > destY) {
-    selectedCharacter.x -= step;
-    selectedCharacter.y -= step / 2;
+    selectedCharacter.x -= 6.5;
+    selectedCharacter.y -= 3.25;
 
 
-    selectedCharacter.hp_bar.x -= step;
-    selectedCharacter.hp_bar.y -= step / 2;
+    selectedCharacter.hp_bar.x -= 6.5;
+    selectedCharacter.hp_bar.y -= 3.25;
   } else if (playerX < destX && playerY > destY) {
-    selectedCharacter.x += step;
-    selectedCharacter.y -= step / 2;
+    selectedCharacter.x += 6.5;
+    selectedCharacter.y -= 3.25;
 
 
-    selectedCharacter.hp_bar.x += step;
-    selectedCharacter.hp_bar.y -= step / 2;
+    selectedCharacter.hp_bar.x += 6.5;
+    selectedCharacter.hp_bar.y -= 3.25;
   } else if (playerX > destX && playerY < destY){
-  	selectedCharacter.x -= step;
-  	selectedCharacter.y += step / 2;
+  	selectedCharacter.x -= 6.5;
+  	selectedCharacter.y += 3.25;
 
 
-    selectedCharacter.hp_bar.x -= step;
-    selectedCharacter.hp_bar.y += step / 2;
+    selectedCharacter.hp_bar.x -= 6.5;
+    selectedCharacter.hp_bar.y += 3.25;
   }
 
   if ((playerX === destX) && (playerY === destY)) {
@@ -129,7 +132,8 @@ function movePlayer() {
   }
 
   sortIndices(selectedCharacter);
-  stage.update();
+  //stage.update();
+  changed = true;
 }
 
 function sortIndices(unit) {
@@ -284,7 +288,10 @@ function update() {
 	if (movingPlayer === true) {
 		movePlayer();
 	}
-	stage.update();
+	if (changed) {
+		stage.update();
+		changed = false;
+	}
 }
 
 // Given the number in the game-map, returns the address of the tile's image
