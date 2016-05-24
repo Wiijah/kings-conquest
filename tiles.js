@@ -9,45 +9,74 @@ var units = [];
 
 var changed = false;
 
-$.getJSON('game-map.json', function(data) {
-	that.mapData = data['main'];
-	mapHeight = parseInt(data.map_dimensions.height);
-	mapWidth = parseInt(data.map_dimensions.width);
-	// console.log(mapHeight + "blah" + mapWidth);
-	
-	that.drawMap(that.mapData);
 
-	units = [];
+resize();
 
-	$.each(data.characters, function(i, value) {
-		player = new createjs.Bitmap(value.address);
-		player.addEventListener("click", function(event) {
-			selectedCharacter = player;
-			drawRange(findReachableTiles(parseInt(value.x), parseInt(value.y), parseInt(value.moveRange), true));
+function resize() {
+	stage.canvas.width = window.innerWidth;
+	stage.canvas.height = window.innerHeight;
+	drawGame();
+}
+
+function initGame() {
+	$.getJSON('game-map.json', function(data) {
+		that.mapData = data['main'];
+		mapHeight = parseInt(data.map_dimensions.height);
+		mapWidth = parseInt(data.map_dimensions.width);
+		// console.log(mapHeight + "blah" + mapWidth);
+		
+		that.drawMap(that.mapData);
+
+		units = [];
+
+		$.each(data.characters, function(i, value) {
+			var player = new createjs.Bitmap(value.address);
+			player.addEventListener("click", function(event) {
+				selectedCharacter = player;
+				drawRange(findReachableTiles(parseInt(value.x), parseInt(value.y), parseInt(value.moveRange), true));
+			});
+			player.row = parseInt(value.y);
+			player.column = parseInt(value.x);
+			player.x = originX +  (value.y - value.x) * 65;
+			player.y = value.y * 32.5 + originY + value.x * 32.5;
+			player.regX = 56.5;
+			player.regY = 130;
+			player.scaleX = 0.7;
+			player.scaleY = 0.7;
+
+			hp_bar = new createjs.Shape();
+			hp_bar.graphics.beginFill("#ff0000").drawRect(player.x - 40, player.y - 120, 80, 10);
+			hp_bar.graphics.beginFill("#00ff00").drawRect(player.x - 40, player.y - 120, (parseInt(value.hp)/parseInt(value.max_hp)) * 80, 10);
+
+			player.hp_bar = hp_bar;
+
+			units.push(player);
+
+			stage.addChild(player);
+			stage.addChild(hp_bar);
 		});
-		player.row = parseInt(value.y);
-		player.column = parseInt(value.x);
-		player.x = originX +  (value.y - value.x) * 65;
-		player.y = value.y * 32.5 + originY + value.x * 32.5;
-		player.regX = 56.5;
-		player.regY = 130;
-		player.scaleX = 0.7;
-		player.scaleY = 0.7;
 
-		hp_bar = new createjs.Shape();
-		hp_bar.graphics.beginFill("#ff0000").drawRect(player.x - 40, player.y - 120, 80, 10);
-		hp_bar.graphics.beginFill("#00ff00").drawRect(player.x - 40, player.y - 120, (parseInt(value.hp)/parseInt(value.max_hp)) * 80, 10);
-
-		player.hp_bar = hp_bar;
-
-		units.push(player);
-
-		stage.addChild(player);
-		stage.addChild(hp_bar);
+		changed = true;
 	});
 
-	changed = true;
-});
+	window.addEventListener('resize', resize, false);
+}
+
+function drawGame() {
+	$.getJSON('game-map.json', function(data) {
+		that.mapData = data['main'];
+		that.drawMap(that.mapData);
+
+		$.each(units, function(i, value) {
+			stage.addChild(value);
+			stage.addChild(value.hp_bar);
+		});
+
+		changed = true;
+	});	
+}
+
+initGame();
 
 // Start moving the player
 function move() {
@@ -81,6 +110,11 @@ function drawRange(reachable) {
 			selectedCharacter.row = value[1];
 		});
 		stage.addChild(bmp);
+		$.each(units, function(i, value) {
+			if (stage.getChildIndex(value) < stage.getChildIndex(bmp)) {
+				stage.swapChildren(bmp, value);
+			}
+		});
 	});
 	changed = true;
 }
