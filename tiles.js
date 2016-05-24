@@ -6,7 +6,7 @@ var movingPlayer = false;
 var path = [];
 var highlighted = [];
 var units = [];
-var ICON_SCALE_FACTOR = 0.3;
+var ICON_SCALE_FACTOR = 0.65;
 var MOVEMENT_STEP = 6.5
 
 var moveButton;
@@ -113,7 +113,8 @@ function createClickableImage(imgSource, x, y, callBack) {
 
 	button.x = x;
 	button.y = y;
-
+    button.scaleX = ICON_SCALE_FACTOR;
+    button.scaleY = ICON_SCALE_FACTOR;
 
 	button.addEventListener("click", callBack);
 	return button;
@@ -125,38 +126,34 @@ function createClickableImage(imgSource, x, y, callBack) {
 function showActionMenuNextToPlayer(unit) {
 	moveSource = unit.canMove === 1 ? "graphics/ingame_menu/move.png"
 								   : "graphics/ingame_menu/move_gray.png";
-	moveButton = createClickableImage(moveSource, unit.x + 50, unit.y - 100, function() {
+	moveButton = createClickableImage(moveSource, unit.x + 50, unit.y - 120, function() {
 		if (unit.canMove) {
-			drawRange(findReachableTiles(unit.column, unit.row, unit.moveRange, true));
+			drawRange(findReachableTiles(unit.column, unit.row, unit.moveRange, true), true);
 		}
 	});
 
-	attackSource = unit.canAttacl === 1 ? "graphics/ingame_menu/attack.png"
+	attackSource = unit.canAttack === 1 ? "graphics/ingame_menu/attack.png"
 								   : "graphics/ingame_menu/attack_gray.png";
-	attackButton = createClickableImage(attackSource, unit.x + 50, unit.y - 120, function() {
-		if (unit.canMove) {
-			drawRange(findReachableTiles(unit.column, unit.row, unit.moveRange, false));
+	attackButton = createClickableImage(attackSource, unit.x + 54, unit.y - 92, function() {
+		if (unit.canAttack) {
+			drawRange(findReachableTiles(unit.column, unit.row, unit.attackRange, false), false);
 		}
-	});
+	})
 
-	// moveButton = unit.canMove == 1 ? new createjs.Bitmap("graphics/ingame_menu/move.png")
-	// 							   : new createjs.Bitmap("graphics/ingame_menu/move_gray.png");
-  
-	// moveButton.addEventListener("click", function() {
-	// 	if (!isInHighlight && unit.canMove) {
-	// 		drawRange(findReachableTiles(unit.column, unit.row, unit.moveRange, true));
-	// 	}
-	// });
+	skillSource = unit.skillCoolDown === 0 ? "graphics/ingame_menu/skill.png"
+								   : "graphics/ingame_menu/skill_gray.png";
+	skillButton = createClickableImage(skillSource, unit.x + 54, unit.y - 72, function() {
+		if (unit.skillCoolDown === 0) {
+			console.log("Casting!");
+		}
+	})
 
 
- //    moveButton.x = unit.x + 50;
- //    moveButton.y = unit.y - 100;
 
- //    moveButton.scaleX = 0.3;
- //    moveButton.scaleY = 0.3;
 
-    // stage.addChild(moveButton);
+    stage.addChild(moveButton);
     stage.addChild(attackButton);
+    stage.addChild(skillButton);
     isDisplayingMenu = true;
     stage.update();
 
@@ -177,16 +174,17 @@ function rcToCoord(x, y) {
 	return result;
 }
 
-function drawRange(reachable) {
+function drawRange(reachable, isMoving) {
 
 	$.each(reachable, function(i, value) {
-		img = "graphics/green_tile.png";
+		img = isMoving ? "graphics/green_tile.png" : "graphics/red_tile.png";
 		bmp = new createjs.Bitmap(img);
 		bmp.x = (value[1]-value[0]) * 65 + 540;
 		bmp.y = (value[1]+value[0]) * 32.5 + 220;
 		bmp.regX = 65;
 		bmp.regY = 32.5;
-		bmp.addEventListener("click", function(event) {
+		if (isMoving) {
+			bmp.addEventListener("click", function(event) {
 			var fromX = selectedCharacter.column;
 			var fromY = selectedCharacter.row;
 			findPath(fromX, fromY, value[0], value[1]);
@@ -194,7 +192,20 @@ function drawRange(reachable) {
 			selectedCharacter.column = value[0];
 			selectedCharacter.row = value[1];
 			clearSelectionEffects();
-		});
+			});
+		} else {
+			bmp.addEventListener("click", function(event) {
+			// var fromX = selectedCharacter.column;
+			// var fromY = selectedCharacter.row;
+			// findPath(fromX, fromY, value[0], value[1]);
+			// move();
+			// selectedCharacter.column = value[0];
+			// selectedCharacter.row = value[1];
+			console.log("Attack!");
+			clearSelectionEffects();
+			});
+		}
+		
 		stage.addChild(bmp);
 		highlighted.push(bmp);
 		$.each(units, function(i, value) {
