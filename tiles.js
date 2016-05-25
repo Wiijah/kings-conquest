@@ -324,19 +324,29 @@ function drawRange(reachable, isMoving) {
 }
 
 function getRandom(luck){
-  var num = Math.random();
-  if(num < (luck / 100)) return 2;  
-  else return 1;  
+  	var num = Math.random();
+ 	if(num < (luck / 100)){ 
+ 		return 1;
+  	} else {
+  		return 2; 
+	} 
 }
-
+var showingDamage;
+var damageBackground;
+var damageText;
+function demageEffect(){
+	damageText.y -= 1.5;
+	damageBackground.y -= 1.5;
+	stage.update();
+}
 function showDamage(unit, critical, damage){
-	var damageBackground = new createjs.Shape();
+	damageBackground = new createjs.Shape();
 	if (critical == 2) {
 		damageBackground.graphics.beginFill("#ffeb00").drawRect(unit.x - 10, unit.y - 50, 40, 20);
-		var damageText = new createjs.Text(damage, "20px Arial", "#000000");
+		damageText = new createjs.Text(damage, "20px Arial", "#000000");
 	} else {
-		damageBackground.graphics.beginFill("#ff00000").drawRect(unit.x - 10, unit.y - 50, 40, 20);
-		var damageText = new createjs.Text(damage, "20px Arial", "#000000");
+		damageBackground.graphics.beginFill("#ff0000").drawRect(unit.x - 10, unit.y - 50, 40, 20);
+		damageText = new createjs.Text(damage, "20px Arial", "#000000");
 	}
 	damageText.x = unit.x;
 	damageText.y = unit.y - 50;
@@ -345,11 +355,14 @@ function showDamage(unit, critical, damage){
 	stage.addChild(damageBackground);
 	stage.addChild(damageText);
 	stage.update();
+	showingDamage = true;
+	demageEffect(damageText, damageBackground);
 	setTimeout(function (){
 		stage.removeChild(damageBackground);
 		stage.removeChild(damageText);
+		showingDamage = false;
 		stage.update();
-	}, 2000);
+	}, 750);
 }
 
 function attack(attacker, target){
@@ -642,6 +655,9 @@ createjs.Ticker.addEventListener("tick", update);
 createjs.Ticker.setFPS(30);
 
 function update() {
+	if (showingDamage === true){
+		demageEffect();
+	}
 	if (movingPlayer === true) {
 		movePlayer();
 	}
