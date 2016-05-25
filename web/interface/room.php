@@ -5,12 +5,12 @@ include 'includes/logout_container.php';
 include 'includes/logo.php';
 
 $result = $db->query("SELECT * FROM room_participants WHERE user_id = '{$user->id}'");
-if (!$participant = $result->fetch_object()) {
+if (!$part = $result->fetch_object()) {
   header ("Location: index");
   die();
 }
 
-$result = $db->query("SELECT * FROM rooms INNER JOIN users ON rooms.user_id = users.id WHERE room_id = '{$participant->room_id}'");
+$result = $db->query("SELECT * FROM rooms INNER JOIN users ON rooms.user_id = users.id WHERE room_id = '{$part->room_id}'");
 if (!$room = $result->fetch_object()) {
   header ("Location: index");
   die();
@@ -70,7 +70,11 @@ var max_players = <?php echo $max_players; ?>;
 if ($isOwner) {
   echo "<div class='play_btn btn' id='btn_start'>Start</div>";
 } else {
-  echo "<div class='play_btn btn' id='btn_ready' data-ready='ready'>Ready</div>";
+  if ($part->state == 'ready') {
+    echo "<div class='play_btn btn' id='btn_ready' data-ready='ready'>Ready</div>";
+  } else {
+    echo "<div class='play_btn btn' id='btn_ready' data-ready='notready'>Cancel Ready</div>";
+  }
 }
 ?>
 <div class="play_btn btn" id="btn_leave">Leave Room</div>

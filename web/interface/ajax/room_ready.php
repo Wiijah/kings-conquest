@@ -2,6 +2,8 @@
 /* Ready or start a new game from a room. */
 require_once 'ajax_common.php';
 
+sleep(1);
+
 $room_id = secureInt($_POST['room_id']);
 $ready = secureStr($_POST['ready']);
 

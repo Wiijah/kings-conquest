@@ -1,9 +1,10 @@
 /* Globally defined constants */
 var FADE_SP = 300;
-var page_disabled = false;
+var LOADING_ANIM = '<img src="images/loading_white.png" class="loading_middle" />';
 
 /* Globally defined variables */
 var session_expired = false; // boolean to indicate whether the session has expired
+var page_disabled = false;
 
 $(document).ready(function() {
   /* Turn off autocomplete for input */
@@ -43,6 +44,15 @@ $(document).ready(function() {
   });
 });
 
+/* Button that only works if not loading */
+function btn_with_load(btn, func) {
+  $('body').on('click', btn, function() {
+    if ($(btn).find(".loading_middle").length) {
+      return;
+    }
+    func();
+  });
+}
 
 function disablePage(url) {
 

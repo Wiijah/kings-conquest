@@ -7,10 +7,8 @@ $(document).ready(function() {
   $('body').on('click', '#btn_leave', function() {
     room_leave();
   });
+  btn_with_load("#btn_ready", room_ready);
 
-  $('body').on('click', '#btn_ready', function() {
-    room_ready();
-  });
   $('body').on('click', '#btn_start', function() {
     room_start();
   });
@@ -29,6 +27,8 @@ function room_start() {
 /* Makes the player ready or unready */
 function room_ready() {
   var ready = $("#btn_ready").attr("data-ready");
+  $("#btn_ready").html(LOADING_ANIM);
+
   quickPost("ajax/room_ready", {room_id: room_id, ready: ready}, function(data, status) {
     if (data.kc_error !== undefined) {
       lightbox_alert("Error", data.kc_error);
