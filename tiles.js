@@ -33,10 +33,10 @@ var currentGold;
 var turn = 0;
 
 function resize() {
-	stage.canvas.width = window.innerWidth;
-	stage.canvas.height = window.innerHeight;
-	drawGame();
-	drawStatsDisplay();
+	//stage.canvas.width = window.innerWidth;
+	//stage.canvas.height = window.innerHeight;
+	//drawGame();
+	//drawStatsDisplay();
 }
 
 function initGame() {
@@ -143,7 +143,7 @@ function initGame() {
 	drawStatsDisplay();
 	changed = true;
 
-	window.addEventListener('resize', resize, false);
+	//window.addEventListener('resize', resize, false);
 }
 
 function getHealth(unit) {
