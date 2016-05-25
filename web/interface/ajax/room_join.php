@@ -24,5 +24,10 @@ if ($result->num_rows >= $room->max_players) {
 $db->query("INSERT INTO room_participants (user_id, room_id, colour) VALUES
     ('{$user->id}', '{$room_id}', 'blue')");
 
+// tell everyone in the room that you joined
+$message = "{$user->username} joined the room.";
+$db->query("INSERT INTO chat (user, message, room_id, chat_type) VALUES
+    ('{$user->id}', '{$message}', '{$room_id}', 'event')");
+
 echo $AJAX_SUCCESS;
 ?>

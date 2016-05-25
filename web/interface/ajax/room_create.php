@@ -28,6 +28,10 @@ $room_id = $db->insert_id;
 $db->query("INSERT INTO room_participants (user_id, room_id, colour) VALUES
     ('{$user->id}', '{$room_id}', 'red')");
 
+// create the event that you joined the room
+$message = "{$user->username} joined the room.";
+$db->query("INSERT INTO chat (user, message, room_id, chat_type) VALUES
+    ('{$user->id}', '{$message}', '{$room_id}', 'event')");
 
 echo $AJAX_SUCCESS;
 ?>
