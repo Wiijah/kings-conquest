@@ -20,7 +20,7 @@ while ($fetch = $result->fetch_object()) {
   $out .= '{
    "id":"'.$fetch->chat_id.'",
    "username":"'.$fetch->username.'",
-   "message":"'.$message.'",
+   "message":"'.secureOutput($message).'",
    "chat_type":"'.$fetch->chat_type.'",
    "colour":"'.$fetch->colour.'"
     }

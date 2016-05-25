@@ -20,7 +20,7 @@ if (!$part = $result->fetch_object()) {
   kc_error("You are not in this room.");
 }
 
-if ($room->state == 'owner') {
+if ($part->state == 'owner') {
   $result = $db->query("SELECT * FROM room_participants WHERE room_id = '{$room_id}' AND event = ''");
   $num_of_players = $result->num_rows;
   if ($num_of_players < $room->max_players) {
@@ -28,7 +28,7 @@ if ($room->state == 'owner') {
   }
 
   $result = $db->query("SELECT * FROM room_participants WHERE room_id = '{$room_id}' AND event = '' AND state = 'ready'");
-  $num_of_players_ready = $result->num_rows;
+  $num_of_players_ready = $result->num_rows + 1; // +1 since the owner is always ready
   if ($num_of_players_ready < $num_of_players) {
     kc_error("All players need to be ready before you can start the game.");
   }
