@@ -21,7 +21,8 @@ while ($fetch = $result->fetch_object()) {
    "id":"'.$fetch->chat_id.'",
    "username":"'.$fetch->username.'",
    "message":"'.$message.'",
-   "chat_type":"'.$fetch->chat_type.'"
+   "chat_type":"'.$fetch->chat_type.'",
+   "colour":"'.$fetch->colour.'"
     }
   ';
 }

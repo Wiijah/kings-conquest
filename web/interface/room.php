@@ -70,7 +70,7 @@ var max_players = <?php echo $max_players; ?>;
 if ($isOwner) {
   echo "<div class='play_btn btn'>Start</div>";
 } else {
-  echo "<div class='play_btn btn'>Ready</div>";
+  echo "<div class='play_btn btn' id='btn_ready' data-ready='ready'>Ready</div>";
 }
 ?>
 <div class="play_btn btn" id="btn_leave">Leave Room</div>

@@ -6,6 +6,9 @@ var page_disabled = false;
 var session_expired = false; // boolean to indicate whether the session has expired
 
 $(document).ready(function() {
+  /* Turn off autocomplete for input */
+  $('input, :input').attr('autocomplete', 'off');
+  $('.auto_off').val("");
 
   /* Custom jQuery Post functions */
   jQuery.extend({
@@ -44,7 +47,7 @@ $(document).ready(function() {
 function disablePage(url) {
 
   page_disabled = true;
-  
+
   //remove closing lightbox features
   $(".lightbox_cross").remove();
 
