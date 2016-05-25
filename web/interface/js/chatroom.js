@@ -2,6 +2,7 @@ var lastID = 0;
 var debug;
 var messageBox = $("#play_chatroom_messages");
 var chatScrollSpeed = 600;
+var chat_colour = '';
 
 $(document).ready(function() {
   chatroom_refresh_messages_periodically();
@@ -45,6 +46,6 @@ function concatToChatroom(line) {
   if (line.chat_type == 'message') { //normal message
     $("#play_chatroom_messages").append("<span class='play_chatroom_user'>"+line.username+":</span> <span class='play_chatroom_text'>"+line.message+"</span><br />");
   } else { // event
-    $("#play_chatroom_messages").append("<span class='play_chatroom_user'>"+line.message+"</span><br />");
+    $("#play_chatroom_messages").append("<span class='play_chatroom_user chat_event'>"+line.message+"</span><br />");
   }
 }

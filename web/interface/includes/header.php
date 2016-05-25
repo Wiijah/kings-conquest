@@ -30,3 +30,4 @@ function genTitle($title) {
 <?php
 require_once 'lightbox.php';
 ?>
+<input type="password" style="display:none;" /> <!-- prevent autocomplete -->
