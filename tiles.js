@@ -7,7 +7,7 @@ var team = 1;
 
 var path = [];
 var highlighted = [];
-	var units = [];
+var units = [];
 var ICON_SCALE_FACTOR = 0.65;
 var MOVEMENT_STEP = 6.5
 
@@ -32,6 +32,7 @@ function resize() {
 }
 
 function initGame() {
+	stage.enableMouseOver(20);
 	$.getJSON('game-map.json', function(data) {
 		that.mapData = data['main'];
 		mapHeight = parseInt(data.map_dimensions.height);
@@ -57,6 +58,10 @@ function initGame() {
 			});
 
 			// Configure unit coordinates
+			unit.hp = value.hp;
+			unit.max_hp = value.max_hp;
+			unit.attack = value.attack;
+			unit.luck = value.luck;
 			unit.row = parseInt(value.y);
 			unit.column = parseInt(value.x);
 			unit.x = originX +  (value.y - value.x) * 65;
@@ -65,6 +70,7 @@ function initGame() {
 			unit.regY = 130;
 			unit.scaleX = 0.7;
 			unit.scaleY = 0.7;
+			unit.team = value.team;
 
 			// Configure the hp bar of the unit
 			hp_bar = new createjs.Shape();
@@ -94,8 +100,9 @@ function initGame() {
 	});
 
 
-	var box = new createjs.Shape();
-	box.graphics.beginFill("#a6a6a6").drawRect(0, 0, 600, 250);
+	var box = new createjs.Bitmap("graphics/stats_background.png");
+	box.scaleX = 0.7;
+	box.scaleY = 0.5;
 	statsDisplay.addChild(box);
 
 	stage.canvas.width = window.innerWidth;
@@ -106,10 +113,19 @@ function initGame() {
 
 	window.addEventListener('resize', resize, false);
 }
-
+function updateHP_bar(unit){
+	stage.update();
+	if (unit.hp <= 0){
+		stage.removeChild(unit);
+		stage.removeChild(unit.hp_bar);
+	} else {
+		unit.hp_bar.graphics.beginFill("#ff0000").drawRect(unit.x - 40, unit.y - 120, 80, 10);
+		unit.hp_bar.graphics.beginFill("#00ff00").drawRect(unit.x - 40, unit.y - 120, (unit.hp / unit.max_hp) * 80, 10);
+	}
+}
 function drawStatsDisplay() {
-	statsDisplay.x = stage.canvas.width - 600;
-	statsDisplay.y = stage.canvas.height - 250;
+	statsDisplay.x = stage.canvas.width - 560
+	statsDisplay.y = stage.canvas.height - 240;
 
 	stage.addChild(statsDisplay);
 }
@@ -267,12 +283,22 @@ function drawRange(reachable, isMoving) {
 			clearSelectionEffects();
 			});
 		} else {
-			bmp.addEventListener("click", function(event) {
-			selectedCharacter.outOfMoves = 1;
-			clearSelectionEffects();
+			
+			$.each(units, function(i, name) {
+				if (name.column == value[0] && name.row == value[1] &&
+						selectedCharacter.team != name.team){
+					bmp.addEventListener("click", function(event) {
+						attack(selectedCharacter, name, value);
+						clearSelectionEffects();
+					});
+					name.addEventListener("click", function(event) {
+						attack(selectedCharacter, name, value);
+						clearSelectionEffects();
+					});
+
+				}
 			});
 		}
-		
 		stage.addChild(bmp);
 		highlighted.push(bmp);
 		$.each(units, function(i, value) {
@@ -287,6 +313,17 @@ function drawRange(reachable, isMoving) {
 }
 
 
+
+function attack(unit,opponent,value){
+	console.log("opponent hp: " + opponent.hp);
+	opponent.hp -= unit.attack;
+	console.log("attack unit: " + value[0] +","+ value[1]);
+	console.log("opponent hp: " + opponent.hp);
+	updateHP_bar(opponent);
+	unit.outOfMoves = 1;
+	unit.canAttack = 0;
+}
+
 function clearSelectionEffects() {
 	destroyMenu();
     undoHighlights();
@@ -296,8 +333,9 @@ function clearSelectionEffects() {
 function destroyStats() {
 	statsDisplay.removeChildAt(2,3);
 
-	var box = new createjs.Shape();
-	box.graphics.beginFill("#a6a6a6").drawRect(0, 0, 600, 250);
+	var box = new createjs.Bitmap("graphics/stats_background.png");
+	box.scaleX = 0.7;
+	box.scaleY = 0.5;
 	statsDisplay.addChild(box);
 	changed = true;
 }
@@ -505,25 +543,54 @@ function findReachableTiles(x, y, range, isMoving) {
 
 }
 
+
+var maps = new Array(4);
+
+
 function drawMap(data) {
+	for (var i = 0; i < 4; i++) {
+		maps[i] = new Array(4);
+	}
+
 	originX = 540;
 	originY = 220;
 	for (i = 0; i < 4; i++) {
 		for (j = 0; j < 4; j++) {
 			img = imageNumber(parseInt(data[i][j]));
-			bmp = new createjs.Bitmap(img);
-			bmp.x = (j-i) * 65 + 540;
-			bmp.y = (j+i) * 32.5 + 220;
-			bmp.regX = 65;
-			bmp.regY = 32.5;
-
-			bmp.addEventListener("click", function(event) {
+			maps[i][j] = new createjs.Bitmap(img);
+			maps[i][j].name = i + "," + j;
+			maps[i][j].x = (j-i) * 65 + 540;
+			maps[i][j].y = (j+i) * 32.5 + 220;
+			maps[i][j].regX = 65;
+			maps[i][j].regY = 32.5;
+			maps[i][j].addEventListener("mouseover",mouveOver);
+			maps[i][j].addEventListener("mouseout", mouseOut);
+			maps[i][j].addEventListener("click", function(event) {
 				if (isDisplayingMenu && !isInHighlight) destroyMenu();
 			});
-			stage.addChild(bmp);
+			stage.addChild(maps[i][j]);
 		}
 	}
 }
+var tile;
+	function mouseOut(evt){
+		stage.removeChild(tile);
+		stage.update();
+	}
+	
+	function mouveOver(evt) {
+		stage.removeChild(tile);
+		var position = evt.target.name.split(",");
+		var i = parseInt(position[0]);
+		var j = parseInt(position[1]);
+		tile = jQuery.extend({},maps[i][j]);
+		tile.x = 100;
+		tile.y = 100;
+		stage.addChild(tile);
+		stage.update();
+		console.log(i + "," + j);
+
+	}
 
 createjs.Ticker.addEventListener("tick", update);
 createjs.Ticker.setFPS(30);
