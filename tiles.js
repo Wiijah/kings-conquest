@@ -51,6 +51,8 @@ function initGame() {
 					clearSelectionEffects();
 					selectedCharacter = unit;
 					showActionMenuNextToPlayer(unit);
+
+					displayStats(value);
 				}
 
 
@@ -58,14 +60,13 @@ function initGame() {
 				if (selectedCharacter != unit && isAttacking) {
 					// console.log("attacker: " + selectedCharacter.column + " " + selectedCharacter.row);
 					$.each(highlighted, function(i, coord) {
-						if (unit.row === coord.column && unit.column === coord.row) {
+						if (unit.row === coord.row && unit.column === coord.column) {
 							attack(selectedCharacter, unit);
 							clearSelectionEffects();
 						}
 					});
 				}
 
-				displayStats(value);
 				changed = true;
 			});
 
@@ -116,7 +117,7 @@ function initGame() {
 
 
 	var box = new createjs.Bitmap("graphics/stats_background.png");
-	box.scaleX = 0.7;
+	box.scaleX = 0.9;
 	box.scaleY = 0.5;
 	statsDisplay.addChild(box);
 
@@ -139,7 +140,7 @@ function updateHP_bar(unit){
 	}
 }
 function drawStatsDisplay() {
-	statsDisplay.x = stage.canvas.width - 560
+	statsDisplay.x = stage.canvas.width - 640;
 	statsDisplay.y = stage.canvas.height - 240;
 
 	stage.addChild(statsDisplay);
@@ -147,11 +148,11 @@ function drawStatsDisplay() {
 
 function displayStats(unit) {
 	var bmp = new createjs.Bitmap(unit.address);
-	bmp.scaleX = 1.6;
-	bmp.scaleY = 1.6;
+	bmp.scaleX = 1.2;
+	bmp.scaleY = 1.2;
 
-	bmp.y = 0;
-	bmp.x = 15; // 226
+	bmp.y = 10;
+	bmp.x = 40; // 226
 
 	var text = unit.team == team ? new createjs.Text("HP : " + unit.hp + "/" + unit.max_hp + "\n" +
 		"ATK : "  + unit.attack + "    " + "RNG : " + unit.attackRange + "\n" +
@@ -337,13 +338,13 @@ function drawRange(reachable, isMoving) {
 		bmp.row = value[1];
 		if (isMoving) {
 			bmp.addEventListener("click", function(event) {
-			var fromX = selectedCharacter.column;
-			var fromY = selectedCharacter.row;
-			findPath(fromX, fromY, value[0], value[1]);
-			move();
-			selectedCharacter.column = value[0];
-			selectedCharacter.row = value[1];
-			clearSelectionEffects();
+				var fromX = selectedCharacter.column;
+				var fromY = selectedCharacter.row;
+				findPath(fromX, fromY, value[0], value[1]);
+				move();
+				selectedCharacter.column = value[0];
+				selectedCharacter.row = value[1];
+				clearSelectionEffects();
 			});
 		} else {
 			
@@ -397,7 +398,7 @@ function destroyStats() {
 	statsDisplay.removeChildAt(2,3);
 
 	var box = new createjs.Bitmap("graphics/stats_background.png");
-	box.scaleX = 0.7;
+	box.scaleX = 0.9;
 	box.scaleY = 0.5;
 	statsDisplay.addChild(box);
 	changed = true;
@@ -612,14 +613,14 @@ var maps = new Array(4);
 
 
 function drawMap(data) {
-	for (var i = 0; i < 4; i++) {
-		maps[i] = new Array(4);
+	for (var i = 0; i < mapHeight; i++) {
+		maps[i] = new Array(mapWidth);
 	}
 
 	originX = 540;
 	originY = 220;
-	for (i = 0; i < 4; i++) {
-		for (j = 0; j < 4; j++) {
+	for (i = 0; i < mapHeight; i++) {
+		for (j = 0; j < mapWidth; j++) {
 			img = imageNumber(parseInt(data[i][j]));
 			maps[i][j] = new createjs.Bitmap(img);
 			maps[i][j].name = i + "," + j;
