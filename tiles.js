@@ -30,6 +30,7 @@ var changed = false;
 var movingPlayer = false;
 var isAttacking = false;
 var currentGold;
+var currentGoldDisplay;
 var turn = 0;
 
 function resize() {
@@ -45,6 +46,23 @@ function initGame() {
 		that.mapData = data['main'];
 		mapHeight = parseInt(data.map_dimensions.height);
 		mapWidth = parseInt(data.map_dimensions.width);
+
+
+		currentGold = data.currentGold;
+		var coin = new createjs.Bitmap("graphics/coin.png");
+		coin.x = stage.canvas.width - 250;
+		coin.y = 10;
+		coin.scaleX = 0.1;
+		coin.scaleY = 0.1;
+
+		currentGoldDisplay = new createjs.Text("Gold: " + currentGold, "20px '04b_19'", "#000000");
+		currentGoldDisplay.x = coin.x + 50;
+		currentGoldDisplay.y = coin.y + 10;
+		currentGoldDisplay.textBasline = "alphabetic";
+
+
+
+
 		blockMaps = new Array(mapHeight);
 		for (var i = 0; i < mapHeight; i++) {
 			blockMaps[i] = new Array(mapWidth);
@@ -127,6 +145,8 @@ function initGame() {
 			// Add the unit and its hp bar to the stage
 			stage.addChild(unit);
 			stage.addChild(hp_bar);
+			stage.addChild(coin);
+			stage.addChild(currentGoldDisplay);
 		});
 
 	});
