@@ -10,12 +10,12 @@ if ($result->num_rows == 0) {
   die('{"kc_error":"The room you attempted to join no longer exists."}');
 }
 
-$result = $db->query("SELECT * FROM room_participants WHERE user_id = {$user->id}");
+$result = $db->query("SELECT * FROM room_participants WHERE user_id = {$user->id} AND event = ''");
 if ($result->num_rows > 0) {
   die('{"kc_error":"You cannot join a room if you are already in a room."}');
 }
 
-$result = $db->query("SELECT * FROM room_participants WHERE room_id = {$room_id}");
+$result = $db->query("SELECT * FROM room_participants WHERE room_id = {$room_id} AND event = ''");
 if ($result->num_rows >= $room->max_players) {
   die('{"kc_error":"Sorry. You cannot join this room because the room has reached its maximum capacity."}');
 }

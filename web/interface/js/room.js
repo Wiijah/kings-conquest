@@ -20,3 +20,7 @@ function room_refresh() {
     $("#room_players").html(players_html);
   });
 }
+
+function room_leave() {
+  
+}

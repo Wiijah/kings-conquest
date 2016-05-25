@@ -6,11 +6,6 @@ var session_expired = false; // boolean to indicate whether the session has expi
 
 $(document).ready(function() {
 
-  /* Button actions */
-  $('body').on('click', '.goto_login', function() {
-    window.location = '../login';
-  });
-
   /* Custom jQuery Post functions */
   jQuery.extend({
     myPostCallbacks: function(url, data, callback_succ, callback_fail, timeout) {
@@ -53,7 +48,11 @@ function quickPost(url, data, callback) {
         //remove closing lightbox features
         $(".lightbox_cross").remove();
 
-        lightbox_alert("Session Expired", "<div style='text-align: center'>You are not logged in. Please log yourself back in.<br /><br /><div class='btn form_btn goto_login'>Okay</div></div>");
+        $('body').on('click', '#alert_btn', function() {
+          window.location = '../login';
+        });
+
+        lightbox_alert("Session Expired", "You are not logged in. Please log yourself back in.");
       }
       callback(data, status);
    });

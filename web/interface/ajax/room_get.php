@@ -10,7 +10,7 @@ $out = "{";
 // output the array of players
 $out .= '"players":[';
 
-$result = $db->query("SELECT * FROM room_participants JOIN users ON room_participants.user_id = users.id WHERE room_id = '{$id}' ORDER BY part_id ASC");
+$result = $db->query("SELECT * FROM room_participants JOIN users ON room_participants.user_id = users.id WHERE room_id = '{$id}'  AND event = '' ORDER BY part_id ASC");
 
 $comma = "";
 while ($player = $result->fetch_object()) {

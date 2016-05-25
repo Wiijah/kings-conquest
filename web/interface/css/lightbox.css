@@ -1,9 +1,17 @@
 /* Lightbox */
+.alert_btn {
+  margin: 0 auto;
+  width: 200px;
+}
 .lightbox_cross {
   float: right;
   margin-left: 15px;
   cursor: pointer;
 }
+#lb_alert_txt {
+  text-align: center;
+}
+
 #lightbox_behind {
   display: none;
   background-color: rgba(0,0,0,.8);
