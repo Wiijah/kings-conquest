@@ -50,7 +50,7 @@ function lightbox_alert(title, message) {
 
 /* Function that fades out all lightbox related objects */
 function lightbox_close() {
-  if (session_expired) return; //if session expired, force alert box open
+  if (page_disabled) return; //if session expired, force alert box open
   $("#lightbox_behind").fadeOut(LB_FS);
   $(".lightbox_error").fadeOut(LB_FS);
   $(".lightbox_container").fadeOut(LB_FS);

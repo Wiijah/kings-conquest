@@ -16,11 +16,15 @@ $out = "{";
 // output the array of players
 $out .= '"rooms":[';
 
-$result = $db->query("SELECT * FROM rooms INNER JOIN users ON rooms.user_id = users.id ORDER BY rooms.created DESC");
+$result = $db->query("SELECT * FROM rooms INNER JOIN users ON rooms.user_id = users.id WHERE state = 'pregame' ORDER BY rooms.created DESC");
 
 $comma = "";
 while ($room = $result->fetch_object()) {
-  $out .= $comma.'{"player": "'.$room->username.'", "room_id": "'.$room->room_id.'"}';
+
+  $result_part = $db->query("SELECT * FROM room_participants WHERE room_id = {$room->room_id} AND event = ''");
+  $num_of_players = $result_part->num_rows;
+
+  $out .= $comma.'{"player": "'.$room->username.'", "room_id": "'.$room->room_id.'", "num_of_players":"'.$num_of_players.'", "max_players":"'.$room->max_players.'"}';
   $comma = ",";
 }
 

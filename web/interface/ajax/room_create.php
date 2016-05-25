@@ -25,8 +25,8 @@ $result = $db->query("INSERT INTO rooms (name, password, user_id) VALUES
 $room_id = $db->insert_id;
 
 // automatically have the user join the room it has made
-$db->query("INSERT INTO room_participants (user_id, room_id, colour) VALUES
-    ('{$user->id}', '{$room_id}', 'red')");
+$db->query("INSERT INTO room_participants (user_id, room_id, colour, state) VALUES
+    ('{$user->id}', '{$room_id}', 'red', 'owner')");
 
 // create the event that you joined the room
 $message = "{$user->username} joined the room.";
