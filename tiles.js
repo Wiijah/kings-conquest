@@ -63,6 +63,8 @@ function initGame() {
 					clearSelectionEffects();
 					selectedCharacter = unit;
 					showActionMenuNextToPlayer(unit);
+
+					displayStats(value);
 				}
 
 
@@ -76,7 +78,6 @@ function initGame() {
 					});
 				}
 
-				displayStats(value);
 				changed = true;
 			});
 
@@ -94,6 +95,9 @@ function initGame() {
 			unit.scaleX = 0.7;
 			unit.scaleY = 0.7;
 			unit.team = value.team;
+			unit.skill = value.skill;
+			unit.address = value.address;
+			unit.skill_no = value.skill_no;
 
 			// Configure the hp bar of the unit
 			hp_bar = new createjs.Shape();
@@ -126,7 +130,7 @@ function initGame() {
 
 
 	var box = new createjs.Bitmap("graphics/stats_background.png");
-	box.scaleX = 0.7;
+	box.scaleX = 0.9;
 	box.scaleY = 0.5;
 	statsDisplay.addChild(box);
 
@@ -150,7 +154,7 @@ function updateHP_bar(unit){
 	}
 }
 function drawStatsDisplay() {
-	statsDisplay.x = stage.canvas.width - 560
+	statsDisplay.x = stage.canvas.width - 640;
 	statsDisplay.y = stage.canvas.height - 240;
 
 	stage.addChild(statsDisplay);
@@ -158,11 +162,11 @@ function drawStatsDisplay() {
 
 function displayStats(unit) {
 	var bmp = new createjs.Bitmap(unit.address);
-	bmp.scaleX = 1.6;
-	bmp.scaleY = 1.6;
+	bmp.scaleX = 1.2;
+	bmp.scaleY = 1.2;
 
-	bmp.y = 0;
-	bmp.x = 15; // 226
+	bmp.y = 10;
+	bmp.x = 40; // 226
 
 	var text = unit.team == team ? new createjs.Text("HP : " + unit.hp + "/" + unit.max_hp + "\n" +
 		"ATK : "  + unit.attack + "    " + "RNG : " + unit.attackRange + "\n" +
@@ -245,7 +249,10 @@ function showActionMenuNextToPlayer(unit) {
 								   : "graphics/ingame_menu/skill_gray.png";
 	skillButton = createClickableImage(skillSource, unit.x + 48, unit.y - 77, function() {
 		if (unit.skillCoolDown === 0) {
-			console.log("Casting!");
+			undoHighlights();
+			unit.skillCoolDown = "3";
+			unit.outOfMoves = 1;
+			cast(unit.skill_no);
 		}
 	});
 
@@ -253,6 +260,12 @@ function showActionMenuNextToPlayer(unit) {
 	cancelButton = createClickableImage(cancelSource, unit.x + 45.5, unit.y - 47, function() {
 		clearSelectionEffects();
 	});
+
+	stage.addChild(menuBackground);
+    stage.addChild(moveButton);
+    stage.addChild(attackButton);
+    stage.addChild(skillButton);
+    stage.addChild(cancelButton);
 
 	var min = moveButton;
 	min = stage.getChildIndex(attackButton) < stage.getChildIndex(min) ? attackButton : min;
@@ -263,15 +276,51 @@ function showActionMenuNextToPlayer(unit) {
 		stage.swapChildren(menuBackground, min);
 	}
 
-	stage.addChild(menuBackground);
-    stage.addChild(moveButton);
-    stage.addChild(attackButton);
-    stage.addChild(skillButton);
-    stage.addChild(cancelButton);
+
     isDisplayingMenu = true;
     changed = true;
+}	
 
-}		
+function cast(skillNo) {
+	switch (skillNo) {
+		case 0: // King's skill
+			// display effect
+			$.each(units, function(i, value) {
+				if (value.team === selectedCharacter.team) {
+					//buff health
+					var add = Math.ceil(0.1 * parseInt(value.max_hp));
+					value.max_hp = (parseInt(value.max_hp) + add) + "";
+					value.hp = (parseInt(value.hp) + add) + "";
+					//buff dmg
+					value.attack = (parseInt(value.attack) + 5) + "";
+
+					destroyStats();
+					displayStats(value);
+
+					destroyMenu();
+					showActionMenuNextToPlayer(value);
+
+					changed = true;
+				}
+			});
+			// notify server
+
+			// display updated json
+			break;
+		case 1: // Archer's skill
+			undoHighlights();
+			drawRange(findReachableTiles(selectedCharacter.column, selectedCharacter.row, selectedCharacter.attackRange, false), false);
+
+
+			undoHighlights();
+			drawRange(findReachableTiles(selectedCharacter.column, selectedCharacter.row, selectedCharacter.attackRange, false), false);
+			break;
+	    case 2: // Wizard's skill
+	    	undoHighlights();
+	    	
+
+	}
+}	
 
 // Start moving the player
 function move() {
@@ -340,19 +389,29 @@ function drawRange(reachable, isMoving) {
 }
 
 function getRandom(luck){
-  var num = Math.random();
-  if(num < (luck / 100)) return 2;  
-  else return 1;  
+  	var num = Math.random();
+ 	if(num < luck){ 
+ 		return 1;
+  	} else {
+  		return 2; 
+	} 
 }
-
+var showingDamage;
+var damageBackground;
+var damageText;
+function demageEffect(){
+	damageText.y -= 1.5;
+	damageBackground.y -= 1.5;
+	stage.update();
+}
 function showDamage(unit, critical, damage){
-	var damageBackground = new createjs.Shape();
+	damageBackground = new createjs.Shape();
 	if (critical == 2) {
 		damageBackground.graphics.beginFill("#ffeb00").drawRect(unit.x - 10, unit.y - 50, 40, 20);
-		var damageText = new createjs.Text(damage, "20px Arial", "#000000");
+		damageText = new createjs.Text(damage, "20px Arial", "#000000");
 	} else {
-		damageBackground.graphics.beginFill("#ff00000").drawRect(unit.x - 10, unit.y - 50, 40, 20);
-		var damageText = new createjs.Text(damage, "20px Arial", "#000000");
+		damageBackground.graphics.beginFill("#ff0000").drawRect(unit.x - 10, unit.y - 50, 40, 20);
+		damageText = new createjs.Text(damage, "20px Arial", "#000000");
 	}
 	damageText.x = unit.x;
 	damageText.y = unit.y - 50;
@@ -361,11 +420,14 @@ function showDamage(unit, critical, damage){
 	stage.addChild(damageBackground);
 	stage.addChild(damageText);
 	stage.update();
+	showingDamage = true;
+	demageEffect(damageText, damageBackground);
 	setTimeout(function (){
 		stage.removeChild(damageBackground);
 		stage.removeChild(damageText);
+		showingDamage = false;
 		stage.update();
-	}, 2000);
+	}, 750);
 }
 
 function attack(attacker, target){
@@ -395,7 +457,7 @@ function destroyStats() {
 	statsDisplay.removeChildAt(2,3);
 
 	var box = new createjs.Bitmap("graphics/stats_background.png");
-	box.scaleX = 0.7;
+	box.scaleX = 0.9;
 	box.scaleY = 0.5;
 	statsDisplay.addChild(box);
 	changed = true;
@@ -664,6 +726,9 @@ createjs.Ticker.addEventListener("tick", update);
 createjs.Ticker.setFPS(30);
 
 function update() {
+	if (showingDamage === true){
+		demageEffect();
+	}
 	if (movingPlayer === true) {
 		movePlayer();
 	}
