@@ -24,7 +24,7 @@ while ($room = $result->fetch_object()) {
   $result_part = $db->query("SELECT * FROM room_participants WHERE room_id = {$room->room_id} AND event = ''");
   $num_of_players = $result_part->num_rows;
 
-  $out .= $comma.'{"player": "'.$room->username.'", "room_id": "'.$room->room_id.'", "num_of_players":"'.$num_of_players.'", "max_players":"'.$room->max_players.'"}';
+  $out .= $comma.'{"room_name": "'.secureOutput($room->name).'", "player": "'.$room->username.'", "room_id": "'.$room->room_id.'", "num_of_players":"'.$num_of_players.'", "max_players":"'.$room->max_players.'"}';
   $comma = ",";
 }
 

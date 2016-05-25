@@ -59,6 +59,7 @@ function room_refresh() {
       players_html += "<tr><td>"+row_number+"</td><td style='position: relative'>"+players[i].player+state_html_array[players[i].state]+"</td><td>"+players[i].colour+"</td></tr>";
     }
     $("#room_players").html(players_html);
+    $("#info_num_players").html(players.length+"/"+max_players);
   });
 }
 

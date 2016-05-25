@@ -25,9 +25,9 @@ function lobby_refresh() {
       return;
     }
     var rooms = data.rooms;
-    var rooms_html = '<tr><th>Room Owner</th><th>Number of Players</th><th>Join</th></tr>';
+    var rooms_html = '<tr><th>Room Name</th><th>Room Owner</th><th>Number of Players</th><th>Join</th></tr>';
     for (var i = 0; i < rooms.length; i++) {
-      rooms_html += "<tr><td>"+rooms[i].player+"</td><td>"+rooms[i].num_of_players+"/"+rooms[i].max_players+"</td><td><div class='btn join_room' data-room-id='"+rooms[i].room_id+"'>Join</div></td></tr>";
+      rooms_html += "<tr><td>"+rooms[i].room_name+"</td><td>"+rooms[i].player+"</td><td>"+rooms[i].num_of_players+"/"+rooms[i].max_players+"</td><td><div class='btn join_room' data-room-id='"+rooms[i].room_id+"'>Join</div></td></tr>";
     }
     $("#rooms").html(rooms_html);
   });
