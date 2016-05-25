@@ -332,7 +332,7 @@ function drawRange(reachable, isMoving) {
 
 function getRandom(luck){
   	var num = Math.random();
- 	if(num < (luck / 100)){ 
+ 	if(num < luck){ 
  		return 1;
   	} else {
   		return 2; 
