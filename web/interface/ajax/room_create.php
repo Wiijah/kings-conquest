@@ -2,8 +2,8 @@
 /* Create a new room */
 require_once 'ajax_common.php';
 
-$room_name = secureStr($_POST['room_name']);
-$room_pass = secureStr($_POST['room_pass']);
+$room_name = trim($_POST['room_name']);
+$room_pass = trim($_POST['room_pass']);
 
 /* Input is checked client-side before posting, however, if the client decides to modify client-side checking, then
    an arbitrary but valid values are substituted in */
@@ -13,6 +13,10 @@ if (!isStrLenCorrect($room_name, 3, 20)) {
 if (!isStrLenCorrect($room_pass, 0, 20)) {
   $room_pass = "";
 }
+
+/* secureStr only after checking the length due to htmlentities */
+$room_name = secureStr($room_name);
+$room_pass = secureStr($room_name);
 
 $result = $db->query("SELECT * FROM room_participants WHERE user_id = {$user->id}");
 if ($result->num_rows > 0) {

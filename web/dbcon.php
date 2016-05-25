@@ -29,12 +29,16 @@ function verifyToken(&$token) {
 function secureStr(&$str) {
   global $db;
   if (!isset($str)) return "";
-  $str = htmlentities($str);
   $str = $db->real_escape_string($str);
   return $str;
 }
 
 function secureInt(&$input) {
   return preg_replace("/[^0-9]/", "", $input);
+}
+
+function secureOutput(&$str) {
+  if (!isset($str)) return "";
+  return htmlentities(stripslashes($str)); 
 }
 ?>

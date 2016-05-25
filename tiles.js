@@ -44,8 +44,8 @@ function initGame() {
 	stage.enableMouseOver(20);
 	$.getJSON('game-map.json', function(data) {
 		that.mapData = data['main'];
-		mapHeight = parseInt(data.map_dimensions.height);
-		mapWidth = parseInt(data.map_dimensions.width);
+		mapHeight = data.map_dimensions.height;
+		mapWidth = data.map_dimensions.width;
 		// console.log(mapHeight + "blah" + mapWidth);
 		
 		that.drawMap(that.mapData);
@@ -53,13 +53,24 @@ function initGame() {
 		units = [];
 
 		$.each(data.characters, function(i, value) {
-			var unit = new createjs.Bitmap(value.address);
+			var spriteSheet = new createjs.SpriteSheet({
+          	"images": [value.address],
+          	"frames": {"regX": +10, "height": 142, "count": 2, "regY": -20, "width": 113 },
+          	"animations": {
+            	"stand":[0,1]
+          	},
+          	framerate: 2
+        	});
+
+
+
+
+			var unit = new createjs.Sprite(spriteSheet, "stand");
 			unit.addEventListener("click", function(event) {
 				if (!movingPlayer && !isAttacking) {
 					clearSelectionEffects();
 					selectedCharacter = unit;
 					showActionMenuNextToPlayer(unit);
-
 					displayStats(value);
 				}
 
@@ -76,15 +87,16 @@ function initGame() {
 
 				changed = true;
 			});
-
+			createjs.Ticker.timingMode = createjs.Ticker.RAF;
+   			createjs.Ticker.addEventListener("tick", stage);
 			// Configure unit coordinates
 			unit.hp = value.hp;
 			unit.max_hp = value.max_hp;
 			unit.attack = value.attack;
 			unit.base_attack = unit.attack;
 			unit.luck = value.luck;
-			unit.row = parseInt(value.y);
-			unit.column = parseInt(value.x);
+			unit.row = value.y;
+			unit.column = value.x;
 			unit.x = originX +  (value.y - value.x) * 65;
 			unit.y = value.y * 32.5 + originY + value.x * 32.5;
 			unit.regX = 56.5;
@@ -100,21 +112,21 @@ function initGame() {
 			// Configure the hp bar of the unit
 			hp_bar = new createjs.Shape();
 			hp_bar.x = unit.x - 40;
-			hp_bar.y = unit.y - 120;
+			hp_bar.y = unit.y - 80;
 			hp_bar.graphics.beginFill("#ff0000").drawRect(0, 0, 80, 10);
-			hp_bar.graphics.beginFill("#00ff00").drawRect(0, 0, (parseInt(getHealth(value))/parseInt(getMaxHealth(value))) * 80, 10);
+			hp_bar.graphics.beginFill("#00ff00").drawRect(0, 0, (getHealth(value)/getMaxHealth(value)) * 80, 10);
 			unit.hp_bar = hp_bar;
 
 
 			// Configure move and attack range of the unit
-			unit.moveRange = parseInt(value.moveRange);
-			unit.attackRange = parseInt(value.attackRange);
+			unit.moveRange = value.moveRange;
+			unit.attackRange = value.attackRange;
 
 			// Configure action control informations
-			unit.canMove = parseInt(value.canMove);
-			unit.canAttack = parseInt(value.canAttack);
-			unit.skillCoolDown = parseInt(value.skillCoolDown);
-			unit.outOfMoves = parseInt(value.outOfMoves);
+			unit.canMove = value.canMove;
+			unit.canAttack = value.canAttack;
+			unit.skillCoolDown = value.skillCoolDown;
+			unit.outOfMoves = value.outOfMoves;
 
 			// Adding the unit to the list of units in the game
 			units.push(unit);
@@ -144,21 +156,18 @@ function initGame() {
 }
 
 function getHealth(unit) {
-	var base = parseInt(unit.hp);
-	console.log("Base :" + base);
+	var base = unit.hp;
 	$.each(unit.buffs, function(i, value) {
 		if (value[0] == 0) {
-			console.log("Buff : " + value[1]);
 			base = base + value[1];
 		} // if type == health, add to base
 	});
-	console.log("result : " + base);
 	return base;
 }
 
 
 function getMaxHealth(unit) {
-	var base = parseInt(unit.max_hp);
+	var base = unit.max_hp;
 	$.each(unit.buffs, function(i, value) {
 		if (value[0] == 1) {
 			base += value[1];
@@ -169,7 +178,7 @@ function getMaxHealth(unit) {
 
 
 function getAttack(unit) {
-	var base = parseInt(unit.attack);
+	var base = unit.attack;
 	$.each(unit.buffs, function(i, value) {
 		if (value[0] == 2) {
 			base += value[1];
@@ -180,7 +189,7 @@ function getAttack(unit) {
 
 
 function getLuck(unit) {
-	var base = parseInt(unit.hp);
+	var base = unit.hp;
 	$.each(unit.buffs, function(i, value) {
 		if (value[0] == 3) {
 			base += value[1];
@@ -336,7 +345,7 @@ function cast(skillNo) {
 			$.each(units, function(i, value) {
 				if (value.team === selectedCharacter.team) {
 					//buff health
-					var add = Math.ceil(0.1 * parseInt(value.max_hp));
+					var add = Math.ceil(0.1 * value.max_hp);
 					value.buffs.push([0,add,3]);
 					value.buffs.push([1,add,3]);
 					//buff dmg
@@ -356,8 +365,8 @@ function cast(skillNo) {
 			// display updated json
 			break;
 		case 1: // Archer's skill
-		    var atk = parseInt(selectedCharacter.attack);
-		    selectedCharacter.attack = (atk * 2) + "";
+		    var atk = selectedCharacter.attack;
+		    selectedCharacter.attack = (atk * 2);
 
 			isAttacking = true;
 			undoHighlights();
@@ -716,7 +725,7 @@ function findPath(fromX, fromY, toX, toY) {
 				if (nx < 0 || nx >= mapHeight || ny < 0 || ny >= mapWidth) continue;
 
 				// Terrain check
-				if (parseInt(that.mapData[nx][ny]) == 2) continue;
+				if (that.mapData[nx][ny] == 2) continue;
 
 				// bounds and obstacle check here
 				if (vis[nx * mapWidth + ny] === false) {
@@ -824,7 +833,7 @@ function drawMap(data) {
 	originY = 220;
 	for (i = 0; i < mapHeight; i++) {
 		for (j = 0; j < mapWidth; j++) {
-			var terrain = parseInt(data[i][j]);
+			var terrain = data[i][j];
 			blockMaps[i][j] = terrain == 2 ? 1 : 0;
 			img = imageNumber(terrain);
 			maps[i][j] = new createjs.Bitmap(img);
@@ -844,22 +853,29 @@ function drawMap(data) {
 }
 
 	function mouseOut(evt){
+		stage.removeChild(highLight_tile);
 		stage.removeChild(tile);
 		stage.update();
 	}
-	
+	var highLight_tile;
 	function mouveOver(evt) {
 		stage.removeChild(tile);
 		var position = evt.target.name.split(",");
-		var i = parseInt(position[0]);
-		var j = parseInt(position[1]);
+		var i = position[0];
+		var j = position[1];
 		tile = jQuery.extend({},maps[i][j]);
 		tile.x = 100;
 		tile.y = 100;
 		stage.addChild(tile);
-		stage.update();
-		// console.log(i + "," + j);
 
+
+		highLight_tile = new createjs.Bitmap("graphics/highlight_tile.png");
+		highLight_tile.x = (j-i) * 65 + 540;
+		highLight_tile.y = (j+i) * 32.5 + 220;
+		highLight_tile.regX = 65;
+		highLight_tile.regY = 32.5;
+		stage.addChild(highLight_tile);
+		stage.update();
 	}
 
 createjs.Ticker.addEventListener("tick", update);
@@ -901,8 +917,3 @@ function imageNumber(number) {
 			return "error";
 	}
 }
-
-// store 8 bits numbers in that.mapData :
-// 5 bits for tile index
-// 1 bit for unit
-// 1 bit for other block
