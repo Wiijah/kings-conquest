@@ -25,6 +25,11 @@ function genTitle($title) {
   <script src="../utils/jquery.js"></script>
   <script src="js/common.js"></script>
   <script src="js/lightbox.js"></script>
+  <script>
+  <!--
+  var user_id = <?php echo $user->id; ?>;
+  -->
+  </script>
 </head>
 <body>
 <?php

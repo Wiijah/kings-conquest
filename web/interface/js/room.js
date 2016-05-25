@@ -1,5 +1,7 @@
 var room_exists = true;
 
+var ready_locked = true; //TODO
+
 $(document).ready(function() {
   room_refresh_periodically();
   $('body').on('click', '#btn_leave', function() {
@@ -70,6 +72,15 @@ function room_refresh() {
     for (var i = 0; i < players.length; i++) {
       var row_number = i + 1;
       players_html += "<tr><td>"+row_number+"</td><td style='position: relative'>"+players[i].player+state_html_array[players[i].state]+"</td><td>"+players[i].colour+"</td></tr>";
+      if (players[i].user_id == user_id) {
+        if (players[i].state == 'ready') {
+          $("#btn_ready").html("Cancel Ready");
+          $("#btn_ready").attr("data-ready", 'notready');
+        } else if (players[i].state == 'notready') {
+          $("#btn_ready").html("Ready");
+          $("#btn_ready").attr("data-ready", 'ready');
+        }
+      }
     }
     $("#room_players").html(players_html);
     $("#info_num_players").html(players.length+"/"+max_players);
