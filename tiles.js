@@ -15,7 +15,10 @@ var sub_highlighted = [];
 var units = [];
 var maps;
 var blockMap;
-var tile;
+var tile_display;
+var highLight_tile;
+var tile_info_text;
+
 
 var moveButton;
 var attackButton;
@@ -108,11 +111,12 @@ function initGame() {
 			unit.address = value.address;
 			unit.skill_no = value.skill_no;
 			unit.buffs = [];
+			unit.buff_icons = [];
 
 			// Configure the hp bar of the unit
 			hp_bar = new createjs.Shape();
 			hp_bar.x = unit.x - 40;
-			hp_bar.y = unit.y - 80;
+			hp_bar.y = unit.y - 90;
 			hp_bar.graphics.beginFill("#ff0000").drawRect(0, 0, 80, 10);
 			hp_bar.graphics.beginFill("#00ff00").drawRect(0, 0, (getHealth(value)/getMaxHealth(value)) * 80, 10);
 			unit.hp_bar = hp_bar;
@@ -189,7 +193,7 @@ function getAttack(unit) {
 
 
 function getLuck(unit) {
-	var base = unit.hp;
+	var base = unit.luck;
 	$.each(unit.buffs, function(i, value) {
 		if (value[0] == 3) {
 			base += value[1];
@@ -309,7 +313,7 @@ function showActionMenuNextToPlayer(unit) {
 			undoHighlights();
 			unit.skillCoolDown = "3";
 			unit.outOfMoves = 1;
-			cast(unit.skill_no);
+			cast(unit.skill_no, unit);
 		}
 	});
 
@@ -338,7 +342,7 @@ function showActionMenuNextToPlayer(unit) {
     changed = true;
 }	
 
-function cast(skillNo) {
+function cast(skillNo, unit) {
 	switch (skillNo) {
 		case 0: // King's skill
 			// display effect
@@ -366,7 +370,7 @@ function cast(skillNo) {
 			break;
 		case 1: // Archer's skill
 		    var atk = selectedCharacter.attack;
-		    selectedCharacter.attack = (atk * 2);
+		    selectedCharacter.attack = 2 * atk;
 
 			isAttacking = true;
 			undoHighlights();
@@ -385,6 +389,10 @@ function cast(skillNo) {
 	    	
 	    	if (!found) {
 	    		selectedCharacter.buffs.push([5, 0, -1]);
+    			buff_icon = new createjs.Bitmap("graphics/buff_shield.png");
+				buff_icon.x = unit.x + 5;
+				buff_icon.y = unit.y - 70;
+				stage.addChild(buff_icon);
 	    	}
 
 
@@ -558,33 +566,36 @@ function showDamage(unit, critical, damage){
 		stage.update();
 	}, 750);
 }
-
+var buff_icon;
 function attack(attacker, target){
-	// console.log("target hp: " + target.hp);
-	// console.log("attack target: " + target.column +","+ target.row);
-	var criticalHit = getRandom(getLuck(attacker));
-	var damage = getAttack(attacker) * criticalHit
-	
-	var shield = false;
-	$.each(target.buffs, function(i, value) {
-		if (value[0] == 5) {
-			shield = true;
-			var index = target.buffs.indexOf(value);
-			target.buffs.splice(index, 1);
+	if (attacker.team != target.team){
+		console.log("target team: " + target.team);
+		console.log("attacker team: " + attacker.team);
+		var criticalHit = getRandom(getLuck(attacker));
+		var damage = getAttack(attacker) * criticalHit
+		
+		var shield = false;
+		$.each(target.buffs, function(i, value) {
+			if (value[0] == 5) {
+				shield = true;
+				stage.removeChild(buff_icon);
+				var index = target.buffs.indexOf(value);
+				target.buffs.splice(index, 1);
+			}
+		});
+		
+		if (!shield) {
+			showDamage(target, criticalHit, damage);
+			target.hp -= damage;
 		}
-	});
-	
-	if (!shield) {
-		showDamage(target, criticalHit, damage);
-		target.hp -= damage;
-	}
-	// console.log("attack attacker: " + attacker.column +","+ attacker.row);
-	// console.log("target hp: " + target.hp);
-	updateHP_bar(target);
-	attacker.outOfMoves = 1;
-	attacker.canAttack = 0;
-	isAttacking = false;
-	changed = true;
+		// console.log("attack attacker: " + attacker.column +","+ attacker.row);
+		// console.log("target hp: " + target.hp);
+		updateHP_bar(target);
+		attacker.outOfMoves = 1;
+		attacker.canAttack = 0;
+		isAttacking = false;
+		changed = true;
+	} 
 }
 
 function clearSelectionEffects() {
@@ -826,9 +837,6 @@ function drawMap(data) {
 		blockMaps[i] = new Array(mapWidth);
 	}
 
-
-
-
 	originX = 540;
 	originY = 220;
 	for (i = 0; i < mapHeight; i++) {
@@ -837,7 +845,7 @@ function drawMap(data) {
 			blockMaps[i][j] = terrain == 2 ? 1 : 0;
 			img = imageNumber(terrain);
 			maps[i][j] = new createjs.Bitmap(img);
-			maps[i][j].name = i + "," + j;
+			maps[i][j].name = i + "," + j + "," + tile_type + "," + tile_info_address;
 			maps[i][j].x = (j-i) * 65 + 540;
 			maps[i][j].y = (j+i) * 32.5 + 220;
 			maps[i][j].regX = 65;
@@ -854,19 +862,31 @@ function drawMap(data) {
 
 	function mouseOut(evt){
 		stage.removeChild(highLight_tile);
-		stage.removeChild(tile);
+		stage.removeChild(tile_display);
+		stage.removeChild(tile_info_text);
 		stage.update();
 	}
-	var highLight_tile;
+
 	function mouveOver(evt) {
-		stage.removeChild(tile);
+		stage.removeChild(tile_display);
+		stage.removeChild(tile_info_text);
 		var position = evt.target.name.split(",");
 		var i = parseInt(position[0]);
 		var j = parseInt(position[1])
-		tile = jQuery.extend({},maps[i][j]);
-		tile.x = 100;
-		tile.y = 100;
-		stage.addChild(tile);
+		tile_info = position[2];
+		tile_display = new createjs.Bitmap(position[3]);
+		tile_display.x = 0;
+		tile_display.y = 0;
+		tile_display.scaleX = 0.6;
+		tile_display.scaleY = 0.6;
+		
+		tile_info_text = new createjs.Text(tile_info, "20px Arial", "#000000");
+		tile_info_text.x = 90;
+		tile_info_text.y = 100;
+		tile_info_text.textBaseline = "alphabetic";
+		tile_info_text.textAlign = "center";
+		stage.addChild(tile_display);
+		stage.addChild(tile_info_text);
 
 
 		highLight_tile = new createjs.Bitmap("graphics/highlight_tile.png");
@@ -893,25 +913,42 @@ function update() {
 		changed = false;
 	}
 }
-
+var tile_type;
+var tile_info_address;
 // Given the number in the game-map, returns the address of the tile's image
 function imageNumber(number) {
 	switch (number) {
 		case 0 :
+			tile_info_address = "graphics/tile_info/tile_grass.png";
+			tile_type = "Grass";
 			return "graphics/tile/grass.png";
 		case 1 :
+			tile_info_address = "graphics/tile_info/tile_mud.png";
+			tile_type = "Mud";
 			return "graphics/tile/mud.png";
 		case 2 :
+			tile_info_address = "graphics/tile_info/tile_stone_bridge.png";
+			tile_type = "Stone Bridge";
 			return "graphics/tile/stone_bridge.png";
 		case 3 :
+			tile_info_address = "graphics/tile_info/tile_stone_bridge.png";
+			tile_type = "Stone Bridge";
 			return "graphics/tile/stone_bridge2.png";
 		case 4 :
+			tile_info_address = "graphics/tile_info/tile_stone_path.png";
+			tile_type = "Stone Path";
 			return "graphics/tile/stone_ground.png";
 		case 5 :
+			tile_info_address = "graphics/tile_info/tile_water.png";
+			tile_type = "Water";
 			return "graphics/tile/water.png";
 		case 6 :
+			tile_info_address = "graphics/tile_info/tile_wood_bridge.png";
+			tile_type = "Wood Bridge";
 			return "graphics/tile/wood_bridge.png";
 		case 7 :
+			tile_info_address = "graphics/tile_info/tile_wood_bridge.png";
+			tile_type = "Wood Bridge";
 			return "graphics/tile/wood_bridge2.png";
 		default:
 			return "error";
