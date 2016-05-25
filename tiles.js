@@ -289,6 +289,7 @@ function cast(skillNo) {
 			break;
 	    case 2: // Wizard's skill
 	    	undoHighlights();
+	    	
 
 	}
 }	
