@@ -5,7 +5,7 @@ var MOVEMENT_STEP = 6.5
 
 var stage = new createjs.Stage("demoCanvas");
 var that = this;
-var team = 1;
+var team = 0;
 
 
 
@@ -86,6 +86,7 @@ function initGame() {
 			unit.hp = value.hp;
 			unit.max_hp = value.max_hp;
 			unit.attack = value.attack;
+			unit.base_attack = unit.attack;
 			unit.luck = value.luck;
 			unit.row = parseInt(value.y);
 			unit.column = parseInt(value.x);
@@ -99,11 +100,12 @@ function initGame() {
 			unit.skill = value.skill;
 			unit.address = value.address;
 			unit.skill_no = value.skill_no;
+			unit.buffs = [];
 
 			// Configure the hp bar of the unit
 			hp_bar = new createjs.Shape();
 			hp_bar.graphics.beginFill("#ff0000").drawRect(unit.x - 40, unit.y - 120, 80, 10);
-			hp_bar.graphics.beginFill("#00ff00").drawRect(unit.x - 40, unit.y - 120, (parseInt(value.hp)/parseInt(value.max_hp)) * 80, 10);
+			hp_bar.graphics.beginFill("#00ff00").drawRect(unit.x - 40, unit.y - 120, (parseInt(getHealth(value))/parseInt(getMaxHealth(value))) * 80, 10);
 			unit.hp_bar = hp_bar;
 
 
@@ -143,17 +145,65 @@ function initGame() {
 
 	window.addEventListener('resize', resize, false);
 }
+
+function getHealth(unit) {
+	var base = parseInt(unit.hp);
+	console.log("Base :" + base);
+	$.each(unit.buffs, function(i, value) {
+		if (value[0] == 0) {
+			console.log("Buff : " + value[1]);
+			base = base + value[1];
+		} // if type == health, add to base
+	});
+	console.log("result : " + base);
+	return base;
+}
+
+
+function getMaxHealth(unit) {
+	var base = parseInt(unit.max_hp);
+	$.each(unit.buffs, function(i, value) {
+		if (value[0] == 1) {
+			base += value[1];
+		} // if type == max_health, add to base
+	});
+	return base;
+}
+
+
+function getAttack(unit) {
+	var base = parseInt(unit.attack);
+	$.each(unit.buffs, function(i, value) {
+		if (value[0] == 2) {
+			base += value[1];
+		} // if type == attack, add to base
+	});
+	return base;
+}
+
+
+function getLuck(unit) {
+	var base = parseInt(unit.hp);
+	$.each(unit.buffs, function(i, value) {
+		if (value[0] == 3) {
+			base += value[1];
+		} // if type == luck, add to base
+	});
+	return base;
+}
+
 function updateHP_bar(unit){
 	stage.update();
-	if (unit.hp <= 0){
+	if (getHealth(unit) <= 0){
 		stage.removeChild(unit);
 		stage.removeChild(unit.hp_bar);
 		blockMaps[unit.column][unit.row] = 0;
 	} else {
 		unit.hp_bar.graphics.beginFill("#ff0000").drawRect(unit.x - 40, unit.y - 120, 80, 10);
-		unit.hp_bar.graphics.beginFill("#00ff00").drawRect(unit.x - 40, unit.y - 120, (unit.hp / unit.max_hp) * 80, 10);
+		unit.hp_bar.graphics.beginFill("#00ff00").drawRect(unit.x - 40, unit.y - 120, (getHealth(unit) / getMaxHealth(unit)) * 80, 10);
 	}
 }
+
 function drawStatsDisplay() {
 	statsDisplay.x = stage.canvas.width - 640;
 	statsDisplay.y = stage.canvas.height - 240;
@@ -169,12 +219,12 @@ function displayStats(unit) {
 	bmp.y = 10;
 	bmp.x = 40; // 226
 
-	var text = unit.team == team ? new createjs.Text("HP : " + unit.hp + "/" + unit.max_hp + "\n" +
-		"ATK : "  + unit.attack + "    " + "RNG : " + unit.attackRange + "\n" +
+	var text = unit.team == team ? new createjs.Text("HP : " + getHealth(unit) + "/" + getMaxHealth(unit) + "\n" +
+		"ATK : "  + getAttack(unit) + "    " + "RNG : " + unit.attackRange + "\n" +
 		"SKILL : " + unit.skill + "  ( CD " + unit.skillCoolDown + " )" + "\n" +
 		"MOV. RANGE : " + unit.moveRange + "\n" +
-		"LCK : " + unit.luck, "20px '04b_19'", "#000000")
-	: new createjs.Text("HP : " + unit.hp + "/" + unit.max_hp + "\n" +
+		"LCK : " + getLuck(unit), "20px '04b_19'", "#000000")
+	: new createjs.Text("HP : " + getHealth(unit) + "/" + getMaxHealth(unit) + "\n" +
 		"ATK : "  + "???" + "    " + "RNG : " + "???" + "\n" +
 		"SKILL : " + "???" + "  ( CD " + "???" + " )" + "\n" +
 		"MOV. RANGE : " + "???" + "\n" +
@@ -290,10 +340,10 @@ function cast(skillNo) {
 				if (value.team === selectedCharacter.team) {
 					//buff health
 					var add = Math.ceil(0.1 * parseInt(value.max_hp));
-					value.max_hp = (parseInt(value.max_hp) + add) + "";
-					value.hp = (parseInt(value.hp) + add) + "";
+					value.buffs.push([0,add,3]);
+					value.buffs.push([1,add,3]);
 					//buff dmg
-					value.attack = (parseInt(value.attack) + 5) + "";
+					value.buffs.push([2,5,3]);
 
 					destroyStats();
 					displayStats(value);
@@ -309,10 +359,10 @@ function cast(skillNo) {
 			// display updated json
 			break;
 		case 1: // Archer's skill
-			undoHighlights();
-			drawRange(findReachableTiles(selectedCharacter.column, selectedCharacter.row, selectedCharacter.attackRange, false), false);
+		    var atk = parseInt(selectedCharacter.attack);
+		    selectedCharacter.attack = (atk * 2) + "";
 
-
+			isAttacking = true;
 			undoHighlights();
 			drawRange(findReachableTiles(selectedCharacter.column, selectedCharacter.row, selectedCharacter.attackRange, false), false);
 			break;
@@ -370,6 +420,7 @@ function drawRange(reachable, isMoving) {
 						selectedCharacter.team != unit.team){
 					bmp.addEventListener("click", function(event) {
 						attack(selectedCharacter, unit);
+						selectedCharacter.attack = selectedCharacter.base_attack;
 						clearSelectionEffects();
 					});
 
@@ -434,8 +485,8 @@ function showDamage(unit, critical, damage){
 function attack(attacker, target){
 	// console.log("target hp: " + target.hp);
 	// console.log("attack target: " + target.column +","+ target.row);
-	var criticalHit = getRandom(attacker.luck);
-	var damage = attacker.attack * criticalHit
+	var criticalHit = getRandom(getLuck(attacker));
+	var damage = getAttack(attacker) * criticalHit
 	showDamage(target, criticalHit, damage);
 	target.hp -= damage;
 	// console.log("attack attacker: " + attacker.column +","+ attacker.row);
@@ -743,12 +794,22 @@ function update() {
 function imageNumber(number) {
 	switch (number) {
 		case 0 :
-			return "graphics/ground_texture/mud.png";
+			return "graphics/tile/grass.png";
 		case 1 :
-			return "graphics/ground_texture/path.png";
+			return "graphics/tile/mud.png";
 		case 2 :
-			return "graphics/ground_texture/water.png";
-		default :
+			return "graphics/tile/stone_bridge.png";
+		case 3 :
+			return "graphics/tile/stone_bridge2.png";
+		case 4 :
+			return "graphics/tile/stone_ground.png";
+		case 5 :
+			return "graphics/tile/water.png";
+		case 6 :
+			return "graphics/tile/wood_bridge.png";
+		case 7 :
+			return "graphics/tile/wood_bridge2.png";
+		default:
 			return "error";
 	}
 }
