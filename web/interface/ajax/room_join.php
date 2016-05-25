@@ -4,10 +4,10 @@ require_once 'ajax_common.php';
 
 $room_id = secureStr($_POST['room_id']);
 
-$result = $db->query("SELECT * FROM rooms WHERE room_id = {$room_id}");
+$result = $db->query("SELECT * FROM rooms WHERE room_id = {$room_id} AND state = 'pregame'");
 $room = $result->fetch_object();
 if ($result->num_rows == 0) {
-  die('{"kc_error":"The room you attempted to join no longer exists."}');
+  die('{"kc_error":"The room you attempted to join is no longer available."}');
 }
 
 $result = $db->query("SELECT * FROM room_participants WHERE user_id = {$user->id} AND event = ''");

@@ -25,9 +25,9 @@ function lobby_refresh() {
       return;
     }
     var rooms = data.rooms;
-    var rooms_html = '<tr><th>Room Owner</th><th>Map</th><th>Mode</th><th>Join</th></tr>';
+    var rooms_html = '<tr><th>Room Owner</th><th>Number of Players</th><th>Join</th></tr>';
     for (var i = 0; i < rooms.length; i++) {
-      rooms_html += "<tr><td>"+rooms[i].player+"</td><td>Dark Forest</td><td>Regicide</td><td><div class='btn join_room' data-room-id='"+rooms[i].room_id+"'>Join</div></td></tr>";
+      rooms_html += "<tr><td>"+rooms[i].player+"</td><td>"+rooms[i].num_of_players+"/"+rooms[i].max_players+"</td><td><div class='btn join_room' data-room-id='"+rooms[i].room_id+"'>Join</div></td></tr>";
     }
     $("#rooms").html(rooms_html);
   });
@@ -38,7 +38,7 @@ function lobby_refresh() {
 function join_room(room_id) {
   quickPost("ajax/room_join", {room_id: room_id}, function(data, status){
     if (session_expired) return;
-
+    
     // server side error checking
     if (data.kc_error !== undefined) {
       lightbox_alert("Error", data.kc_error);
