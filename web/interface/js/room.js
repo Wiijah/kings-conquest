@@ -1,3 +1,4 @@
+var room_exists = true;
 
 $(document).ready(function() {
   room_refresh_periodically();
@@ -13,7 +14,16 @@ function room_refresh_periodically() {
 
 function room_refresh() {
   quickPost("ajax/room_get", {id: room_id}, function(data, status){
-    if (session_expired) return;
+    if (session_expired || !room_exists) return;
+
+    if (data.kc_error !== undefined) {
+      if (data.kc_error == "deleted") {
+        room_exists = false;
+        disablePage("index");
+        lightbox_alert("Room Deleted", "This room has been deleted.");
+      }
+      return;
+    }
     var players = data.players;
     console.log(data);
     var players_html = '<tr><th>#</th><th>Player</th><th>Colour</th></tr>';
