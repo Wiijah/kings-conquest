@@ -1,14 +1,20 @@
-var stage = new createjs.Stage("demoCanvas");
-var shouldMove = false;
 
+var ICON_SCALE_FACTOR = 0.65;
+var MOVEMENT_STEP = 6.5
+
+
+var stage = new createjs.Stage("demoCanvas");
 var that = this;
-var team = 1;
+var team = 0;
+
+
 
 var path = [];
 var highlighted = [];
 var units = [];
-var ICON_SCALE_FACTOR = 0.65;
-var MOVEMENT_STEP = 6.5
+var maps;
+var blockMap;
+var tile;
 
 var moveButton;
 var attackButton;
@@ -23,13 +29,14 @@ var isInHighlight = false;
 var changed = false;
 var movingPlayer = false;
 var isAttacking = false;
+var currentGold;
 var turn = 0;
 
 function resize() {
-	stage.canvas.width = window.innerWidth;
-	stage.canvas.height = window.innerHeight;
-	drawGame();
-	drawStatsDisplay();
+	//stage.canvas.width = window.innerWidth;
+	//stage.canvas.height = window.innerHeight;
+	//drawGame();
+	//drawStatsDisplay();
 }
 
 function initGame() {
@@ -38,7 +45,13 @@ function initGame() {
 		that.mapData = data['main'];
 		mapHeight = parseInt(data.map_dimensions.height);
 		mapWidth = parseInt(data.map_dimensions.width);
-		// console.log(mapHeight + "blah" + mapWidth);
+		blockMaps = new Array(mapHeight);
+		for (var i = 0; i < mapHeight; i++) {
+			blockMaps[i] = new Array(mapWidth);
+			for (var j = 0; j < mapWidth; j++) {
+				blockMaps[i][j] = 0;
+			}
+		}
 		
 		that.drawMap(that.mapData);
 
@@ -51,21 +64,21 @@ function initGame() {
 					clearSelectionEffects();
 					selectedCharacter = unit;
 					showActionMenuNextToPlayer(unit);
+
+					displayStats(value);
 				}
 
 
 				// In this case, we are selecting the unit to be attacked
 				if (selectedCharacter != unit && isAttacking) {
-					// console.log("attacker: " + selectedCharacter.column + " " + selectedCharacter.row);
 					$.each(highlighted, function(i, coord) {
-						if (unit.row === coord.column && unit.column === coord.row) {
+						if (unit.row === coord.row && unit.column === coord.column) {
 							attack(selectedCharacter, unit);
 							clearSelectionEffects();
 						}
 					});
 				}
 
-				displayStats(value);
 				changed = true;
 			});
 
@@ -73,6 +86,7 @@ function initGame() {
 			unit.hp = value.hp;
 			unit.max_hp = value.max_hp;
 			unit.attack = value.attack;
+			unit.base_attack = unit.attack;
 			unit.luck = value.luck;
 			unit.row = parseInt(value.y);
 			unit.column = parseInt(value.x);
@@ -83,11 +97,15 @@ function initGame() {
 			unit.scaleX = 0.7;
 			unit.scaleY = 0.7;
 			unit.team = value.team;
+			unit.skill = value.skill;
+			unit.address = value.address;
+			unit.skill_no = value.skill_no;
+			unit.buffs = [];
 
 			// Configure the hp bar of the unit
 			hp_bar = new createjs.Shape();
 			hp_bar.graphics.beginFill("#ff0000").drawRect(unit.x - 40, unit.y - 120, 80, 10);
-			hp_bar.graphics.beginFill("#00ff00").drawRect(unit.x - 40, unit.y - 120, (parseInt(value.hp)/parseInt(value.max_hp)) * 80, 10);
+			hp_bar.graphics.beginFill("#00ff00").drawRect(unit.x - 40, unit.y - 120, (parseInt(getHealth(value))/parseInt(getMaxHealth(value))) * 80, 10);
 			unit.hp_bar = hp_bar;
 
 
@@ -104,6 +122,8 @@ function initGame() {
 			// Adding the unit to the list of units in the game
 			units.push(unit);
 
+			blockMaps[unit.column][unit.row] = 1;
+
 			// Add the unit and its hp bar to the stage
 			stage.addChild(unit);
 			stage.addChild(hp_bar);
@@ -113,7 +133,7 @@ function initGame() {
 
 
 	var box = new createjs.Bitmap("graphics/stats_background.png");
-	box.scaleX = 0.7;
+	box.scaleX = 0.9;
 	box.scaleY = 0.5;
 	statsDisplay.addChild(box);
 
@@ -123,20 +143,69 @@ function initGame() {
 	drawStatsDisplay();
 	changed = true;
 
-	window.addEventListener('resize', resize, false);
+	//window.addEventListener('resize', resize, false);
 }
+
+function getHealth(unit) {
+	var base = parseInt(unit.hp);
+	console.log("Base :" + base);
+	$.each(unit.buffs, function(i, value) {
+		if (value[0] == 0) {
+			console.log("Buff : " + value[1]);
+			base = base + value[1];
+		} // if type == health, add to base
+	});
+	console.log("result : " + base);
+	return base;
+}
+
+
+function getMaxHealth(unit) {
+	var base = parseInt(unit.max_hp);
+	$.each(unit.buffs, function(i, value) {
+		if (value[0] == 1) {
+			base += value[1];
+		} // if type == max_health, add to base
+	});
+	return base;
+}
+
+
+function getAttack(unit) {
+	var base = parseInt(unit.attack);
+	$.each(unit.buffs, function(i, value) {
+		if (value[0] == 2) {
+			base += value[1];
+		} // if type == attack, add to base
+	});
+	return base;
+}
+
+
+function getLuck(unit) {
+	var base = parseInt(unit.hp);
+	$.each(unit.buffs, function(i, value) {
+		if (value[0] == 3) {
+			base += value[1];
+		} // if type == luck, add to base
+	});
+	return base;
+}
+
 function updateHP_bar(unit){
 	stage.update();
-	if (unit.hp <= 0){
+	if (getHealth(unit) <= 0){
 		stage.removeChild(unit);
 		stage.removeChild(unit.hp_bar);
+		blockMaps[unit.column][unit.row] = 0;
 	} else {
 		unit.hp_bar.graphics.beginFill("#ff0000").drawRect(unit.x - 40, unit.y - 120, 80, 10);
-		unit.hp_bar.graphics.beginFill("#00ff00").drawRect(unit.x - 40, unit.y - 120, (unit.hp / unit.max_hp) * 80, 10);
+		unit.hp_bar.graphics.beginFill("#00ff00").drawRect(unit.x - 40, unit.y - 120, (getHealth(unit) / getMaxHealth(unit)) * 80, 10);
 	}
 }
+
 function drawStatsDisplay() {
-	statsDisplay.x = stage.canvas.width - 560
+	statsDisplay.x = stage.canvas.width - 640;
 	statsDisplay.y = stage.canvas.height - 240;
 
 	stage.addChild(statsDisplay);
@@ -144,18 +213,18 @@ function drawStatsDisplay() {
 
 function displayStats(unit) {
 	var bmp = new createjs.Bitmap(unit.address);
-	bmp.scaleX = 1.6;
-	bmp.scaleY = 1.6;
+	bmp.scaleX = 1.2;
+	bmp.scaleY = 1.2;
 
-	bmp.y = 0;
-	bmp.x = 15; // 226
+	bmp.y = 10;
+	bmp.x = 40; // 226
 
-	var text = unit.team == team ? new createjs.Text("HP : " + unit.hp + "/" + unit.max_hp + "\n" +
-		"ATK : "  + unit.attack + "    " + "RNG : " + unit.attackRange + "\n" +
+	var text = unit.team == team ? new createjs.Text("HP : " + getHealth(unit) + "/" + getMaxHealth(unit) + "\n" +
+		"ATK : "  + getAttack(unit) + "    " + "RNG : " + unit.attackRange + "\n" +
 		"SKILL : " + unit.skill + "  ( CD " + unit.skillCoolDown + " )" + "\n" +
 		"MOV. RANGE : " + unit.moveRange + "\n" +
-		"LCK : " + unit.luck, "20px '04b_19'", "#000000")
-	: new createjs.Text("HP : " + unit.hp + "/" + unit.max_hp + "\n" +
+		"LCK : " + getLuck(unit), "20px '04b_19'", "#000000")
+	: new createjs.Text("HP : " + getHealth(unit) + "/" + getMaxHealth(unit) + "\n" +
 		"ATK : "  + "???" + "    " + "RNG : " + "???" + "\n" +
 		"SKILL : " + "???" + "  ( CD " + "???" + " )" + "\n" +
 		"MOV. RANGE : " + "???" + "\n" +
@@ -231,7 +300,10 @@ function showActionMenuNextToPlayer(unit) {
 								   : "graphics/ingame_menu/skill_gray.png";
 	skillButton = createClickableImage(skillSource, unit.x + 48, unit.y - 77, function() {
 		if (unit.skillCoolDown === 0) {
-			console.log("Casting!");
+			undoHighlights();
+			unit.skillCoolDown = "3";
+			unit.outOfMoves = 1;
+			cast(unit.skill_no);
 		}
 	});
 
@@ -239,6 +311,12 @@ function showActionMenuNextToPlayer(unit) {
 	cancelButton = createClickableImage(cancelSource, unit.x + 45.5, unit.y - 47, function() {
 		clearSelectionEffects();
 	});
+
+	stage.addChild(menuBackground);
+    stage.addChild(moveButton);
+    stage.addChild(attackButton);
+    stage.addChild(skillButton);
+    stage.addChild(cancelButton);
 
 	var min = moveButton;
 	min = stage.getChildIndex(attackButton) < stage.getChildIndex(min) ? attackButton : min;
@@ -249,15 +327,51 @@ function showActionMenuNextToPlayer(unit) {
 		stage.swapChildren(menuBackground, min);
 	}
 
-	stage.addChild(menuBackground);
-    stage.addChild(moveButton);
-    stage.addChild(attackButton);
-    stage.addChild(skillButton);
-    stage.addChild(cancelButton);
+
     isDisplayingMenu = true;
     changed = true;
+}	
 
-}		
+function cast(skillNo) {
+	switch (skillNo) {
+		case 0: // King's skill
+			// display effect
+			$.each(units, function(i, value) {
+				if (value.team === selectedCharacter.team) {
+					//buff health
+					var add = Math.ceil(0.1 * parseInt(value.max_hp));
+					value.buffs.push([0,add,3]);
+					value.buffs.push([1,add,3]);
+					//buff dmg
+					value.buffs.push([2,5,3]);
+
+					destroyStats();
+					displayStats(value);
+
+					destroyMenu();
+					showActionMenuNextToPlayer(value);
+
+					changed = true;
+				}
+			});
+			// notify server
+
+			// display updated json
+			break;
+		case 1: // Archer's skill
+		    var atk = parseInt(selectedCharacter.attack);
+		    selectedCharacter.attack = (atk * 2) + "";
+
+			isAttacking = true;
+			undoHighlights();
+			drawRange(findReachableTiles(selectedCharacter.column, selectedCharacter.row, selectedCharacter.attackRange, false), false);
+			break;
+	    case 2: // Wizard's skill
+	    	undoHighlights();
+	    	
+
+	}
+}	
 
 // Start moving the player
 function move() {
@@ -292,9 +406,11 @@ function drawRange(reachable, isMoving) {
 			var fromX = selectedCharacter.column;
 			var fromY = selectedCharacter.row;
 			findPath(fromX, fromY, value[0], value[1]);
+			blockMaps[selectedCharacter.column][selectedCharacter.row] = 0;
 			move();
 			selectedCharacter.column = value[0];
 			selectedCharacter.row = value[1];
+			blockMaps[selectedCharacter.column][selectedCharacter.row] = 1;
 			clearSelectionEffects();
 			});
 		} else {
@@ -304,6 +420,7 @@ function drawRange(reachable, isMoving) {
 						selectedCharacter.team != unit.team){
 					bmp.addEventListener("click", function(event) {
 						attack(selectedCharacter, unit);
+						selectedCharacter.attack = selectedCharacter.base_attack;
 						clearSelectionEffects();
 					});
 
@@ -324,19 +441,29 @@ function drawRange(reachable, isMoving) {
 }
 
 function getRandom(luck){
-  var num = Math.random();
-  if(num < (luck / 100)) return 2;  
-  else return 1;  
+  	var num = Math.random();
+ 	if(num < luck){ 
+ 		return 1;
+  	} else {
+  		return 2; 
+	} 
 }
-
+var showingDamage;
+var damageBackground;
+var damageText;
+function demageEffect(){
+	damageText.y -= 1.5;
+	damageBackground.y -= 1.5;
+	stage.update();
+}
 function showDamage(unit, critical, damage){
-	var damageBackground = new createjs.Shape();
+	damageBackground = new createjs.Shape();
 	if (critical == 2) {
 		damageBackground.graphics.beginFill("#ffeb00").drawRect(unit.x - 10, unit.y - 50, 40, 20);
-		var damageText = new createjs.Text(damage, "20px Arial", "#000000");
+		damageText = new createjs.Text(damage, "20px Arial", "#000000");
 	} else {
-		damageBackground.graphics.beginFill("#ff00000").drawRect(unit.x - 10, unit.y - 50, 40, 20);
-		var damageText = new createjs.Text(damage, "20px Arial", "#000000");
+		damageBackground.graphics.beginFill("#ff0000").drawRect(unit.x - 10, unit.y - 50, 40, 20);
+		damageText = new createjs.Text(damage, "20px Arial", "#000000");
 	}
 	damageText.x = unit.x;
 	damageText.y = unit.y - 50;
@@ -345,18 +472,21 @@ function showDamage(unit, critical, damage){
 	stage.addChild(damageBackground);
 	stage.addChild(damageText);
 	stage.update();
+	showingDamage = true;
+	demageEffect(damageText, damageBackground);
 	setTimeout(function (){
 		stage.removeChild(damageBackground);
 		stage.removeChild(damageText);
+		showingDamage = false;
 		stage.update();
-	}, 2000);
+	}, 750);
 }
 
 function attack(attacker, target){
 	// console.log("target hp: " + target.hp);
 	// console.log("attack target: " + target.column +","+ target.row);
-	var criticalHit = getRandom(attacker.luck);
-	var damage = attacker.attack * criticalHit
+	var criticalHit = getRandom(getLuck(attacker));
+	var damage = getAttack(attacker) * criticalHit
 	showDamage(target, criticalHit, damage);
 	target.hp -= damage;
 	// console.log("attack attacker: " + attacker.column +","+ attacker.row);
@@ -379,7 +509,7 @@ function destroyStats() {
 	statsDisplay.removeChildAt(2,3);
 
 	var box = new createjs.Bitmap("graphics/stats_background.png");
-	box.scaleX = 0.7;
+	box.scaleX = 0.9;
 	box.scaleY = 0.5;
 	statsDisplay.addChild(box);
 	changed = true;
@@ -503,7 +633,7 @@ function findPath(fromX, fromY, toX, toY) {
 				if (nx < 0 || nx >= mapHeight || ny < 0 || ny >= mapWidth) continue;
 
 				// Terrain check
-				if (parseInt(that.mapData[nx][ny]) == 2) continue;
+				if (blockMaps[nx][ny] === 1) continue;
 
 				// bounds and obstacle check here
 				if (vis[nx * mapWidth + ny] === false) {
@@ -565,7 +695,7 @@ function findReachableTiles(x, y, range, isMoving) {
 				if (nx < 0 || nx >= mapHeight || ny < 0 || ny >= mapWidth) continue;
 
 				// Terrain check
-				if (parseInt(that.mapData[nx][ny]) == 2 && isMoving) continue;
+				if (blockMaps[nx][ny] != 0 && isMoving) continue;
 
 				// bounds and obstacle check here
 				if ($.inArray(nx * mapWidth + ny, marked) === -1) {
@@ -590,19 +720,24 @@ function findReachableTiles(x, y, range, isMoving) {
 }
 
 
-var maps = new Array(4);
+
 
 
 function drawMap(data) {
-	for (var i = 0; i < 4; i++) {
-		maps[i] = new Array(4);
+	maps = new Array(mapHeight);
+	for (var i = 0; i < mapHeight; i++) {
+		maps[i] = new Array(mapWidth);
 	}
+
+
 
 	originX = 540;
 	originY = 220;
-	for (i = 0; i < 4; i++) {
-		for (j = 0; j < 4; j++) {
-			img = imageNumber(parseInt(data[i][j]));
+	for (i = 0; i < mapHeight; i++) {
+		for (j = 0; j < mapWidth; j++) {
+			var terrain = parseInt(data[i][j]);
+			blockMaps[i][j] = terrain === 2 ? 1 : 0;
+			img = imageNumber(terrain);
 			maps[i][j] = new createjs.Bitmap(img);
 			maps[i][j].name = i + "," + j;
 			maps[i][j].x = (j-i) * 65 + 540;
@@ -612,13 +747,14 @@ function drawMap(data) {
 			maps[i][j].addEventListener("mouseover",mouveOver);
 			maps[i][j].addEventListener("mouseout", mouseOut);
 			maps[i][j].addEventListener("click", function(event) {
-				if (isDisplayingMenu && !isInHighlight) destroyMenu();
+				clearSelectionEffects();
 			});
 			stage.addChild(maps[i][j]);
 		}
 	}
+	console.log(blockMaps);
 }
-var tile;
+
 	function mouseOut(evt){
 		stage.removeChild(tile);
 		stage.update();
@@ -642,6 +778,9 @@ createjs.Ticker.addEventListener("tick", update);
 createjs.Ticker.setFPS(30);
 
 function update() {
+	if (showingDamage === true){
+		demageEffect();
+	}
 	if (movingPlayer === true) {
 		movePlayer();
 	}
@@ -655,12 +794,22 @@ function update() {
 function imageNumber(number) {
 	switch (number) {
 		case 0 :
-			return "graphics/ground_texture/mud.png";
+			return "graphics/tile/grass.png";
 		case 1 :
-			return "graphics/ground_texture/path.png";
+			return "graphics/tile/mud.png";
 		case 2 :
-			return "graphics/ground_texture/water.png";
-		default :
+			return "graphics/tile/stone_bridge.png";
+		case 3 :
+			return "graphics/tile/stone_bridge2.png";
+		case 4 :
+			return "graphics/tile/stone_ground.png";
+		case 5 :
+			return "graphics/tile/water.png";
+		case 6 :
+			return "graphics/tile/wood_bridge.png";
+		case 7 :
+			return "graphics/tile/wood_bridge2.png";
+		default:
 			return "error";
 	}
 }
