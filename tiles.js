@@ -12,6 +12,9 @@ var team = 1;
 var path = [];
 var highlighted = [];
 var units = [];
+var maps;
+var blockMap;
+var tile;
 
 var moveButton;
 var attackButton;
@@ -59,9 +62,8 @@ function initGame() {
 
 				// In this case, we are selecting the unit to be attacked
 				if (selectedCharacter != unit && isAttacking) {
-					// console.log("attacker: " + selectedCharacter.column + " " + selectedCharacter.row);
 					$.each(highlighted, function(i, coord) {
-						if (unit.row === coord.column && unit.column === coord.row) {
+						if (unit.row === coord.row && unit.column === coord.column) {
 							attack(selectedCharacter, unit);
 							clearSelectionEffects();
 						}
@@ -106,6 +108,8 @@ function initGame() {
 
 			// Adding the unit to the list of units in the game
 			units.push(unit);
+
+			blockMaps[unit.row][unit.column] = 1;
 
 			// Add the unit and its hp bar to the stage
 			stage.addChild(unit);
@@ -568,7 +572,7 @@ function findReachableTiles(x, y, range, isMoving) {
 				if (nx < 0 || nx >= mapHeight || ny < 0 || ny >= mapWidth) continue;
 
 				// Terrain check
-				if (parseInt(that.mapData[nx][ny]) == 2 && isMoving) continue;
+				if (blockMaps[nx][ny] != 0 && isMoving) continue;
 
 				// bounds and obstacle check here
 				if ($.inArray(nx * mapWidth + ny, marked) === -1) {
@@ -593,19 +597,30 @@ function findReachableTiles(x, y, range, isMoving) {
 }
 
 
-var maps = new Array(4);
+
 
 
 function drawMap(data) {
-	for (var i = 0; i < 4; i++) {
-		maps[i] = new Array(4);
+	maps = new Array(mapHeight);
+	for (var i = 0; i < mapHeight; i++) {
+		maps[i] = new Array(mapWidth);
 	}
+
+	blockMaps = new Array(mapHeight);
+	for (var i = 0; i < mapHeight; i++) {
+		blockMaps[i] = new Array(mapWidth);
+	}
+
+
+
 
 	originX = 540;
 	originY = 220;
-	for (i = 0; i < 4; i++) {
-		for (j = 0; j < 4; j++) {
-			img = imageNumber(parseInt(data[i][j]));
+	for (i = 0; i < mapHeight; i++) {
+		for (j = 0; j < mapWidth; j++) {
+			var terrain = parseInt(data[i][j]);
+			blockMaps[i][j] = terrain == 2 ? 1 : 0;
+			img = imageNumber(terrain);
 			maps[i][j] = new createjs.Bitmap(img);
 			maps[i][j].name = i + "," + j;
 			maps[i][j].x = (j-i) * 65 + 540;
@@ -615,13 +630,13 @@ function drawMap(data) {
 			maps[i][j].addEventListener("mouseover",mouveOver);
 			maps[i][j].addEventListener("mouseout", mouseOut);
 			maps[i][j].addEventListener("click", function(event) {
-				if (isDisplayingMenu && !isInHighlight) destroyMenu();
+				clearSelectionEffects();
 			});
 			stage.addChild(maps[i][j]);
 		}
 	}
 }
-var tile;
+
 	function mouseOut(evt){
 		stage.removeChild(tile);
 		stage.update();
