@@ -44,7 +44,13 @@ function initGame() {
 		that.mapData = data['main'];
 		mapHeight = parseInt(data.map_dimensions.height);
 		mapWidth = parseInt(data.map_dimensions.width);
-		// console.log(mapHeight + "blah" + mapWidth);
+		blockMaps = new Array(mapHeight);
+		for (var i = 0; i < mapHeight; i++) {
+			blockMaps[i] = new Array(mapWidth);
+			for (var j = 0; j < mapWidth; j++) {
+				blockMaps[i][j] = 0;
+			}
+		}
 		
 		that.drawMap(that.mapData);
 
@@ -115,7 +121,7 @@ function initGame() {
 			// Adding the unit to the list of units in the game
 			units.push(unit);
 
-			blockMaps[unit.row][unit.column] = 1;
+			blockMaps[unit.column][unit.row] = 1;
 
 			// Add the unit and its hp bar to the stage
 			stage.addChild(unit);
@@ -190,6 +196,7 @@ function updateHP_bar(unit){
 	if (getHealth(unit) <= 0){
 		stage.removeChild(unit);
 		stage.removeChild(unit.hp_bar);
+		blockMaps[unit.column][unit.row] = 0;
 	} else {
 		unit.hp_bar.graphics.beginFill("#ff0000").drawRect(unit.x - 40, unit.y - 120, 80, 10);
 		unit.hp_bar.graphics.beginFill("#00ff00").drawRect(unit.x - 40, unit.y - 120, (getHealth(unit) / getMaxHealth(unit)) * 80, 10);
@@ -395,13 +402,15 @@ function drawRange(reachable, isMoving) {
 		bmp.row = value[1];
 		if (isMoving) {
 			bmp.addEventListener("click", function(event) {
-				var fromX = selectedCharacter.column;
-				var fromY = selectedCharacter.row;
-				findPath(fromX, fromY, value[0], value[1]);
-				move();
-				selectedCharacter.column = value[0];
-				selectedCharacter.row = value[1];
-				clearSelectionEffects();
+			var fromX = selectedCharacter.column;
+			var fromY = selectedCharacter.row;
+			findPath(fromX, fromY, value[0], value[1]);
+			blockMaps[selectedCharacter.column][selectedCharacter.row] = 0;
+			move();
+			selectedCharacter.column = value[0];
+			selectedCharacter.row = value[1];
+			blockMaps[selectedCharacter.column][selectedCharacter.row] = 1;
+			clearSelectionEffects();
 			});
 		} else {
 			
@@ -623,7 +632,7 @@ function findPath(fromX, fromY, toX, toY) {
 				if (nx < 0 || nx >= mapHeight || ny < 0 || ny >= mapWidth) continue;
 
 				// Terrain check
-				if (parseInt(that.mapData[nx][ny]) == 2) continue;
+				if (blockMaps[nx][ny] === 1) continue;
 
 				// bounds and obstacle check here
 				if (vis[nx * mapWidth + ny] === false) {
@@ -719,12 +728,6 @@ function drawMap(data) {
 		maps[i] = new Array(mapWidth);
 	}
 
-	blockMaps = new Array(mapHeight);
-	for (var i = 0; i < mapHeight; i++) {
-		blockMaps[i] = new Array(mapWidth);
-	}
-
-
 
 
 	originX = 540;
@@ -732,7 +735,7 @@ function drawMap(data) {
 	for (i = 0; i < mapHeight; i++) {
 		for (j = 0; j < mapWidth; j++) {
 			var terrain = parseInt(data[i][j]);
-			blockMaps[i][j] = terrain == 2 ? 1 : 0;
+			blockMaps[i][j] = terrain === 2 ? 1 : 0;
 			img = imageNumber(terrain);
 			maps[i][j] = new createjs.Bitmap(img);
 			maps[i][j].name = i + "," + j;
@@ -748,6 +751,7 @@ function drawMap(data) {
 			stage.addChild(maps[i][j]);
 		}
 	}
+	console.log(blockMaps);
 }
 
 	function mouseOut(evt){
