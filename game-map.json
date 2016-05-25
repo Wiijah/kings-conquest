@@ -17,7 +17,7 @@
 		"king": {
 			"address": "graphics/unit/king/king!.png",
 			"hp" : "40",
-			"max_hp" : "80",
+			"max_hp" : "400",
 			"attack" : "20",
 			"skill": "RUN AWAY",
 			"skill_no": 0,
