@@ -45,7 +45,7 @@
 			"max_hp" : "80",
 			"attack" : "20",
 			"skill": "RUN AWAY",
-			"skill_no": 1,
+			"skill_no": 4,
 			"luck":"0.7",
 			"x" : "0",
 			"y" : "2",

@@ -11,6 +11,7 @@ var team = 0;
 
 var path = [];
 var highlighted = [];
+var sub_highlighted = [];
 var units = [];
 var maps;
 var blockMap;
@@ -278,7 +279,7 @@ function showActionMenuNextToPlayer(unit) {
 	moveButton = createClickableImage(moveSource, unit.x + 45, unit.y - 140, function() {
 		if (unit.canMove) {
 			undoHighlights();
-			drawRange(findReachableTiles(unit.column, unit.row, unit.moveRange, true), true);
+			drawRange(findReachableTiles(unit.column, unit.row, unit.moveRange, true), 0);
 		}
 	});
 
@@ -288,7 +289,7 @@ function showActionMenuNextToPlayer(unit) {
 		if (unit.canAttack) {
 			undoHighlights();
 			isAttacking = true;
-			drawRange(findReachableTiles(unit.column, unit.row, unit.attackRange, false), false);
+			drawRange(findReachableTiles(unit.column, unit.row, unit.attackRange, false), 1);
 		}
 	});
 
@@ -360,7 +361,7 @@ function cast(skillNo) {
 
 			isAttacking = true;
 			undoHighlights();
-			drawRange(findReachableTiles(selectedCharacter.column, selectedCharacter.row, selectedCharacter.attackRange, false), false);
+			drawRange(findReachableTiles(selectedCharacter.column, selectedCharacter.row, selectedCharacter.attackRange, false), 1);
 			break;
 	    case 3: // Warrior's skill
 	    	undoHighlights();
@@ -385,8 +386,8 @@ function cast(skillNo) {
 
 	    	break;
 	    case 4: // Wizard's skill
-	    	
-
+	    	drawRange(findReachableTiles(selectedCharacter.column, selectedCharacter.row, selectedCharacter.attackRange, false), 2);
+			
 	}
 }	
 
@@ -405,20 +406,20 @@ function rcToCoord(x, y) {
 	return result;
 }
 
-function drawRange(reachable, isMoving) {
+function drawRange(reachable, typeOfRange) {
 
 	destroyMenu();
 
 	$.each(reachable, function(i, value) {
-		img = isMoving ? "graphics/green_tile.png" : "graphics/red_tile.png";
-		bmp = new createjs.Bitmap(img);
+		img = (typeOfRange == 0) ? "graphics/green_tile.png" : "graphics/red_tile.png";
+		var bmp = new createjs.Bitmap(img);
 		bmp.x = (value[1]-value[0]) * 65 + 540;
 		bmp.y = (value[1]+value[0]) * 32.5 + 220;
 		bmp.regX = 65;
 		bmp.regY = 32.5;
 		bmp.column = value[0];
 		bmp.row = value[1];
-		if (isMoving) {
+		if (typeOfRange == 0) {
 			bmp.addEventListener("click", function(event) {
 				var fromX = selectedCharacter.column;
 				var fromY = selectedCharacter.row;
@@ -428,8 +429,7 @@ function drawRange(reachable, isMoving) {
 				selectedCharacter.row = value[1];
 				clearSelectionEffects();
 			});
-		} else {
-			
+		} else if (typeOfRange == 1) {
 			$.each(units, function(i, unit) {
 				if (unit.column == value[0] && unit.row == value[1] &&
 						selectedCharacter.team != unit.team){
@@ -438,8 +438,43 @@ function drawRange(reachable, isMoving) {
 						selectedCharacter.attack = selectedCharacter.base_attack;
 						clearSelectionEffects();
 					});
-
 				}
+			});
+		} else if (typeOfRange == 2) {
+			bmp.addEventListener("click", function(event) {
+				$.each(units, function(i, unit) {
+					if (unit.column == bmp.column && unit.row == bmp.row) {
+						attack(selectedCharacter, unit);
+					}
+					if (unit.column == bmp.column
+						&& (unit.row == bmp.row-1 || unit.row == bmp.row+1)) {
+						attack(selectedCharacter, unit);
+					}
+					if (unit.row == bmp.row
+						&& (unit.column == bmp.column-1 || unit.column == bmp.column+1)) {
+						attack(selectedCharacter, unit);
+					}
+					clearSelectionEffects();
+				});
+			});
+			bmp.addEventListener("mouseover", function(event) {
+				var tiles = getSurroundingTiles(bmp.column, bmp.row);
+				$.each(tiles, function(i, tile) {
+					var sub_bmp = new createjs.Bitmap("graphics/green_tile.png");
+					sub_bmp.x = (tile[1]-tile[0]) * 65 + 540;
+					sub_bmp.y = (tile[1]+tile[0]) * 32.5 + 220;
+					sub_bmp.regX = 65;
+					sub_bmp.regY = 32.5;
+					stage.addChild(sub_bmp);
+					sub_highlighted.push(sub_bmp);
+				});
+				stage.update();
+			});
+			bmp.addEventListener("mouseout", function(event) {
+				$.each(sub_highlighted, function(i, tile) {
+					stage.removeChild(tile);
+				});
+				stage.update();
 			});
 		}
 		stage.addChild(bmp);
@@ -453,6 +488,24 @@ function drawRange(reachable, isMoving) {
 	});
 	isInHighlight = true;
 	changed = true;
+}
+
+function getSurroundingTiles(col, row) {
+	var result = [];
+	result.push([col,row]);
+	if (col > 0) {
+		result.push([col-1,row]);
+	}
+	if (col < mapWidth-1) {
+		result.push([col+1,row]);
+	}
+	if (row > 0) {
+		result.push([col,row-1]);
+	}
+	if (row < mapHeight-1) {
+		result.push([col,row+1]);
+	}
+	return result
 }
 
 function getRandom(luck){
@@ -558,6 +611,9 @@ function undoHighlights() {
 	$.each(highlighted, function(i, tile) {
 		stage.removeChild(tile);
 	});
+	$.each(sub_highlighted, function(i, tile) {
+		stage.removeChild(tile);
+	})
 	isInHighlight = false;
 	highlighted = [];
 	changed = true;
