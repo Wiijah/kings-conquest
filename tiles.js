@@ -58,13 +58,24 @@ function initGame() {
 		units = [];
 
 		$.each(data.characters, function(i, value) {
-			var unit = new createjs.Bitmap(value.address);
+			var spriteSheet = new createjs.SpriteSheet({
+          	"images": [value.address],
+          	"frames": {"regX": +10, "height": 142, "count": 2, "regY": -20, "width": 113 },
+          	"animations": {
+            	"stand":[0,1]
+          	},
+          	framerate: 2
+        	});
+
+
+
+
+			var unit = new createjs.Sprite(spriteSheet, "stand");
 			unit.addEventListener("click", function(event) {
 				if (!movingPlayer && !isAttacking) {
 					clearSelectionEffects();
 					selectedCharacter = unit;
 					showActionMenuNextToPlayer(unit);
-
 					displayStats(value);
 				}
 
@@ -81,7 +92,8 @@ function initGame() {
 
 				changed = true;
 			});
-
+			createjs.Ticker.timingMode = createjs.Ticker.RAF;
+   			createjs.Ticker.addEventListener("tick", stage);
 			// Configure unit coordinates
 			unit.hp = value.hp;
 			unit.max_hp = value.max_hp;
