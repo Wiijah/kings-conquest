@@ -98,8 +98,10 @@ function initGame() {
 
 			// Configure the hp bar of the unit
 			hp_bar = new createjs.Shape();
-			hp_bar.graphics.beginFill("#ff0000").drawRect(unit.x - 40, unit.y - 120, 80, 10);
-			hp_bar.graphics.beginFill("#00ff00").drawRect(unit.x - 40, unit.y - 120, (parseInt(getHealth(value))/parseInt(getMaxHealth(value))) * 80, 10);
+			hp_bar.x = unit.x - 40;
+			hp_bar.y = unit.y - 120;
+			hp_bar.graphics.beginFill("#ff0000").drawRect(0, 0, 80, 10);
+			hp_bar.graphics.beginFill("#00ff00").drawRect(0, 0, (parseInt(getHealth(value))/parseInt(getMaxHealth(value))) * 80, 10);
 			unit.hp_bar = hp_bar;
 
 
@@ -116,7 +118,7 @@ function initGame() {
 			// Adding the unit to the list of units in the game
 			units.push(unit);
 
-			blockMaps[unit.row][unit.column] = 1;
+			blockMaps[unit.column][unit.row] = 1;
 
 			// Add the unit and its hp bar to the stage
 			stage.addChild(unit);
@@ -192,8 +194,9 @@ function updateHP_bar(unit){
 		stage.removeChild(unit);
 		stage.removeChild(unit.hp_bar);
 	} else {
-		unit.hp_bar.graphics.beginFill("#ff0000").drawRect(unit.x - 40, unit.y - 120, 80, 10);
-		unit.hp_bar.graphics.beginFill("#00ff00").drawRect(unit.x - 40, unit.y - 120, (getHealth(unit) / getMaxHealth(unit)) * 80, 10);
+		unit.hp_bar.graphics.clear();
+		unit.hp_bar.graphics.beginFill("#ff0000").drawRect(0, 0, 80, 10);
+		unit.hp_bar.graphics.beginFill("#00ff00").drawRect(0, 0, (getHealth(unit) / getMaxHealth(unit)) * 80, 10);
 	}
 }
 
