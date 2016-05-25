@@ -103,6 +103,15 @@ ul, ol {
 /* Input styles */
 
 /* Chatroom */
+.chat_red {
+  color: #E03B3B;
+}
+.chat_blue {
+  color: #3B7AE0;
+}
+.chat_event {
+  color: #73FF64;
+}
 .play_chatroom {
   margin-bottom: 10px;
 }

@@ -20,7 +20,7 @@ $result = $db->query("SELECT * FROM room_participants JOIN users ON room_partici
 
 $comma = "";
 while ($player = $result->fetch_object()) {
-  $out .= $comma.'{"player": "'.$player->username.'", "colour": "'.$player->colour.'"}';
+  $out .= $comma.'{"player": "'.$player->username.'", "colour": "'.$player->colour.'", "state": "'.$player->state.'"}';
   $comma = ",";
 }
 
