@@ -22,17 +22,18 @@ if (!$participant = $result->fetch_object()) { //user already left
   die('{"kc_success":""}');
 }
 
-/* Leave the game */
-$db->query("UPDATE room_participants SET event = 'left' WHERE user_id = '{$user->id}'");
 
 /* Tell everyone you left */
 $message = $user->username." left the game.";
 $db->query("INSERT INTO chat (user, message, room_id, chat_type) VALUES
     ('{$user->id}', '{$message}', '{$room_id}', 'event')");
 
-/* Delete room if owner */
+/* Delete room and room participant records if owner */
 if ($participant->state == 'owner') {
-  $db->query("UPDATE rooms SET event = 'ended' WHERE room_id = {$room_id}");
+  $db->query("UPDATE rooms SET state = 'deleted' WHERE room_id = {$room_id}");
+  $db->query("DELETE FROM room_participants WHERE room_id = {$room_id}");
+} else { /* Otherwise, leave the game without deleting the room */
+  $db->query("UPDATE room_participants SET event = 'left' WHERE user_id = '{$user->id}'");
 }
 
 /* Success */

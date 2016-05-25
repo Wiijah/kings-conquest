@@ -372,12 +372,42 @@ function drawRange(reachable, isMoving) {
 	changed = true;
 }
 
+function getRandom(luck){
+  var num = Math.random();
+  if(num < (luck / 100)) return 2;  
+  else return 1;  
+}
 
+function showDamage(unit, critical, damage){
+	var damageBackground = new createjs.Shape();
+	if (critical == 2) {
+		damageBackground.graphics.beginFill("#ffeb00").drawRect(unit.x - 10, unit.y - 50, 40, 20);
+		var damageText = new createjs.Text(damage, "20px Arial", "#000000");
+	} else {
+		damageBackground.graphics.beginFill("#ff00000").drawRect(unit.x - 10, unit.y - 50, 40, 20);
+		var damageText = new createjs.Text(damage, "20px Arial", "#000000");
+	}
+	damageText.x = unit.x;
+	damageText.y = unit.y - 50;
+	damageText.textBasline = "alphabetic";
+
+	stage.addChild(damageBackground);
+	stage.addChild(damageText);
+	stage.update();
+	setTimeout(function (){
+		stage.removeChild(damageBackground);
+		stage.removeChild(damageText);
+		stage.update();
+	}, 2000);
+}
 
 function attack(attacker, target){
 	// console.log("target hp: " + target.hp);
 	// console.log("attack target: " + target.column +","+ target.row);
-	target.hp -= attacker.attack;
+	var criticalHit = getRandom(attacker.luck);
+	var damage = attacker.attack * criticalHit
+	showDamage(target, criticalHit, damage);
+	target.hp -= damage;
 	// console.log("attack attacker: " + attacker.column +","+ attacker.row);
 	// console.log("target hp: " + target.hp);
 	updateHP_bar(target);
