@@ -9,7 +9,7 @@ $room_id = secureStr($_POST['room_id']);
 
 $result = $db->query("SELECT * FROM rooms WHERE room_id = {$room_id}");
 $room = $result->fetch_object();
-if ($result->num_rows == 0) {
+if ($result->num_rows == 0) { //room no longer exists
   die('{"kc_success":""}');
 }
 
@@ -18,12 +18,12 @@ if ($room->state != 'pregame') {
 }
 
 $result = $db->query("SELECT * FROM room_participants WHERE user_id = '{$user->id}' AND event = ''");
-if (!$participant = $result->fetch_object()) {
+if (!$participant = $result->fetch_object()) { //user already left
   die('{"kc_success":""}');
 }
 
 /* Leave the game */
-$db->query("UPDATE room_participants SET event = 'left'");
+$db->query("UPDATE room_participants SET event = 'left' WHERE user_id = '{$user->id}'");
 
 /* Tell everyone you left */
 $message = $user->username." left the game.";

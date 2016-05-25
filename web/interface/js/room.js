@@ -1,6 +1,9 @@
 
 $(document).ready(function() {
   room_refresh_periodically();
+  $('body').on('click', '#btn_leave', function() {
+    room_leave();
+  });
 });
 
 function room_refresh_periodically() {
@@ -9,7 +12,8 @@ function room_refresh_periodically() {
 }
 
 function room_refresh() {
-  $.quickPost("ajax/room_get", {id: room_id}, function(data, status){
+  quickPost("ajax/room_get", {id: room_id}, function(data, status){
+    if (session_expired) return;
     var players = data.players;
     console.log(data);
     var players_html = '<tr><th>#</th><th>Player</th><th>Colour</th></tr>';
@@ -22,7 +26,7 @@ function room_refresh() {
 }
 
 function room_leave() {
-  $.quickPost("ajax/room_leave", {id: room_id}, function(data, status){
-    
+  quickPost("ajax/room_leave", {room_id: room_id}, function(data, status) {
+    window.location.href = 'index';
   });
 }
