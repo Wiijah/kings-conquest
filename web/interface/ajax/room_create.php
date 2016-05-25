@@ -30,8 +30,8 @@ $db->query("INSERT INTO room_participants (user_id, room_id, colour) VALUES
 
 // create the event that you joined the room
 $message = "{$user->username} joined the room.";
-$query = "INSERT INTO chat (user, message, room_id, chat_type) VALUES
-    ('{$user->id}', '{$message}', '{$room_id}', 'event')";
+$db->query("INSERT INTO chat (user, message, room_id, chat_type) VALUES
+    ('{$user->id}', '{$message}', '{$room_id}', 'event')");
 
 echo $AJAX_SUCCESS;
 ?>

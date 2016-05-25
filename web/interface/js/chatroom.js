@@ -27,10 +27,11 @@ function chatroom_refresh_messages() {
   quickPost("ajax/chatroom_get", {id: lastID, room: room_id}, function(data, status){
     if (session_expired) return;
     console.log(session_expired);
+
     for (var i = 0; i < data.length; i++) {
         concatToChatroom(data[i]);
     }
-    // if new data has arrived, then update lastID and automatically scroll to bottom of chat
+      // if new data has arrived, then update lastID and automatically scroll to bottom of chat
     if (data.length != 0) {
       lastID = data[data.length - 1].id;
       $("#play_chatroom_messages").animate({ scrollTop: $("#play_chatroom_messages")[0].scrollHeight }, chatScrollSpeed);

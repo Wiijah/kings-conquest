@@ -33,11 +33,7 @@ var max_players = <?php echo $max_players; ?>;
 <?php echo genTitle("Room Chat"); ?>
 <div class="play_chatroom box">
 <div id="play_chatroom_messages">
-<?php
-for ($i = 0; $i < 50; $i++) {
-  //echo "<span class='play_chatroom_user'>xXDragonSlayer52:</span> <span class='play_chatroom_text'>Hello everyone! I am a new player!</span><br />";
-}
-?>
+
 </div> <!-- play_chatroom_messages -->
 <div class="play_chatroom_footer">
 <input type="text" id="play_chatroom_msg" placeholder="Type your message here and press enter to send." />
@@ -77,7 +73,7 @@ if ($isOwner) {
   echo "<div class='play_btn btn'>Ready</div>";
 }
 ?>
-<div class="play_btn btn">Leave Room</div>
+<div class="play_btn btn" id="btn_leave">Leave Room</div>
 
 
 </div> <!-- play_right -->
