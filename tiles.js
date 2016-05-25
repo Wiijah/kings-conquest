@@ -29,13 +29,14 @@ var isInHighlight = false;
 var changed = false;
 var movingPlayer = false;
 var isAttacking = false;
+var currentGold;
 var turn = 0;
 
 function resize() {
-	stage.canvas.width = window.innerWidth;
-	stage.canvas.height = window.innerHeight;
-	drawGame();
-	drawStatsDisplay();
+	//stage.canvas.width = window.innerWidth;
+	//stage.canvas.height = window.innerHeight;
+	//drawGame();
+	//drawStatsDisplay();
 }
 
 function initGame() {
@@ -136,7 +137,7 @@ function initGame() {
 	drawStatsDisplay();
 	changed = true;
 
-	window.addEventListener('resize', resize, false);
+	//window.addEventListener('resize', resize, false);
 }
 
 function getHealth(unit) {
@@ -822,12 +823,22 @@ function update() {
 function imageNumber(number) {
 	switch (number) {
 		case 0 :
-			return "graphics/ground_texture/mud.png";
+			return "graphics/tile/grass.png";
 		case 1 :
-			return "graphics/ground_texture/path.png";
+			return "graphics/tile/mud.png";
 		case 2 :
-			return "graphics/ground_texture/water.png";
-		default :
+			return "graphics/tile/stone_bridge.png";
+		case 3 :
+			return "graphics/tile/stone_bridge2.png";
+		case 4 :
+			return "graphics/tile/stone_ground.png";
+		case 5 :
+			return "graphics/tile/water.png";
+		case 6 :
+			return "graphics/tile/wood_bridge.png";
+		case 7 :
+			return "graphics/tile/wood_bridge2.png";
+		default:
 			return "error";
 	}
 }
