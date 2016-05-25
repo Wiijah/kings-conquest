@@ -2,7 +2,6 @@ var stage = new createjs.Stage("demoCanvas");
 var shouldMove = false;
 
 var that = this;
-var movingPlayer = false;
 var team = 1;
 
 var path = [];
@@ -22,6 +21,8 @@ var statsDisplay = new createjs.Container();
 var isDisplayingMenu = false;
 var isInHighlight = false;
 var changed = false;
+var movingPlayer = false;
+var isAttacking = false;
 var turn = 0;
 
 function resize() {
@@ -46,13 +47,24 @@ function initGame() {
 		$.each(data.characters, function(i, value) {
 			var unit = new createjs.Bitmap(value.address);
 			unit.addEventListener("click", function(event) {
-				if (!movingPlayer) {
+				if (!movingPlayer && !isAttacking) {
 					clearSelectionEffects();
 					selectedCharacter = unit;
 					showActionMenuNextToPlayer(unit);
 				}
-				console.log(i);
-				// drawRange(findReachableTiles(parseInt(value.x), parseInt(value.y), parseInt(value.moveRange), true));
+
+
+				// In this case, we are selecting the unit to be attacked
+				if (selectedCharacter != unit && isAttacking) {
+					// console.log("attacker: " + selectedCharacter.column + " " + selectedCharacter.row);
+					$.each(highlighted, function(i, coord) {
+						if (unit.row === coord.column && unit.column === coord.row) {
+							attack(selectedCharacter, unit);
+							clearSelectionEffects();
+						}
+					});
+				}
+
 				displayStats(value);
 				changed = true;
 			});
@@ -210,6 +222,7 @@ function showActionMenuNextToPlayer(unit) {
 	attackButton = createClickableImage(attackSource, unit.x + 49, unit.y - 111, function() {
 		if (unit.canAttack) {
 			undoHighlights();
+			isAttacking = true;
 			drawRange(findReachableTiles(unit.column, unit.row, unit.attackRange, false), false);
 		}
 	});
@@ -272,6 +285,8 @@ function drawRange(reachable, isMoving) {
 		bmp.y = (value[1]+value[0]) * 32.5 + 220;
 		bmp.regX = 65;
 		bmp.regY = 32.5;
+		bmp.column = value[0];
+		bmp.row = value[1];
 		if (isMoving) {
 			bmp.addEventListener("click", function(event) {
 			var fromX = selectedCharacter.column;
@@ -284,15 +299,11 @@ function drawRange(reachable, isMoving) {
 			});
 		} else {
 			
-			$.each(units, function(i, name) {
-				if (name.column == value[0] && name.row == value[1] &&
-						selectedCharacter.team != name.team){
+			$.each(units, function(i, unit) {
+				if (unit.column == value[0] && unit.row == value[1] &&
+						selectedCharacter.team != unit.team){
 					bmp.addEventListener("click", function(event) {
-						attack(selectedCharacter, name, value);
-						clearSelectionEffects();
-					});
-					name.addEventListener("click", function(event) {
-						attack(selectedCharacter, name, value);
+						attack(selectedCharacter, unit);
 						clearSelectionEffects();
 					});
 
@@ -314,20 +325,24 @@ function drawRange(reachable, isMoving) {
 
 
 
-function attack(unit,opponent,value){
-	console.log("opponent hp: " + opponent.hp);
-	opponent.hp -= unit.attack;
-	console.log("attack unit: " + value[0] +","+ value[1]);
-	console.log("opponent hp: " + opponent.hp);
-	updateHP_bar(opponent);
-	unit.outOfMoves = 1;
-	unit.canAttack = 0;
+function attack(attacker, target){
+	// console.log("target hp: " + target.hp);
+	// console.log("attack target: " + target.column +","+ target.row);
+	target.hp -= attacker.attack;
+	// console.log("attack attacker: " + attacker.column +","+ attacker.row);
+	// console.log("target hp: " + target.hp);
+	updateHP_bar(target);
+	attacker.outOfMoves = 1;
+	attacker.canAttack = 0;
+	isAttacking = false;
+	changed = true;
 }
 
 function clearSelectionEffects() {
 	destroyMenu();
     undoHighlights();
     destroyStats();
+    isAttacking = false;
 }
 
 function destroyStats() {
@@ -351,12 +366,13 @@ function destroyMenu() {
 }
 
 function undoHighlights() {
-	console.log(isInHighlight);
+	// console.log(isInHighlight);
 	if (!isInHighlight) return;
 	$.each(highlighted, function(i, tile) {
 		stage.removeChild(tile);
 	});
 	isInHighlight = false;
+	highlighted = [];
 	changed = true;
 }
 
@@ -588,7 +604,7 @@ var tile;
 		tile.y = 100;
 		stage.addChild(tile);
 		stage.update();
-		console.log(i + "," + j);
+		// console.log(i + "," + j);
 
 	}
 
