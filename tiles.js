@@ -201,7 +201,6 @@ function getLuck(unit) {
 	});
 	return base;
 }
-
 function updateHP_bar(unit){
 	stage.update();
 	if (getHealth(unit) <= 0){
@@ -341,7 +340,8 @@ function showActionMenuNextToPlayer(unit) {
     isDisplayingMenu = true;
     changed = true;
 }	
-
+var secondAttack;
+var firstAttackDone;
 function cast(skillNo, unit) {
 	switch (skillNo) {
 		case 0: // King's skill
@@ -369,12 +369,19 @@ function cast(skillNo, unit) {
 			// display updated json
 			break;
 		case 1: // Archer's skill
-		    var atk = selectedCharacter.attack;
-		    selectedCharacter.attack = 2 * atk;
+		 //    var atk = selectedCharacter.attack;
+		 //    selectedCharacter.attack = 2 * atk;
 
-			isAttacking = true;
+			// isAttacking = true;
+			// undoHighlights();
+			// drawRange(findReachableTiles(selectedCharacter.column, selectedCharacter.row, selectedCharacter.attackRange, false), 1);
+		
 			undoHighlights();
-			drawRange(findReachableTiles(selectedCharacter.column, selectedCharacter.row, selectedCharacter.attackRange, false), 1);
+			isAttacking = true;
+			secondAttack = true;
+			secondAttackDone = false;
+			drawRange(findReachableTiles(unit.column, unit.row, unit.attackRange, false), 1);
+			
 			break;
 	    case 3: // Warrior's skill
 	    	undoHighlights();
@@ -594,6 +601,14 @@ function attack(attacker, target){
 		attacker.outOfMoves = 1;
 		attacker.canAttack = 0;
 		isAttacking = false;
+
+		// check for archer skill
+		if (firstAttackDone){
+			secondAttack = false;
+		}
+		if (secondAttack) {
+			firstAttackDone = true;
+		}
 		changed = true;
 	} 
 }
@@ -902,6 +917,12 @@ createjs.Ticker.addEventListener("tick", update);
 createjs.Ticker.setFPS(30);
 
 function update() {
+	//console.log(secondAttack +","+!firstAttackDone);
+	if (secondAttack && firstAttackDone) {
+		undoHighlights();
+		isAttacking = true;
+		drawRange(findReachableTiles(selectedCharacter.column, selectedCharacter.row, selectedCharacter.attackRange, false), 1);
+	}
 	if (showingDamage === true){
 		demageEffect();
 	}
