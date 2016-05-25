@@ -1,14 +1,17 @@
-var stage = new createjs.Stage("demoCanvas");
-var shouldMove = false;
 
+var ICON_SCALE_FACTOR = 0.65;
+var MOVEMENT_STEP = 6.5
+
+
+var stage = new createjs.Stage("demoCanvas");
 var that = this;
 var team = 1;
+
+
 
 var path = [];
 var highlighted = [];
 var units = [];
-var ICON_SCALE_FACTOR = 0.65;
-var MOVEMENT_STEP = 6.5
 
 var moveButton;
 var attackButton;
