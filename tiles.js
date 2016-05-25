@@ -29,6 +29,7 @@ var isInHighlight = false;
 var changed = false;
 var movingPlayer = false;
 var isAttacking = false;
+var currentGold;
 var turn = 0;
 
 function resize() {

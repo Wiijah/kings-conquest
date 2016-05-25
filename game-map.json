@@ -13,6 +13,7 @@
 		"width": "7",
 		"height": "8"
 	},
+	"currentGold": 500,
 	"characters": {
 		"king": {
 			"address": "graphics/unit/king/king!.png",
