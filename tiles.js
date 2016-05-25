@@ -71,6 +71,9 @@ function initGame() {
 			unit.scaleX = 0.7;
 			unit.scaleY = 0.7;
 			unit.team = value.team;
+			unit.skill = value.skill;
+			unit.address = value.address;
+			unit.skill_no = value.skill_no;
 
 			// Configure the hp bar of the unit
 			hp_bar = new createjs.Shape();
@@ -218,7 +221,10 @@ function showActionMenuNextToPlayer(unit) {
 								   : "graphics/ingame_menu/skill_gray.png";
 	skillButton = createClickableImage(skillSource, unit.x + 48, unit.y - 77, function() {
 		if (unit.skillCoolDown === 0) {
-			console.log("Casting!");
+			undoHighlights();
+			unit.skillCoolDown = "3";
+			unit.outOfMoves = 1;
+			cast(unit.skill_no);
 		}
 	});
 
@@ -226,6 +232,12 @@ function showActionMenuNextToPlayer(unit) {
 	cancelButton = createClickableImage(cancelSource, unit.x + 45.5, unit.y - 47, function() {
 		clearSelectionEffects();
 	});
+
+	stage.addChild(menuBackground);
+    stage.addChild(moveButton);
+    stage.addChild(attackButton);
+    stage.addChild(skillButton);
+    stage.addChild(cancelButton);
 
 	var min = moveButton;
 	min = stage.getChildIndex(attackButton) < stage.getChildIndex(min) ? attackButton : min;
@@ -236,15 +248,50 @@ function showActionMenuNextToPlayer(unit) {
 		stage.swapChildren(menuBackground, min);
 	}
 
-	stage.addChild(menuBackground);
-    stage.addChild(moveButton);
-    stage.addChild(attackButton);
-    stage.addChild(skillButton);
-    stage.addChild(cancelButton);
+
     isDisplayingMenu = true;
     changed = true;
+}	
 
-}		
+function cast(skillNo) {
+	switch (skillNo) {
+		case 0: // King's skill
+			// display effect
+			$.each(units, function(i, value) {
+				if (value.team === selectedCharacter.team) {
+					//buff health
+					var add = Math.ceil(0.1 * parseInt(value.max_hp));
+					value.max_hp = (parseInt(value.max_hp) + add) + "";
+					value.hp = (parseInt(value.hp) + add) + "";
+					//buff dmg
+					value.attack = (parseInt(value.attack) + 5) + "";
+
+					destroyStats();
+					displayStats(value);
+
+					destroyMenu();
+					showActionMenuNextToPlayer(value);
+
+					changed = true;
+				}
+			});
+			// notify server
+
+			// display updated json
+			break;
+		case 1: // Archer's skill
+			undoHighlights();
+			drawRange(findReachableTiles(selectedCharacter.column, selectedCharacter.row, selectedCharacter.attackRange, false), false);
+
+
+			undoHighlights();
+			drawRange(findReachableTiles(selectedCharacter.column, selectedCharacter.row, selectedCharacter.attackRange, false), false);
+			break;
+	    case 2: // Wizard's skill
+	    	undoHighlights();
+
+	}
+}	
 
 // Start moving the player
 function move() {
