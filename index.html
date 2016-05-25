@@ -1,4 +1,4 @@
-<script src="https://code.createjs.com/createjs-2015.11.26.min.js"></script>
+<script src="https://code.createjs.com/easeljs-0.8.2.min.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.3/jquery.min.js"></script>
 <style type="text/css">
 	@font-face {
