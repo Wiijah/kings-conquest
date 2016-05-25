@@ -9,7 +9,20 @@ $(document).ready(function() {
   $('body').on('click', '#btn_ready', function() {
     room_ready();
   });
+  $('body').on('click', '#btn_start', function() {
+    room_start();
+  });
 });
+
+function room_start() {
+  quickPost("ajax/room_ready", {room_id: room_id, ready: 'ready'}, function(data, status) {
+    if (data.kc_error !== undefined) {
+      lightbox_alert("Error", data.kc_error);
+      return;
+    }
+    alert('Game Started!');
+  });
+}
 
 /* Makes the player ready or unready */
 function room_ready() {

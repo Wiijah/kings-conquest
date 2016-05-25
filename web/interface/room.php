@@ -68,7 +68,7 @@ var max_players = <?php echo $max_players; ?>;
 
 <?php
 if ($isOwner) {
-  echo "<div class='play_btn btn'>Start</div>";
+  echo "<div class='play_btn btn' id='btn_start'>Start</div>";
 } else {
   echo "<div class='play_btn btn' id='btn_ready' data-ready='ready'>Ready</div>";
 }
