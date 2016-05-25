@@ -22,5 +22,7 @@ function room_refresh() {
 }
 
 function room_leave() {
-  
+  $.quickPost("ajax/room_leave", {id: room_id}, function(data, status){
+    
+  });
 }

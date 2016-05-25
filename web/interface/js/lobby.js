@@ -19,6 +19,11 @@ function lobby_refresh_periodically() {
 
 function lobby_refresh() {
   $.quickPost("ajax/lobby_get", {id: room_id}, function(data, status){
+
+    if (data.kc_error !== undefined && data.kc_error == "room") {
+      window.location.href = 'room';
+      return;
+    }
     var rooms = data.rooms;
     var rooms_html = '<tr><th>Room Owner</th><th>Map</th><th>Mode</th><th>Join</th></tr>';
     for (var i = 0; i < rooms.length; i++) {

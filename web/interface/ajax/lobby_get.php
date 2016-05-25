@@ -2,6 +2,13 @@
 /* Output lobby games */
 require_once 'ajax_common.php';
 
+/* Check if user is already in a room */
+$result = $db->query("SELECT * FROM room_participants WHERE user_id = {$user->id} AND event = ''");
+if ($result->num_rows > 0) {
+  die('{"kc_error":"room"}');
+}
+
+
 $id = secureInt($_POST['id']);
 
 $out = "{";

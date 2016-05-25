@@ -41,5 +41,9 @@ function chatroom_refresh_messages() {
 }
 
 function concatToChatroom(line) {
-  $("#play_chatroom_messages").append("<span class='play_chatroom_user'>"+line.username+":</span> <span class='play_chatroom_text'>"+line.message+"</span><br />");
+  if (line.chat_type == 'message') { //normal message
+    $("#play_chatroom_messages").append("<span class='play_chatroom_user'>"+line.username+":</span> <span class='play_chatroom_text'>"+line.message+"</span><br />");
+  } else { // event
+    $("#play_chatroom_messages").append("<span class='play_chatroom_user'>"+line.message+"</span><br />");
+  }
 }
