@@ -768,10 +768,11 @@ function drawMap(data) {
 }
 
 	function mouseOut(evt){
+		stage.removeChild(highLight_tile);
 		stage.removeChild(tile);
 		stage.update();
 	}
-	
+	var highLight_tile;
 	function mouveOver(evt) {
 		stage.removeChild(tile);
 		var position = evt.target.name.split(",");
@@ -781,6 +782,14 @@ function drawMap(data) {
 		tile.x = 100;
 		tile.y = 100;
 		stage.addChild(tile);
+
+
+		highLight_tile = new createjs.Bitmap("graphics/highlight_tile.png");
+		highLight_tile.x = (j-i) * 65 + 540;
+		highLight_tile.y = (j+i) * 32.5 + 220;
+		highLight_tile.regX = 65;
+		highLight_tile.regY = 32.5;
+		stage.addChild(highLight_tile);
 		stage.update();
 		// console.log(i + "," + j);
 
