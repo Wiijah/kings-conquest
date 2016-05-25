@@ -861,8 +861,8 @@ function drawMap(data) {
 	function mouveOver(evt) {
 		stage.removeChild(tile);
 		var position = evt.target.name.split(",");
-		var i = position[0];
-		var j = position[1];
+		var i = parseInt(position[0]);
+		var j = parseInt(position[1])
 		tile = jQuery.extend({},maps[i][j]);
 		tile.x = 100;
 		tile.y = 100;
