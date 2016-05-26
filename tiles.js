@@ -11,10 +11,14 @@ var team = 0;
 
 var path = [];
 var highlighted = [];
+var sub_highlighted = [];
 var units = [];
 var maps;
 var blockMap;
-var tile;
+var tile_display;
+var highLight_tile;
+var tile_info_text;
+
 
 var moveButton;
 var attackButton;
@@ -48,6 +52,7 @@ function initGame() {
 	stage.enableMouseOver(20);
 	$.getJSON('game-map.json', function(data) {
 		that.mapData = data['main'];
+
 		mapHeight = parseInt(data.map_dimensions.height);
 		mapWidth = parseInt(data.map_dimensions.width);
 
@@ -63,6 +68,7 @@ function initGame() {
 
 		currentGold = data.currentGold;
 		drawGoldDisplay();
+
 		
 		that.drawMap(that.mapData);
 
@@ -111,8 +117,8 @@ function initGame() {
 			unit.attack = value.attack;
 			unit.base_attack = unit.attack;
 			unit.luck = value.luck;
-			unit.row = parseInt(value.y);
-			unit.column = parseInt(value.x);
+			unit.row = value.y;
+			unit.column = value.x;
 			unit.x = originX +  (value.y - value.x) * 65;
 			unit.y = value.y * 32.5 + originY + value.x * 32.5;
 			unit.regX = 56.5;
@@ -124,23 +130,26 @@ function initGame() {
 			unit.address = value.address;
 			unit.skill_no = value.skill_no;
 			unit.buffs = [];
+			unit.buff_icons = [];
 
 			// Configure the hp bar of the unit
 			hp_bar = new createjs.Shape();
-			hp_bar.graphics.beginFill("#ff0000").drawRect(unit.x - 40, unit.y - 120, 80, 10);
-			hp_bar.graphics.beginFill("#00ff00").drawRect(unit.x - 40, unit.y - 120, (parseInt(getHealth(value))/parseInt(getMaxHealth(value))) * 80, 10);
+			hp_bar.x = unit.x - 40;
+			hp_bar.y = unit.y - 90;
+			hp_bar.graphics.beginFill("#ff0000").drawRect(0, 0, 80, 10);
+			hp_bar.graphics.beginFill("#00ff00").drawRect(0, 0, (getHealth(value)/getMaxHealth(value)) * 80, 10);
 			unit.hp_bar = hp_bar;
 
 
 			// Configure move and attack range of the unit
-			unit.moveRange = parseInt(value.moveRange);
-			unit.attackRange = parseInt(value.attackRange);
+			unit.moveRange = value.moveRange;
+			unit.attackRange = value.attackRange;
 
 			// Configure action control informations
-			unit.canMove = parseInt(value.canMove);
-			unit.canAttack = parseInt(value.canAttack);
-			unit.skillCoolDown = parseInt(value.skillCoolDown);
-			unit.outOfMoves = parseInt(value.outOfMoves);
+			unit.canMove = value.canMove;
+			unit.canAttack = value.canAttack;
+			unit.skillCoolDown = value.skillCoolDown;
+			unit.outOfMoves = value.outOfMoves;
 
 			// Adding the unit to the list of units in the game
 			units.push(unit);
@@ -179,21 +188,20 @@ function initGame() {
 
 
 function getHealth(unit) {
-	var base = parseInt(unit.hp);
-	// console.log("Base :" + base);
+
+	var base = unit.hp;
 	$.each(unit.buffs, function(i, value) {
 		if (value[0] == 0) {
-			// console.log("Buff : " + value[1]);
 			base = base + value[1];
 		} // if type == health, add to base
 	});
-	// console.log("result : " + base);
+
 	return base;
 }
 
 
 function getMaxHealth(unit) {
-	var base = parseInt(unit.max_hp);
+	var base = unit.max_hp;
 	$.each(unit.buffs, function(i, value) {
 		if (value[0] == 1) {
 			base += value[1];
@@ -204,7 +212,7 @@ function getMaxHealth(unit) {
 
 
 function getAttack(unit) {
-	var base = parseInt(unit.attack);
+	var base = unit.attack;
 	$.each(unit.buffs, function(i, value) {
 		if (value[0] == 2) {
 			base += value[1];
@@ -215,7 +223,7 @@ function getAttack(unit) {
 
 
 function getLuck(unit) {
-	var base = parseInt(unit.hp);
+	var base = unit.luck;
 	$.each(unit.buffs, function(i, value) {
 		if (value[0] == 3) {
 			base += value[1];
@@ -223,23 +231,22 @@ function getLuck(unit) {
 	});
 	return base;
 }
-
 function updateHP_bar(unit){
 	stage.update();
 	if (getHealth(unit) <= 0){
 		stage.removeChild(unit);
 		stage.removeChild(unit.hp_bar);
-		blockMaps[unit.column][unit.row] = 0;
 	} else {
-		unit.hp_bar.graphics.beginFill("#ff0000").drawRect(unit.x - 40, unit.y - 120, 80, 10);
-		unit.hp_bar.graphics.beginFill("#00ff00").drawRect(unit.x - 40, unit.y - 120, (getHealth(unit) / getMaxHealth(unit)) * 80, 10);
+		unit.hp_bar.graphics.clear();
+		unit.hp_bar.graphics.beginFill("#ff0000").drawRect(0, 0, 80, 10);
+		unit.hp_bar.graphics.beginFill("#00ff00").drawRect(0, 0, (getHealth(unit) / getMaxHealth(unit)) * 80, 10);
 	}
 }
 
 function drawBottomInterface()  {
 	bottomInterface.x = 0;
-	// bottomInterface.y = stage.canvas.height - 240;
-	bottomInterface.y = 0;
+	bottomInterface.y = stage.canvas.height - 240;
+	// bottomInterface.y = 0;
 	stage.addChild(bottomInterface);
 }
 
@@ -382,7 +389,7 @@ function showActionMenuNextToPlayer(unit) {
 	moveButton = createClickableImage(moveSource, unit.x + 45, unit.y - 140, function() {
 		if (unit.canMove) {
 			undoHighlights();
-			drawRange(findReachableTiles(unit.column, unit.row, unit.moveRange, true), true);
+			drawRange(findReachableTiles(unit.column, unit.row, unit.moveRange, true), 0);
 		}
 	});
 
@@ -392,7 +399,7 @@ function showActionMenuNextToPlayer(unit) {
 		if (unit.canAttack) {
 			undoHighlights();
 			isAttacking = true;
-			drawRange(findReachableTiles(unit.column, unit.row, unit.attackRange, false), false);
+			drawRange(findReachableTiles(unit.column, unit.row, unit.attackRange, false), 1);
 		}
 	});
 
@@ -403,7 +410,7 @@ function showActionMenuNextToPlayer(unit) {
 			undoHighlights();
 			unit.skillCoolDown = "3";
 			unit.outOfMoves = 1;
-			cast(unit.skill_no);
+			cast(unit.skill_no, unit);
 		}
 	});
 
@@ -431,15 +438,16 @@ function showActionMenuNextToPlayer(unit) {
     isDisplayingMenu = true;
     changed = true;
 }	
-
-function cast(skillNo) {
+var secondAttack;
+var firstAttackDone;
+function cast(skillNo, unit) {
 	switch (skillNo) {
 		case 0: // King's skill
 			// display effect
 			$.each(units, function(i, value) {
 				if (value.team === selectedCharacter.team) {
 					//buff health
-					var add = Math.ceil(0.1 * parseInt(value.max_hp));
+					var add = Math.ceil(0.1 * value.max_hp);
 					value.buffs.push([0,add,3]);
 					value.buffs.push([1,add,3]);
 					//buff dmg
@@ -459,17 +467,49 @@ function cast(skillNo) {
 			// display updated json
 			break;
 		case 1: // Archer's skill
-		    var atk = parseInt(selectedCharacter.attack);
-		    selectedCharacter.attack = (atk * 2) + "";
+		 //    var atk = selectedCharacter.attack;
+		 //    selectedCharacter.attack = 2 * atk;
 
-			isAttacking = true;
+			// isAttacking = true;
+			// undoHighlights();
+			// drawRange(findReachableTiles(selectedCharacter.column, selectedCharacter.row, selectedCharacter.attackRange, false), 1);
+		
 			undoHighlights();
-			drawRange(findReachableTiles(selectedCharacter.column, selectedCharacter.row, selectedCharacter.attackRange, false), false);
+			isAttacking = true;
+			secondAttack = true;
+			secondAttackDone = false;
+			drawRange(findReachableTiles(unit.column, unit.row, unit.attackRange, false), 1);
+			
 			break;
-	    case 2: // Wizard's skill
+	    case 3: // Warrior's skill
 	    	undoHighlights();
-	    	
 
+	    	var found = false;
+
+	    	$.each(selectedCharacter.buffs, function(i, value) {
+	    		if (value[0] == 5) {
+	    			found = true;
+	    		}
+	    	});
+	    	
+	    	if (!found) {
+	    		selectedCharacter.buffs.push([5, 0, -1]);
+    			buff_icon = new createjs.Bitmap("graphics/buff_shield.png");
+				buff_icon.x = unit.x + 5;
+				buff_icon.y = unit.y - 70;
+				stage.addChild(buff_icon);
+	    	}
+
+
+			destroyMenu();
+			showActionMenuNextToPlayer(selectedCharacter);
+
+			changed = true;
+
+	    	break;
+	    case 4: // Wizard's skill
+	    	drawRange(findReachableTiles(selectedCharacter.column, selectedCharacter.row, selectedCharacter.attackRange, false), 2);
+			
 	}
 }	
 
@@ -488,33 +528,30 @@ function rcToCoord(x, y) {
 	return result;
 }
 
-function drawRange(reachable, isMoving) {
+function drawRange(reachable, typeOfRange) {
 
 	destroyMenu();
 
 	$.each(reachable, function(i, value) {
-		img = isMoving ? "graphics/green_tile.png" : "graphics/red_tile.png";
-		bmp = new createjs.Bitmap(img);
+		img = (typeOfRange == 0) ? "graphics/green_tile.png" : "graphics/red_tile.png";
+		var bmp = new createjs.Bitmap(img);
 		bmp.x = (value[1]-value[0]) * 65 + 540;
 		bmp.y = (value[1]+value[0]) * 32.5 + 220;
 		bmp.regX = 65;
 		bmp.regY = 32.5;
 		bmp.column = value[0];
 		bmp.row = value[1];
-		if (isMoving) {
+		if (typeOfRange == 0) {
 			bmp.addEventListener("click", function(event) {
-			var fromX = selectedCharacter.column;
-			var fromY = selectedCharacter.row;
-			findPath(fromX, fromY, value[0], value[1]);
-			blockMaps[selectedCharacter.column][selectedCharacter.row] = 0;
-			move();
-			selectedCharacter.column = value[0];
-			selectedCharacter.row = value[1];
-			blockMaps[selectedCharacter.column][selectedCharacter.row] = 1;
-			clearSelectionEffects();
+				var fromX = selectedCharacter.column;
+				var fromY = selectedCharacter.row;
+				findPath(fromX, fromY, value[0], value[1]);
+				move();
+				selectedCharacter.column = value[0];
+				selectedCharacter.row = value[1];
+				clearSelectionEffects();
 			});
-		} else {
-			
+		} else if (typeOfRange == 1) {
 			$.each(units, function(i, unit) {
 				if (unit.column == value[0] && unit.row == value[1] &&
 						selectedCharacter.team != unit.team){
@@ -523,8 +560,43 @@ function drawRange(reachable, isMoving) {
 						selectedCharacter.attack = selectedCharacter.base_attack;
 						clearSelectionEffects();
 					});
-
 				}
+			});
+		} else if (typeOfRange == 2) {
+			bmp.addEventListener("click", function(event) {
+				$.each(units, function(i, unit) {
+					if (unit.column == bmp.column && unit.row == bmp.row) {
+						attack(selectedCharacter, unit);
+					}
+					if (unit.column == bmp.column
+						&& (unit.row == bmp.row-1 || unit.row == bmp.row+1)) {
+						attack(selectedCharacter, unit);
+					}
+					if (unit.row == bmp.row
+						&& (unit.column == bmp.column-1 || unit.column == bmp.column+1)) {
+						attack(selectedCharacter, unit);
+					}
+					clearSelectionEffects();
+				});
+			});
+			bmp.addEventListener("mouseover", function(event) {
+				var tiles = getSurroundingTiles(bmp.column, bmp.row);
+				$.each(tiles, function(i, tile) {
+					var sub_bmp = new createjs.Bitmap("graphics/green_tile.png");
+					sub_bmp.x = (tile[1]-tile[0]) * 65 + 540;
+					sub_bmp.y = (tile[1]+tile[0]) * 32.5 + 220;
+					sub_bmp.regX = 65;
+					sub_bmp.regY = 32.5;
+					stage.addChild(sub_bmp);
+					sub_highlighted.push(sub_bmp);
+				});
+				stage.update();
+			});
+			bmp.addEventListener("mouseout", function(event) {
+				$.each(sub_highlighted, function(i, tile) {
+					stage.removeChild(tile);
+				});
+				stage.update();
 			});
 		}
 		stage.addChild(bmp);
@@ -538,6 +610,24 @@ function drawRange(reachable, isMoving) {
 	});
 	isInHighlight = true;
 	changed = true;
+}
+
+function getSurroundingTiles(col, row) {
+	var result = [];
+	result.push([col,row]);
+	if (col > 0) {
+		result.push([col-1,row]);
+	}
+	if (col < mapWidth-1) {
+		result.push([col+1,row]);
+	}
+	if (row > 0) {
+		result.push([col,row-1]);
+	}
+	if (row < mapHeight-1) {
+		result.push([col,row+1]);
+	}
+	return result
 }
 
 function getRandom(luck){
@@ -581,21 +671,44 @@ function showDamage(unit, critical, damage){
 		stage.update();
 	}, 750);
 }
-
+var buff_icon;
 function attack(attacker, target){
-	// console.log("target hp: " + target.hp);
-	// console.log("attack target: " + target.column +","+ target.row);
-	var criticalHit = getRandom(getLuck(attacker));
-	var damage = getAttack(attacker) * criticalHit
-	showDamage(target, criticalHit, damage);
-	target.hp -= damage;
-	// console.log("attack attacker: " + attacker.column +","+ attacker.row);
-	// console.log("target hp: " + target.hp);
-	updateHP_bar(target);
-	attacker.outOfMoves = 1;
-	attacker.canAttack = 0;
-	isAttacking = false;
-	changed = true;
+	if (attacker.team != target.team){
+		console.log("target team: " + target.team);
+		console.log("attacker team: " + attacker.team);
+		var criticalHit = getRandom(getLuck(attacker));
+		var damage = getAttack(attacker) * criticalHit
+		
+		var shield = false;
+		$.each(target.buffs, function(i, value) {
+			if (value[0] == 5) {
+				shield = true;
+				stage.removeChild(buff_icon);
+				var index = target.buffs.indexOf(value);
+				target.buffs.splice(index, 1);
+			}
+		});
+		
+		if (!shield) {
+			showDamage(target, criticalHit, damage);
+			target.hp -= damage;
+		}
+		// console.log("attack attacker: " + attacker.column +","+ attacker.row);
+		// console.log("target hp: " + target.hp);
+		updateHP_bar(target);
+		attacker.outOfMoves = 1;
+		attacker.canAttack = 0;
+		isAttacking = false;
+
+		// check for archer skill
+		if (firstAttackDone){
+			secondAttack = false;
+		}
+		if (secondAttack) {
+			firstAttackDone = true;
+		}
+		changed = true;
+	} 
 }
 
 function clearSelectionEffects() {
@@ -631,6 +744,9 @@ function undoHighlights() {
 	$.each(highlighted, function(i, tile) {
 		stage.removeChild(tile);
 	});
+	$.each(sub_highlighted, function(i, tile) {
+		stage.removeChild(tile);
+	})
 	isInHighlight = false;
 	highlighted = [];
 	changed = true;
@@ -733,7 +849,7 @@ function findPath(fromX, fromY, toX, toY) {
 				if (nx < 0 || nx >= mapHeight || ny < 0 || ny >= mapWidth) continue;
 
 				// Terrain check
-				if (blockMaps[nx][ny] === 1) continue;
+				if (that.mapData[nx][ny] == 2) continue;
 
 				// bounds and obstacle check here
 				if (vis[nx * mapWidth + ny] === false) {
@@ -829,17 +945,20 @@ function drawMap(data) {
 		maps[i] = new Array(mapWidth);
 	}
 
-
+	blockMaps = new Array(mapHeight);
+	for (var i = 0; i < mapHeight; i++) {
+		blockMaps[i] = new Array(mapWidth);
+	}
 
 	originX = 540;
 	originY = 220;
 	for (i = 0; i < mapHeight; i++) {
 		for (j = 0; j < mapWidth; j++) {
-			var terrain = parseInt(data[i][j]);
-			blockMaps[i][j] = terrain === 2 ? 1 : 0;
+			var terrain = data[i][j];
+			blockMaps[i][j] = terrain == 2 ? 1 : 0;
 			img = imageNumber(terrain);
 			maps[i][j] = new createjs.Bitmap(img);
-			maps[i][j].name = i + "," + j;
+			maps[i][j].name = i + "," + j + "," + tile_type + "," + tile_info_address;
 			maps[i][j].x = (j-i) * 65 + 540;
 			maps[i][j].y = (j+i) * 32.5 + 220;
 			maps[i][j].regX = 65;
@@ -853,24 +972,35 @@ function drawMap(data) {
 		}
 	}
 
-
 }
 
 	function mouseOut(evt){
 		stage.removeChild(highLight_tile);
-		stage.removeChild(tile);
+		stage.removeChild(tile_display);
+		stage.removeChild(tile_info_text);
 		stage.update();
 	}
-	var highLight_tile;
+
 	function mouveOver(evt) {
-		stage.removeChild(tile);
+		stage.removeChild(tile_display);
+		stage.removeChild(tile_info_text);
 		var position = evt.target.name.split(",");
 		var i = parseInt(position[0]);
-		var j = parseInt(position[1]);
-		tile = jQuery.extend({},maps[i][j]);
-		tile.x = 100;
-		tile.y = 100;
-		stage.addChild(tile);
+		var j = parseInt(position[1])
+		tile_info = position[2];
+		tile_display = new createjs.Bitmap(position[3]);
+		tile_display.x = 0;
+		tile_display.y = 0;
+		tile_display.scaleX = 0.6;
+		tile_display.scaleY = 0.6;
+		
+		tile_info_text = new createjs.Text(tile_info, "20px Arial", "#000000");
+		tile_info_text.x = 90;
+		tile_info_text.y = 100;
+		tile_info_text.textBaseline = "alphabetic";
+		tile_info_text.textAlign = "center";
+		stage.addChild(tile_display);
+		stage.addChild(tile_info_text);
 
 
 		highLight_tile = new createjs.Bitmap("graphics/highlight_tile.png");
@@ -880,14 +1010,18 @@ function drawMap(data) {
 		highLight_tile.regY = 32.5;
 		stage.addChild(highLight_tile);
 		stage.update();
-		// console.log(i + "," + j);
-
 	}
 
 createjs.Ticker.addEventListener("tick", update);
 createjs.Ticker.setFPS(30);
 
 function update() {
+	//console.log(secondAttack +","+!firstAttackDone);
+	if (secondAttack && firstAttackDone) {
+		undoHighlights();
+		isAttacking = true;
+		drawRange(findReachableTiles(selectedCharacter.column, selectedCharacter.row, selectedCharacter.attackRange, false), 1);
+	}
 	if (showingDamage === true){
 		demageEffect();
 	}
@@ -899,32 +1033,44 @@ function update() {
 		changed = false;
 	}
 }
-
+var tile_type;
+var tile_info_address;
 // Given the number in the game-map, returns the address of the tile's image
 function imageNumber(number) {
 	switch (number) {
 		case 0 :
+			tile_info_address = "graphics/tile_info/tile_grass.png";
+			tile_type = "Grass";
 			return "graphics/tile/grass.png";
 		case 1 :
+			tile_info_address = "graphics/tile_info/tile_mud.png";
+			tile_type = "Mud";
 			return "graphics/tile/mud.png";
 		case 2 :
+			tile_info_address = "graphics/tile_info/tile_stone_bridge.png";
+			tile_type = "Stone Bridge";
 			return "graphics/tile/stone_bridge.png";
 		case 3 :
+			tile_info_address = "graphics/tile_info/tile_stone_bridge.png";
+			tile_type = "Stone Bridge";
 			return "graphics/tile/stone_bridge2.png";
 		case 4 :
+			tile_info_address = "graphics/tile_info/tile_stone_path.png";
+			tile_type = "Stone Path";
 			return "graphics/tile/stone_ground.png";
 		case 5 :
+			tile_info_address = "graphics/tile_info/tile_water.png";
+			tile_type = "Water";
 			return "graphics/tile/water.png";
 		case 6 :
+			tile_info_address = "graphics/tile_info/tile_wood_bridge.png";
+			tile_type = "Wood Bridge";
 			return "graphics/tile/wood_bridge.png";
 		case 7 :
+			tile_info_address = "graphics/tile_info/tile_wood_bridge.png";
+			tile_type = "Wood Bridge";
 			return "graphics/tile/wood_bridge2.png";
 		default:
 			return "error";
 	}
 }
-
-// store 8 bits numbers in that.mapData :
-// 5 bits for tile index
-// 1 bit for unit
-// 1 bit for other block

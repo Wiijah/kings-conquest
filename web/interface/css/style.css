@@ -17,6 +17,43 @@ table {
 ul, ol {
   margin-left: 20px;
 }
+
+
+/* General CSS */
+/* General Button */
+.btn {
+  position: relative;
+  text-align: center;
+  border-radius: 0.4vw;
+  cursor: pointer;
+  background-image: url("../images/btn_bg.png");
+  background-clip: padding-box;
+  border: 0.3vw solid;
+  border-color: rgba(255,255,255,.2);
+  padding: 0.8vw 1vw 0.3vw 1.2vw;
+}
+.btn:hover {
+  box-shadow: 0 0 3px #888;
+  text-shadow: 0 0 2px #FFF, 0 0 1px #FFF, 1px 1px 7px #FFF, 0 0 0 #FFF;
+  background-image: url("../images/btn_bg_hover.png");
+  border-color: rgba(255,255,255,.3);
+}
+.box {
+  border-radius: 0.3vw;
+  background-color: rgba(0, 0, 0, 0.5);
+  border: 0.3vw solid;
+  border-color: rgba(255, 255, 255, .2);
+  background-clip: padding-box;
+}
+.loading {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 35px;
+}
+.loading_middle {
+  width: 25px;
+}
 /* General Input Styles */
 .text {
   width: 100%;
@@ -220,31 +257,6 @@ body {
   display: inline-block;
 }
 
-/* General CSS */
-/* General Button */
-.btn {
-  text-align: center;
-  border-radius: 0.4vw;
-  cursor: pointer;
-  background-image: url("../images/btn_bg.png");
-  background-clip: padding-box;
-  border: 0.3vw solid;
-  border-color: rgba(255,255,255,.2);
-  padding: 0.8vw 1vw 0.3vw 1.2vw;
-}
-.btn:hover {
-  box-shadow: 0 0 3px #888;
-  text-shadow: 0 0 2px #FFF, 0 0 1px #FFF, 1px 1px 7px #FFF, 0 0 0 #FFF;
-  background-image: url("../images/btn_bg_hover.png");
-  border-color: rgba(255,255,255,.3);
-}
-.box {
-  border-radius: 0.3vw;
-  background-color: rgba(0, 0, 0, 0.5);
-  border: 0.3vw solid;
-  border-color: rgba(255, 255, 255, .2);
-  background-clip: padding-box;
-}
 
 .play_left {
   float: left;
