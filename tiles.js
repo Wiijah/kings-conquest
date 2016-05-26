@@ -131,8 +131,9 @@ function initGame() {
 			hp_bar = new createjs.Shape();
 			hp_bar.x = unit.x - 40;
 			hp_bar.y = unit.y - 90;
-			hp_bar.graphics.beginFill("#ff0000").drawRect(0, 0, 80, 10);
-			hp_bar.graphics.beginFill("#00ff00").drawRect(0, 0, (getHealth(value)/getMaxHealth(value)) * 80, 10);
+			hp_bar.graphics.beginFill("#000000").drawRect(0, 0, 82, 12);
+			hp_bar.graphics.beginFill("#ff0000").drawRect(0, 0, 81, 11);
+			hp_bar.graphics.beginFill("#00ff00").drawRect(0, 0, (getHealth(value)/getMaxHealth(value)) * 81, 11);
 			unit.hp_bar = hp_bar;
 
 
@@ -161,7 +162,7 @@ function initGame() {
 					selectedCharacter = unit;;
 					showUnitInfo = true;
 					showActionMenuNextToPlayer(unit);
-					displayStats(value);
+					displayStats(unit);
 				}
 
 
@@ -389,6 +390,8 @@ function displayStats(unit) {
 
 	bmp.y = 10;
 	bmp.x = 20; // 226
+	stage.update();
+	console.log(unit.hp);
 	var text = unit.team == team ? new createjs.Text("HP : " + getHealth(unit) + "/" + getMaxHealth(unit) + "\n" +
 		"ATK : "  + getAttack(unit) + "\n" + "RNG : " + unit.attackRange + "\n" +
 		"SKILL : " + unit.skill +  "\n" + "CD: " + unit.skillCoolDown  + "\n" +
@@ -510,8 +513,9 @@ function cast(skillNo, unit) {
 				if (value.team === selectedCharacter.team) {
 					//buff health
 					var add = Math.ceil(0.1 * value.max_hp);
-					
-					value.hp += add;
+					if (value.hp + add < value.max_hp){
+						value.hp += add;
+					}
 					updateHP_bar(value);
 					//value.buffs.push([0,add,3]);
 					//value.buffs.push([1,add,3]);
@@ -519,13 +523,13 @@ function cast(skillNo, unit) {
 					value.buffs.push([2,5,3]);
 
 					destroyStats();
-					displayStats(value);
+					displayStats(unit);
 
 
 					selectedCharacter.outOfMoves = 1;
 					unit.skillCoolDown = 3;
 					destroyMenu();
-					showActionMenuNextToPlayer(value);
+					showActionMenuNextToPlayer(unit);
 
 					changed = true;
 				}
@@ -762,11 +766,9 @@ function showDamage(unit, critical, damage){
 var buff_icon;
 function attack(attacker, target){
 	if (attacker.team != target.team){
-		console.log("target team: " + target.team);
-		console.log("attacker team: " + attacker.team);
 		var criticalHit = getRandom(getLuck(attacker));
 		var damage = getAttack(attacker) * criticalHit
-		
+		//console.log("target hp before: " + target.hp);
 		var shield = false;
 		$.each(target.buffs, function(i, value) {
 			if (value[0] == 5) {
@@ -1153,7 +1155,7 @@ function imageNumber(number) {
 		case 3 :
 			tile_info_address = "graphics/tile_info/tile_stone_bridge.png";
 			tile_type = "Stone Bridge";
-			return "graphics/tile/stone_bridge2.png";
+			return "graphics/tile/3d_tile/stone_bridge.png";
 		case 4 :
 			tile_info_address = "graphics/tile_info/tile_stone_path.png";
 			tile_type = "Stone Path";
@@ -1161,11 +1163,11 @@ function imageNumber(number) {
 		case 5 :
 			tile_info_address = "graphics/tile_info/tile_water.png";
 			tile_type = "Water";
-			return "graphics/tile/3d_tile/water.png";
+			return "graphics/tile/3d_tile/water_half.png";
 		case 6 :
 			tile_info_address = "graphics/tile_info/tile_wood_bridge.png";
 			tile_type = "Wood Bridge";
-			return "graphics/tile/wood_bridge.png";
+			return "graphics/tile/3d_tile/wood_bridge.png";
 		case 7 :
 			tile_info_address = "graphics/tile_info/tile_wood_bridge.png";
 			tile_type = "Wood Bridge";
