@@ -132,8 +132,8 @@ function initGame() {
 			hp_bar.x = unit.x - 40;
 			hp_bar.y = unit.y - 90;
 			hp_bar.graphics.beginFill("#000000").drawRect(0, 0, 82, 12);
-			hp_bar.graphics.beginFill("#ff0000").drawRect(0, 0, 81, 11);
-			hp_bar.graphics.beginFill("#00ff00").drawRect(0, 0, (getHealth(value)/getMaxHealth(value)) * 81, 11);
+			hp_bar.graphics.beginFill("#ff0000").drawRect(1, 1, 80, 10);
+			hp_bar.graphics.beginFill("#00ff00").drawRect(1, 1, (getHealth(value)/getMaxHealth(value)) * 80, 10);
 			unit.hp_bar = hp_bar;
 
 
