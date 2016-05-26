@@ -143,6 +143,7 @@ function initGame() {
 			unit.team = value.team;
 			unit.skill = value.skill;
 			unit.address = value.address;
+			unit.info = value.info;
 			unit.skill_no = value.skill_no;
 			unit.buffs = [];
 			unit.buff_icons = [];
@@ -183,8 +184,8 @@ function initGame() {
 
 
 	var box = new createjs.Bitmap("graphics/stats_background.png");
-	box.scaleX = 0.9;
-	box.scaleY = 0.47;
+	box.scaleX = 0.8;
+	box.scaleY = 0.8;
 	statsDisplay.addChild(box);
 
 	stage.canvas.width = window.innerWidth;
@@ -300,8 +301,8 @@ function drawUnitCreationMenu() {
 	// var knightWizard = new createjs.Bitmap("graphics/card/card_wizard");
 
 	createFloatingCards(listOfSources, []);
-	unitCreationMenu.x = 0;
-	unitCreationMenu.y = window.innerHeight - 240;
+	unitCreationMenu.x = 50;
+	unitCreationMenu.y = window.innerHeight - 130;
 	bottomInterface.addChild(unitCreationMenu);
 }
 
@@ -340,14 +341,14 @@ function createFloatingCards(listOfSources, correspondingUnit) {
 function drawGoldDisplay() {
 	console.log("displaying gold bar");
 	var coin = new createjs.Bitmap("graphics/coin.png");
-	coin.x = stage.canvas.width - 230;
-	coin.y = 20;
-	coin.scaleX = 0.5;
-	coin.scaleY = 0.5;
+	coin.x = stage.canvas.width - 240;
+	coin.y = 10;
+	coin.scaleX = 0.1;
+	coin.scaleY = 0.1;
 
 	currentGoldDisplay = new createjs.Text("Gold: " + currentGold, "20px '04b_19'", "#000000");
-	currentGoldDisplay.x = coin.x + 30;
-	currentGoldDisplay.y = coin.y + 5;
+	currentGoldDisplay.x = coin.x + 50;
+	currentGoldDisplay.y = coin.y + 10;
 	currentGoldDisplay.textBasline = "alphabetic";
 
 	stage.addChild(coin);
@@ -355,40 +356,32 @@ function drawGoldDisplay() {
 }
 
 function drawStatsDisplay() {
-	statsDisplay.x = 800;
-	statsDisplay.y = window.innerHeight - 240;
+	statsDisplay.x = window.innerWidth - 350;
+	statsDisplay.y = window.innerHeight - 180;
 	bottomInterface.addChild(statsDisplay);
 	// stage.addChild(statsDisplay);
 }
 
 function displayStats(unit) {
-	var spriteSheet = new createjs.SpriteSheet({
-          	"images": [unit.address],
-          	"frames": {"regX": +10, "height": 142, "count": 2, "regY": -20, "width": 113 },
-          	"animations": {
-            	"info":[0]
-          	},
-          	framerate: 2
-        	});
-	var bmp = new createjs.Sprite(spriteSheet, "info");
-	bmp.scaleX = 1.2;
-	bmp.scaleY = 1.2;
+	var bmp = new createjs.Bitmap(unit.info);
+	bmp.scaleX = 0.75;
+	bmp.scaleY = 0.75;
 
-	bmp.y = -10;
-	bmp.x = 40; // 226
+	bmp.y = 10;
+	bmp.x = 20; // 226
 
 	var text = unit.team == team ? new createjs.Text("HP : " + getHealth(unit) + "/" + getMaxHealth(unit) + "\n" +
-		"ATK : "  + getAttack(unit) + "    " + "RNG : " + unit.attackRange + "\n" +
-		"SKILL : " + unit.skill + "  ( CD " + unit.skillCoolDown + " )" + "\n" +
+		"ATK : "  + getAttack(unit) + "\n" + "RNG : " + unit.attackRange + "\n" +
+		"SKILL : " + unit.skill +  "\n" + "CD: " + unit.skillCoolDown  + "\n" +
 		"MOV. RANGE : " + unit.moveRange + "\n" +
-		"LCK : " + getLuck(unit), "20px '04b_19'", "#000000")
+		"LCK : " + getLuck(unit), "15px '04b_19'", "#000000")
 	: new createjs.Text("HP : " + getHealth(unit) + "/" + getMaxHealth(unit) + "\n" +
-		"ATK : "  + "???" + "    " + "RNG : " + "???" + "\n" +
-		"SKILL : " + "???" + "  ( CD " + "???" + " )" + "\n" +
+		"ATK : "  + "???"  + "\n" + "RNG : " + "???" + "\n" +
+		"SKILL : " + "???"  + "\n" +"CD: " + "???" + "\n" +
 		"MOV. RANGE : " + "???" + "\n" +
-		"LCK : " + "???", "20px '04b_19'", "#000000");
-	text.y = 30;
-	text.x = 226;
+		"LCK : " + "???", "15px '04b_19'", "#000000");
+	text.y = 25;
+	text.x = 156;
 	text.textBasline = "alphabetic";
 
 	statsDisplay.addChild(bmp);
@@ -786,8 +779,8 @@ function destroyStats() {
 	statsDisplay.removeChildAt(2,3);
 
 	var box = new createjs.Bitmap("graphics/stats_background.png");
-	box.scaleX = 0.9;
-	box.scaleY = 0.5;
+	box.scaleX = 0.8;
+	box.scaleY = 0.8;
 	statsDisplay.addChild(box);
 	changed = true;
 }
@@ -1136,7 +1129,7 @@ function imageNumber(number) {
 			tile_info_address = "graphics/tile_info/tile_wood_bridge.png";
 			tile_type = "Wood Bridge";
 			return "graphics/tile/wood_bridge2.png";
-		case 10:
+		case 9:
 			tile_info_address = "";
 			tile_type = "";
 			return "";
