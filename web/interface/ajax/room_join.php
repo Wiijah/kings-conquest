@@ -1,7 +1,7 @@
 <?php
 /* Create a new room */
 require_once 'ajax_common.php';
-sleep(1);
+
 $room_id = secureStr($_POST['room_id']);
 
 $result = $db->query("SELECT * FROM rooms WHERE room_id = {$room_id} AND state = 'pregame'");

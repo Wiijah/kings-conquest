@@ -26,8 +26,6 @@ function chatroom_refresh_messages_periodically() {
   setTimeout("chatroom_refresh_messages_periodically()", 1000);
 }
 function chatroom_refresh_messages() {
-  if (preventDouble) return;
-  preventDouble = true;
   quickPost("ajax/chatroom_get", {id: lastID, room: room_id}, function(data, status){
     if (session_expired) return;
 
@@ -40,10 +38,11 @@ function chatroom_refresh_messages() {
       $("#play_chatroom_messages").animate({ scrollTop: $("#play_chatroom_messages")[0].scrollHeight }, chatScrollSpeed);
     }
   });
-  preventDouble = false;
 }
 
 function concatToChatroom(line) {
+  if (lastID >= line.id) return; //prevent old messages being resent
+  lastID = line.id;
   if (line.chat_type == 'message') { //normal message
     $("#play_chatroom_messages").append("<span class='play_chatroom_user'>"+line.username+":</span> <span class='play_chatroom_text'>"+line.message+"</span><br />");
   } else { // event
