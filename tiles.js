@@ -184,10 +184,7 @@ function initGame() {
 
 
 
-	var box = new createjs.Bitmap("graphics/stats_background.png");
-	box.scaleX = 0.8;
-	box.scaleY = 0.8;
-	statsDisplay.addChild(box);
+
 
 	console.log(stage.canvas.width);
 	stage.canvas.width = window.innerWidth;
@@ -196,7 +193,7 @@ function initGame() {
 
 	draggable = new createjs.Container();
 	var box = new createjs.Shape();
-	box.graphics.beginFill("#ffffff").drawRect(0,0,stage.canvas.width, stage.canvas.height);
+	//box.graphics.beginFill("#ffffff").drawRect(0,0,stage.canvas.width, stage.canvas.height);
 	draggable.addChild(box);
 	draggable.on("pressmove", function(event) {
 		if (isDragging) {
@@ -372,28 +369,36 @@ function drawGoldDisplay() {
 function drawStatsDisplay() {
 	statsDisplay.x = window.innerWidth - 350;
 	statsDisplay.y = window.innerHeight - 180;
-	bottomInterface.addChild(statsDisplay);
 	// stage.addChild(statsDisplay);
 }
 
 function displayStats(unit) {
+	if(unit.team === turn){
+		var box = new createjs.Bitmap("graphics/stats_background_self.png");
+	} else {
+		var box = new createjs.Bitmap("graphics/stats_background_opponent.png");
+	}
+	
+	box.scaleX = 0.8;
+	box.scaleY = 0.8;
+	statsDisplay.addChild(box);
+
 	var bmp = new createjs.Bitmap(unit.info);
 	bmp.scaleX = 0.75;
 	bmp.scaleY = 0.75;
 
 	bmp.y = 10;
 	bmp.x = 20; // 226
-
 	var text = unit.team == team ? new createjs.Text("HP : " + getHealth(unit) + "/" + getMaxHealth(unit) + "\n" +
 		"ATK : "  + getAttack(unit) + "\n" + "RNG : " + unit.attackRange + "\n" +
 		"SKILL : " + unit.skill +  "\n" + "CD: " + unit.skillCoolDown  + "\n" +
 		"MOV. RANGE : " + unit.moveRange + "\n" +
-		"LCK : " + getLuck(unit), "15px '04b_19'", "#000000")
+		"LCK : " + getLuck(unit), "15px Arial", "#000000")
 	: new createjs.Text("HP : " + getHealth(unit) + "/" + getMaxHealth(unit) + "\n" +
 		"ATK : "  + "???"  + "\n" + "RNG : " + "???" + "\n" +
 		"SKILL : " + "???"  + "\n" +"CD: " + "???" + "\n" +
 		"MOV. RANGE : " + "???" + "\n" +
-		"LCK : " + "???", "15px '04b_19'", "#000000");
+		"LCK : " + "???", "15px Arial", "#000000");
 	text.y = 25;
 	text.x = 156;
 	text.textBasline = "alphabetic";
@@ -598,7 +603,7 @@ function drawRange(reachable, typeOfRange) {
 	destroyMenu();
 
 	$.each(reachable, function(i, value) {
-		img = (typeOfRange == 0) ? "graphics/green_tile.png" : "graphics/red_tile.png";
+		img = (typeOfRange == 0) ? "graphics/tile/green_tile.png" : "graphics/tile/red_tile.png";
 		var bmp = new createjs.Bitmap(img);
 		bmp.x = (value[1]-value[0]) * 65 + 540;
 		bmp.y = (value[1]+value[0]) * 32.5 + 220;
@@ -802,8 +807,8 @@ function clearSelectionEffects() {
 }
 
 function destroyStats() {
-	var success = bottomInterface.removeChild(statsDisplay);
-	console.log(success);
+	statsDisplay.removeAllChildren();
+	stage.removeChild(statsDisplay);
 	// statsDisplay.removeChild(2, 3);
 
 	// var box = new createjs.Bitmap("graphics/stats_background.png");
@@ -1083,7 +1088,7 @@ function drawMap(data) {
 			tile_display.scaleX = 0.6;
 			tile_display.scaleY = 0.6;
 			
-			tile_info_text = new createjs.Text(tile_info, "20px Arial", "#000000");
+			tile_info_text = new createjs.Text(tile_info, "20px Arial", "#ffffff");
 			tile_info_text.x = 90;
 			tile_info_text.y = 100;
 			tile_info_text.textBaseline = "alphabetic";
@@ -1092,7 +1097,7 @@ function drawMap(data) {
 			stage.addChild(tile_info_text);
 
 
-			highLight_tile = new createjs.Bitmap("graphics/highlight_tile.png");
+			highLight_tile = new createjs.Bitmap("graphics/tile/highlight_tile.png");
 			highLight_tile.x = (j-i) * 65 + 540;
 			highLight_tile.y = (j+i) * 32.5 + 220;
 			highLight_tile.regX = 65;
@@ -1136,11 +1141,11 @@ function imageNumber(number) {
 		case 0 :
 			tile_info_address = "graphics/tile_info/tile_grass.png";
 			tile_type = "Grass";
-			return "graphics/tile/grass.png";
+			return "graphics/tile/3d_tile/grass.png";
 		case 1 :
 			tile_info_address = "graphics/tile_info/tile_mud.png";
 			tile_type = "Mud";
-			return "graphics/tile/mud.png";
+			return "graphics/tile/3d_tile/mud.png";
 		case 2 :
 			tile_info_address = "graphics/tile_info/tile_stone_bridge.png";
 			tile_type = "Stone Bridge";
@@ -1152,11 +1157,11 @@ function imageNumber(number) {
 		case 4 :
 			tile_info_address = "graphics/tile_info/tile_stone_path.png";
 			tile_type = "Stone Path";
-			return "graphics/tile/stone_ground.png";
+			return "graphics/tile/3d_tile/stone_path.png";
 		case 5 :
 			tile_info_address = "graphics/tile_info/tile_water.png";
 			tile_type = "Water";
-			return "graphics/tile/water.png";
+			return "graphics/tile/3d_tile/water.png";
 		case 6 :
 			tile_info_address = "graphics/tile_info/tile_wood_bridge.png";
 			tile_type = "Wood Bridge";
