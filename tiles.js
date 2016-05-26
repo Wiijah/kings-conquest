@@ -95,7 +95,8 @@ function initGame() {
           	"images": [value.address],
           	"frames": {"regX": +10, "height": 142, "count": 2, "regY": -20, "width": 113 },
           	"animations": {
-            	"stand":[0,1]
+            	"stand":[0,1],
+            	"info":[0]
           	},
           	framerate: 2
         	});
@@ -290,9 +291,9 @@ function drawBottomInterface()  {
 
 function drawUnitCreationMenu() {
 	var listOfSources = [];
-	listOfSources.push("graphics/card/card_knight.png");
-	listOfSources.push("graphics/card/card_archer.png");
-	listOfSources.push("graphics/card/card_wizard.png");
+	listOfSources.push("graphics/card/knight_card.png");
+	listOfSources.push("graphics/card/archer_card.png");
+	listOfSources.push("graphics/card/wizard_card.png");
 
 	// var knightCard = new createjs.Bitmap("graphics/card/card_knight");
 	// var knightArcher = new createjs.Bitmap("graphics/card/card_archer");
@@ -309,23 +310,29 @@ function createFloatingCards(listOfSources, correspondingUnit) {
 	var numOfCards = listOfSources.length;
 	for (i = 0; i < listOfSources.length; i++) {
 		unitCards[i] = new createjs.Bitmap(listOfSources[i]);
+		var unit_card_text = new createjs.Text("$ 100", "12px 'Arial'", "#ffffff");
 		unitCards[i].y = 0;
-		unitCards[i].x = i * (500 / numOfCards);
-		unitCards[i].scaleX = 0.40;
-		unitCards[i].scaleY = 0.40;
+		unitCards[i].x = i * (300 / numOfCards);
+		unitCards[i].scaleX = 0.60;
+		unitCards[i].scaleY = 0.60;
 		unitCards[i].index = i;
 		unitCards[i].unitName = correspondingUnit[i];
-
+		unitCards[i].text = unit_card_text;
+		unitCards[i].text.y = unitCards[i].y+80;
+		unitCards[i].text.x = unitCards[i].x+28;
 		unitCards[i].addEventListener("mouseover", function(event) {
 			unitCards[event.target.index].y -= 20;
+			unitCards[event.target.index].text.y  -= 20;
 			changed = true;
 		});
 		unitCards[i].addEventListener("mouseout", function(event) {
 			unitCards[event.target.index].y += 20;
+			unitCards[event.target.index].text.y += 20;
 			changed = true;
 		});
-
 		unitCreationMenu.addChild(unitCards[i]);
+
+		unitCreationMenu.addChild(unitCards[i].text);
 
 	}
 }
@@ -333,14 +340,14 @@ function createFloatingCards(listOfSources, correspondingUnit) {
 function drawGoldDisplay() {
 	console.log("displaying gold bar");
 	var coin = new createjs.Bitmap("graphics/coin.png");
-	coin.x = stage.canvas.width - 250;
-	coin.y = 10;
-	coin.scaleX = 0.1;
-	coin.scaleY = 0.1;
+	coin.x = stage.canvas.width - 230;
+	coin.y = 20;
+	coin.scaleX = 0.5;
+	coin.scaleY = 0.5;
 
 	currentGoldDisplay = new createjs.Text("Gold: " + currentGold, "20px '04b_19'", "#000000");
-	currentGoldDisplay.x = coin.x + 50;
-	currentGoldDisplay.y = coin.y + 10;
+	currentGoldDisplay.x = coin.x + 30;
+	currentGoldDisplay.y = coin.y + 5;
 	currentGoldDisplay.textBasline = "alphabetic";
 
 	stage.addChild(coin);
@@ -355,11 +362,19 @@ function drawStatsDisplay() {
 }
 
 function displayStats(unit) {
-	var bmp = new createjs.Bitmap(unit.address);
+	var spriteSheet = new createjs.SpriteSheet({
+          	"images": [unit.address],
+          	"frames": {"regX": +10, "height": 142, "count": 2, "regY": -20, "width": 113 },
+          	"animations": {
+            	"info":[0]
+          	},
+          	framerate: 2
+        	});
+	var bmp = new createjs.Sprite(spriteSheet, "info");
 	bmp.scaleX = 1.2;
 	bmp.scaleY = 1.2;
 
-	bmp.y = 10;
+	bmp.y = -10;
 	bmp.x = 40; // 226
 
 	var text = unit.team == team ? new createjs.Text("HP : " + getHealth(unit) + "/" + getMaxHealth(unit) + "\n" +
@@ -685,7 +700,6 @@ function demageEffect(damageText,damageBackground ){
 	stage.update(damageText,damageBackground);
 	for (var i = 0; i < 100; i++) {
 		setTimeout(function (){
-			console.log("in loop!");
 			damageText.y -= 0.2;
 			damageBackground.y -= 0.2;
 			stage.update(damageText,damageBackground);
@@ -698,10 +712,10 @@ function showDamage(unit, critical, damage){
 	unit.damageBackground = new createjs.Shape();
 	if (critical == 2) {
 		unit.damageBackground.graphics.beginFill("#ffeb00").drawRect(unit.x - 10, unit.y - 50, 40, 20);
-		unit.damageText = new createjs.Text(damage, "20px Arial", "#000000");
+		unit.damageText = new createjs.Text(damage, "20px '04b_19'", "#000000");
 	} else {
 		unit.damageBackground.graphics.beginFill("#ff0000").drawRect(unit.x - 10, unit.y - 50, 40, 20);
-		unit.damageText = new createjs.Text(damage, "20px Arial", "#000000");
+		unit.damageText = new createjs.Text(damage, "20px '04b_19'", "#000000");
 	}
 	unit.damageText.x = unit.x;
 	unit.damageText.y = unit.y - 50;
@@ -899,7 +913,7 @@ function findPath(fromX, fromY, toX, toY) {
 				if (nx < 0 || nx >= mapHeight || ny < 0 || ny >= mapWidth) continue;
 
 				// Terrain check
-				if (that.mapData[nx][ny] == 2) continue;
+				if (blockMaps[nx][ny] === 1) continue;
 
 				// bounds and obstacle check here
 				if (vis[nx * mapWidth + ny] === false) {
@@ -1005,7 +1019,7 @@ function drawMap(data) {
 	for (i = 0; i < mapHeight; i++) {
 		for (j = 0; j < mapWidth; j++) {
 			var terrain = data[i][j];
-			blockMaps[i][j] = terrain == 2 ? 1 : 0;
+			blockMaps[i][j] = (terrain == 5 || terrain == 10) ? 1 : 0;
 			img = imageNumber(terrain);
 			maps[i][j] = new createjs.Bitmap(img);
 			maps[i][j].name = i + "," + j + "," + tile_type + "," + tile_info_address;
@@ -1122,6 +1136,10 @@ function imageNumber(number) {
 			tile_info_address = "graphics/tile_info/tile_wood_bridge.png";
 			tile_type = "Wood Bridge";
 			return "graphics/tile/wood_bridge2.png";
+		case 10:
+			tile_info_address = "";
+			tile_type = "";
+			return "";
 		default:
 			return "error";
 	}
