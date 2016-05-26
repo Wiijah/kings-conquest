@@ -541,38 +541,52 @@ function getRandom(luck){
 	} 
 }
 var showingDamage;
-var damageBackground;
-var damageText;
-function demageEffect(){
-	damageText.y -= 1.5;
-	damageBackground.y -= 1.5;
-	stage.update();
+
+
+
+
+function demageEffect(damageText,damageBackground ){
+	damageText.y -= 0.2;
+	damageBackground.y -= 0.2;
+	stage.update(damageText,damageBackground);
+	for (var i = 0; i < 100; i++) {
+		setTimeout(function (){
+			console.log("in loop!");
+			damageText.y -= 0.2;
+			damageBackground.y -= 0.2;
+			stage.update(damageText,damageBackground);
+		}, 100);
+		
+	}
+	
 }
 function showDamage(unit, critical, damage){
-	damageBackground = new createjs.Shape();
+	unit.damageBackground = new createjs.Shape();
 	if (critical == 2) {
-		damageBackground.graphics.beginFill("#ffeb00").drawRect(unit.x - 10, unit.y - 50, 40, 20);
-		damageText = new createjs.Text(damage, "20px Arial", "#000000");
+		unit.damageBackground.graphics.beginFill("#ffeb00").drawRect(unit.x - 10, unit.y - 50, 40, 20);
+		unit.damageText = new createjs.Text(damage, "20px Arial", "#000000");
 	} else {
-		damageBackground.graphics.beginFill("#ff0000").drawRect(unit.x - 10, unit.y - 50, 40, 20);
-		damageText = new createjs.Text(damage, "20px Arial", "#000000");
+		unit.damageBackground.graphics.beginFill("#ff0000").drawRect(unit.x - 10, unit.y - 50, 40, 20);
+		unit.damageText = new createjs.Text(damage, "20px Arial", "#000000");
 	}
-	damageText.x = unit.x;
-	damageText.y = unit.y - 50;
-	damageText.textBasline = "alphabetic";
+	unit.damageText.x = unit.x;
+	unit.damageText.y = unit.y - 50;
+	unit.damageText.textBasline = "alphabetic";
 
-	stage.addChild(damageBackground);
-	stage.addChild(damageText);
+	stage.addChild(unit.damageBackground);
+	stage.addChild(unit.damageText);
 	stage.update();
-	showingDamage = true;
-	demageEffect(damageText, damageBackground);
+	unit.showingDamage = true;
+	demageEffect(unit.damageText, unit.damageBackground);	
+
 	setTimeout(function (){
-		stage.removeChild(damageBackground);
-		stage.removeChild(damageText);
-		showingDamage = false;
+		stage.removeChild(unit.damageBackground);
+		stage.removeChild(unit.damageText);
+		unit.showingDamage = false;
 		stage.update();
 	}, 750);
 }
+
 var buff_icon;
 function attack(attacker, target){
 	if (attacker.team != target.team){
@@ -917,15 +931,15 @@ createjs.Ticker.addEventListener("tick", update);
 createjs.Ticker.setFPS(30);
 
 function update() {
-	//console.log(secondAttack +","+!firstAttackDone);
+	//really bad!
 	if (secondAttack && firstAttackDone) {
 		undoHighlights();
 		isAttacking = true;
 		drawRange(findReachableTiles(selectedCharacter.column, selectedCharacter.row, selectedCharacter.attackRange, false), 1);
 	}
-	if (showingDamage === true){
-		demageEffect();
-	}
+	// if (unit.showingDamage === true){
+	// 	demageEffect();
+	// }
 	if (movingPlayer === true) {
 		movePlayer();
 	}
