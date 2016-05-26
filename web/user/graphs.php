@@ -1,0 +1,109 @@
+<?php
+$title = "Dashboard";
+include 'header.php';
+?>
+
+            <!-- Main Content -->
+            <div class="container-fluid">
+                <div class="side-body">
+                    <div class="page-title">
+                        <span class="title">Chart</span>
+                        <div class="description">Create chart with Chart.js</div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-6 col-xs-12">
+                            <div class="card">
+                                <div class="card-header">
+                                    <div class="card-title">
+                                        <div class="title">Line Chart</div>
+                                    </div>
+                                </div>
+                                <div class="card-body no-padding">
+                                    <canvas id="line-chart" class="chart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6 col-xs-12">
+                            <div class="card">
+                                <div class="card-header">
+                                    <div class="card-title">
+                                        <div class="title">Bar Chart</div>
+                                    </div>
+                                </div>
+                                <div class="card-body no-padding">
+                                    <canvas id="bar-chart" class="chart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-6 col-xs-12">
+                            <div class="card">
+                                <div class="card-header">
+                                    <div class="card-title">
+                                        <div class="title">Radar Chart</div>
+                                    </div>
+                                </div>
+                                <div class="card-body no-padding">
+                                    <canvas id="radar-chart" class="chart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6 col-xs-12">
+                            <div class="card">
+                                <div class="card-header">
+                                    <div class="card-title">
+                                        <div class="title">Polar Area Chart</div>
+                                    </div>
+                                </div>
+                                <div class="card-body no-padding">
+                                    <canvas id="polar-area-chart" class="chart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-6 col-xs-12">
+                            <div class="card">
+                                <div class="card-header">
+                                    <div class="card-title">
+                                        <div class="title">Pie & Doughnut Chart</div>
+                                    </div>
+                                </div>
+                                <div class="card-body no-padding">
+                                    <canvas id="pie-chart" class="chart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="page-title">
+                        <span class="title">Card Jumbotron</span>
+                        <div class="description">Chart.js in Jumbotron Header, recommend using in dashboard pages.</div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-6 col-xs-12">
+                            <div class="card">
+                                <div class="card-header">
+                                    <div class="card-title">
+                                        <div class="title">Line Chart</div>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <div class="card primary">
+                                        <div class="card-jumbotron no-padding">
+                                            <canvas id="jumbotron-line-chart" class="chart no-padding"></canvas>
+                                        </div>
+                                        <div class="card-body">
+                                            <h4>Lorem Ipsum</h4>
+                                            Lorem ipsum dolor sit amet, consectetuer adipiscing elit,
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+<?php include 'footer.php'; ?>
