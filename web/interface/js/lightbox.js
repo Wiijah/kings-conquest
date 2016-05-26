@@ -21,6 +21,12 @@ function lightbox_error(text) {
 
 
 $(document).ready(function() {
+
+  /* Tell user it's under development */
+  $('body').on('click', '.dev', function() {
+    in_dev();
+  });
+
   /* General function for opening a lightbox */
   $('body').on('click', '.lightbox_open', function() {
     var id = $(this).attr("data-lb");
@@ -37,6 +43,7 @@ $(document).ready(function() {
 /* Open lightbox */
 // Show the black background surrounding the lightbox
 function lightbox_open(id) {
+  lightbox_quick_close(); // prevent more than one lightbox showing
   $("#lightbox_behind").fadeIn(LB_FS);
   //Fade the lightbox in
   $("#lightbox_"+id).fadeIn(LB_FS);
@@ -54,4 +61,19 @@ function lightbox_close() {
   $("#lightbox_behind").fadeOut(LB_FS);
   $(".lightbox_error").fadeOut(LB_FS);
   $(".lightbox_container").fadeOut(LB_FS);
+}
+
+/* Close all FS loading and old lightboxes */
+function lightbox_quick_close() {
+  $("#lightbox_behind").hide();
+  $(".lightbox_error").hide();
+  $(".lightbox_container").hide();
+}
+
+function fs_load() {
+  $("#fs_load").fadeIn(LB_FS);
+}
+
+function in_dev() {
+  lightbox_alert("In Development", "This feature is in development. Please check back in a few days.");
 }

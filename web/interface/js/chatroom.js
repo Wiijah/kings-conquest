@@ -12,9 +12,9 @@ $(document).ready(function() {
     if(event.which === 13 && $(this).val() != ""){
       var message = $(this).val();
       $(this).val("");
-      console.log("Message: "+ message);
       quickPost("ajax/chatroom_send", {message: message, room: room_id}, function(data, status){
         chatroom_refresh_messages();
+        console.log("YEA");
       });
     }
   });
@@ -27,7 +27,6 @@ function chatroom_refresh_messages_periodically() {
 function chatroom_refresh_messages() {
   quickPost("ajax/chatroom_get", {id: lastID, room: room_id}, function(data, status){
     if (session_expired) return;
-    console.log(session_expired);
 
     for (var i = 0; i < data.length; i++) {
         concatToChatroom(data[i]);
@@ -37,8 +36,6 @@ function chatroom_refresh_messages() {
       lastID = data[data.length - 1].id;
       $("#play_chatroom_messages").animate({ scrollTop: $("#play_chatroom_messages")[0].scrollHeight }, chatScrollSpeed);
     }
-    console.log(data + "Last ID: "+lastID);
-
   });
 }
 

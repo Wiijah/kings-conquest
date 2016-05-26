@@ -38,9 +38,9 @@ var room_id = 0;
 
 <?php echo genTitle("Actions"); ?>
 <div class="play_btn btn lightbox_open" data-lb="create_game">Create Game</div>
-<div class="play_btn btn">How To Play</div>
-<div class="play_btn btn">Options</div>
-<div class="play_btn btn">Highscores</div>
+<div class="play_btn btn dev">How To Play</div>
+<div class="play_btn btn dev">Options</div>
+<div class="play_btn btn dev">Highscores</div>
 
 
 <?php echo genTitle("Your Profile"); ?>

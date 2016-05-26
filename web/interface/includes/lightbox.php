@@ -19,7 +19,6 @@ function genLightbox($title, $id, $html) {
   return $out;
 }
 
-echo '<div id="lightbox_behind" class="lightbox_close"></div>';
 echo genLightbox("Alert", "alert", "<div id='lb_alert_txt'></div><br /><div class='btn form_btn alert_btn lightbox_close' id='alert_btn'>Okay</div>");
 
 echo genLightbox("Create Game", "create_game", "<table class='form_table'>
@@ -28,3 +27,5 @@ echo genLightbox("Create Game", "create_game", "<table class='form_table'>
     </table>
     <div class='btn lightbox_btn' id='lightbox_btn_create_game'>Submit</div>");
 ?>
+<div id="lightbox_behind" class="lightbox_close"></div>
+<div id="fs_load"><img src='images/loading_white.png' /></div>
