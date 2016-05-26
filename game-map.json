@@ -1,6 +1,5 @@
 {
 	"main": {
-
 		"0":[4, 4, 4, 0 ,1, 1, 1, 1, 1, 1, 1, 0, 1 ,0],
         "1":[4, 4, 4, 4 ,4, 4, 5, 5, 5, 5, 5, 5, 6 ,5],
         "2":[4, 4, 4, 0 ,1, 4, 5, 5, 5, 5, 5, 5, 6 ,5],
@@ -23,12 +22,13 @@
 	"characters": {
 		"red_castle": {
 			"address": "graphics/spritesheet/special_unit/ss_castle_red.png",
+			"info": "graphics/card/castle_card.png",
 			"hp" : 999,
 			"max_hp" : 999,
 			"attack" : 999,
 			"skill": "RED",
 			"skill_no": -1,
-			"luck":0,
+			"luck":1,
 			"x" : 0,
 			"y" : 0,
 			"moveRange" : 0, 
@@ -41,12 +41,13 @@
 		},
 		"blue_castle": {
 			"address": "graphics/spritesheet/special_unit/ss_castle_blue.png",
+			"info": "graphics/card/castle_card.png",
 			"hp" : 999,
 			"max_hp" : 999,
 			"attack" : 999,
 			"skill": "BLUE",
 			"skill_no": -1,
-			"luck":0,
+			"luck":1,
 			"x" : 2,
 			"y" : 0,
 			"moveRange" : 0, 
@@ -59,6 +60,7 @@
 		},
 		"king": {
 			"address": "graphics/spritesheet/stand/ss_king_stand.png",
+			"info": "graphics/card/king_card.png",
 			"hp" : 40,
 			"max_hp" : 400,
 			"attack" : 25,
@@ -77,6 +79,7 @@
 		},
 		"wizard": {
 			"address": "graphics/spritesheet/stand/ss_wizard_stand.png",
+			"info": "graphics/card/wizard_card.png",
 			"hp" : 40,
 			"max_hp" : 200,
 			"attack" : 15,
@@ -95,6 +98,7 @@
 		},
 		"knight": {
 			"address": "graphics/spritesheet/stand/ss_knight_stand.png",
+			"info": "graphics/card/knight_card.png",
 			"hp" : 40,
 			"max_hp" : 300,
 			"attack" : 40,
@@ -113,6 +117,7 @@
 		},
 		"archer": {
 			"address": "graphics/spritesheet/stand/ss_archer_stand.png",
+			"info": "graphics/card/archer_card.png",
 			"hp" : 20,
 			"max_hp" : 200,
 			"attack" : 20,

@@ -4,9 +4,13 @@ var MOVEMENT_STEP = 6.5
 
 
 var stage = new createjs.Stage("demoCanvas");
+
 var that = this;
 var team = 0;
 
+var isDragging = false;
+var offX;
+var offY;
 
 
 var path = [];
@@ -39,12 +43,24 @@ var isAttacking = false;
 var currentGold;
 var currentGoldDisplay;
 var turn = 0;
-
+var showUnitInfo = false;
 function resize() {
 	//stage.canvas.width = window.innerWidth;
 	//stage.canvas.height = window.innerHeight;
 	//drawGame();
 	//drawStatsDisplay();
+}
+
+// drag
+var offset = new createjs.Point();
+function startDrag(event) {
+	offset.x = stage.mouseX - draggable.x;
+	offset.y = stage.mouseY - draggable.y;
+	stage.addEventListener("mousemove", doDrag);
+}
+function doDrag(event) {
+	draggable.x = event.stageX - offset.x;
+	draggable.y = event.stageY - offset.y;
 }
 
 
@@ -85,30 +101,8 @@ function initGame() {
         	});
 
 
-
-
 			var unit = new createjs.Sprite(spriteSheet, "stand");
-			unit.addEventListener("click", function(event) {
-				if (!movingPlayer && !isAttacking) {
-					clearSelectionEffects();
-					selectedCharacter = unit;
-					showActionMenuNextToPlayer(unit);
-					displayStats(value);
-				}
-
-
-				// In this case, we are selecting the unit to be attacked
-				if (selectedCharacter != unit && isAttacking) {
-					$.each(highlighted, function(i, coord) {
-						if (unit.row === coord.row && unit.column === coord.column) {
-							attack(selectedCharacter, unit);
-							clearSelectionEffects();
-						}
-					});
-				}
-
-				changed = true;
-			});
+			
 			createjs.Ticker.timingMode = createjs.Ticker.RAF;
    			createjs.Ticker.addEventListener("tick", stage);
 			// Configure unit coordinates
@@ -128,6 +122,7 @@ function initGame() {
 			unit.team = value.team;
 			unit.skill = value.skill;
 			unit.address = value.address;
+			unit.info = value.info;
 			unit.skill_no = value.skill_no;
 			unit.buffs = [];
 			unit.buff_icons = [];
@@ -157,8 +152,31 @@ function initGame() {
 			blockMaps[unit.column][unit.row] = 1;
 
 			// Add the unit and its hp bar to the stage
-			stage.addChild(unit);
-			stage.addChild(hp_bar);
+			draggable.addChild(unit);
+			draggable.addChild(hp_bar);
+
+			unit.addEventListener("click", function(event) {
+				if (!movingPlayer && !isAttacking) {
+					clearSelectionEffects();
+					selectedCharacter = unit;;
+					showUnitInfo = true;
+					showActionMenuNextToPlayer(unit);
+					displayStats(value);
+				}
+
+
+				// In this case, we are selecting the unit to be attacked
+				if (selectedCharacter != unit && isAttacking) {
+					$.each(highlighted, function(i, coord) {
+						if (unit.row === coord.row && unit.column === coord.column) {
+							attack(selectedCharacter, unit);
+							clearSelectionEffects();
+						}
+					});
+				}
+
+				changed = true;
+			});
 		});
 
 
@@ -167,13 +185,36 @@ function initGame() {
 
 
 	var box = new createjs.Bitmap("graphics/stats_background.png");
-	box.scaleX = 0.9;
-	box.scaleY = 0.47;
+	box.scaleX = 0.8;
+	box.scaleY = 0.8;
 	statsDisplay.addChild(box);
 
 	console.log(stage.canvas.width);
 	stage.canvas.width = window.innerWidth;
 	stage.canvas.height = window.innerHeight;
+
+
+	draggable = new createjs.Container();
+	var box = new createjs.Shape();
+	box.graphics.beginFill("#ffffff").drawRect(0,0,stage.canvas.width, stage.canvas.height);
+	draggable.addChild(box);
+	draggable.on("pressmove", function(event) {
+		if (isDragging) {
+			this.x = event.stageX - offX;
+    		this.y = event.stageY - offY;
+    	} else if (!isInHighlight) {
+    		offX = stage.mouseX - draggable.x;
+    		offY = stage.mouseY - draggable.y;
+    		isDragging = true;
+    		draggable.removeChild(highLight_tile);
+    	}
+	});
+	draggable.on("pressup", function(event) {
+		if (isDragging) {
+			isDragging = false;
+		}
+	})
+	stage.addChild(draggable);
 	
 	drawStatsDisplay();
 	drawUnitCreationMenu();
@@ -232,10 +273,10 @@ function getLuck(unit) {
 	return base;
 }
 function updateHP_bar(unit){
-	stage.update();
+	//stage.update();
 	if (getHealth(unit) <= 0){
-		stage.removeChild(unit);
-		stage.removeChild(unit.hp_bar);
+		draggable.removeChild(unit);
+		draggable.removeChild(unit.hp_bar);
 	} else {
 		unit.hp_bar.graphics.clear();
 		unit.hp_bar.graphics.beginFill("#ff0000").drawRect(0, 0, 80, 10);
@@ -247,24 +288,24 @@ function drawBottomInterface()  {
 	bottomInterface.x = 0;
 	bottomInterface.y = stage.canvas.height - 240;
 	// bottomInterface.y = 0;
-	stage.addChild(bottomInterface);
+	draggable.addChild(bottomInterface);
 }
 
 
 
 function drawUnitCreationMenu() {
 	var listOfSources = [];
-	listOfSources.push("graphics/card/card_knight.png");
-	listOfSources.push("graphics/card/card_archer.png");
-	listOfSources.push("graphics/card/card_wizard.png");
+	listOfSources.push("graphics/card/knight_card.png");
+	listOfSources.push("graphics/card/archer_card.png");
+	listOfSources.push("graphics/card/wizard_card.png");
 
 	// var knightCard = new createjs.Bitmap("graphics/card/card_knight");
 	// var knightArcher = new createjs.Bitmap("graphics/card/card_archer");
 	// var knightWizard = new createjs.Bitmap("graphics/card/card_wizard");
 
 	createFloatingCards(listOfSources, []);
-	unitCreationMenu.x = 0;
-	unitCreationMenu.y = 0;
+	unitCreationMenu.x = 50;
+	unitCreationMenu.y = window.innerHeight - 130;
 	bottomInterface.addChild(unitCreationMenu);
 }
 
@@ -273,71 +314,88 @@ function createFloatingCards(listOfSources, correspondingUnit) {
 	var numOfCards = listOfSources.length;
 	for (i = 0; i < listOfSources.length; i++) {
 		unitCards[i] = new createjs.Bitmap(listOfSources[i]);
+		var unit_card_text = new createjs.Text("$ 100", "12px 'Arial'", "#ffffff");
 		unitCards[i].y = 0;
-		unitCards[i].x = i * (500 / numOfCards);
-		unitCards[i].scaleX = 0.40;
-		unitCards[i].scaleY = 0.40;
+		unitCards[i].x = i * (330 / numOfCards);
+		unitCards[i].scaleX = 0.60;
+		unitCards[i].scaleY = 0.60;
 		unitCards[i].index = i;
 		unitCards[i].unitName = correspondingUnit[i];
-
+		unitCards[i].text = unit_card_text;
+		unitCards[i].text.y = unitCards[i].y+80;
+		unitCards[i].text.x = unitCards[i].x+28;
 		unitCards[i].addEventListener("mouseover", function(event) {
 			unitCards[event.target.index].y -= 20;
+			unitCards[event.target.index].text.y  -= 20;
 			changed = true;
 		});
 		unitCards[i].addEventListener("mouseout", function(event) {
 			unitCards[event.target.index].y += 20;
+			unitCards[event.target.index].text.y += 20;
 			changed = true;
 		});
-
 		unitCreationMenu.addChild(unitCards[i]);
+
+		unitCreationMenu.addChild(unitCards[i].text);
 
 	}
 }
 
 function drawGoldDisplay() {
 	console.log("displaying gold bar");
+	var coin_background = new createjs.Bitmap("graphics/stats_background.png");
+	coin_background.x = stage.canvas.width - 180;
+	coin_background.y = 8;
+	coin_background.scaleX = 0.375;
+	coin_background.scaleY = 0.155;
+
+
+
 	var coin = new createjs.Bitmap("graphics/coin.png");
-	coin.x = stage.canvas.width - 250;
+	coin.x = stage.canvas.width - 170;
 	coin.y = 10;
-	coin.scaleX = 0.1;
-	coin.scaleY = 0.1;
+	coin.scaleX = 1;
+	coin.scaleY = 1;
+
+
 
 	currentGoldDisplay = new createjs.Text("Gold: " + currentGold, "20px '04b_19'", "#000000");
-	currentGoldDisplay.x = coin.x + 50;
-	currentGoldDisplay.y = coin.y + 10;
+	currentGoldDisplay.x = coin.x + 40;
+	currentGoldDisplay.y = coin.y  +5;
 	currentGoldDisplay.textBasline = "alphabetic";
 
+	stage.addChild(coin_background);
 	stage.addChild(coin);
 	stage.addChild(currentGoldDisplay);
 }
 
 function drawStatsDisplay() {
-	statsDisplay.x = 800;
-	statsDisplay.y = 0;
+	statsDisplay.x = window.innerWidth - 350;
+	statsDisplay.y = window.innerHeight - 180;
 	bottomInterface.addChild(statsDisplay);
 	// stage.addChild(statsDisplay);
 }
 
 function displayStats(unit) {
-	var bmp = new createjs.Bitmap(unit.address);
-	bmp.scaleX = 1.2;
-	bmp.scaleY = 1.2;
+	var bmp = new createjs.Bitmap(unit.info);
+	bmp.scaleX = 0.75;
+	bmp.scaleY = 0.75;
 
 	bmp.y = 10;
-	bmp.x = 40; // 226
+	bmp.x = 20; // 226
 
 	var text = unit.team == team ? new createjs.Text("HP : " + getHealth(unit) + "/" + getMaxHealth(unit) + "\n" +
-		"ATK : "  + getAttack(unit) + "    " + "RNG : " + unit.attackRange + "\n" +
-		"SKILL : " + unit.skill + "  ( CD " + unit.skillCoolDown + " )" + "\n" +
+		"ATK : "  + getAttack(unit) + "\n" + "RNG : " + unit.attackRange + "\n" +
+		"SKILL : " + unit.skill +  "\n" + "CD: " + unit.skillCoolDown  + "\n" +
 		"MOV. RANGE : " + unit.moveRange + "\n" +
-		"LCK : " + getLuck(unit), "20px '04b_19'", "#000000")
+		"LCK : " + getLuck(unit), "15px '04b_19'", "#000000")
 	: new createjs.Text("HP : " + getHealth(unit) + "/" + getMaxHealth(unit) + "\n" +
-		"ATK : "  + "???" + "    " + "RNG : " + "???" + "\n" +
-		"SKILL : " + "???" + "  ( CD " + "???" + " )" + "\n" +
+		"ATK : "  + "???"  + "\n" + "RNG : " + "???" + "\n" +
+		"SKILL : " + "???"  + "\n" +"CD: " + "???" + "\n" +
 		"MOV. RANGE : " + "???" + "\n" +
-		"LCK : " + "???", "20px '04b_19'", "#000000");
-	text.y = 30;
-	text.x = 226;
+		"LCK : " + "???", "15px '04b_19'", "#000000");
+	text.y = 25;
+	text.x = 156;
 	text.textBasline = "alphabetic";
 
 	statsDisplay.addChild(bmp);
@@ -350,8 +408,8 @@ function drawGame() {
 		that.drawMap(that.mapData);
 
 		$.each(units, function(i, value) {
-			stage.addChild(value);
-			stage.addChild(value.hp_bar);
+			draggable.addChild(value);
+			draggable.addChild(value.hp_bar);
 		});
 
 		changed = true;
@@ -408,8 +466,7 @@ function showActionMenuNextToPlayer(unit) {
 	skillButton = createClickableImage(skillSource, unit.x + 48, unit.y - 77, function() {
 		if (unit.skillCoolDown === 0) {
 			undoHighlights();
-			unit.skillCoolDown = "3";
-			unit.outOfMoves = 1;
+			// unit.skillCoolDown = 3;
 			cast(unit.skill_no, unit);
 		}
 	});
@@ -419,19 +476,19 @@ function showActionMenuNextToPlayer(unit) {
 		clearSelectionEffects();
 	});
 
-	stage.addChild(menuBackground);
-    stage.addChild(moveButton);
-    stage.addChild(attackButton);
-    stage.addChild(skillButton);
-    stage.addChild(cancelButton);
+	draggable.addChild(menuBackground);
+    draggable.addChild(moveButton);
+    draggable.addChild(attackButton);
+    draggable.addChild(skillButton);
+    draggable.addChild(cancelButton);
 
 	var min = moveButton;
-	min = stage.getChildIndex(attackButton) < stage.getChildIndex(min) ? attackButton : min;
-	min = stage.getChildIndex(skillButton) < stage.getChildIndex(min) ? skillButton : min;
-	min = stage.getChildIndex(cancelButton) < stage.getChildIndex(min) ? cancelButton : min;
+	min = draggable.getChildIndex(attackButton) < draggable.getChildIndex(min) ? attackButton : min;
+	min = draggable.getChildIndex(skillButton) < draggable.getChildIndex(min) ? skillButton : min;
+	min = draggable.getChildIndex(cancelButton) < draggable.getChildIndex(min) ? cancelButton : min;
 
-	if (stage.getChildIndex(menuBackground) > stage.getChildIndex(min)) {
-		stage.swapChildren(menuBackground, min);
+	if (draggable.getChildIndex(menuBackground) > draggable.getChildIndex(min)) {
+		draggable.swapChildren(menuBackground, min);
 	}
 
 
@@ -448,14 +505,20 @@ function cast(skillNo, unit) {
 				if (value.team === selectedCharacter.team) {
 					//buff health
 					var add = Math.ceil(0.1 * value.max_hp);
-					value.buffs.push([0,add,3]);
-					value.buffs.push([1,add,3]);
+					
+					value.hp += add;
+					updateHP_bar(value);
+					//value.buffs.push([0,add,3]);
+					//value.buffs.push([1,add,3]);
 					//buff dmg
 					value.buffs.push([2,5,3]);
 
 					destroyStats();
 					displayStats(value);
 
+
+					selectedCharacter.outOfMoves = 1;
+					unit.skillCoolDown = 3;
 					destroyMenu();
 					showActionMenuNextToPlayer(value);
 
@@ -497,10 +560,12 @@ function cast(skillNo, unit) {
     			buff_icon = new createjs.Bitmap("graphics/buff_shield.png");
 				buff_icon.x = unit.x + 5;
 				buff_icon.y = unit.y - 70;
-				stage.addChild(buff_icon);
+				draggable.addChild(buff_icon);
 	    	}
 
 
+	    	selectedCharacter.outOfMoves = 1;
+	    	unit.skillCoolDown = 3;
 			destroyMenu();
 			showActionMenuNextToPlayer(selectedCharacter);
 
@@ -546,6 +611,8 @@ function drawRange(reachable, typeOfRange) {
 				var fromX = selectedCharacter.column;
 				var fromY = selectedCharacter.row;
 				findPath(fromX, fromY, value[0], value[1]);
+				blockMaps[fromX][fromY] = 0;
+				blockMaps[value[0]][value[1]] = 1;
 				move();
 				selectedCharacter.column = value[0];
 				selectedCharacter.row = value[1];
@@ -577,6 +644,8 @@ function drawRange(reachable, typeOfRange) {
 						attack(selectedCharacter, unit);
 					}
 					clearSelectionEffects();
+					selectedCharacter.outOfMoves = 0;
+					selectedCharacter.skillCoolDown = 3;
 				});
 			});
 			bmp.addEventListener("mouseover", function(event) {
@@ -590,21 +659,21 @@ function drawRange(reachable, typeOfRange) {
 					stage.addChild(sub_bmp);
 					sub_highlighted.push(sub_bmp);
 				});
-				stage.update();
+				//stage.update();
 			});
 			bmp.addEventListener("mouseout", function(event) {
 				$.each(sub_highlighted, function(i, tile) {
 					stage.removeChild(tile);
 				});
-				stage.update();
+				//stage.update();
 			});
 		}
-		stage.addChild(bmp);
+		draggable.addChild(bmp);
 		highlighted.push(bmp);
 		$.each(units, function(i, value) {
-			if (stage.getChildIndex(value) < stage.getChildIndex(bmp)) {
-				stage.swapChildren(bmp, value);
-				stage.swapChildren(bmp, value.hp_bar);
+			if (draggable.getChildIndex(value) < draggable.getChildIndex(bmp)) {
+				draggable.swapChildren(bmp, value);
+				draggable.swapChildren(bmp, value.hp_bar);
 			}
 		});
 	});
@@ -639,38 +708,52 @@ function getRandom(luck){
 	} 
 }
 var showingDamage;
-var damageBackground;
-var damageText;
-function demageEffect(){
-	damageText.y -= 1.5;
-	damageBackground.y -= 1.5;
-	stage.update();
+
+
+
+
+function demageEffect(damageText,damageBackground ){
+	damageText.y -= 0.2;
+	damageBackground.y -= 0.2;
+	stage.update(damageText,damageBackground);
+	for (var i = 0; i < 100; i++) {
+		setTimeout(function (){
+			console.log("in loop!");
+			damageText.y -= 0.2;
+			damageBackground.y -= 0.2;
+			stage.update(damageText,damageBackground);
+		}, 100);
+		
+	}
+	
 }
 function showDamage(unit, critical, damage){
-	damageBackground = new createjs.Shape();
+	unit.damageBackground = new createjs.Shape();
 	if (critical == 2) {
-		damageBackground.graphics.beginFill("#ffeb00").drawRect(unit.x - 10, unit.y - 50, 40, 20);
-		damageText = new createjs.Text(damage, "20px Arial", "#000000");
+		unit.damageBackground.graphics.beginFill("#ffeb00").drawRect(unit.x - 10, unit.y - 50, 40, 20);
+		unit.damageText = new createjs.Text(damage, "20px Arial", "#000000");
 	} else {
-		damageBackground.graphics.beginFill("#ff0000").drawRect(unit.x - 10, unit.y - 50, 40, 20);
-		damageText = new createjs.Text(damage, "20px Arial", "#000000");
+		unit.damageBackground.graphics.beginFill("#ff0000").drawRect(unit.x - 10, unit.y - 50, 40, 20);
+		unit.damageText = new createjs.Text(damage, "20px Arial", "#000000");
 	}
-	damageText.x = unit.x;
-	damageText.y = unit.y - 50;
-	damageText.textBasline = "alphabetic";
+	unit.damageText.x = unit.x;
+	unit.damageText.y = unit.y - 50;
+	unit.damageText.textBasline = "alphabetic";
 
-	stage.addChild(damageBackground);
-	stage.addChild(damageText);
-	stage.update();
-	showingDamage = true;
-	demageEffect(damageText, damageBackground);
+	draggable.addChild(unit.damageBackground);
+	draggable.addChild(unit.damageText);
+	//stage.update();
+	unit.showingDamage = true;
+	demageEffect(unit.damageText, unit.damageBackground);	
+
 	setTimeout(function (){
-		stage.removeChild(damageBackground);
-		stage.removeChild(damageText);
-		showingDamage = false;
-		stage.update();
+		draggable.removeChild(unit.damageBackground);
+		draggable.removeChild(unit.damageText);
+		unit.showingDamage = false;
+		//stage.update();
 	}, 750);
 }
+
 var buff_icon;
 function attack(attacker, target){
 	if (attacker.team != target.team){
@@ -683,7 +766,7 @@ function attack(attacker, target){
 		$.each(target.buffs, function(i, value) {
 			if (value[0] == 5) {
 				shield = true;
-				stage.removeChild(buff_icon);
+				draggable.removeChild(buff_icon);
 				var index = target.buffs.indexOf(value);
 				target.buffs.splice(index, 1);
 			}
@@ -719,22 +802,24 @@ function clearSelectionEffects() {
 }
 
 function destroyStats() {
-	statsDisplay.removeChildAt(2,3);
+	var success = bottomInterface.removeChild(statsDisplay);
+	console.log(success);
+	// statsDisplay.removeChild(2, 3);
 
-	var box = new createjs.Bitmap("graphics/stats_background.png");
-	box.scaleX = 0.9;
-	box.scaleY = 0.5;
-	statsDisplay.addChild(box);
+	// var box = new createjs.Bitmap("graphics/stats_background.png");
+	// box.scaleX = 0.8;
+	// box.scaleY = 0.8;
+	// statsDisplay.addChild(box);
 	changed = true;
 }
 
 function destroyMenu() {
 	if (!isDisplayingMenu) return;
-	stage.removeChild(menuBackground);
-	stage.removeChild(moveButton);
-	stage.removeChild(attackButton);
-	stage.removeChild(skillButton);
-	stage.removeChild(cancelButton);
+	draggable.removeChild(menuBackground);
+	draggable.removeChild(moveButton);
+	draggable.removeChild(attackButton);
+	draggable.removeChild(skillButton);
+	draggable.removeChild(cancelButton);
 	changed = true;
 }
 
@@ -742,7 +827,7 @@ function undoHighlights() {
 	// console.log(isInHighlight);
 	if (!isInHighlight) return;
 	$.each(highlighted, function(i, tile) {
-		stage.removeChild(tile);
+		draggable.removeChild(tile);
 	});
 	$.each(sub_highlighted, function(i, tile) {
 		stage.removeChild(tile);
@@ -808,12 +893,12 @@ function movePlayer() {
 function sortIndices(unit) {
 	$.each(units, function(i, value) {
 		if (unit.y > value.y) {
-			if (stage.getChildIndex(unit) < stage.getChildIndex(value)) {
-				stage.swapChildren(unit, value);
+			if (draggable.getChildIndex(unit) < draggable.getChildIndex(value)) {
+				draggable.swapChildren(unit, value);
 			}
 		} else if (unit.y < value.y) {
-			if (stage.getChildIndex(unit) > stage.getChildIndex(value)) {
-				stage.swapChildren(unit, value);
+			if (draggable.getChildIndex(unit) > draggable.getChildIndex(value)) {
+				draggable.swapChildren(unit, value);
 			}
 		}
 	});
@@ -849,7 +934,7 @@ function findPath(fromX, fromY, toX, toY) {
 				if (nx < 0 || nx >= mapHeight || ny < 0 || ny >= mapWidth) continue;
 
 				// Terrain check
-				if (that.mapData[nx][ny] == 2) continue;
+				if (blockMaps[nx][ny] != 0) continue;
 
 				// bounds and obstacle check here
 				if (vis[nx * mapWidth + ny] === false) {
@@ -955,7 +1040,7 @@ function drawMap(data) {
 	for (i = 0; i < mapHeight; i++) {
 		for (j = 0; j < mapWidth; j++) {
 			var terrain = data[i][j];
-			blockMaps[i][j] = terrain == 2 ? 1 : 0;
+			blockMaps[i][j] = terrain == 5 ? 1 : 0;
 			img = imageNumber(terrain);
 			maps[i][j] = new createjs.Bitmap(img);
 			maps[i][j].name = i + "," + j + "," + tile_type + "," + tile_info_address;
@@ -966,65 +1051,73 @@ function drawMap(data) {
 			maps[i][j].addEventListener("mouseover",mouveOver);
 			maps[i][j].addEventListener("mouseout", mouseOut);
 			maps[i][j].addEventListener("click", function(event) {
+				showUnitInfo = false;
 				clearSelectionEffects();
 			});
-			stage.addChild(maps[i][j]);
+			draggable.addChild(maps[i][j]);
 		}
 	}
 
 }
 
 	function mouseOut(evt){
-		stage.removeChild(highLight_tile);
-		stage.removeChild(tile_display);
-		stage.removeChild(tile_info_text);
-		stage.update();
+		//if (!isDragging) {
+			//draggable.removeChild(highLight_tile);
+			stage.removeChild(tile_display);
+			stage.removeChild(tile_info_text);
+			//stage.update();
+		//}
 	}
 
 	function mouveOver(evt) {
-		stage.removeChild(tile_display);
-		stage.removeChild(tile_info_text);
-		var position = evt.target.name.split(",");
-		var i = parseInt(position[0]);
-		var j = parseInt(position[1])
-		tile_info = position[2];
-		tile_display = new createjs.Bitmap(position[3]);
-		tile_display.x = 0;
-		tile_display.y = 0;
-		tile_display.scaleX = 0.6;
-		tile_display.scaleY = 0.6;
-		
-		tile_info_text = new createjs.Text(tile_info, "20px Arial", "#000000");
-		tile_info_text.x = 90;
-		tile_info_text.y = 100;
-		tile_info_text.textBaseline = "alphabetic";
-		tile_info_text.textAlign = "center";
-		stage.addChild(tile_display);
-		stage.addChild(tile_info_text);
+		//if (!isDragging) {
+			stage.removeChild(tile_display);
+			stage.removeChild(tile_info_text);
+			var position = evt.target.name.split(",");
+			var i = parseInt(position[0]);
+			var j = parseInt(position[1])
+			tile_info = position[2];
+			tile_display = new createjs.Bitmap(position[3]);
+			tile_display.x = 0;
+			tile_display.y = 0;
+			tile_display.scaleX = 0.6;
+			tile_display.scaleY = 0.6;
+			
+			tile_info_text = new createjs.Text(tile_info, "20px Arial", "#000000");
+			tile_info_text.x = 90;
+			tile_info_text.y = 100;
+			tile_info_text.textBaseline = "alphabetic";
+			tile_info_text.textAlign = "center";
+			stage.addChild(tile_display);
+			stage.addChild(tile_info_text);
 
 
-		highLight_tile = new createjs.Bitmap("graphics/highlight_tile.png");
-		highLight_tile.x = (j-i) * 65 + 540;
-		highLight_tile.y = (j+i) * 32.5 + 220;
-		highLight_tile.regX = 65;
-		highLight_tile.regY = 32.5;
-		stage.addChild(highLight_tile);
-		stage.update();
+			highLight_tile = new createjs.Bitmap("graphics/highlight_tile.png");
+			highLight_tile.x = (j-i) * 65 + 540;
+			highLight_tile.y = (j+i) * 32.5 + 220;
+			highLight_tile.regX = 65;
+			highLight_tile.regY = 32.5;
+
+			//draggable.addChild(highLight_tile);
+		//}
+		//stage.update();
 	}
 
 createjs.Ticker.addEventListener("tick", update);
 createjs.Ticker.setFPS(30);
 
 function update() {
-	//console.log(secondAttack +","+!firstAttackDone);
+	//really bad!
 	if (secondAttack && firstAttackDone) {
 		undoHighlights();
 		isAttacking = true;
+		secondAttack = 0;
+		selectedCharacter.skillCoolDown = 3;
 		drawRange(findReachableTiles(selectedCharacter.column, selectedCharacter.row, selectedCharacter.attackRange, false), 1);
 	}
-	if (showingDamage === true){
-		demageEffect();
-	}
+	// if (unit.showingDamage === true){
+	// 	demageEffect();
+	// }
 	if (movingPlayer === true) {
 		movePlayer();
 	}
@@ -1032,6 +1125,8 @@ function update() {
 		stage.update();
 		changed = false;
 	}
+	stage.addChild(statsDisplay);
+	stage.addChild(unitCreationMenu);
 }
 var tile_type;
 var tile_info_address;
@@ -1070,6 +1165,10 @@ function imageNumber(number) {
 			tile_info_address = "graphics/tile_info/tile_wood_bridge.png";
 			tile_type = "Wood Bridge";
 			return "graphics/tile/wood_bridge2.png";
+		case 9:
+			tile_info_address = "";
+			tile_type = "";
+			return "";
 		default:
 			return "error";
 	}
