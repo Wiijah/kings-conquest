@@ -292,9 +292,9 @@ function drawBottomInterface()  {
 
 function drawUnitCreationMenu() {
 	var listOfSources = [];
-	listOfSources.push("graphics/card/card_knight.png");
-	listOfSources.push("graphics/card/card_archer.png");
-	listOfSources.push("graphics/card/card_wizard.png");
+	listOfSources.push("graphics/card/knight_card.png");
+	listOfSources.push("graphics/card/archer_card.png");
+	listOfSources.push("graphics/card/wizard_card.png");
 
 	// var knightCard = new createjs.Bitmap("graphics/card/card_knight");
 	// var knightArcher = new createjs.Bitmap("graphics/card/card_archer");
@@ -311,23 +311,29 @@ function createFloatingCards(listOfSources, correspondingUnit) {
 	var numOfCards = listOfSources.length;
 	for (i = 0; i < listOfSources.length; i++) {
 		unitCards[i] = new createjs.Bitmap(listOfSources[i]);
+		var unit_card_text = new createjs.Text("$ 100", "12px 'Arial'", "#ffffff");
 		unitCards[i].y = 0;
-		unitCards[i].x = i * (500 / numOfCards);
-		unitCards[i].scaleX = 0.40;
-		unitCards[i].scaleY = 0.40;
+		unitCards[i].x = i * (330 / numOfCards);
+		unitCards[i].scaleX = 0.60;
+		unitCards[i].scaleY = 0.60;
 		unitCards[i].index = i;
 		unitCards[i].unitName = correspondingUnit[i];
-
+		unitCards[i].text = unit_card_text;
+		unitCards[i].text.y = unitCards[i].y+80;
+		unitCards[i].text.x = unitCards[i].x+28;
 		unitCards[i].addEventListener("mouseover", function(event) {
 			unitCards[event.target.index].y -= 20;
+			unitCards[event.target.index].text.y  -= 20;
 			changed = true;
 		});
 		unitCards[i].addEventListener("mouseout", function(event) {
 			unitCards[event.target.index].y += 20;
+			unitCards[event.target.index].text.y += 20;
 			changed = true;
 		});
-
 		unitCreationMenu.addChild(unitCards[i]);
+
+		unitCreationMenu.addChild(unitCards[i].text);
 
 	}
 }
@@ -337,12 +343,12 @@ function drawGoldDisplay() {
 	var coin = new createjs.Bitmap("graphics/coin.png");
 	coin.x = stage.canvas.width - 240;
 	coin.y = 10;
-	coin.scaleX = 0.1;
-	coin.scaleY = 0.1;
+	coin.scaleX = 1;
+	coin.scaleY = 1;
 
 	currentGoldDisplay = new createjs.Text("Gold: " + currentGold, "20px '04b_19'", "#000000");
-	currentGoldDisplay.x = coin.x + 50;
-	currentGoldDisplay.y = coin.y + 10;
+	currentGoldDisplay.x = coin.x + 40;
+	currentGoldDisplay.y = coin.y  +5;
 	currentGoldDisplay.textBasline = "alphabetic";
 
 	stage.addChild(coin);
@@ -1033,16 +1039,16 @@ function drawMap(data) {
 }
 
 	function mouseOut(evt){
-		if (!isDragging) {
-			draggable.removeChild(highLight_tile);
+		//if (!isDragging) {
+			//draggable.removeChild(highLight_tile);
 			stage.removeChild(tile_display);
 			stage.removeChild(tile_info_text);
 			stage.update();
-		}
+		//}
 	}
 
 	function mouveOver(evt) {
-		if (!isDragging) {
+		//if (!isDragging) {
 			stage.removeChild(tile_display);
 			stage.removeChild(tile_info_text);
 			var position = evt.target.name.split(",");
@@ -1069,9 +1075,9 @@ function drawMap(data) {
 			highLight_tile.y = (j+i) * 32.5 + 220;
 			highLight_tile.regX = 65;
 			highLight_tile.regY = 32.5;
-			draggable.addChild(highLight_tile);
-		}
-		//stage.update();
+			//draggable.addChild(highLight_tile);
+		//}
+		stage.update();
 	}
 
 createjs.Ticker.addEventListener("tick", update);
