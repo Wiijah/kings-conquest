@@ -19,6 +19,6 @@ if ($fetch = $result->fetch_object()) { //if user successfully logged in
   header ("Location: ../{$LOGGEDIN_DIR}/");
   exit;
 } else {
-  echo ("<script>alert('not logged in!')</script>");
+  echo ("<script>alert('Not logged in!')</script>");
 }
 ?>

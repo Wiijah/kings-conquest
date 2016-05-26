@@ -143,7 +143,7 @@ $(document).ready(function(){
 			                    </div>
 		                    </div>
 		                
-		                	<div class="social-login">
+		                	<div class="social-login" style="display: none">
 	                        	<h3>...or login with:</h3>
 	                        	<div class="social-login-buttons">
 		                        	<a class="btn btn-link-1 btn-link-1-facebook social_login" data-type="Facebook">
@@ -186,7 +186,7 @@ require_once 'inc_signup_form.php';
                         	</div>
 
 
-                            <div class="social-login">
+                            <div class="social-login" style="display: none">
                                 <h3>...or sign up with:</h3>
                                 <div class="social-login-buttons">
                                     <a class="btn btn-link-1 btn-link-1-facebook social_register" data-type="Facebook">
