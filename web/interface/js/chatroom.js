@@ -3,6 +3,7 @@ var debug;
 var messageBox = $("#play_chatroom_messages");
 var chatScrollSpeed = 600;
 var chat_colour = '';
+var preventDouble = false;
 
 $(document).ready(function() {
   chatroom_refresh_messages_periodically();
@@ -25,6 +26,8 @@ function chatroom_refresh_messages_periodically() {
   setTimeout("chatroom_refresh_messages_periodically()", 1000);
 }
 function chatroom_refresh_messages() {
+  if (preventDouble) return;
+  preventDouble = true;
   quickPost("ajax/chatroom_get", {id: lastID, room: room_id}, function(data, status){
     if (session_expired) return;
 
@@ -37,6 +40,7 @@ function chatroom_refresh_messages() {
       $("#play_chatroom_messages").animate({ scrollTop: $("#play_chatroom_messages")[0].scrollHeight }, chatScrollSpeed);
     }
   });
+  preventDouble = false;
 }
 
 function concatToChatroom(line) {
