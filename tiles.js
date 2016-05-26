@@ -164,7 +164,6 @@ function initGame() {
 
 	});
 
-	var knight = new createjs.Bitmap();
 
 
 	var box = new createjs.Bitmap("graphics/stats_background.png");
@@ -172,6 +171,7 @@ function initGame() {
 	box.scaleY = 0.47;
 	statsDisplay.addChild(box);
 
+	console.log(stage.canvas.width);
 	stage.canvas.width = window.innerWidth;
 	stage.canvas.height = window.innerHeight;
 	
