@@ -4,9 +4,13 @@ var MOVEMENT_STEP = 6.5
 
 
 var stage = new createjs.Stage("demoCanvas");
+
 var that = this;
 var team = 0;
 
+var isDragging = false;
+var offX;
+var offY;
 
 
 var path = [];
@@ -47,6 +51,18 @@ function resize() {
 	//drawStatsDisplay();
 }
 
+// drag
+var offset = new createjs.Point();
+function startDrag(event) {
+	offset.x = stage.mouseX - draggable.x;
+	offset.y = stage.mouseY - draggable.y;
+	stage.addEventListener("mousemove", doDrag);
+}
+function doDrag(event) {
+	draggable.x = event.stageX - offset.x;
+	draggable.y = event.stageY - offset.y;
+}
+
 
 function initGame() {
 	stage.enableMouseOver(20);
@@ -83,8 +99,6 @@ function initGame() {
           	},
           	framerate: 2
         	});
-
-
 
 
 			var unit = new createjs.Sprite(spriteSheet, "stand");
@@ -157,8 +171,8 @@ function initGame() {
 			blockMaps[unit.column][unit.row] = 1;
 
 			// Add the unit and its hp bar to the stage
-			stage.addChild(unit);
-			stage.addChild(hp_bar);
+			draggable.addChild(unit);
+			draggable.addChild(hp_bar);
 		});
 
 
@@ -174,6 +188,28 @@ function initGame() {
 
 	stage.canvas.width = window.innerWidth;
 	stage.canvas.height = window.innerHeight;
+
+
+	draggable = new createjs.Container();
+	var box = new createjs.Shape();
+	box.graphics.beginFill("#ffffff").drawRect(0,0,stage.canvas.width, stage.canvas.height);
+	draggable.addChild(box);
+	draggable.on("pressmove", function(event) {
+		if (isDragging) {
+			this.x = event.stageX - offX;
+    		this.y = event.stageY - offY;
+    	} else {
+    		offX = stage.mouseX - draggable.x;
+    		offY = stage.mouseY - draggable.y;
+    		isDragging = true;
+    	}
+	});
+	draggable.on("pressup", function(event) {
+		if (isDragging) {
+			isDragging = false;
+		}
+	})
+	stage.addChild(draggable);
 	
 	drawStatsDisplay();
 	drawUnitCreationMenu();
@@ -234,8 +270,8 @@ function getLuck(unit) {
 function updateHP_bar(unit){
 	stage.update();
 	if (getHealth(unit) <= 0){
-		stage.removeChild(unit);
-		stage.removeChild(unit.hp_bar);
+		draggable.removeChild(unit);
+		draggable.removeChild(unit.hp_bar);
 	} else {
 		unit.hp_bar.graphics.clear();
 		unit.hp_bar.graphics.beginFill("#ff0000").drawRect(0, 0, 80, 10);
@@ -247,7 +283,7 @@ function drawBottomInterface()  {
 	bottomInterface.x = 0;
 	bottomInterface.y = stage.canvas.height - 240;
 	// bottomInterface.y = 0;
-	stage.addChild(bottomInterface);
+	draggable.addChild(bottomInterface);
 }
 
 
@@ -264,7 +300,7 @@ function drawUnitCreationMenu() {
 
 	createFloatingCards(listOfSources, []);
 	unitCreationMenu.x = 0;
-	unitCreationMenu.y = 0;
+	unitCreationMenu.y = window.innerHeight - 240;
 	bottomInterface.addChild(unitCreationMenu);
 }
 
@@ -313,7 +349,7 @@ function drawGoldDisplay() {
 
 function drawStatsDisplay() {
 	statsDisplay.x = 800;
-	statsDisplay.y = 0;
+	statsDisplay.y = window.innerHeight - 240;
 	bottomInterface.addChild(statsDisplay);
 	// stage.addChild(statsDisplay);
 }
@@ -350,8 +386,8 @@ function drawGame() {
 		that.drawMap(that.mapData);
 
 		$.each(units, function(i, value) {
-			stage.addChild(value);
-			stage.addChild(value.hp_bar);
+			draggable.addChild(value);
+			draggable.addChild(value.hp_bar);
 		});
 
 		changed = true;
@@ -419,19 +455,19 @@ function showActionMenuNextToPlayer(unit) {
 		clearSelectionEffects();
 	});
 
-	stage.addChild(menuBackground);
-    stage.addChild(moveButton);
-    stage.addChild(attackButton);
-    stage.addChild(skillButton);
-    stage.addChild(cancelButton);
+	draggable.addChild(menuBackground);
+    draggable.addChild(moveButton);
+    draggable.addChild(attackButton);
+    draggable.addChild(skillButton);
+    draggable.addChild(cancelButton);
 
 	var min = moveButton;
-	min = stage.getChildIndex(attackButton) < stage.getChildIndex(min) ? attackButton : min;
-	min = stage.getChildIndex(skillButton) < stage.getChildIndex(min) ? skillButton : min;
-	min = stage.getChildIndex(cancelButton) < stage.getChildIndex(min) ? cancelButton : min;
+	min = draggable.getChildIndex(attackButton) < draggable.getChildIndex(min) ? attackButton : min;
+	min = draggable.getChildIndex(skillButton) < draggable.getChildIndex(min) ? skillButton : min;
+	min = draggable.getChildIndex(cancelButton) < draggable.getChildIndex(min) ? cancelButton : min;
 
-	if (stage.getChildIndex(menuBackground) > stage.getChildIndex(min)) {
-		stage.swapChildren(menuBackground, min);
+	if (draggable.getChildIndex(menuBackground) > draggable.getChildIndex(min)) {
+		draggable.swapChildren(menuBackground, min);
 	}
 
 
@@ -497,7 +533,7 @@ function cast(skillNo, unit) {
     			buff_icon = new createjs.Bitmap("graphics/buff_shield.png");
 				buff_icon.x = unit.x + 5;
 				buff_icon.y = unit.y - 70;
-				stage.addChild(buff_icon);
+				draggable.addChild(buff_icon);
 	    	}
 
 
@@ -587,24 +623,24 @@ function drawRange(reachable, typeOfRange) {
 					sub_bmp.y = (tile[1]+tile[0]) * 32.5 + 220;
 					sub_bmp.regX = 65;
 					sub_bmp.regY = 32.5;
-					stage.addChild(sub_bmp);
+					draggable.addChild(sub_bmp);
 					sub_highlighted.push(sub_bmp);
 				});
 				stage.update();
 			});
 			bmp.addEventListener("mouseout", function(event) {
 				$.each(sub_highlighted, function(i, tile) {
-					stage.removeChild(tile);
+					draggable.removeChild(tile);
 				});
 				stage.update();
 			});
 		}
-		stage.addChild(bmp);
+		draggable.addChild(bmp);
 		highlighted.push(bmp);
 		$.each(units, function(i, value) {
-			if (stage.getChildIndex(value) < stage.getChildIndex(bmp)) {
-				stage.swapChildren(bmp, value);
-				stage.swapChildren(bmp, value.hp_bar);
+			if (draggable.getChildIndex(value) < draggable.getChildIndex(bmp)) {
+				draggable.swapChildren(bmp, value);
+				draggable.swapChildren(bmp, value.hp_bar);
 			}
 		});
 	});
@@ -671,15 +707,15 @@ function showDamage(unit, critical, damage){
 	unit.damageText.y = unit.y - 50;
 	unit.damageText.textBasline = "alphabetic";
 
-	stage.addChild(unit.damageBackground);
-	stage.addChild(unit.damageText);
+	draggable.addChild(unit.damageBackground);
+	draggable.addChild(unit.damageText);
 	stage.update();
 	unit.showingDamage = true;
 	demageEffect(unit.damageText, unit.damageBackground);	
 
 	setTimeout(function (){
-		stage.removeChild(unit.damageBackground);
-		stage.removeChild(unit.damageText);
+		draggable.removeChild(unit.damageBackground);
+		draggable.removeChild(unit.damageText);
 		unit.showingDamage = false;
 		stage.update();
 	}, 750);
@@ -697,7 +733,7 @@ function attack(attacker, target){
 		$.each(target.buffs, function(i, value) {
 			if (value[0] == 5) {
 				shield = true;
-				stage.removeChild(buff_icon);
+				draggable.removeChild(buff_icon);
 				var index = target.buffs.indexOf(value);
 				target.buffs.splice(index, 1);
 			}
@@ -744,11 +780,11 @@ function destroyStats() {
 
 function destroyMenu() {
 	if (!isDisplayingMenu) return;
-	stage.removeChild(menuBackground);
-	stage.removeChild(moveButton);
-	stage.removeChild(attackButton);
-	stage.removeChild(skillButton);
-	stage.removeChild(cancelButton);
+	draggable.removeChild(menuBackground);
+	draggable.removeChild(moveButton);
+	draggable.removeChild(attackButton);
+	draggable.removeChild(skillButton);
+	draggable.removeChild(cancelButton);
 	changed = true;
 }
 
@@ -756,10 +792,10 @@ function undoHighlights() {
 	// console.log(isInHighlight);
 	if (!isInHighlight) return;
 	$.each(highlighted, function(i, tile) {
-		stage.removeChild(tile);
+		draggable.removeChild(tile);
 	});
 	$.each(sub_highlighted, function(i, tile) {
-		stage.removeChild(tile);
+		draggable.removeChild(tile);
 	})
 	isInHighlight = false;
 	highlighted = [];
@@ -822,12 +858,12 @@ function movePlayer() {
 function sortIndices(unit) {
 	$.each(units, function(i, value) {
 		if (unit.y > value.y) {
-			if (stage.getChildIndex(unit) < stage.getChildIndex(value)) {
-				stage.swapChildren(unit, value);
+			if (draggable.getChildIndex(unit) < draggable.getChildIndex(value)) {
+				draggable.swapChildren(unit, value);
 			}
 		} else if (unit.y < value.y) {
-			if (stage.getChildIndex(unit) > stage.getChildIndex(value)) {
-				stage.swapChildren(unit, value);
+			if (draggable.getChildIndex(unit) > draggable.getChildIndex(value)) {
+				draggable.swapChildren(unit, value);
 			}
 		}
 	});
@@ -982,14 +1018,14 @@ function drawMap(data) {
 			maps[i][j].addEventListener("click", function(event) {
 				clearSelectionEffects();
 			});
-			stage.addChild(maps[i][j]);
+			draggable.addChild(maps[i][j]);
 		}
 	}
 
 }
 
 	function mouseOut(evt){
-		stage.removeChild(highLight_tile);
+		draggable.removeChild(highLight_tile);
 		stage.removeChild(tile_display);
 		stage.removeChild(tile_info_text);
 		stage.update();
@@ -1022,7 +1058,7 @@ function drawMap(data) {
 		highLight_tile.y = (j+i) * 32.5 + 220;
 		highLight_tile.regX = 65;
 		highLight_tile.regY = 32.5;
-		stage.addChild(highLight_tile);
+		draggable.addChild(highLight_tile);
 		stage.update();
 	}
 
@@ -1046,6 +1082,8 @@ function update() {
 		stage.update();
 		changed = false;
 	}
+	stage.addChild(statsDisplay);
+	stage.addChild(unitCreationMenu);
 }
 var tile_type;
 var tile_info_address;
