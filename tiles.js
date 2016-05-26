@@ -22,8 +22,10 @@ var skillButton;
 var cancelButton;
 var menuBackground;
 
+var bottomInterface  = new createjs.Container();
 var statsDisplay = new createjs.Container();
 var unitCreationMenu = new createjs.Container();
+var unitCards = new Array(3);
 
 var isDisplayingMenu = false;
 var isInHighlight = false;
@@ -60,6 +62,7 @@ function initGame() {
 
 
 		currentGold = data.currentGold;
+		drawGoldDisplay();
 		
 		that.drawMap(that.mapData);
 
@@ -157,14 +160,15 @@ function initGame() {
 
 	var box = new createjs.Bitmap("graphics/stats_background.png");
 	box.scaleX = 0.9;
-	box.scaleY = 0.5;
+	box.scaleY = 0.47;
 	statsDisplay.addChild(box);
 
 	stage.canvas.width = window.innerWidth;
 	stage.canvas.height = window.innerHeight;
 	
 	drawStatsDisplay();
-	drawGoldDisplay();
+	drawUnitCreationMenu();
+	drawBottomInterface();
 
 
 	changed = true;
@@ -172,32 +176,18 @@ function initGame() {
 	//window.addEventListener('resize', resize, false);
 }
 
-function drawGoldDisplay() {
-		var coin = new createjs.Bitmap("graphics/coin.png");
-		coin.x = stage.canvas.width - 250;
-		coin.y = 10;
-		coin.scaleX = 0.1;
-		coin.scaleY = 0.1;
 
-		currentGoldDisplay = new createjs.Text("Gold: " + currentGold, "20px '04b_19'", "#000000");
-		currentGoldDisplay.x = coin.x + 50;
-		currentGoldDisplay.y = coin.y + 10;
-		currentGoldDisplay.textBasline = "alphabetic";
-
-		stage.addChild(coin);
-		stage.addChild(currentGoldDisplay);
-}
 
 function getHealth(unit) {
 	var base = parseInt(unit.hp);
-	console.log("Base :" + base);
+	// console.log("Base :" + base);
 	$.each(unit.buffs, function(i, value) {
 		if (value[0] == 0) {
-			console.log("Buff : " + value[1]);
+			// console.log("Buff : " + value[1]);
 			base = base + value[1];
 		} // if type == health, add to base
 	});
-	console.log("result : " + base);
+	// console.log("result : " + base);
 	return base;
 }
 
@@ -246,11 +236,79 @@ function updateHP_bar(unit){
 	}
 }
 
-function drawStatsDisplay() {
-	statsDisplay.x = stage.canvas.width - 640;
-	statsDisplay.y = stage.canvas.height - 240;
+function drawBottomInterface()  {
+	bottomInterface.x = 0;
+	// bottomInterface.y = stage.canvas.height - 240;
+	bottomInterface.y = 0;
+	stage.addChild(bottomInterface);
+}
 
-	stage.addChild(statsDisplay);
+
+
+function drawUnitCreationMenu() {
+	var listOfSources = [];
+	listOfSources.push("graphics/card/card_knight.png");
+	listOfSources.push("graphics/card/card_archer.png");
+	listOfSources.push("graphics/card/card_wizard.png");
+
+	// var knightCard = new createjs.Bitmap("graphics/card/card_knight");
+	// var knightArcher = new createjs.Bitmap("graphics/card/card_archer");
+	// var knightWizard = new createjs.Bitmap("graphics/card/card_wizard");
+
+	createFloatingCards(listOfSources, []);
+	unitCreationMenu.x = 0;
+	unitCreationMenu.y = 0;
+	bottomInterface.addChild(unitCreationMenu);
+}
+
+function createFloatingCards(listOfSources, correspondingUnit) {
+
+	var numOfCards = listOfSources.length;
+	for (i = 0; i < listOfSources.length; i++) {
+		unitCards[i] = new createjs.Bitmap(listOfSources[i]);
+		unitCards[i].y = 0;
+		unitCards[i].x = i * (500 / numOfCards);
+		unitCards[i].scaleX = 0.40;
+		unitCards[i].scaleY = 0.40;
+		unitCards[i].index = i;
+		unitCards[i].unitName = correspondingUnit[i];
+
+		unitCards[i].addEventListener("mouseover", function(event) {
+			unitCards[event.target.index].y -= 20;
+			changed = true;
+		});
+		unitCards[i].addEventListener("mouseout", function(event) {
+			unitCards[event.target.index].y += 20;
+			changed = true;
+		});
+
+		unitCreationMenu.addChild(unitCards[i]);
+
+	}
+}
+
+function drawGoldDisplay() {
+	console.log("displaying gold bar");
+	var coin = new createjs.Bitmap("graphics/coin.png");
+	coin.x = stage.canvas.width - 250;
+	coin.y = 10;
+	coin.scaleX = 0.1;
+	coin.scaleY = 0.1;
+
+	currentGoldDisplay = new createjs.Text("Gold: " + currentGold, "20px '04b_19'", "#000000");
+	currentGoldDisplay.x = coin.x + 50;
+	currentGoldDisplay.y = coin.y + 10;
+	currentGoldDisplay.textBasline = "alphabetic";
+
+	stage.addChild(coin);
+	stage.addChild(currentGoldDisplay);
+}
+
+function drawStatsDisplay() {
+	statsDisplay.x = 800;
+	statsDisplay.y = 0;
+	bottomInterface.addChild(statsDisplay);
+	// stage.addChild(statsDisplay);
 }
 
 function displayStats(unit) {
@@ -794,7 +852,8 @@ function drawMap(data) {
 			stage.addChild(maps[i][j]);
 		}
 	}
-	console.log(blockMaps);
+
+
 }
 
 	function mouseOut(evt){
