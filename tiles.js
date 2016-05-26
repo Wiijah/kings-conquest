@@ -95,8 +95,7 @@ function initGame() {
           	"images": [value.address],
           	"frames": {"regX": +10, "height": 142, "count": 2, "regY": -20, "width": 113 },
           	"animations": {
-            	"stand":[0,1],
-            	"info":[0]
+            	"stand":[0,1]
           	},
           	framerate: 2
         	});
@@ -200,10 +199,11 @@ function initGame() {
 		if (isDragging) {
 			this.x = event.stageX - offX;
     		this.y = event.stageY - offY;
-    	} else {
+    	} else if (!isInHighlight) {
     		offX = stage.mouseX - draggable.x;
     		offY = stage.mouseY - draggable.y;
     		isDragging = true;
+    		draggable.removeChild(highLight_tile);
     	}
 	});
 	draggable.on("pressup", function(event) {
@@ -292,9 +292,9 @@ function drawBottomInterface()  {
 
 function drawUnitCreationMenu() {
 	var listOfSources = [];
-	listOfSources.push("graphics/card/knight_card.png");
-	listOfSources.push("graphics/card/archer_card.png");
-	listOfSources.push("graphics/card/wizard_card.png");
+	listOfSources.push("graphics/card/card_knight.png");
+	listOfSources.push("graphics/card/card_archer.png");
+	listOfSources.push("graphics/card/card_wizard.png");
 
 	// var knightCard = new createjs.Bitmap("graphics/card/card_knight");
 	// var knightArcher = new createjs.Bitmap("graphics/card/card_archer");
@@ -311,29 +311,23 @@ function createFloatingCards(listOfSources, correspondingUnit) {
 	var numOfCards = listOfSources.length;
 	for (i = 0; i < listOfSources.length; i++) {
 		unitCards[i] = new createjs.Bitmap(listOfSources[i]);
-		var unit_card_text = new createjs.Text("$ 100", "12px 'Arial'", "#ffffff");
 		unitCards[i].y = 0;
-		unitCards[i].x = i * (300 / numOfCards);
-		unitCards[i].scaleX = 0.60;
-		unitCards[i].scaleY = 0.60;
+		unitCards[i].x = i * (500 / numOfCards);
+		unitCards[i].scaleX = 0.40;
+		unitCards[i].scaleY = 0.40;
 		unitCards[i].index = i;
 		unitCards[i].unitName = correspondingUnit[i];
-		unitCards[i].text = unit_card_text;
-		unitCards[i].text.y = unitCards[i].y+80;
-		unitCards[i].text.x = unitCards[i].x+28;
+
 		unitCards[i].addEventListener("mouseover", function(event) {
 			unitCards[event.target.index].y -= 20;
-			unitCards[event.target.index].text.y  -= 20;
 			changed = true;
 		});
 		unitCards[i].addEventListener("mouseout", function(event) {
 			unitCards[event.target.index].y += 20;
-			unitCards[event.target.index].text.y += 20;
 			changed = true;
 		});
-		unitCreationMenu.addChild(unitCards[i]);
 
-		unitCreationMenu.addChild(unitCards[i].text);
+		unitCreationMenu.addChild(unitCards[i]);
 
 	}
 }
@@ -452,8 +446,7 @@ function showActionMenuNextToPlayer(unit) {
 	skillButton = createClickableImage(skillSource, unit.x + 48, unit.y - 77, function() {
 		if (unit.skillCoolDown === 0) {
 			undoHighlights();
-			unit.skillCoolDown = "3";
-			unit.outOfMoves = 1;
+			// unit.skillCoolDown = 3;
 			cast(unit.skill_no, unit);
 		}
 	});
@@ -500,6 +493,9 @@ function cast(skillNo, unit) {
 					destroyStats();
 					displayStats(value);
 
+
+					selectedCharacter.outOfMoves = 1;
+					unit.skillCoolDown = 3;
 					destroyMenu();
 					showActionMenuNextToPlayer(value);
 
@@ -545,6 +541,8 @@ function cast(skillNo, unit) {
 	    	}
 
 
+	    	selectedCharacter.outOfMoves = 1;
+	    	unit.skillCoolDown = 3;
 			destroyMenu();
 			showActionMenuNextToPlayer(selectedCharacter);
 
@@ -621,6 +619,8 @@ function drawRange(reachable, typeOfRange) {
 						attack(selectedCharacter, unit);
 					}
 					clearSelectionEffects();
+					selectedCharacter.outOfMoves = 0;
+					selectedCharacter.skillCoolDown = 3;
 				});
 			});
 			bmp.addEventListener("mouseover", function(event) {
@@ -631,14 +631,14 @@ function drawRange(reachable, typeOfRange) {
 					sub_bmp.y = (tile[1]+tile[0]) * 32.5 + 220;
 					sub_bmp.regX = 65;
 					sub_bmp.regY = 32.5;
-					draggable.addChild(sub_bmp);
+					stage.addChild(sub_bmp);
 					sub_highlighted.push(sub_bmp);
 				});
 				stage.update();
 			});
 			bmp.addEventListener("mouseout", function(event) {
 				$.each(sub_highlighted, function(i, tile) {
-					draggable.removeChild(tile);
+					stage.removeChild(tile);
 				});
 				stage.update();
 			});
@@ -693,6 +693,7 @@ function demageEffect(damageText,damageBackground ){
 	stage.update(damageText,damageBackground);
 	for (var i = 0; i < 100; i++) {
 		setTimeout(function (){
+			console.log("in loop!");
 			damageText.y -= 0.2;
 			damageBackground.y -= 0.2;
 			stage.update(damageText,damageBackground);
@@ -705,10 +706,10 @@ function showDamage(unit, critical, damage){
 	unit.damageBackground = new createjs.Shape();
 	if (critical == 2) {
 		unit.damageBackground.graphics.beginFill("#ffeb00").drawRect(unit.x - 10, unit.y - 50, 40, 20);
-		unit.damageText = new createjs.Text(damage, "20px '04b_19'", "#000000");
+		unit.damageText = new createjs.Text(damage, "20px Arial", "#000000");
 	} else {
 		unit.damageBackground.graphics.beginFill("#ff0000").drawRect(unit.x - 10, unit.y - 50, 40, 20);
-		unit.damageText = new createjs.Text(damage, "20px '04b_19'", "#000000");
+		unit.damageText = new createjs.Text(damage, "20px Arial", "#000000");
 	}
 	unit.damageText.x = unit.x;
 	unit.damageText.y = unit.y - 50;
@@ -802,7 +803,7 @@ function undoHighlights() {
 		draggable.removeChild(tile);
 	});
 	$.each(sub_highlighted, function(i, tile) {
-		draggable.removeChild(tile);
+		stage.removeChild(tile);
 	})
 	isInHighlight = false;
 	highlighted = [];
@@ -906,7 +907,7 @@ function findPath(fromX, fromY, toX, toY) {
 				if (nx < 0 || nx >= mapHeight || ny < 0 || ny >= mapWidth) continue;
 
 				// Terrain check
-				if (blockMaps[nx][ny] === 1) continue;
+				if (that.mapData[nx][ny] == 2) continue;
 
 				// bounds and obstacle check here
 				if (vis[nx * mapWidth + ny] === false) {
@@ -1012,7 +1013,7 @@ function drawMap(data) {
 	for (i = 0; i < mapHeight; i++) {
 		for (j = 0; j < mapWidth; j++) {
 			var terrain = data[i][j];
-			blockMaps[i][j] = (terrain == 5 || terrain == 10) ? 1 : 0;
+			blockMaps[i][j] = terrain == 2 ? 1 : 0;
 			img = imageNumber(terrain);
 			maps[i][j] = new createjs.Bitmap(img);
 			maps[i][j].name = i + "," + j + "," + tile_type + "," + tile_info_address;
@@ -1032,41 +1033,45 @@ function drawMap(data) {
 }
 
 	function mouseOut(evt){
-		draggable.removeChild(highLight_tile);
-		stage.removeChild(tile_display);
-		stage.removeChild(tile_info_text);
-		stage.update();
+		if (!isDragging) {
+			draggable.removeChild(highLight_tile);
+			stage.removeChild(tile_display);
+			stage.removeChild(tile_info_text);
+			stage.update();
+		}
 	}
 
 	function mouveOver(evt) {
-		stage.removeChild(tile_display);
-		stage.removeChild(tile_info_text);
-		var position = evt.target.name.split(",");
-		var i = parseInt(position[0]);
-		var j = parseInt(position[1])
-		tile_info = position[2];
-		tile_display = new createjs.Bitmap(position[3]);
-		tile_display.x = 0;
-		tile_display.y = 0;
-		tile_display.scaleX = 0.6;
-		tile_display.scaleY = 0.6;
-		
-		tile_info_text = new createjs.Text(tile_info, "20px Arial", "#000000");
-		tile_info_text.x = 90;
-		tile_info_text.y = 100;
-		tile_info_text.textBaseline = "alphabetic";
-		tile_info_text.textAlign = "center";
-		stage.addChild(tile_display);
-		stage.addChild(tile_info_text);
+		if (!isDragging) {
+			stage.removeChild(tile_display);
+			stage.removeChild(tile_info_text);
+			var position = evt.target.name.split(",");
+			var i = parseInt(position[0]);
+			var j = parseInt(position[1])
+			tile_info = position[2];
+			tile_display = new createjs.Bitmap(position[3]);
+			tile_display.x = 0;
+			tile_display.y = 0;
+			tile_display.scaleX = 0.6;
+			tile_display.scaleY = 0.6;
+			
+			tile_info_text = new createjs.Text(tile_info, "20px Arial", "#000000");
+			tile_info_text.x = 90;
+			tile_info_text.y = 100;
+			tile_info_text.textBaseline = "alphabetic";
+			tile_info_text.textAlign = "center";
+			stage.addChild(tile_display);
+			stage.addChild(tile_info_text);
 
 
-		highLight_tile = new createjs.Bitmap("graphics/highlight_tile.png");
-		highLight_tile.x = (j-i) * 65 + 540;
-		highLight_tile.y = (j+i) * 32.5 + 220;
-		highLight_tile.regX = 65;
-		highLight_tile.regY = 32.5;
-		draggable.addChild(highLight_tile);
-		stage.update();
+			highLight_tile = new createjs.Bitmap("graphics/highlight_tile.png");
+			highLight_tile.x = (j-i) * 65 + 540;
+			highLight_tile.y = (j+i) * 32.5 + 220;
+			highLight_tile.regX = 65;
+			highLight_tile.regY = 32.5;
+			draggable.addChild(highLight_tile);
+		}
+		//stage.update();
 	}
 
 createjs.Ticker.addEventListener("tick", update);
@@ -1077,6 +1082,8 @@ function update() {
 	if (secondAttack && firstAttackDone) {
 		undoHighlights();
 		isAttacking = true;
+		secondAttack = 0;
+		selectedCharacter.skillCoolDown = 3;
 		drawRange(findReachableTiles(selectedCharacter.column, selectedCharacter.row, selectedCharacter.attackRange, false), 1);
 	}
 	// if (unit.showingDamage === true){
