@@ -3,8 +3,9 @@ error_reporting  (E_ALL);
 ini_set ("display_errors", true); 
 
 session_start();
+require_once 'dbacc.php';
 
-$db = mysqli_connect("localhost","root","","kconq");
+$db = mysqli_connect("localhost",$DB_USER,$DB_PASS,$DB_NAME);
 if (!$db) die("Unable to connect to the MySQL server.");
 
 $isLoggedIn = isset($_SESSION['id']);
