@@ -213,6 +213,11 @@ function initGame() {
 		}
 	})
 	stage.addChild(draggable);
+
+	upper = new createjs.Container();
+	upper.x = draggable.x;
+	upper.y = draggable.y;
+	stage.addChild(upper);
 	
 	drawStatsDisplay();
 	drawUnitCreationMenu();
@@ -665,14 +670,14 @@ function drawRange(reachable, typeOfRange) {
 					sub_bmp.y = (tile[1]+tile[0]) * 32.5 + 220;
 					sub_bmp.regX = 65;
 					sub_bmp.regY = 32.5;
-					stage.addChild(sub_bmp);
+					upper.addChild(sub_bmp);
 					sub_highlighted.push(sub_bmp);
 				});
 				//stage.update();
 			});
 			bmp.addEventListener("mouseout", function(event) {
 				$.each(sub_highlighted, function(i, tile) {
-					stage.removeChild(tile);
+					upper.removeChild(tile);
 				});
 				//stage.update();
 			});
@@ -837,7 +842,7 @@ function undoHighlights() {
 		draggable.removeChild(tile);
 	});
 	$.each(sub_highlighted, function(i, tile) {
-		stage.removeChild(tile);
+		upper.removeChild(tile);
 	})
 	isInHighlight = false;
 	highlighted = [];
@@ -1132,6 +1137,8 @@ function update() {
 		stage.update();
 		changed = false;
 	}
+	upper.x = draggable.x;
+	upper.y = draggable.y;
 	stage.addChild(statsDisplay);
 	stage.addChild(unitCreationMenu);
 }
