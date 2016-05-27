@@ -62,7 +62,7 @@
 		},
 		"king": {
 			"address": "graphics/spritesheet/stand/ss_king_stand.png",
-			"spritesheet": "graphics/spritesheet/attack/ss_archer_attack.png",
+			"spritesheet": "graphics/spritesheet/attack/ss_king_attack.png",
 			"info": "graphics/card/king_card.png",
 			"hp" : 400,
 			"max_hp" : 400,
