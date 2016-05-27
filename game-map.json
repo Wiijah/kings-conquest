@@ -61,7 +61,7 @@
 		"king": {
 			"address": "graphics/spritesheet/stand/ss_king_stand.png",
 			"info": "graphics/card/king_card.png",
-			"hp" : 40,
+			"hp" : 400,
 			"max_hp" : 400,
 			"attack" : 25,
 			"skill": "Buffer",
@@ -80,9 +80,9 @@
 		"wizard": {
 			"address": "graphics/spritesheet/stand/ss_wizard_stand.png",
 			"info": "graphics/card/wizard_card.png",
-			"hp" : 40,
-			"max_hp" : 200,
-			"attack" : 15,
+			"hp" : 150,
+			"max_hp" : 150,
+			"attack" : 55,
 			"skill": "Magic Damage",
 			"skill_no": 4,
 			"luck":0.75,
@@ -99,7 +99,7 @@
 		"knight": {
 			"address": "graphics/spritesheet/stand/ss_knight_stand.png",
 			"info": "graphics/card/knight_card.png",
-			"hp" : 40,
+			"hp" : 300,
 			"max_hp" : 300,
 			"attack" : 40,
 			"skill": "Shield!",
