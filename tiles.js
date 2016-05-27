@@ -134,7 +134,7 @@ function initGame() {
 						next: false	
 					}
 				},
-				framerate: 2
+				framerate: 1
 			});
 			unit.skill_no = value.skill_no;
 			unit.buffs = [];
