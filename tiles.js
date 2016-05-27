@@ -124,6 +124,17 @@ function initGame() {
 			unit.skill = value.skill;
 			unit.address = value.address;
 			unit.info = value.info;
+			unit.spritesheet = new createjs.SpriteSheet({
+				"images": [value.spritesheet],
+				"frames": {"width": 142, "height": 142, "count": 4, "regY": 110, "regX": 95},
+				"animations": {
+					"attack":{
+						frames: [0,1,2,3],
+						next: false	
+					}
+				},
+				framerate: 2
+			});
 			unit.skill_no = value.skill_no;
 			unit.buffs = [];
 			unit.buff_icons = [];
@@ -701,6 +712,7 @@ function drawRange(reachable, typeOfRange) {
 				$.each(sub_highlighted, function(i, tile) {
 					upper.removeChild(tile);
 				});
+				sub_highlighted = [];
 				//stage.update();
 			});
 		}
@@ -793,6 +805,15 @@ function showDamage(unit, critical, damage){
 var buff_icon;
 function attack(attacker, target){
 	if (attacker.team != target.team){
+		
+		var sprite = new createjs.Sprite(attacker.spritesheet, "attack");
+		sprite.x = attacker.x;
+		sprite.y = attacker.y;
+		sprite.scaleX = 0.7;
+		sprite.scaleY = 0.7;
+		draggable.removeChild(attacker);
+		draggable.addChild(sprite);
+
 		var criticalHit = getRandom(getLuck(attacker));
 		var damage = getAttack(attacker) * criticalHit
 		//console.log("target hp before: " + target.hp);
@@ -824,6 +845,12 @@ function attack(attacker, target){
 		if (secondAttack) {
 			firstAttackDone = true;
 		}
+
+		setTimeout(function() {
+			draggable.removeChild(sprite);
+			draggable.addChild(attacker);
+		}, 1000);
+
 		changed = true;
 	} 
 }
