@@ -23,7 +23,6 @@ $(document).ready(function() {
 
 function chatroom_refresh_messages_periodically() {
   chatroom_refresh_messages();
-  setTimeout("chatroom_refresh_messages_periodically()", 1000);
 }
 function chatroom_refresh_messages() {
   quickPost("ajax/chatroom_get", {id: lastID, room: room_id}, function(data, status){
@@ -37,6 +36,7 @@ function chatroom_refresh_messages() {
       lastID = data[data.length - 1].id;
       $("#play_chatroom_messages").animate({ scrollTop: $("#play_chatroom_messages")[0].scrollHeight }, chatScrollSpeed);
     }
+  setTimeout("chatroom_refresh_messages()", 650);
   });
 }
 
