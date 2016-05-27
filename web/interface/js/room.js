@@ -15,6 +15,7 @@ $(document).ready(function() {
 });
 
 function room_start() {
+  fs_load();
   quickPost("ajax/room_ready", {room_id: room_id, ready: 'ready'}, function(data, status) {
     if (data.kc_error !== undefined) {
       lightbox_alert("Error", data.kc_error);
