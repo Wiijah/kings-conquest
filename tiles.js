@@ -347,6 +347,14 @@ function createFloatingCards(listOfSources, correspondingUnit) {
 		unitCards[i].text = unit_card_text;
 		unitCards[i].text.y = unitCards[i].y+80;
 		unitCards[i].text.x = unitCards[i].x+28;
+		unitCards[i].addEventListener("click", function(event) {
+			if (currentGold >= 100) {
+				console.log("create new unit");
+				currentGold -= 100;
+				currentGoldDisplay.text = ("Gold: " + currentGold);
+			}
+			changed = true;
+		});
 		unitCards[i].addEventListener("mouseover", function(event) {
 			unitCards[event.target.index].y -= 20;
 			unitCards[event.target.index].text.y  -= 20;
@@ -687,7 +695,7 @@ function drawRange(reachable, typeOfRange) {
 			bmp.addEventListener("mouseover", function(event) {
 				var tiles = getSurroundingTiles(bmp.column, bmp.row);
 				$.each(tiles, function(i, tile) {
-					var sub_bmp = new createjs.Bitmap("graphics/green_tile.png");
+					var sub_bmp = new createjs.Bitmap("graphics/tile/green_tile.png");
 					sub_bmp.x = (tile[1]-tile[0]) * 65 + 540;
 					sub_bmp.y = (tile[1]+tile[0]) * 32.5 + 220;
 					sub_bmp.regX = 65;
@@ -749,16 +757,16 @@ var showingDamage;
 
 
 function demageEffect(damageText,damageBackground ){
-	damageText.y -= 0.2;
-	damageBackground.y -= 0.2;
+	damageText.y -= 0.1;
+	damageBackground.y -= 0.1;
 	stage.update(damageText,damageBackground);
 	for (var i = 0; i < 100; i++) {
 		setTimeout(function (){
 			console.log("in loop!");
-			damageText.y -= 0.2;
-			damageBackground.y -= 0.2;
+			damageText.y -= 0.1;
+			damageBackground.y -= 0.1;
 			stage.update(damageText,damageBackground);
-		}, 100);
+		}, 5);
 		
 	}
 	
