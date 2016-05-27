@@ -32,6 +32,7 @@ if ($part->state == 'owner') {
   if ($num_of_players_ready < $num_of_players) {
     kc_error("All players need to be ready before you can start the game.");
   }
+  $db->query("UPDATE rooms SET state = 'ingame' WHERE room_id = {$room_id}");
 } else { //not owner, so just set ready
   $db->query("UPDATE room_participants SET state = '{$ready}' WHERE user_id = '{$user->id}'");
 }
