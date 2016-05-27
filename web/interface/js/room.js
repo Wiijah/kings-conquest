@@ -20,7 +20,7 @@ function room_start() {
       lightbox_alert("Error", data.kc_error);
       return;
     }
-    alert('Game Started!');
+    window.location.href = '../game/';
   });
 }
 
