@@ -187,7 +187,7 @@ function initGame() {
 					});
 				}
 
-				if (selectedCharacter != unit && isCasting) {
+				if (selectedCharacter != unit && isCasting && selectedCharacter.team != unit.team) {
 
 					$.each(units, function(i, otherUnit) {
 						if (otherUnit.column == unit.column && otherUnit.row == unit.row) {
