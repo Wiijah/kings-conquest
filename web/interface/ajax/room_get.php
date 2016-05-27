@@ -8,7 +8,12 @@ $room_id = secureInt($_POST['id']);
 $result = $db->query("SELECT * FROM rooms WHERE room_id = {$room_id}");
 $room = $result->fetch_object();
 if ($result->num_rows == 0 || $room->state == 'deleted') {
-  die('{"kc_error":"deleted"}');
+  die('{"kc_error":"This room no longer exists."}');
+}
+
+$result = $db->query("SELECT * FROM room_participants WHERE user_id = '{$user->id}' AND room_id = '{$room_id}' AND event = ''");
+if (!$participant = $result->fetch_object()) { //user not in room
+  die('{"kc_error":"You are not in this room."}');
 }
 
 $out = "{";

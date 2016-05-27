@@ -58,11 +58,9 @@ function room_refresh() {
     if (session_expired || !room_exists) return;
 
     if (data.kc_error !== undefined) {
-      if (data.kc_error == "deleted") {
-        room_exists = false;
-        disablePage("index");
-        lightbox_alert("Room Deleted", "This room has been deleted.");
-      }
+      room_exists = false;
+      disablePage("index");
+      lightbox_alert("Room Deleted", data.kc_error);
       return;
     }
     var players = data.players;
