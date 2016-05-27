@@ -63,6 +63,9 @@ function room_refresh() {
       lightbox_alert("Room Deleted", data.kc_error);
       return;
     }
+    if (data.kc_success !== undefined && data.kc_success == "started") {
+      window.location.href = '../game/';
+    }
     var players = data.players;
     console.log(data);
     var players_html = '<tr><th>#</th><th>Player</th><th>Colour</th></tr>';
