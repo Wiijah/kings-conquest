@@ -341,11 +341,11 @@ function createFloatingCards(listOfSources, correspondingUnit) {
 
 function drawGoldDisplay() {
 	console.log("displaying gold bar");
-	var coin_background = new createjs.Bitmap("graphics/stats_background.png");
-	coin_background.x = stage.canvas.width - 180;
-	coin_background.y = 8;
-	coin_background.scaleX = 0.375;
-	coin_background.scaleY = 0.155;
+	// var coin_background = new createjs.Bitmap("graphics/stats_background.png");
+	// coin_background.x = stage.canvas.width - 180;
+	// coin_background.y = 8;
+	// coin_background.scaleX = 0.375;
+	// coin_background.scaleY = 0.155;
 
 
 
@@ -357,12 +357,12 @@ function drawGoldDisplay() {
 
 
 
-	currentGoldDisplay = new createjs.Text("Gold: " + currentGold, "20px '04b_19'", "#000000");
+	currentGoldDisplay = new createjs.Text("Gold: " + currentGold, "20px '04b_19'", "#ffffff");
 	currentGoldDisplay.x = coin.x + 40;
 	currentGoldDisplay.y = coin.y  +5;
 	currentGoldDisplay.textBasline = "alphabetic";
 
-	stage.addChild(coin_background);
+	// stage.addChild(coin_background);
 	stage.addChild(coin);
 	stage.addChild(currentGoldDisplay);
 }
