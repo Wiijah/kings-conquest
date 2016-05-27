@@ -17,6 +17,10 @@ function hashPass($pass) {
   return password_hash($pass, PASSWORD_BCRYPT);
 }
 
+function passVerify($input, $encrypted_password) {
+  return password_verify($input, $encrypted_password);
+}
+
 //ekko is an extension to echo, supporting undeclared variables
 function ekko(&$str) {
   if (!isset($str)) echo "";
@@ -24,10 +28,12 @@ function ekko(&$str) {
 }
 
 function percent($a, $b) {
+  if ($a + $b == 0) return 0;
   return round(100 * $a / ($a + $b), 2);
 }
 
 function ratio($a, $b) {
+  if ($b == 0) return 0;
   return round($a / $b, 2);
 }
 
@@ -36,7 +42,7 @@ function formatSQLDate($date) {
 }
 //check if a string contains a substring
 function contains($haystack, $needle) {
-  return strpos($haystack, $needle) !== false;
+  return $needle == "" || (strpos($haystack, $needle) !== false);
 }
 
 //check if both variables $a and $b are set and equal to each other
