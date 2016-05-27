@@ -216,6 +216,11 @@ function initGame() {
 		}
 	})
 	stage.addChild(draggable);
+
+	upper = new createjs.Container();
+	upper.x = draggable.x;
+	upper.y = draggable.y;
+	stage.addChild(upper);
 	
 	drawStatsDisplay();
 	drawUnitCreationMenu();
@@ -344,11 +349,11 @@ function createFloatingCards(listOfSources, correspondingUnit) {
 
 function drawGoldDisplay() {
 	console.log("displaying gold bar");
-	var coin_background = new createjs.Bitmap("graphics/stats_background.png");
-	coin_background.x = stage.canvas.width - 180;
-	coin_background.y = 8;
-	coin_background.scaleX = 0.375;
-	coin_background.scaleY = 0.155;
+	// var coin_background = new createjs.Bitmap("graphics/stats_background.png");
+	// coin_background.x = stage.canvas.width - 180;
+	// coin_background.y = 8;
+	// coin_background.scaleX = 0.375;
+	// coin_background.scaleY = 0.155;
 
 
 
@@ -360,12 +365,12 @@ function drawGoldDisplay() {
 
 
 
-	currentGoldDisplay = new createjs.Text("Gold: " + currentGold, "20px '04b_19'", "#000000");
+	currentGoldDisplay = new createjs.Text("Gold: " + currentGold, "20px '04b_19'", "#ffffff");
 	currentGoldDisplay.x = coin.x + 40;
 	currentGoldDisplay.y = coin.y  +5;
 	currentGoldDisplay.textBasline = "alphabetic";
 
-	stage.addChild(coin_background);
+	// stage.addChild(coin_background);
 	stage.addChild(coin);
 	stage.addChild(currentGoldDisplay);
 }
@@ -668,14 +673,14 @@ function drawRange(reachable, typeOfRange) {
 					sub_bmp.y = (tile[1]+tile[0]) * 32.5 + 220;
 					sub_bmp.regX = 65;
 					sub_bmp.regY = 32.5;
-					stage.addChild(sub_bmp);
+					upper.addChild(sub_bmp);
 					sub_highlighted.push(sub_bmp);
 				});
 				//stage.update();
 			});
 			bmp.addEventListener("mouseout", function(event) {
 				$.each(sub_highlighted, function(i, tile) {
-					stage.removeChild(tile);
+					upper.removeChild(tile);
 				});
 				//stage.update();
 			});
@@ -840,7 +845,7 @@ function undoHighlights() {
 		draggable.removeChild(tile);
 	});
 	$.each(sub_highlighted, function(i, tile) {
-		stage.removeChild(tile);
+		upper.removeChild(tile);
 	})
 	isInHighlight = false;
 	highlighted = [];
@@ -1141,6 +1146,8 @@ function update() {
 		stage.update();
 		changed = false;
 	}
+	upper.x = draggable.x;
+	upper.y = draggable.y;
 	stage.addChild(statsDisplay);
 	stage.addChild(unitCreationMenu);
 }
