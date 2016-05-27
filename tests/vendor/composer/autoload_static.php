@@ -28,6 +28,10 @@ class ComposerStaticInit3a0ff48b6d14d6212bd2246e3557cd3a
         ),
     );
 
+    public static $fallbackDirsPsr0 = array (
+        0 => __DIR__ . '/../..' . '/../web',
+    );
+
     public static $classMap = array (
         'File_Iterator' => __DIR__ . '/..' . '/phpunit/php-file-iterator/File/Iterator.php',
         'File_Iterator_Facade' => __DIR__ . '/..' . '/phpunit/php-file-iterator/File/Iterator/Facade.php',
@@ -464,6 +468,7 @@ class ComposerStaticInit3a0ff48b6d14d6212bd2246e3557cd3a
         return \Closure::bind(function () use ($loader) {
             $loader->prefixLengthsPsr4 = ComposerStaticInit3a0ff48b6d14d6212bd2246e3557cd3a::$prefixLengthsPsr4;
             $loader->prefixDirsPsr4 = ComposerStaticInit3a0ff48b6d14d6212bd2246e3557cd3a::$prefixDirsPsr4;
+            $loader->fallbackDirsPsr0 = ComposerStaticInit3a0ff48b6d14d6212bd2246e3557cd3a::$fallbackDirsPsr0;
             $loader->classMap = ComposerStaticInit3a0ff48b6d14d6212bd2246e3557cd3a::$classMap;
 
         }, null, ClassLoader::class);
