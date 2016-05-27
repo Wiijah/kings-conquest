@@ -3,6 +3,7 @@ var debug;
 var messageBox = $("#play_chatroom_messages");
 var chatScrollSpeed = 600;
 var chat_colour = '';
+var preventDouble = false;
 
 $(document).ready(function() {
   chatroom_refresh_messages_periodically();
@@ -12,9 +13,9 @@ $(document).ready(function() {
     if(event.which === 13 && $(this).val() != ""){
       var message = $(this).val();
       $(this).val("");
-      console.log("Message: "+ message);
       quickPost("ajax/chatroom_send", {message: message, room: room_id}, function(data, status){
         chatroom_refresh_messages();
+        console.log("YEA");
       });
     }
   });
@@ -27,7 +28,6 @@ function chatroom_refresh_messages_periodically() {
 function chatroom_refresh_messages() {
   quickPost("ajax/chatroom_get", {id: lastID, room: room_id}, function(data, status){
     if (session_expired) return;
-    console.log(session_expired);
 
     for (var i = 0; i < data.length; i++) {
         concatToChatroom(data[i]);
@@ -37,12 +37,12 @@ function chatroom_refresh_messages() {
       lastID = data[data.length - 1].id;
       $("#play_chatroom_messages").animate({ scrollTop: $("#play_chatroom_messages")[0].scrollHeight }, chatScrollSpeed);
     }
-    console.log(data + "Last ID: "+lastID);
-
   });
 }
 
 function concatToChatroom(line) {
+  if (lastID >= line.id) return; //prevent old messages being resent
+  lastID = line.id;
   if (line.chat_type == 'message') { //normal message
     $("#play_chatroom_messages").append("<span class='play_chatroom_user'>"+line.username+":</span> <span class='play_chatroom_text'>"+line.message+"</span><br />");
   } else { // event

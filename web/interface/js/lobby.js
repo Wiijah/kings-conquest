@@ -36,6 +36,7 @@ function lobby_refresh() {
 
 /* Join a room */
 function join_room(room_id) {
+  fs_load();
   quickPost("ajax/room_join", {room_id: room_id}, function(data, status){
     if (session_expired) return;
     

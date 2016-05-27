@@ -9,4 +9,5 @@ $colour = secureStr($_POST['colour']);
 $query = "INSERT INTO chat (user, message, room_id, colour) VALUES
     ('{$user->id}', '{$message}', '{$room_id}', '{$colour}')";
 $db->query($query);
+echo $AJAX_SUCCESS;
 ?>
