@@ -1233,7 +1233,8 @@ function drawMap(data) {
 
 			highLight_tile = new createjs.Bitmap("graphics/tile/highlight_tile.png");
 			highLight_tile.x = (j-i) * 65 + 540;
-			highLight_tile.y = (j+i) * 32.5 + 220;
+		    if (that.mapData[i][j] == 5) highLight_tile.y = (j+i) * 32.5 + 230;
+		    else highLight_tile.y = (j+i) * 32.5 + 220;
 			highLight_tile.regX = 65;
 			highLight_tile.regY = 32.5;
 
