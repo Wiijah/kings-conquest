@@ -40,6 +40,7 @@ var isInHighlight = false;
 var changed = false;
 var movingPlayer = false;
 var isAttacking = false;
+var isCasting = false;
 var currentGold;
 var currentGoldDisplay;
 var turn = 0;
@@ -176,8 +177,10 @@ function initGame() {
 					});
 				}
 
+
 				changed = true;
 			});
+
 		});
 
 
@@ -660,7 +663,7 @@ function drawRange(reachable, typeOfRange) {
 			bmp.addEventListener("mouseover", function(event) {
 				var tiles = getSurroundingTiles(bmp.column, bmp.row);
 				$.each(tiles, function(i, tile) {
-					var sub_bmp = new createjs.Bitmap("graphics/green_tile.png");
+					var sub_bmp = new createjs.Bitmap("graphics/tile/green_tile.png");
 					sub_bmp.x = (tile[1]-tile[0]) * 65 + 540;
 					sub_bmp.y = (tile[1]+tile[0]) * 32.5 + 220;
 					sub_bmp.regX = 65;
@@ -903,9 +906,15 @@ function sortIndices(unit) {
 			if (draggable.getChildIndex(unit) < draggable.getChildIndex(value)) {
 				draggable.swapChildren(unit, value);
 			}
+			if (draggable.getChildIndex(unit.hp_bar) < draggable.getChildIndex(value)) {
+				draggable.swapChildren(unit.hp_bar, value);
+			}
 		} else if (unit.y < value.y) {
 			if (draggable.getChildIndex(unit) > draggable.getChildIndex(value)) {
 				draggable.swapChildren(unit, value);
+			}
+			if (draggable.getChildIndex(unit.hp_bar) > draggable.getChildIndex(value)) {
+				draggable.swapChildren(unit.hp_bar, value);
 			}
 		}
 	});
