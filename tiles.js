@@ -789,6 +789,32 @@ function showDamage(unit, critical, damage){
 		//stage.update();
 	}, 750);
 }
+function showDamage2(unit, critical, damage){
+	unit.damageBackground2 = new createjs.Shape();
+	if (critical == 2) {
+		unit.damageBackground2.graphics.beginFill("#ffeb00").drawRect(unit.x - 10, unit.y - 50, 40, 20);
+		unit.damageText2 = new createjs.Text(damage, "20px Arial", "#000000");
+	} else {
+		unit.damageBackground2.graphics.beginFill("#ff0000").drawRect(unit.x - 10, unit.y - 50, 40, 20);
+		unit.damageText2 = new createjs.Text(damage, "20px Arial", "#000000");
+	}
+	unit.damageText2.x = unit.x;
+	unit.damageText2.y = unit.y - 50;
+	unit.damageText2.textBasline = "alphabetic";
+
+	draggable.addChild(unit.damageBackground2);
+	draggable.addChild(unit.damageText2);
+	//stage.update();
+	unit.showingDamage = true;
+	demageEffect(unit.damageText2, unit.damageBackground2);	
+
+	setTimeout(function (){
+		draggable.removeChild(unit.damageBackground2);
+		draggable.removeChild(unit.damageText2);
+		unit.showingDamage = false;
+		//stage.update();
+	}, 750);
+}
 
 var buff_icon;
 function attack(attacker, target){
@@ -807,7 +833,11 @@ function attack(attacker, target){
 		});
 		
 		if (!shield) {
-			showDamage(target, criticalHit, damage);
+			if (firstAttackDone){
+				showDamage2(target, criticalHit, damage);
+			} else {
+				showDamage(target, criticalHit, damage);
+			}
 			target.hp -= damage;
 		}
 		// console.log("attack attacker: " + attacker.column +","+ attacker.row);
