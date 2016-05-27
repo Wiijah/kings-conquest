@@ -545,11 +545,11 @@ function createClickableImage(imgSource, x, y, callBack) {
 function showActionMenuNextToPlayer(unit) {
 
 
-	menuBackground = new createjs.Bitmap("graphics/ingame_menu/ingame_menu_background.png");
-	menuBackground.x = unit.x + 43;
+	menuBackground = new createjs.Bitmap("graphics/ingame_menu/ingame_menu_background2.png");
+	menuBackground.x = unit.x + 40;
 	menuBackground.y = unit.y - 150;
 	menuBackground.scaleX = 0.6;
-    menuBackground.scaleY = 0.6;
+    menuBackground.scaleY = 0.65;
 
 	moveSource = unit.canMove === 1 && unit.outOfMoves === 0 ? "graphics/ingame_menu/move.png"
 								    : "graphics/ingame_menu/move_gray.png";
@@ -584,6 +584,7 @@ function showActionMenuNextToPlayer(unit) {
 	cancelButton = createClickableImage(cancelSource, unit.x + 45.5, unit.y - 47, function() {
 		clearSelectionEffects();
 	});
+
 
 	draggable.addChild(menuBackground);
     draggable.addChild(moveButton);

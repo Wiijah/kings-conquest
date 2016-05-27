@@ -4,7 +4,7 @@ include 'includes/header.php';
 include 'includes/logout_container.php';
 include 'includes/logo.php';
 
-$result = $db->query("SELECT * FROM room_participants WHERE user_id = '{$user->id}'");
+$result = $db->query("SELECT * FROM room_participants WHERE user_id = '{$user->id}' AND event = ''");
 if (!$part = $result->fetch_object()) {
   header ("Location: index");
   die();

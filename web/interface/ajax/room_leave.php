@@ -17,7 +17,7 @@ if ($room->state != 'pregame') {
   die('{"kc_error":"Game already started."}'); //can't leave room if game started, must leave through the game interface
 }
 
-$result = $db->query("SELECT * FROM room_participants WHERE user_id = '{$user->id}' AND event = ''");
+$result = $db->query("SELECT * FROM room_participants WHERE user_id = '{$user->id}' AND room_id = '{$room_id}' AND event = ''");
 if (!$participant = $result->fetch_object()) { //user already left
   die('{"kc_success":""}');
 }
@@ -30,8 +30,8 @@ $db->query("INSERT INTO chat (user, message, room_id, chat_type) VALUES
 
 /* Delete room and room participant records if owner */
 if ($participant->state == 'owner') {
-  $db->query("UPDATE rooms SET state = 'deleted' WHERE room_id = {$room_id}");
-  $db->query("DELETE FROM room_participants WHERE room_id = {$room_id}");
+  $db->query("UPDATE rooms SET state = 'deleted' WHERE room_id = '{$room_id}'");
+  $db->query("DELETE FROM room_participants WHERE room_id = '{$room_id}'");
 } else { /* Otherwise, leave the game without deleting the room */
   $db->query("UPDATE room_participants SET event = 'left' WHERE user_id = '{$user->id}'");
 }

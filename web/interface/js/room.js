@@ -20,7 +20,7 @@ function room_start() {
       lightbox_alert("Error", data.kc_error);
       return;
     }
-    alert('Game Started!');
+    window.location.href = '../game/';
   });
 }
 
@@ -58,11 +58,9 @@ function room_refresh() {
     if (session_expired || !room_exists) return;
 
     if (data.kc_error !== undefined) {
-      if (data.kc_error == "deleted") {
-        room_exists = false;
-        disablePage("index");
-        lightbox_alert("Room Deleted", "This room has been deleted.");
-      }
+      room_exists = false;
+      disablePage("index");
+      lightbox_alert("Room Deleted", data.kc_error);
       return;
     }
     var players = data.players;
@@ -90,6 +88,7 @@ function room_refresh() {
 
 /* Make the player leave the room */
 function room_leave() {
+  fs_load();
   quickPost("ajax/room_leave", {room_id: room_id}, function(data, status) {
     window.location.href = 'index';
   });
