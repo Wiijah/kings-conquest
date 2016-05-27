@@ -280,6 +280,7 @@ function updateHP_bar(unit){
 	if (getHealth(unit) <= 0){
 		draggable.removeChild(unit);
 		draggable.removeChild(unit.hp_bar);
+		units.splice(units.indexOf(unit), 1);
 	} else {
 		unit.hp_bar.graphics.clear();
 		unit.hp_bar.graphics.beginFill("#ff0000").drawRect(0, 0, 80, 10);
@@ -658,7 +659,7 @@ function drawRange(reachable, typeOfRange) {
 						attack(selectedCharacter, unit);
 					}
 					clearSelectionEffects();
-					selectedCharacter.outOfMoves = 0;
+					selectedCharacter.outOfMoves = 1;
 					selectedCharacter.skillCoolDown = 3;
 				});
 			});
@@ -1073,16 +1074,16 @@ function drawMap(data) {
 }
 
 	function mouseOut(evt){
-		//if (!isDragging) {
-			//draggable.removeChild(highLight_tile);
+		if (!isDragging) {
+			upper.removeChild(highLight_tile);
 			stage.removeChild(tile_display);
 			stage.removeChild(tile_info_text);
-			//stage.update();
-		//}
+			stage.update();
+		}
 	}
 
 	function mouveOver(evt) {
-		//if (!isDragging) {
+		if (!isDragging) {
 			stage.removeChild(tile_display);
 			stage.removeChild(tile_info_text);
 			var position = evt.target.name.split(",");
@@ -1110,9 +1111,9 @@ function drawMap(data) {
 			highLight_tile.regX = 65;
 			highLight_tile.regY = 32.5;
 
-			//draggable.addChild(highLight_tile);
-		//}
-		//stage.update();
+			upper.addChild(highLight_tile);
+		}
+		stage.update();
 	}
 
 createjs.Ticker.addEventListener("tick", update);

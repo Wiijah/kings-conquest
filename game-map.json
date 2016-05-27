@@ -118,7 +118,7 @@
 		"archer": {
 			"address": "graphics/spritesheet/stand/ss_archer_stand.png",
 			"info": "graphics/card/archer_card.png",
-			"hp" : 20,
+			"hp" : 200,
 			"max_hp" : 200,
 			"attack" : 20,
 			"skill": "Double Shoot",
