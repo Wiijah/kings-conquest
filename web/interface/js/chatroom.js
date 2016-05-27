@@ -14,7 +14,7 @@ $(document).ready(function() {
       var message = $(this).val();
       $(this).val("");
       quickPost("ajax/chatroom_send", {message: message, room: room_id}, function(data, status){
-        chatroom_refresh_messages();
+        //chatroom_refresh_messages();
         console.log("YEA");
       });
     }
@@ -30,7 +30,7 @@ function chatroom_refresh_messages() {
     if (session_expired) return;
 
     for (var i = 0; i < data.length; i++) {
-        concatToChatroom(data[i]);
+      concatToChatroom(data[i]);
     }
       // if new data has arrived, then update lastID and automatically scroll to bottom of chat
     if (data.length != 0) {
