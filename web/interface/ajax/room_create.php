@@ -18,9 +18,9 @@ if (!isStrLenCorrect($room_pass, 0, 20)) {
 $room_name = secureStr($room_name);
 $room_pass = secureStr($room_name);
 
-$result = $db->query("SELECT * FROM room_participants WHERE user_id = {$user->id}");
+$result = $db->query("SELECT * FROM room_participants WHERE user_id = {$user->id} AND event = ''");
 if ($result->num_rows > 0) {
-  die('{"kc_error":"You cannot join a room if you are already in a room."}');
+  kc_error("You cannot join a room if you are already in a room.");
 }
 
 // insert new room and get the room's ID
