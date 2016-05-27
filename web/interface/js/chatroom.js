@@ -14,7 +14,7 @@ $(document).ready(function() {
       var message = $(this).val();
       $(this).val("");
       quickPost("ajax/chatroom_send", {message: message, room: room_id}, function(data, status){
-        //chatroom_refresh_messages();
+        chatroom_refresh_messages();
         console.log("YEA");
       });
     }
@@ -33,7 +33,7 @@ function chatroom_refresh_messages() {
     }
       // if new data has arrived, then update lastID and automatically scroll to bottom of chat
     if (data.length != 0) {
-      lastID = data[data.length - 1].id;
+      //lastID = data[data.length - 1].id;
       $("#play_chatroom_messages").animate({ scrollTop: $("#play_chatroom_messages")[0].scrollHeight }, chatScrollSpeed);
     }
   setTimeout("chatroom_refresh_messages()", 650);
