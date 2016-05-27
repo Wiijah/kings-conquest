@@ -90,6 +90,7 @@ function room_refresh() {
 
 /* Make the player leave the room */
 function room_leave() {
+  fs_load();
   quickPost("ajax/room_leave", {room_id: room_id}, function(data, status) {
     window.location.href = 'index';
   });
