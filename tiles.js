@@ -8,6 +8,7 @@ var stage = new createjs.Stage("demoCanvas");
 var that = this;
 var team = 0;
 
+
 var isDragging = false;
 var offX;
 var offY;
@@ -131,9 +132,18 @@ function initGame() {
 			hp_bar = new createjs.Shape();
 			hp_bar.x = unit.x - 40;
 			hp_bar.y = unit.y - 90;
-			hp_bar.graphics.beginFill("#000000").drawRect(0, 0, 82, 12);
-			hp_bar.graphics.beginFill("#ff0000").drawRect(1, 1, 80, 10);
-			hp_bar.graphics.beginFill("#00ff00").drawRect(1, 1, (getHealth(value)/getMaxHealth(value)) * 80, 10);
+			if (unit.team === 0){
+				hp_bar.graphics.beginFill("#000000").drawRect(0, 0, 82, 12);
+				hp_bar.graphics.beginFill("#000000").drawRect(1, 1, 80, 10);
+				hp_bar.graphics.beginFill("#ff0000").drawRect(1, 1, (getHealth(value)/getMaxHealth(value)) * 80, 10);
+			} else {
+				hp_bar.graphics.beginFill("#000000").drawRect(0, 0, 82, 12);
+				hp_bar.graphics.beginFill("#000000").drawRect(1, 1, 80, 10);
+				hp_bar.graphics.beginFill("#3399ff").drawRect(1, 1, (getHealth(value)/getMaxHealth(value)) * 80, 10);
+			}
+			// hp_bar.graphics.beginFill("#000000").drawRect(0, 0, 82, 12);
+			// hp_bar.graphics.beginFill("#ff0000").drawRect(1, 1, 80, 10);
+			// hp_bar.graphics.beginFill("#00ff00").drawRect(1, 1, (getHealth(value)/getMaxHealth(value)) * 80, 10);
 			unit.hp_bar = hp_bar;
 
 
@@ -276,9 +286,18 @@ function updateHP_bar(unit){
 		draggable.removeChild(unit);
 		draggable.removeChild(unit.hp_bar);
 	} else {
-		unit.hp_bar.graphics.clear();
-		unit.hp_bar.graphics.beginFill("#ff0000").drawRect(0, 0, 80, 10);
-		unit.hp_bar.graphics.beginFill("#00ff00").drawRect(0, 0, (getHealth(unit) / getMaxHealth(unit)) * 80, 10);
+		// unit.hp_bar.graphics.clear();
+		// unit.hp_bar.graphics.beginFill("#000000").drawRect(0, 0, 80, 10);
+		// unit.hp_bar.graphics.beginFill("#ff0000").drawRect(0, 0, (getHealth(unit) / getMaxHealth(unit)) * 80, 10);
+		if (unit.team == 0){
+			unit.hp_bar.graphics.beginFill("#000000").drawRect(0, 0, 82, 12);
+			unit.hp_bar.graphics.beginFill("#000000").drawRect(1, 1, 80, 10);
+			unit.hp_bar.graphics.beginFill("#ff0000").drawRect(1, 1, (getHealth(unit)/getMaxHealth(unit)) * 80, 10);
+		} else {
+			unit.hp_bar.graphics.beginFill("#000000").drawRect(0, 0, 82, 12);
+			unit.hp_bar.graphics.beginFill("#000000").drawRect(1, 1, 80, 10);
+			unit.hp_bar.graphics.beginFill("#3399ff").drawRect(1, 1, (getHealth(unit)/getMaxHealth(unit)) * 80, 10);
+		}
 	}
 }
 
@@ -374,7 +393,7 @@ function drawStatsDisplay() {
 }
 
 function displayStats(unit) {
-	if(unit.team === turn){
+	if(unit.team === 1){
 		var box = new createjs.Bitmap("graphics/stats_background_self.png");
 	} else {
 		var box = new createjs.Bitmap("graphics/stats_background_opponent.png");
@@ -515,6 +534,8 @@ function cast(skillNo, unit) {
 					var add = Math.ceil(0.1 * value.max_hp);
 					if (value.hp + add < value.max_hp){
 						value.hp += add;
+					} else {
+						value.hp = value.max_hp;
 					}
 					updateHP_bar(value);
 					//value.buffs.push([0,add,3]);
