@@ -22,6 +22,7 @@
 	"characters": {
 		"red_castle": {
 			"address": "graphics/spritesheet/special_unit/ss_castle_red.png",
+			"spritesheet": "graphics/spritesheet/attack/ss_archer_attack.png",
 			"info": "graphics/card/castle_card.png",
 			"hp" : 999,
 			"max_hp" : 999,
@@ -41,6 +42,7 @@
 		},
 		"blue_castle": {
 			"address": "graphics/spritesheet/special_unit/ss_castle_blue.png",
+			"spritesheet": "graphics/spritesheet/attack/ss_archer_attack.png",
 			"info": "graphics/card/castle_card.png",
 			"hp" : 999,
 			"max_hp" : 999,
@@ -60,6 +62,7 @@
 		},
 		"king": {
 			"address": "graphics/spritesheet/stand/ss_king_stand.png",
+			"spritesheet": "graphics/spritesheet/attack/ss_archer_attack.png",
 			"info": "graphics/card/king_card.png",
 			"hp" : 400,
 			"max_hp" : 400,
@@ -79,6 +82,7 @@
 		},
 		"wizard": {
 			"address": "graphics/spritesheet/stand/ss_wizard_stand.png",
+			"spritesheet": "graphics/spritesheet/attack/ss_archer_attack.png",
 			"info": "graphics/card/wizard_card.png",
 			"hp" : 150,
 			"max_hp" : 150,
@@ -98,6 +102,7 @@
 		},
 		"knight": {
 			"address": "graphics/spritesheet/stand/ss_knight_stand.png",
+			"spritesheet": "graphics/spritesheet/attack/ss_knight_attack.png",
 			"info": "graphics/card/knight_card.png",
 			"hp" : 300,
 			"max_hp" : 300,
@@ -117,6 +122,7 @@
 		},
 		"archer": {
 			"address": "graphics/spritesheet/stand/ss_archer_stand.png",
+			"spritesheet": "graphics/spritesheet/attack/ss_archer_attack.png",
 			"info": "graphics/card/archer_card.png",
 			"hp" : 200,
 			"max_hp" : 200,
