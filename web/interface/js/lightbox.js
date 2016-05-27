@@ -47,6 +47,7 @@ function lightbox_open(id) {
   $("#lightbox_behind").fadeIn(LB_FS);
   //Fade the lightbox in
   $("#lightbox_"+id).fadeIn(LB_FS);
+  $("#fs_load").hide();
 }
 /* Generic lightbox alert */
 function lightbox_alert(title, message) {

@@ -41,6 +41,7 @@ var isInHighlight = false;
 var changed = false;
 var movingPlayer = false;
 var isAttacking = false;
+var isCasting = false;
 var currentGold;
 var currentGoldDisplay;
 var turn = 0;
@@ -167,7 +168,7 @@ function initGame() {
 			draggable.addChild(hp_bar);
 
 			unit.addEventListener("click", function(event) {
-				if (!movingPlayer && !isAttacking) {
+				if (!movingPlayer && !isAttacking && !isCasting) {
 					clearSelectionEffects();
 					selectedCharacter = unit;;
 					showUnitInfo = true;
@@ -186,8 +187,64 @@ function initGame() {
 					});
 				}
 
+				if (selectedCharacter != unit && isCasting) {
+
+					$.each(units, function(i, otherUnit) {
+						if (otherUnit.column == unit.column && otherUnit.row == unit.row) {
+							attack(selectedCharacter, otherUnit);
+						}
+						if (otherUnit.column == unit.column
+							&& (otherUnit.row == unit.row-1 || otherUnit.row == unit.row+1)) {
+							attack(selectedCharacter, otherUnit);
+						}
+						if (otherUnit.row == unit.row
+							&& (otherUnit.column == unit.column-1 || otherUnit.column == unit.column+1)) {
+							attack(selectedCharacter, otherUnit);
+						}
+						clearSelectionEffects();
+						selectedCharacter.outOfMoves = 0;
+						selectedCharacter.skillCoolDown = 3;
+						isCasting = false;
+					});
+				}
+
+
 				changed = true;
 			});
+
+			unit.addEventListener("mouseover", function(event) {
+				if (isCasting) {
+					for (i = 0; i < sub_highlighted.length; i++) {
+						upper.removeChild(sub_highlighted[i]);
+					}
+
+					sub_highlighted = [];
+
+					var surroudingTiles = getSurroundingTiles(unit.column, unit.row);
+					for (i = 0; i < surroudingTiles.length; i++) {
+						var bmp = new createjs.Bitmap("graphics/tile/green_tile.png");
+						bmp.x = (surroudingTiles[i][1]-surroudingTiles[i][0]) * 65 + 540;
+						bmp.y = (surroudingTiles[i][1]+surroudingTiles[i][0]) * 32.5 + 220;
+						bmp.regX = 65;
+						bmp.regY = 32.5;
+						bmp.column = surroudingTiles[i][0];
+						bmp.row = surroudingTiles[i][1];
+						upper.addChild(bmp);
+						sub_highlighted.push(bmp);
+					}
+					changed = true;
+				}
+			}); 
+
+			unit.addEventListener("mouseout", function(event) {
+				$.each(sub_highlighted, function(i, tile) {
+					upper.removeChild(tile);
+				});
+				sub_highlighted = [];
+				change = true;
+			});
+
+
 		});
 
 
@@ -507,7 +564,7 @@ function showActionMenuNextToPlayer(unit) {
 	skillButton = createClickableImage(skillSource, unit.x + 48, unit.y - 77, function() {
 		if (unit.skillCoolDown === 0) {
 			undoHighlights();
-			// unit.skillCoolDown = 3;
+			isCasting = true;
 			cast(unit.skill_no, unit);
 		}
 	});
@@ -569,6 +626,7 @@ function cast(skillNo, unit) {
 					changed = true;
 				}
 			});
+			isCasting = false;
 			// notify server
 
 			// display updated json
@@ -580,7 +638,7 @@ function cast(skillNo, unit) {
 			// isAttacking = true;
 			// undoHighlights();
 			// drawRange(findReachableTiles(selectedCharacter.column, selectedCharacter.row, selectedCharacter.attackRange, false), 1);
-		
+			isCasting = false;
 			undoHighlights();
 			isAttacking = true;
 			secondAttack = true;
@@ -610,6 +668,7 @@ function cast(skillNo, unit) {
 
 	    	selectedCharacter.outOfMoves = 1;
 	    	unit.skillCoolDown = 3;
+	    	isCasting = false;
 			destroyMenu();
 			showActionMenuNextToPlayer(selectedCharacter);
 
@@ -690,6 +749,7 @@ function drawRange(reachable, typeOfRange) {
 					clearSelectionEffects();
 					selectedCharacter.outOfMoves = 1;
 					selectedCharacter.skillCoolDown = 3;
+					isCasting = false;
 				});
 			});
 			bmp.addEventListener("mouseover", function(event) {
@@ -871,6 +931,7 @@ function clearSelectionEffects() {
     undoHighlights();
     destroyStats();
     isAttacking = false;
+    isCasting = false;
 }
 
 function destroyStats() {
@@ -968,9 +1029,15 @@ function sortIndices(unit) {
 			if (draggable.getChildIndex(unit) < draggable.getChildIndex(value)) {
 				draggable.swapChildren(unit, value);
 			}
+			if (draggable.getChildIndex(unit.hp_bar) < draggable.getChildIndex(value)) {
+				draggable.swapChildren(unit.hp_bar, value);
+			}
 		} else if (unit.y < value.y) {
 			if (draggable.getChildIndex(unit) > draggable.getChildIndex(value)) {
 				draggable.swapChildren(unit, value);
+			}
+			if (draggable.getChildIndex(unit.hp_bar) > draggable.getChildIndex(value)) {
+				draggable.swapChildren(unit.hp_bar, value);
 			}
 		}
 	});
