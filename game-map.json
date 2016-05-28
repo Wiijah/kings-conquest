@@ -18,7 +18,7 @@
 		"width": 14,
 		"height": 13
 	},
-	"currentGold": 500,
+	"currentGold": 5000,
 	"characters": {
 		"red_castle": {
 			"address": "graphics/spritesheet/special_unit/ss_castle_red.png",
