@@ -4,7 +4,7 @@ include 'includes/header.php';
 include 'includes/logout_container.php';
 include 'includes/logo.php';
 
-$result = $db->query("SELECT * FROM room_participants WHERE user_id = '{$user->id}'");
+$result = $db->query("SELECT * FROM room_participants WHERE user_id = '{$user->id}' AND event = ''");
 if (!$part = $result->fetch_object()) {
   header ("Location: index");
   die();
@@ -54,10 +54,10 @@ var max_players = <?php echo $max_players; ?>;
 <?php echo genTitle("Game Info"); ?>
 <div class="room_data box small_box">
 <table class="play_table">
-<tr><td class="play_avatar" colspan="2"><img src="images/default_avatar.png" /></td></tr>
+<tr><td class="play_avatar" colspan="2"><img src="images/the_bridge.png" /></td></tr>
 <tr><th>Game Name</th><td><?php echo secureOutput($room->name); ?></td></tr>
 <tr><th>Room Owner</th><td><?php echo $room->username; ?></td></tr>
-<tr><th>Map</th><td>Dark Forest</td></tr>
+<tr><th>Map</th><td>The Bridge</td></tr>
 <tr><th>Mode</th><td>Regicide</td></tr>
 <tr><th>Players</th><td id="info_num_players">1/2</td></tr>
 </table>
