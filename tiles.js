@@ -87,9 +87,9 @@ function spawnUnit(typeName, initial){
 			case "archer":
 				jsonObj = eval(data.characters.archer); 
 				break;
-			case "rogue":
-				jsonObj = eval(data.characters.rogue);
-				break;
+			// case "rogue":
+			// 	jsonObj = eval(data.characters.rogue);
+			// 	break;
 			default:
 				return "error";
 		}
@@ -319,7 +319,7 @@ function initGame() {
 	stage.enableMouseOver(20);
 	$.getJSON('game-map.json', function(data) {
 		that.mapData = data['main'];
-		
+
 		console.log("init game");
 		mapHeight = parseInt(data.map_dimensions.height);
 		mapWidth = parseInt(data.map_dimensions.width);
@@ -469,7 +469,7 @@ function drawUnitCreationMenu() {
 	listOfSources.push("graphics/card/knight_card.png");
 	listOfSources.push("graphics/card/archer_card.png");
 	listOfSources.push("graphics/card/wizard_card.png");
-	listOfSources.push("graphics/card/rogue_card.png");
+	//listOfSources.push("graphics/card/rogue_card.png");
 
 	createFloatingCards(listOfSources, ["knight","archer","wizard","rogue"]);
 	unitCreationMenu.x = 50;
@@ -483,7 +483,7 @@ function createFloatingCards(listOfSources, correspondingUnit) {
 		unitCards[i] = new createjs.Bitmap(listOfSources[i]);
 		var unit_card_text = new createjs.Text("$ 100", "12px 'Arial'", "#ffffff");
 		unitCards[i].y = 0;
-		unitCards[i].x = i * (440 / numOfCards);
+		unitCards[i].x = i * (110);
 		unitCards[i].scaleX = 0.60;
 		unitCards[i].scaleY = 0.60;
 		unitCards[i].index = i;
