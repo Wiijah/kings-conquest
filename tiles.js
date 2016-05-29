@@ -87,6 +87,9 @@ function spawnUnit(typeName, initial){
 			case "archer":
 				jsonObj = eval(data.characters.archer); 
 				break;
+			case "rogue":
+				jsonObj = eval(data.characters.rogue);
+				break;
 			default:
 				return "error";
 		}
@@ -100,6 +103,7 @@ function spawnUnit(typeName, initial){
     	});
 
 		var unit = new createjs.Sprite(spriteSheet, "stand");
+
 		
 		createjs.Ticker.timingMode = createjs.Ticker.RAF;
 			createjs.Ticker.addEventListener("tick", stage);
@@ -233,7 +237,14 @@ function spawnUnit(typeName, initial){
 		});
 
 		unit.addEventListener("mouseover", function(event) {
-			if (isCasting) {
+			if (isCasting && selectedCharacter.skill_no == 4) {
+				var i;
+				for (i = 0; i < highlighted.length; i++) {
+					if (unit.row == highlighted[i].row && unit.column == highlighted[i].column) {
+						break;
+					}
+				}
+				if (i == highlighted.length) return;
 				for (i = 0; i < sub_highlighted.length; i++) {
 					upper.removeChild(sub_highlighted[i]);
 				}
@@ -303,7 +314,7 @@ function initGame() {
 
 
 		fireBall = new createjs.SpriteSheet({
-			"images": [data.spells.fireBall],
+			"images": [data.spells.physicalAttack],
 			"frames": {"width": 142, "height": 142, "count": 4, "regY": 110, "regX": 95},
 			"animations": {
 				"fireBallAnimation":{
@@ -332,6 +343,7 @@ function initGame() {
 
 		//should only spawn 2 kings and castles
 		$.each(data.characters, function(i, value) {
+			console.log(i);
 			spawnUnit(i, true);
 		});
 	});
@@ -777,7 +789,11 @@ function cast(skillNo, unit) {
 	    	// drawRange(findReachableTiles(selectedCharacter.column, selectedCharacter.row, selectedCharacter.attackRange, false), 2);
 	    	var reachableTiles = findReachableTiles(selectedCharacter.row, selectedCharacter.column, selectedCharacter.attackRange, false);
 	    	highlightArea(reachableTiles, "graphics/tile/red_tile.png", ["click", "mouseover", "mouseout"], [castWizardSpellOnClick, highlightWizardSpellCross, clearWizardSpellCross]);
-			
+			break;
+		case 5:
+			remainingAttackTimes = 1;
+			performAttack();
+
 	}
 }
 
