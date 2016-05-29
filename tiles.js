@@ -38,6 +38,7 @@ var isInHighlight = false;
 var changed = false;
 var movingPlayer = false;
 var isAttacking = false;
+var remainingAttackTimes;
 var isCasting = false;
 var currentGold;
 var currentGoldDisplay;
@@ -112,8 +113,8 @@ function spawnUnit(typeName, initial){
 		
 		if (initial){
 			unit.team = jsonObj.team;
-			unit.row = jsonObj.y;
-			unit.column = jsonObj.x;
+			unit.column = jsonObj.y;
+			unit.row = jsonObj.x;
 			unit.x = originX +  (jsonObj.y - jsonObj.x) * 65;
 			unit.y = jsonObj.y * 32.5 + originY + jsonObj.x * 32.5;
 		} else {
@@ -121,8 +122,8 @@ function spawnUnit(typeName, initial){
 			var empty = findFreeSpace();
 			x = empty[0];
 			y = empty[1];
-			unit.row = y;
-			unit.column = x;
+			unit.column = y;
+			unit.row = x;
 			unit.x = originX +  (y - x) * 65;
 			unit.y = y * 32.5 + originY + x * 32.5;
 		}
@@ -178,7 +179,7 @@ function spawnUnit(typeName, initial){
 		// Adding the unit to the list of units in the game
 		units.push(unit);
 
-		blockMaps[unit.column][unit.row] = 1;
+		blockMaps[unit.row][unit.column] = 1;
 
 		// Add the unit and its hp bar to the stage
 		draggable.addChild(unit);
@@ -200,6 +201,10 @@ function spawnUnit(typeName, initial){
 					if (unit.row === coord.row && unit.column === coord.column) {
 						attack(selectedCharacter, unit);
 						clearSelectionEffects();
+						if (remainingAttackTimes > 0) {
+							remainingAttackTimes - 1;
+							performAttack();
+						}
 					}
 				});
 			}
@@ -235,15 +240,15 @@ function spawnUnit(typeName, initial){
 
 				sub_highlighted = [];
 
-				var surroudingTiles = getSurroundingTiles(unit.column, unit.row);
+				var surroudingTiles = getSurroundingTiles(unit.row, unit.column);
 				for (i = 0; i < surroudingTiles.length; i++) {
 					var bmp = new createjs.Bitmap("graphics/tile/green_tile.png");
 					bmp.x = (surroudingTiles[i][1]-surroudingTiles[i][0]) * 65 + 540;
 					bmp.y = (surroudingTiles[i][1]+surroudingTiles[i][0]) * 32.5 + 220;
 					bmp.regX = 65;
 					bmp.regY = 32.5;
-					bmp.column = surroudingTiles[i][0];
-					bmp.row = surroudingTiles[i][1];
+					bmp.row = surroudingTiles[i][0];
+					bmp.column = surroudingTiles[i][1];
 					upper.addChild(bmp);
 					sub_highlighted.push(bmp);
 				}
@@ -633,7 +638,8 @@ function showActionMenuNextToPlayer(unit) {
 	moveButton = createClickableImage(moveSource, unit.x + 45, unit.y - 140, function() {
 		if (unit.canMove) {
 			undoHighlights();
-			drawRange(findReachableTiles(unit.column, unit.row, unit.moveRange, true), 0);
+			// drawRange(findReachableTiles(unit.column, unit.row, unit.moveRange, true), 0);
+			moveCharacter(unit);
 		}
 	});
 
@@ -642,8 +648,10 @@ function showActionMenuNextToPlayer(unit) {
 	attackButton = createClickableImage(attackSource, unit.x + 49, unit.y - 111, function() {
 		if (unit.canAttack) {
 			undoHighlights();
-			isAttacking = true;
-			drawRange(findReachableTiles(unit.column, unit.row, unit.attackRange, false), 1);
+			// isAttacking = true;
+			// drawRange(findReachableTiles(unit.column, unit.row, unit.attackRange, false), 1);
+			remainingAttackTimes = 1;
+			performAttack();
 		}
 	});
 
@@ -682,8 +690,7 @@ function showActionMenuNextToPlayer(unit) {
     isDisplayingMenu = true;
     changed = true;
 }	
-var secondAttack;
-var firstAttackDone;
+
 function cast(skillNo, unit) {
 	switch (skillNo) {
 		case 0: // King's skill
@@ -727,12 +734,12 @@ function cast(skillNo, unit) {
 			// isAttacking = true;
 			// undoHighlights();
 			// drawRange(findReachableTiles(selectedCharacter.column, selectedCharacter.row, selectedCharacter.attackRange, false), 1);
+			var reachableTiles = findReachableTiles(selectedCharacter.column, selectedCharacter.row, selectedCharacter.attackRange, false);
 			isCasting = false;
 			undoHighlights();
-			isAttacking = true;
-			secondAttack = true;
-			secondAttackDone = false;
-			drawRange(findReachableTiles(unit.column, unit.row, unit.attackRange, false), 1);
+			remainingAttackTimes = 2;
+			performAttack();
+
 			
 			break;
 	    case 3: // Warrior's skill
@@ -766,10 +773,57 @@ function cast(skillNo, unit) {
 	    	break;
 	    case 4: // Wizard's skill
 	    	isCasting = true;
-	    	drawRange(findReachableTiles(selectedCharacter.column, selectedCharacter.row, selectedCharacter.attackRange, false), 2);
+
+	    	// drawRange(findReachableTiles(selectedCharacter.column, selectedCharacter.row, selectedCharacter.attackRange, false), 2);
+	    	var reachableTiles = findReachableTiles(selectedCharacter.row, selectedCharacter.column, selectedCharacter.attackRange, false);
+	    	highlightArea(reachableTiles, "graphics/tile/red_tile.png", ["click", "mouseover", "mouseout"], [castWizardSpellOnClick, highlightWizardSpellCross, clearWizardSpellCross]);
 			
 	}
+}
+
+function castWizardSpellOnClick(event) {
+	$.each(units, function(i, unit) {
+		if (unit.column == event.target.column && unit.row == event.target.row) {
+			attack(selectedCharacter, unit);
+		}
+		if (unit.column == event.target.column
+			&& (unit.row == event.target.row-1 || unit.row == event.target.row + 1)) {
+			attack(selectedCharacter, unit);
+		}
+		if (unit.row == event.target.row
+			&& (unit.column == event.target.column-1 || unit.column == event.target.column + 1)) {
+			attack(selectedCharacter, unit);
+		}
+		clearSelectionEffects();
+		selectedCharacter.outOfMoves = 1;
+		selectedCharacter.skillCoolDown = 3;
+		isCasting = false;
+		changed = true;
+	});
+} 
+
+
+function highlightWizardSpellCross(event) {
+	var tiles = getSurroundingTiles(event.target.row, event.target.column);
+	$.each(tiles, function(i, tile) {
+		var sub_bmp = new createjs.Bitmap("graphics/tile/green_tile.png");
+		sub_bmp.x = (tile[1]-tile[0]) * 65 + 540;
+		sub_bmp.y = (tile[1]+tile[0]) * 32.5 + 220;
+		sub_bmp.regX = 65;
+		sub_bmp.regY = 32.5;
+		upper.addChild(sub_bmp);
+		sub_highlighted.push(sub_bmp);
+		changed = true;
+	});
 }	
+
+function clearWizardSpellCross(event) {
+	$.each(sub_highlighted, function(i, tile) {
+		upper.removeChild(tile);
+	});
+	sub_highlighted = [];
+	changed = true;
+}
 
 // Start moving the player
 function move() {
@@ -786,112 +840,22 @@ function rcToCoord(x, y) {
 	return result;
 }
 
-function drawRange(reachable, typeOfRange) {
-
-	destroyMenu();
-
-	$.each(reachable, function(i, value) {
-		img = (typeOfRange == 0) ? "graphics/tile/green_tile.png" : "graphics/tile/red_tile.png";
-		var bmp = new createjs.Bitmap(img);
-		bmp.x = (value[1]-value[0]) * 65 + 540;
-		bmp.y = (value[1]+value[0]) * 32.5 + 220;
-		bmp.regX = 65;
-		bmp.regY = 32.5;
-		bmp.column = value[0];
-		bmp.row = value[1];
-		if (typeOfRange == 0) {
-			bmp.addEventListener("click", function(event) {
-				var fromX = selectedCharacter.column;
-				var fromY = selectedCharacter.row;
-				findPath(fromX, fromY, value[0], value[1]);
-				blockMaps[fromX][fromY] = 0;
-				blockMaps[value[0]][value[1]] = 1;
-				move();
-				selectedCharacter.column = value[0];
-				selectedCharacter.row = value[1];
-				clearSelectionEffects();
-			});
-		} else if (typeOfRange == 1) {
-			$.each(units, function(i, unit) {
-				if (unit.column == value[0] && unit.row == value[1] &&
-						selectedCharacter.team != unit.team){
-					bmp.addEventListener("click", function(event) {
-						attack(selectedCharacter, unit);
-						selectedCharacter.attack = selectedCharacter.base_attack;
-						clearSelectionEffects();
-					});
-				}
-			});
-		} else if (typeOfRange == 2) {
-			bmp.addEventListener("click", function(event) {
-				$.each(units, function(i, unit) {
-					if (unit.column == bmp.column && unit.row == bmp.row) {
-						attack(selectedCharacter, unit);
-					}
-					if (unit.column == bmp.column
-						&& (unit.row == bmp.row-1 || unit.row == bmp.row+1)) {
-						attack(selectedCharacter, unit);
-					}
-					if (unit.row == bmp.row
-						&& (unit.column == bmp.column-1 || unit.column == bmp.column+1)) {
-						attack(selectedCharacter, unit);
-					}
-					clearSelectionEffects();
-					selectedCharacter.outOfMoves = 1;
-					selectedCharacter.skillCoolDown = 3;
-				});
-				isCasting = false;
-			});
-			bmp.addEventListener("mouseover", function(event) {
-				var tiles = getSurroundingTiles(bmp.column, bmp.row);
-				$.each(tiles, function(i, tile) {
-					var sub_bmp = new createjs.Bitmap("graphics/tile/green_tile.png");
-					sub_bmp.x = (tile[1]-tile[0]) * 65 + 540;
-					sub_bmp.y = (tile[1]+tile[0]) * 32.5 + 220;
-					sub_bmp.regX = 65;
-					sub_bmp.regY = 32.5;
-					upper.addChild(sub_bmp);
-					sub_highlighted.push(sub_bmp);
-				});
-				//stage.update();
-			});
-			bmp.addEventListener("mouseout", function(event) {
-				$.each(sub_highlighted, function(i, tile) {
-					upper.removeChild(tile);
-				});
-				sub_highlighted = [];
-				//stage.update();
-			});
-		}
-		draggable.addChild(bmp);
-		highlighted.push(bmp);
-		$.each(units, function(i, value) {
-			if (draggable.getChildIndex(value) < draggable.getChildIndex(bmp)) {
-				draggable.swapChildren(bmp, value);
-				draggable.swapChildren(bmp, value.hp_bar);
-			}
-		});
-	});
-	isInHighlight = true;
-	changed = true;
-}
-
-function getSurroundingTiles(col, row) {
+function getSurroundingTiles(row, col) {
 	var result = [];
-	result.push([col,row]);
+	result.push([row,col]);
 	if (col > 0) {
-		result.push([col-1,row]);
+		result.push([row, col - 1]);
 	}
 	if (col < mapWidth-1) {
-		result.push([col+1,row]);
+		result.push([row, col + 1]);
 	}
 	if (row > 0) {
-		result.push([col,row-1]);
+		result.push([row - 1, col]);
 	}
 	if (row < mapHeight-1) {
-		result.push([col,row+1]);
+		result.push([row + 1, col]);
 	}
-	return result
+	return result;
 }
 
 function getRandom(luck){
@@ -1001,35 +965,29 @@ function attack(attacker, target){
 		});
 		
 		if (!shield) {
-			if (firstAttackDone){
-				showDamage2(target, criticalHit, damage);
-			} else {
-				showDamage(target, criticalHit, damage);
-			}
+			showDamage(target, criticalHit, damage);
 			target.hp -= damage;
+			updateHP_bar(target);
 		}
 		if (isCasting){
 			console.log(target);
 		}
 		// console.log("attack attacker: " + attacker.column +","+ attacker.row);
 		// console.log("target hp: " + target.hp);
+
+		// really bad
 		var fireBallAnimation = new createjs.Sprite(fireBall, "fireBallAnimation");
 		fireBallAnimation.x = target.x;
 		fireBallAnimation.y = target.y;
 		draggable.addChild(fireBallAnimation);
 
 		updateHP_bar(target);
+
 		attacker.outOfMoves = 1;
 		attacker.canAttack = 0;
+		remainingAttackTimes--;
 		isAttacking = false;
 
-		// check for archer skill
-		if (firstAttackDone){
-			secondAttack = false;
-		}
-		if (secondAttack) {
-			firstAttackDone = true;
-		}
 
 		setTimeout(function() {
 			draggable.removeChild(sprite);
@@ -1385,17 +1343,8 @@ createjs.Ticker.addEventListener("tick", update);
 createjs.Ticker.setFPS(30);
 
 function update() {
-	//really bad!
-	if (secondAttack && firstAttackDone) {
-		undoHighlights();
-		isAttacking = true;
-		secondAttack = 0;
-		selectedCharacter.skillCoolDown = 3;
-		drawRange(findReachableTiles(selectedCharacter.column, selectedCharacter.row, selectedCharacter.attackRange, false), 1);
-	}
-	// if (unit.showingDamage === true){
-	// 	demageEffect();
-	// }
+
+
 	if (movingPlayer === true) {
 		movePlayer();
 	}
@@ -1469,4 +1418,72 @@ $(function(){
         $('body').css('background-position', x + 'px 0');
     }, 10);
 })
+
+
+function moveCharacter(unit) {
+	var reachableTiles = findReachableTiles(unit.row, unit.column, unit.moveRange, true);
+	highlightArea(reachableTiles, "graphics/tile/green_tile.png", ["click"], [function(event) {
+		var fromX = selectedCharacter.row;
+		var fromY = selectedCharacter.column;
+		var tile = event.target;
+		findPath(fromX, fromY, tile.row, tile.column);
+		blockMaps[fromX][fromY] = 0;
+		move();
+		blockMaps[tile.row][tile.column] = 1;
+		selectedCharacter.row = tile.row;
+		selectedCharacter.column = tile.column;
+		clearSelectionEffects();
+	}]);
+
+}
+
+function performAttack() {
+	isAttacking = true;
+	var reachableTiles = findReachableTiles(selectedCharacter.row, selectedCharacter.column, selectedCharacter.attackRange, false);
+	highlightArea(reachableTiles, "graphics/tile/red_tile.png", ["click"], [function(event) {
+		var tile = event.target;
+		$.each(units, function(i, unit) {
+			if (unit.row == tile.row && unit.column == tile.column && selectedCharacter.team != unit.team){
+				attack(selectedCharacter, unit);
+				selectedCharacter.attack = selectedCharacter.base_attack;
+				clearSelectionEffects();
+				if (remainingAttackTimes > 0) {
+					performAttack();
+				}
+			}
+		});	
+	}]);
+	
+}
+
+function highlightArea(tiles, imgSource, callBackEventNames, callBackFunctions) {
+	destroyMenu();
+	for (var i = 0; i < tiles.length; i++) {
+		var bmp = new createjs.Bitmap(imgSource);
+		bmp.x = (tiles[i][1]-tiles[i][0]) * 65 + 540;
+		bmp.y = (tiles[i][1]+tiles[i][0]) * 32.5 + 220;
+		bmp.regX = 65;
+		bmp.regY = 32.5;
+		bmp.row = tiles[i][0];
+		bmp.column = tiles[i][1];
+		for (var j = 0; j < callBackEventNames.length; j++) {
+			console.log(j);
+			bmp.addEventListener(callBackEventNames[j], callBackFunctions[j]);
+			console.log(callBackEventNames[j]);
+		}
+		draggable.addChild(bmp);
+		highlighted.push(bmp);
+		$.each(units, function(i, value) {
+			if (draggable.getChildIndex(value) < draggable.getChildIndex(bmp)) {
+				draggable.swapChildren(bmp, value);
+				draggable.swapChildren(bmp, value.hp_bar);
+			}
+		});
+	}
+
+
+	isInHighlight = true;
+	changed = true;
+
+}
 
