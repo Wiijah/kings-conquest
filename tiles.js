@@ -315,12 +315,12 @@ function findFreeSpace(){
 	}
 }
 
-var fireBall;
 function initGame() {
 	stage.enableMouseOver(20);
 	$.getJSON('game-map.json', function(data) {
 		that.mapData = data['main'];
-
+		
+		console.log("init game");
 		mapHeight = parseInt(data.map_dimensions.height);
 		mapWidth = parseInt(data.map_dimensions.width);
 
