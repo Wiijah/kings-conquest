@@ -19,6 +19,12 @@
 		"height": 13
 	},
 	"currentGold": 5000,
+
+	"spells": {
+		"fireBall" : "graphics/spritesheet/spell/ss_fireball.png",
+		"arrow": "graphics/spritesheet/spell/ss_arrow.png"
+	},
+
 	"characters": {
 		"red_castle": {
 			"address": "graphics/spritesheet/special_unit/ss_castle_red.png",

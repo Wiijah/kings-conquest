@@ -281,14 +281,13 @@ function findFreeSpace(){
 			x = empty[i][0];
 			y = empty[i][1];
 			if (blockMaps[x][y] == 0) {
-				console.log(x + "," + y);
 				return [x,y];
 			}
 		}
 	}
 }
 
-	
+var fireBall;
 function initGame() {
 	stage.enableMouseOver(20);
 	$.getJSON('game-map.json', function(data) {
@@ -296,6 +295,20 @@ function initGame() {
 
 		mapHeight = parseInt(data.map_dimensions.height);
 		mapWidth = parseInt(data.map_dimensions.width);
+
+
+		fireBall = new createjs.SpriteSheet({
+			"images": [data.spells.fireBall],
+			"frames": {"width": 142, "height": 142, "count": 4, "regY": 110, "regX": 95},
+			"animations": {
+				"fireBallAnimation":{
+					frames: [0,1,2,3],
+					next: false	
+				}
+			},
+			framerate: 1
+		});
+
 
 
 		blockMaps = new Array(mapHeight);
@@ -752,6 +765,7 @@ function cast(skillNo, unit) {
 
 	    	break;
 	    case 4: // Wizard's skill
+	    	isCasting = true;
 	    	drawRange(findReachableTiles(selectedCharacter.column, selectedCharacter.row, selectedCharacter.attackRange, false), 2);
 			
 	}
@@ -825,8 +839,8 @@ function drawRange(reachable, typeOfRange) {
 					clearSelectionEffects();
 					selectedCharacter.outOfMoves = 1;
 					selectedCharacter.skillCoolDown = 3;
-					isCasting = false;
 				});
+				isCasting = false;
 			});
 			bmp.addEventListener("mouseover", function(event) {
 				var tiles = getSurroundingTiles(bmp.column, bmp.row);
@@ -994,8 +1008,16 @@ function attack(attacker, target){
 			}
 			target.hp -= damage;
 		}
+		if (isCasting){
+			console.log(target);
+		}
 		// console.log("attack attacker: " + attacker.column +","+ attacker.row);
 		// console.log("target hp: " + target.hp);
+		var fireBallAnimation = new createjs.Sprite(fireBall, "fireBallAnimation");
+		fireBallAnimation.x = target.x;
+		fireBallAnimation.y = target.y;
+		draggable.addChild(fireBallAnimation);
+
 		updateHP_bar(target);
 		attacker.outOfMoves = 1;
 		attacker.canAttack = 0;
@@ -1012,6 +1034,7 @@ function attack(attacker, target){
 		setTimeout(function() {
 			draggable.removeChild(sprite);
 			draggable.addChild(attacker);
+			draggable.removeChild(fireBallAnimation);
 		}, 1000);
 
 		changed = true;
