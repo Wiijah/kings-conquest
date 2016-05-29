@@ -114,6 +114,18 @@ function spawnUnit(typeName, initial){
 		unit.base_attack = unit.attack;
 		unit.luck = jsonObj.luck;
 
+		var damageEffect = new createjs.SpriteSheet({
+			"images": [jsonObj.damageEffect],
+			"frames": {"width": 142, "height": 142, "count": 4, "regY": 110, "regX": 95},
+			"animations": {
+				"damage":{
+					frames: [0,1,2,3]
+				}
+			},
+			framerate: 2
+		});
+		unit.damageEffect = new createjs.Sprite(damageEffect);
+
 		
 		if (initial){
 			unit.team = jsonObj.team;
@@ -313,20 +325,6 @@ function initGame() {
 		mapWidth = parseInt(data.map_dimensions.width);
 
 
-		fireBall = new createjs.SpriteSheet({
-			"images": [data.spells.physicalAttack],
-			"frames": {"width": 142, "height": 142, "count": 4, "regY": 110, "regX": 95},
-			"animations": {
-				"fireBallAnimation":{
-					frames: [0,1,2,3],
-					next: false	
-				}
-			},
-			framerate: 1
-		});
-
-
-
 		blockMaps = new Array(mapHeight);
 		for (var i = 0; i < mapHeight; i++) {
 			blockMaps[i] = new Array(mapWidth);
@@ -471,8 +469,9 @@ function drawUnitCreationMenu() {
 	listOfSources.push("graphics/card/knight_card.png");
 	listOfSources.push("graphics/card/archer_card.png");
 	listOfSources.push("graphics/card/wizard_card.png");
+	listOfSources.push("graphics/card/rogue_card.png");
 
-	createFloatingCards(listOfSources, ["knight","archer","wizard"]);
+	createFloatingCards(listOfSources, ["knight","archer","wizard","rogue"]);
 	unitCreationMenu.x = 50;
 	unitCreationMenu.y = window.innerHeight - 130;
 	bottomInterface.addChild(unitCreationMenu);
@@ -484,7 +483,7 @@ function createFloatingCards(listOfSources, correspondingUnit) {
 		unitCards[i] = new createjs.Bitmap(listOfSources[i]);
 		var unit_card_text = new createjs.Text("$ 100", "12px 'Arial'", "#ffffff");
 		unitCards[i].y = 0;
-		unitCards[i].x = i * (330 / numOfCards);
+		unitCards[i].x = i * (440 / numOfCards);
 		unitCards[i].scaleX = 0.60;
 		unitCards[i].scaleY = 0.60;
 		unitCards[i].index = i;
@@ -517,6 +516,16 @@ function createFloatingCards(listOfSources, correspondingUnit) {
 				unitCards[i].addEventListener("click", function(event) {
 					if (currentGold >= 100) {
 						spawnUnit("wizard",false, 5,3,turn);
+						currentGold -= 100;
+						currentGoldDisplay.text = ("Gold: " + currentGold);
+					}
+					changed = true;
+				});
+				break;
+			case "rogue": 
+				unitCards[i].addEventListener("click", function(event) {
+					if (currentGold >= 100) {
+						spawnUnit("rogue",false, 5,2,turn);
 						currentGold -= 100;
 						currentGoldDisplay.text = ("Gold: " + currentGold);
 					}
@@ -992,10 +1001,10 @@ function attack(attacker, target){
 		// console.log("target hp: " + target.hp);
 
 		// really bad
-		var fireBallAnimation = new createjs.Sprite(fireBall, "fireBallAnimation");
-		fireBallAnimation.x = target.x;
-		fireBallAnimation.y = target.y;
-		draggable.addChild(fireBallAnimation);
+		var damageAnimation = attacker.damageEffect;
+		damageAnimation.x = target.x;
+		damageAnimation.y = target.y;
+		draggable.addChild(damageAnimation);
 
 		updateHP_bar(target);
 
@@ -1008,7 +1017,7 @@ function attack(attacker, target){
 		setTimeout(function() {
 			draggable.removeChild(sprite);
 			draggable.addChild(attacker);
-			draggable.removeChild(fireBallAnimation);
+			draggable.removeChild(damageAnimation);
 		}, 1000);
 
 		changed = true;
@@ -1356,7 +1365,7 @@ function drawMap(data) {
 	}
 
 createjs.Ticker.addEventListener("tick", update);
-createjs.Ticker.setFPS(30);
+// createjs.Ticker.setFPS(30);
 
 function update() {
 

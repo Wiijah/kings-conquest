@@ -45,7 +45,8 @@
 			"canMove" : 0,
 			"canAttack" : 1,
 			"skillCoolDown" : 0,
-			"outOfMoves" : 0
+			"outOfMoves" : 0,
+			"damageEffect": "graphics/spritesheet/spell/ss_physical_attack.png"
 		},
 		"blue_castle": {
 			"address": "graphics/spritesheet/special_unit/ss_castle_blue.png",
@@ -65,7 +66,8 @@
 			"canMove" : 0,
 			"canAttack" : 1,
 			"skillCoolDown" : 0,
-			"outOfMoves" : 0
+			"outOfMoves" : 0,
+			"damageEffect": "graphics/spritesheet/spell/ss_physical_attack.png"
 		},
 		"king": {
 			"address": "graphics/spritesheet/stand/ss_king_stand.png",
@@ -85,7 +87,8 @@
 			"canMove" : 1,
 			"canAttack" : 1,
 			"skillCoolDown" : 0,
-			"outOfMoves" : 0
+			"outOfMoves" : 0,
+			"damageEffect": "graphics/spritesheet/spell/ss_physical_attack.png"
 		},
 		"wizard": {
 			"address": "graphics/spritesheet/stand/ss_wizard_stand.png",
@@ -105,7 +108,8 @@
 			"canMove" : 1,
 			"canAttack" : 1,
 			"skillCoolDown" : 0,
-			"outOfMoves" : 0
+			"outOfMoves" : 0,
+			"damageEffect": "graphics/spritesheet/spell/ss_fireball.png"
 		},
 		"knight": {
 			"address": "graphics/spritesheet/stand/ss_knight_stand.png",
@@ -125,7 +129,8 @@
 			"canMove" : 1,
 			"canAttack" : 1,
 			"skillCoolDown" : 0,
-			"outOfMoves" : 0
+			"outOfMoves" : 0,
+			"damageEffect": "graphics/spritesheet/spell/ss_physical_attack.png"
 		},
 		"archer": {
 			"address": "graphics/spritesheet/stand/ss_archer_stand.png",
@@ -145,18 +150,19 @@
 			"canMove" : 1,
 			"canAttack" : 1,
 			"skillCoolDown" : 0,
-			"outOfMoves" : 0
+			"outOfMoves" : 0,
+			"damageEffect" : "graphics/spritesheet/spell/ss_arrow.png"
 		},
 		"rogue": {
 			"address": "graphics/spritesheet/stand/ss_rogue_stand.png",
 			"spritesheet": "graphics/spritesheet/attack/ss_rogue_attack.png",
-			"info": "graphics/card/archer_card.png",
-			"hp" : 200,
-			"max_hp" : 200,
-			"attack" : 20,
-			"skill": "steal",
+			"info": "graphics/card/rogue_card.png",
+			"hp" : 160,
+			"max_hp" : 160,
+			"attack" : 10,
+			"skill": "steal",//TODO:没有钱就必定暴击
 			"skill_no": 5,
-			"luck":0.6,
+			"luck":0.2,
 			"x" : 3,
 			"y" : 4,
 			"moveRange" : 5, 
@@ -165,7 +171,8 @@
 			"canMove" : 1,
 			"canAttack" : 1,
 			"skillCoolDown" : 0,
-			"outOfMoves" : 0
+			"outOfMoves" : 0,
+			"damageEffect": "graphics/spritesheet/spell/ss_physical_attack.png"
 		}
 	}
 }
