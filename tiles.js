@@ -1395,6 +1395,7 @@ function keyEvent(event) {
             if (isDisplayingMenu) {
             	destroyMenu();
             	destroyStats();
+            	clearSelectionEffects();
             }
             break;
 
