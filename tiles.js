@@ -993,9 +993,18 @@ function attack(attacker, target){
 		});
 		
 		if (!shield) {
-			showDamage(target, criticalHit, damage);
-			target.hp -= damage;
-			updateHP_bar(target);
+			if (remainingAttackTimes > 1) {
+				console.log("attack2");
+				showDamage2(target, criticalHit, damage);
+				target.hp -= damage;
+				updateHP_bar(target);
+			} else {
+				console.log("attack1");
+				showDamage(target, criticalHit, damage);
+				target.hp -= damage;
+				updateHP_bar(target);
+			}
+			
 		}
 		if (isCasting){
 			console.log(target);
