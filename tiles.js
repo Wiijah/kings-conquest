@@ -164,6 +164,7 @@ function spawnUnit(data, initial){
 		// Adding the unit to the list of units in the game
 		units.push(unit);
 
+
 		blockMaps[unit.row][unit.column] = 1;
 
 		// Add the unit and its hp bar to the stage
@@ -274,7 +275,6 @@ function findFreeSpace(){
 			x = empty[i][0];
 			y = empty[i][1];
 			if (blockMaps[x][y] == 0) {
-				console.log(x + "," + y);
 				return [x,y];
 			}
 		}
@@ -307,7 +307,6 @@ function initGame() {
 		mapHeight = parseInt(data.map_dimensions.height);
 		mapWidth = parseInt(data.map_dimensions.width);
 
-
 		blockMaps = new Array(mapHeight);
 		for (var i = 0; i < mapHeight; i++) {
 			blockMaps[i] = new Array(mapWidth);
@@ -315,6 +314,7 @@ function initGame() {
 				blockMaps[i][j] = 0;
 			}
 		}
+
 
 
 		currentGold = data.currentGold;
@@ -598,7 +598,6 @@ function destroyGoldDisplay() {
 }
 
 function drawGoldDisplay() {
-	console.log("displaying gold bar");
 
 	coin_pic = new createjs.Bitmap("graphics/coin.png");
 	coin_pic.x = stage.canvas.width - 170;
@@ -640,7 +639,6 @@ function displayStats(unit) {
 	bmp.y = 10;
 	bmp.x = 20; // 226
 	//stage.update();
-	console.log(unit.hp);
 	var text = unit.team == team ? new createjs.Text("HP : " + getHealth(unit) + "/" + getMaxHealth(unit) + "\n" +
 		"ATK : "  + getAttack(unit) + "\n" + "RNG : " + unit.attackRange + "\n" +
 		"SKILL : " + unit.skill +  "\n" + "CD: " + unit.skillCoolDown  + "\n" +
@@ -936,7 +934,6 @@ function demageEffect(damageText,damageBackground ){
 	//stage.update(damageText,damageBackground);
 	for (var i = 0; i < 100; i++) {
 		setTimeout(function (){
-			console.log("in loop!");
 			damageText.y -= 0.1;
 			damageBackground.y -= 0.1;
 	//		stage.update(damageText,damageBackground);
@@ -1167,7 +1164,6 @@ function sortIndices(unit) {
 
 
 function findPath(fromX, fromY, toX, toY) {
-
 	var parent = new Array(mapWidth * mapHeight);
 	var vis = new Array(mapWidth * mapHeight);
 	var q = [];
@@ -1285,22 +1281,19 @@ function findReachableTiles(x, y, range, isMoving) {
 
 
 function drawMap(data) {
+
 	maps = new Array(mapHeight);
 	for (var i = 0; i < mapHeight; i++) {
 		maps[i] = new Array(mapWidth);
 	}
 
-	blockMaps = new Array(mapHeight);
-	for (var i = 0; i < mapHeight; i++) {
-		blockMaps[i] = new Array(mapWidth);
-	}
 
 	originX = 540;
 	originY = 220;
 	for (i = 0; i < mapHeight; i++) {
 		for (j = 0; j < mapWidth; j++) {
 			var terrain = data[i][j];
-			blockMaps[i][j] = terrain == 5 ? 1 : 0;
+            if (terrain == 5) blockMaps[i][j] = 1;
 			// if (terrain == 5) {
 			// 	img = imageNumber(terrain);
 			// 	var spriteSheet = new createjs.SpriteSheet({
@@ -1551,9 +1544,7 @@ function highlightArea(tiles, imgSource, callBackEventNames, callBackFunctions) 
 		bmp.row = tiles[i][0];
 		bmp.column = tiles[i][1];
 		for (var j = 0; j < callBackEventNames.length; j++) {
-			console.log(j);
 			bmp.addEventListener(callBackEventNames[j], callBackFunctions[j]);
-			console.log(callBackEventNames[j]);
 		}
 		upper.addChild(bmp);
 		highlighted.push(bmp);
