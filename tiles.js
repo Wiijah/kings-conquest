@@ -545,21 +545,23 @@ function addEventListenersToUnit(unit) {
             if (selectedCharacter != unit && isCasting && selectedCharacter.team != unit.team) {
 
                 $.each(units, function(i, otherUnit) {
-                    if (otherUnit.column == unit.column && otherUnit.row == unit.row) {
+
+                    if (otherUnit.column == unit.column && otherUnit.row == unit.row && otherUnit.team != selectedCharacter.team) {
                         attack(selectedCharacter, otherUnit);
                     }
                     if (otherUnit.column == unit.column
-                        && (otherUnit.row == unit.row-1 || otherUnit.row == unit.row+1)) {
+                        && (otherUnit.row == unit.row-1 || otherUnit.row == unit.row+1) && otherUnit.team != selectedCharacter.team) {
                         attack(selectedCharacter, otherUnit);
                     }
                     if (otherUnit.row == unit.row
-                        && (otherUnit.column == unit.column-1 || otherUnit.column == unit.column+1)) {
+                        && (otherUnit.column == unit.column-1 || otherUnit.column == unit.column+1) && otherUnit.team != selectedCharacter.team) {
                         attack(selectedCharacter, otherUnit);
                     }
                     clearSelectionEffects();
                     selectedCharacter.outOfMoves = 0;
                     selectedCharacter.skillCoolDown = 3;
                     isCasting = false;
+
                 });
             }
             changed = true;
