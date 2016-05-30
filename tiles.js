@@ -46,11 +46,13 @@ var currentGold;
 var currentGoldDisplay;
 var turn = 0;
 var showUnitInfo = false;
+var resized = false;
 function resize() {
-	//stage.canvas.width = window.innerWidth;
+	// stage.canvas.width = window.innerWidth;
 	//stage.canvas.height = window.innerHeight;
 	//drawGame();
 	//drawStatsDisplay();
+	resized = true;
 }
 
 // drag
@@ -304,7 +306,7 @@ function initGame() {
 
 	changed = true;
 
-	//window.addEventListener('resize', resize, false);
+	window.addEventListener('resize', resize, false);
 }
 
 
@@ -440,6 +442,11 @@ function createFloatingCards(listOfSources, correspondingUnit) {
 	}
 }
 
+function destroyGoldDisplay() {
+	stage.removeChild(coin_pic);
+	stage.removeChild(currentGoldDisplay);
+}
+
 function drawGoldDisplay() {
 	console.log("displaying gold bar");
 	// var coin_background = new createjs.Bitmap("graphics/stats_background.png");
@@ -450,21 +457,21 @@ function drawGoldDisplay() {
 
 
 
-	var coin = new createjs.Bitmap("graphics/coin.png");
-	coin.x = stage.canvas.width - 170;
-	coin.y = 10;
-	coin.scaleX = 1;
-	coin.scaleY = 1;
+	coin_pic = new createjs.Bitmap("graphics/coin.png");
+	coin_pic.x = stage.canvas.width - 170;
+	coin_pic.y = 10;
+	coin_pic.scaleX = 1;
+	coin_pic.scaleY = 1;
 
 
 
 	currentGoldDisplay = new createjs.Text("Gold: " + currentGold, "20px '04b_19'", "#ffffff");
-	currentGoldDisplay.x = coin.x + 40;
-	currentGoldDisplay.y = coin.y  +5;
+	currentGoldDisplay.x = coin_pic.x + 40;
+	currentGoldDisplay.y = coin_pic.y  +5;
 	currentGoldDisplay.textBasline = "alphabetic";
 
 	// stage.addChild(coin_background);
-	stage.addChild(coin);
+	stage.addChild(coin_pic);
 	stage.addChild(currentGoldDisplay);
 }
 
@@ -545,11 +552,11 @@ function createClickableImage(imgSource, x, y, callBack) {
 function showActionMenuNextToPlayer(unit) {
 
 
-	menuBackground = new createjs.Bitmap("graphics/ingame_menu/ingame_menu_background2.png");
-	menuBackground.x = unit.x + 40;
+	menuBackground = new createjs.Bitmap("graphics/ingame_menu/ingame_menu_background.png");
+	menuBackground.x = unit.x + 43;
 	menuBackground.y = unit.y - 150;
 	menuBackground.scaleX = 0.6;
-    menuBackground.scaleY = 0.65;
+    menuBackground.scaleY = 0.6;
 
 	moveSource = unit.canMove === 1 && unit.outOfMoves === 0 ? "graphics/ingame_menu/move.png"
 								    : "graphics/ingame_menu/move_gray.png";
@@ -584,7 +591,6 @@ function showActionMenuNextToPlayer(unit) {
 	cancelButton = createClickableImage(cancelSource, unit.x + 45.5, unit.y - 47, function() {
 		clearSelectionEffects();
 	});
-
 
 	draggable.addChild(menuBackground);
     draggable.addChild(moveButton);
@@ -1287,6 +1293,22 @@ function update() {
 	// }
 	if (movingPlayer === true) {
 		movePlayer();
+	}
+	if (resized) {	
+		stage.canvas.width = window.innerWidth;
+		stage.canvas.height = window.innerHeight;
+		drawGame();
+		drawStatsDisplay();
+		destroyGoldDisplay();
+		drawGoldDisplay();
+
+		$.each(unitCards, function(i, value) {
+			stage.removeChild(value.text);
+			stage.removeChild(value);
+		});
+		unitCards = [];
+		drawUnitCreationMenu();
+		resized = false;
 	}
 	if (changed) {
 		stage.update();
