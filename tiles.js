@@ -112,7 +112,7 @@ function spawnUnit(data, initial){
 
 		unit.regX = 56.5;
 		unit.regY = 130;
-		if (unit.team == 0) unit.scaleX = -0.7;
+		if (unit.team == 0 && data.skill_no != -1) unit.scaleX = -0.7;
         else unit.scaleX = 0.7
 		unit.scaleY = 0.7;
 		unit.skill = data.skill;
