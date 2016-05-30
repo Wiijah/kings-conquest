@@ -56,39 +56,10 @@ function resize() {
 
 // typeName : king, red_castle, wizard, etc
 // initial: true / false
-function spawnUnit(typeName, initial){
-	var jsonObj;
-	$.getJSON('game-map.json', function(data) {
-		switch(typeName){
-			case "red_castle": 
-				jsonObj = eval(data.characters.red_castle);
-				break;
-			case "blue_castle":
-				jsonObj = eval(data.characters.blue_castle); 
-				break;
-			case "king":
-				jsonObj = eval(data.characters.king); 
-				break;
-			case "wizard":
-				jsonObj = eval(data.characters.wizard); 
-				break;
-			case "knight":
-				jsonObj = eval(data.characters.knight); 
-				break;
-			case "archer":
-				jsonObj = eval(data.characters.archer); 
-				break;
-			// case "rogue":
-			// 	jsonObj = eval(data.characters.rogue);
-			// 	break;
-			// case "scarecrow":
-			// 	jsonObj = eval(data.characters.scarecrow);
-			// 	break;
-			default:
-				return "error";
-		}
+function spawnUnit(data, initial){
+    if (data.address == "graphics/spritesheet/stand/ss_rogue_stand.png" || data.address == "graphics/spritesheet/stand/ss_scarecrow_stand.png") return;
 		var spriteSheet = new createjs.SpriteSheet({
-          	"images": [jsonObj.address],
+          	"images": [data.address],
           	"frames": {"regX": +10, "height": 142, "count": 2, "regY": -20, "width": 113 },
           	"animations": {
             	"stand":[0,1]
@@ -102,14 +73,14 @@ function spawnUnit(typeName, initial){
 		createjs.Ticker.timingMode = createjs.Ticker.RAF;	
 			createjs.Ticker.addEventListener("tick", stage);
 		// Configure unit coordinates
-		unit.hp = jsonObj.hp;
-		unit.max_hp = jsonObj.max_hp;
-		unit.attack = jsonObj.attack;
+		unit.hp = data.hp;
+		unit.max_hp = data.max_hp;
+		unit.attack = data.attack;
 		unit.base_attack = unit.attack;
-		unit.luck = jsonObj.luck;
+		unit.luck = data.luck;
 
 		var damageEffect = new createjs.SpriteSheet({
-			"images": [jsonObj.damageEffect],
+			"images": [data.damageEffect],
 			"frames": {"width": 142, "height": 142, "count": 4, "regY": 110, "regX": 95},
 			"animations": {
 				"damage":{
@@ -123,11 +94,11 @@ function spawnUnit(typeName, initial){
 
 		
 		if (initial){
-			unit.team = jsonObj.team;
-			unit.column = jsonObj.y;
-			unit.row = jsonObj.x;
-			unit.x = originX +  (jsonObj.y - jsonObj.x) * 65;
-			unit.y = jsonObj.y * 32.5 + originY + jsonObj.x * 32.5;
+			unit.team = data.team;
+			unit.column = data.y;
+			unit.row = data.x;
+			unit.x = originX +  (data.y - data.x) * 65;
+			unit.y = data.y * 32.5 + originY + data.x * 32.5;
 		} else {
 			unit.team = turn;
 			var empty = findFreeSpace();
@@ -141,14 +112,15 @@ function spawnUnit(typeName, initial){
 
 		unit.regX = 56.5;
 		unit.regY = 130;
-		unit.scaleX = 0.7;
+		if (unit.team == 0) unit.scaleX = -0.7;
+        else unit.scaleX = 0.7
 		unit.scaleY = 0.7;
-		unit.skill = jsonObj.skill;
-		unit.address = jsonObj.address;
-		unit.info = jsonObj.info;
+		unit.skill = data.skill;
+		unit.address = data.address;
+		unit.info = data.info;
 
 		unit.spritesheet = new createjs.SpriteSheet({
-			"images": [jsonObj.spritesheet],
+			"images": [data.spritesheet],
 			"frames": {"width": 142, "height": 142, "count": 4, "regY": 110, "regX": 95},
 			"animations": {
 				"attack":{
@@ -158,7 +130,7 @@ function spawnUnit(typeName, initial){
 			},
 			framerate: 4
 		});
-		unit.skill_no = jsonObj.skill_no;
+		unit.skill_no = data.skill_no;
 		unit.buffs = [];
 		unit.buff_icons = [];
 
@@ -169,24 +141,24 @@ function spawnUnit(typeName, initial){
 		if (unit.team === 0){
 			hp_bar.graphics.beginFill("#000000").drawRect(0, 0, 82, 12);
 			hp_bar.graphics.beginFill("#000000").drawRect(1, 1, 80, 10);
-			hp_bar.graphics.beginFill("#ff0000").drawRect(1, 1, (getHealth(jsonObj)/getMaxHealth(jsonObj)) * 80, 10);
+			hp_bar.graphics.beginFill("#ff0000").drawRect(1, 1, (getHealth(data)/getMaxHealth(data)) * 80, 10);
 		} else {
 			hp_bar.graphics.beginFill("#000000").drawRect(0, 0, 82, 12);
 			hp_bar.graphics.beginFill("#000000").drawRect(1, 1, 80, 10);
-			hp_bar.graphics.beginFill("#3399ff").drawRect(1, 1, (getHealth(jsonObj)/getMaxHealth(jsonObj)) * 80, 10);
+			hp_bar.graphics.beginFill("#3399ff").drawRect(1, 1, (getHealth(data)/getMaxHealth(data)) * 80, 10);
 		}
 		unit.hp_bar = hp_bar;
 
 
 		// Configure move and attack range of the unit
-		unit.moveRange = jsonObj.moveRange;
-		unit.attackRange = jsonObj.attackRange;
+		unit.moveRange = data.moveRange;
+		unit.attackRange = data.attackRange;
 
 		// Configure action control informations
-		unit.canMove = jsonObj.canMove;
-		unit.canAttack = jsonObj.canAttack;
-		unit.skillCoolDown = jsonObj.skillCoolDown;
-		unit.outOfMoves = jsonObj.outOfMoves;
+		unit.canMove = data.canMove;
+		unit.canAttack = data.canAttack;
+		unit.skillCoolDown = data.skillCoolDown;
+		unit.outOfMoves = data.outOfMoves;
 
 		// Adding the unit to the list of units in the game
 		units.push(unit);
@@ -287,7 +259,7 @@ function spawnUnit(typeName, initial){
 			sub_highlighted = [];
 			change = true;
 		});
-	});		
+	// });		
 }
 
 function findFreeSpace(){
@@ -345,8 +317,8 @@ function initGame() {
 
 		//should only spawn 2 kings and castles
 		$.each(data.characters, function(i, value) {
-			console.log(i);
-			spawnUnit(i, true);
+			// console.log(data.characters[i].x);
+			spawnUnit(data.characters[i], true);
 		});
 	});
 
