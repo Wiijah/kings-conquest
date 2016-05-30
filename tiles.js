@@ -441,6 +441,9 @@ function applyBuff(buffType, unit) {
 			var buffIcon = new createjs.Bitmap("graphics/buff/buff_shield.png");
 			unit.buffs.push([4, 0, -1, buffIcon]);
 			break;
+        case 5: // burn Buff
+            var buffIcon = new createjs.Bitmap("graphics/buff/buff_burning.png");
+            unit.buffs.push([5, 0.02, 5, buffIcon]);
 	}
 
 	buffIcon.x = unit.hp_bar.x + (unit.buffs.length - 1) * 25;
@@ -832,21 +835,6 @@ function cast(skillNo, unit) {
 	    case 3: // Warrior's skill
 	    	undoHighlights();
             applyBuff(4, selectedCharacter);
-	   //  	var found = false;
-
-	   //  	$.each(selectedCharacter.buffs, function(i, value) {
-	   //  		if (value[0] == 5) {
-	   //  			found = true;
-	   //  		}
-	   //  	});
-	    	
-	   //  	if (!found) {
-	   //  		selectedCharacter.buffs.push([5, 0, -1]);
-    // 			buff_icon = new createjs.Bitmap("graphics/buff/buff_shield.png");
-				// buff_icon.x = unit.x + 5;
-				// buff_icon.y = unit.y - 70;
-				// draggable.addChild(buff_icon);
-	   //  	}
 
 
 	    	selectedCharacter.outOfMoves = 1;
@@ -876,14 +864,17 @@ function castWizardSpellOnClick(event) {
 	$.each(units, function(i, unit) {
 		if (unit.column == event.target.column && unit.row == event.target.row) {
 			attack(selectedCharacter, unit);
+            applyBuff(5, unit);
 		}
 		if (unit.column == event.target.column
 			&& (unit.row == event.target.row-1 || unit.row == event.target.row + 1)) {
 			attack(selectedCharacter, unit);
+            applyBuff(5, unit);
 		}
 		if (unit.row == event.target.row
 			&& (unit.column == event.target.column-1 || unit.column == event.target.column + 1)) {
 			attack(selectedCharacter, unit);
+            applyBuff(5, unit);
 		}
 		clearSelectionEffects();
 		selectedCharacter.outOfMoves = 1;
