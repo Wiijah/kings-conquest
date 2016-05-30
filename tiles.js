@@ -93,7 +93,7 @@ function spawnUnit(typeName, initial){
 			// case "scarecrow":
 			// 	jsonObj = eval(data.characters.scarecrow);
 			// 	break;
-			// default:
+			default:
 				return "error";
 		}
 		var spriteSheet = new createjs.SpriteSheet({
