@@ -322,6 +322,8 @@ function findFreeSpace(){
 }
 
 function initGame() {
+	createjs.Ticker.addEventListener("tick", keyEvent);
+    this.document.onkeydown = keyEvent;
 	stage.enableMouseOver(20);
 	$.getJSON('game-map.json', function(data) {
 		that.mapData = data['main'];
@@ -1381,10 +1383,19 @@ function drawMap(data) {
 
 createjs.Ticker.addEventListener("tick", update);
 // createjs.Ticker.setFPS(30);
+function keyEvent(event) {
+    switch(event.keyCode) {
+        case 27:
+            if (isDisplayingMenu) {
+            	destroyMenu();
+            	destroyStats();
+            }
+            break;
+
+    }
+} 
 
 function update() {
-
-
 	if (movingPlayer === true) {
 		movePlayer();
 	}
