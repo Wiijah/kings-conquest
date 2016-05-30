@@ -169,6 +169,8 @@ function spawnUnit(data, initial){
 		draggable.addChild(unit);
 		draggable.addChild(hp_bar);
 
+		sortIndices(unit);
+
 		unit.cache(0,0,150,150);
 		hp_bar.cache(0,0,100,120);
 
@@ -293,6 +295,10 @@ function initGame() {
 	createjs.Ticker.addEventListener("tick", keyEvent);
     this.document.onkeydown = keyEvent;
 	stage.enableMouseOver(20);
+
+	chars = new createjs.Container();
+	stage.addChild(chars);
+
 	$.getJSON('game-map.json', function(data) {
 		that.mapData = data['main'];
 
@@ -352,7 +358,11 @@ function initGame() {
 	upper.x = draggable.x;
 	upper.y = draggable.y;
 	stage.addChild(upper);
-	
+
+	stage.setChildIndex(draggable, stage.getNumChildren()-1);
+	stage.setChildIndex( upper, stage.getNumChildren()-1);
+	stage.setChildIndex( chars, stage.getNumChildren()-1);
+
 	drawStatsDisplay();
 	drawUnitCreationMenu();
 	drawBottomInterface();
@@ -368,7 +378,7 @@ function removeBuff(buffType, unit) {
 
     for (var i = 0; i < unit.buffs.length; i++) {
         if (unit.buffs[i][0] === buffType) {
-            draggable.removeChild(unit.buffs[i][3]);
+            chars.removeChild(unit.buffs[i][3]);
             unit.buffs.splice(i, 1);
             success = true;
             break;
@@ -386,7 +396,7 @@ function removeBuff(buffType, unit) {
 function applyBuff(buffType, unit) {
     for (var i = 0; i < unit.buffs.length; i++) {
         if (unit.buffs[i][0] === buffType) {
-            draggable.removeChild(unit.buffs[i][3]);
+            chars.removeChild(unit.buffs[i][3]);
             unit.buffs.splice(i, 1);
             break;
         }
@@ -414,7 +424,7 @@ function applyBuff(buffType, unit) {
 	buffIcon.x = unit.hp_bar.x + (unit.buffs.length - 1) * 25;
 	buffIcon.y = unit.hp_bar.y - 20;
 	buffIcon.scaleY = 0.8;
-	draggable.addChild(buffIcon);
+	chars.addChild(buffIcon);
 }
 
 
@@ -464,8 +474,8 @@ function getLuck(unit) {
 function updateHP_bar(unit){
 	//stage.update();
 	if (getHealth(unit) <= 0){
-		draggable.removeChild(unit);
-		draggable.removeChild(unit.hp_bar);
+		chars.removeChild(unit);
+		chars.removeChild(unit.hp_bar);
         blockMaps[unit.row][unit.column] = 0;
 		units.splice(units.indexOf(unit), 1);
 	} else {
@@ -654,8 +664,8 @@ function drawGame() {
 		that.drawMap(that.mapData);
 
 		$.each(units, function(i, value) {
-			draggable.addChild(value);
-			draggable.addChild(value.hp_bar);
+			chars.addChild(value);
+			chars.addChild(value.hp_bar);
 		});
 
 		changed = true;
@@ -725,19 +735,19 @@ function showActionMenuNextToPlayer(unit) {
 		clearSelectionEffects();
 	});
 
-	draggable.addChild(menuBackground);
-    draggable.addChild(moveButton);
-    draggable.addChild(attackButton);
-    draggable.addChild(skillButton);
-    draggable.addChild(cancelButton);
+	chars.addChild(menuBackground);
+    chars.addChild(moveButton);
+    chars.addChild(attackButton);
+    chars.addChild(skillButton);
+    chars.addChild(cancelButton);
 
 	var min = moveButton;
-	min = draggable.getChildIndex(attackButton) < draggable.getChildIndex(min) ? attackButton : min;
-	min = draggable.getChildIndex(skillButton) < draggable.getChildIndex(min) ? skillButton : min;
-	min = draggable.getChildIndex(cancelButton) < draggable.getChildIndex(min) ? cancelButton : min;
+	min = chars.getChildIndex(attackButton) < chars.getChildIndex(min) ? attackButton : min;
+	min = chars.getChildIndex(skillButton) < chars.getChildIndex(min) ? skillButton : min;
+	min = chars.getChildIndex(cancelButton) < chars.getChildIndex(min) ? cancelButton : min;
 
-	if (draggable.getChildIndex(menuBackground) > draggable.getChildIndex(min)) {
-		draggable.swapChildren(menuBackground, min);
+	if (chars.getChildIndex(menuBackground) > chars.getChildIndex(min)) {
+		chars.swapChildren(menuBackground, min);
 	}
 
 
@@ -862,6 +872,7 @@ function highlightWizardSpellCross(event) {
 		sub_highlighted.push(sub_bmp);
 		changed = true;
 	});
+	drawGame();
 }	
 
 function clearWizardSpellCross(event) {
@@ -946,15 +957,15 @@ function showDamage(unit, critical, damage){
 	unit.damageText.y = unit.y - 50;
 	unit.damageText.textBasline = "alphabetic";
 
-	draggable.addChild(unit.damageBackground);
-	draggable.addChild(unit.damageText);
+	chars.addChild(unit.damageBackground);
+	chars.addChild(unit.damageText);
 	//stage.update();
 	unit.showingDamage = true;
 	demageEffect(unit.damageText, unit.damageBackground);	
 
 	setTimeout(function (){
-		draggable.removeChild(unit.damageBackground);
-		draggable.removeChild(unit.damageText);
+		chars.removeChild(unit.damageBackground);
+		chars.removeChild(unit.damageText);
 		unit.showingDamage = false;
 		//stage.update();
 	}, 750);
@@ -972,15 +983,15 @@ function showDamage2(unit, critical, damage){
 	unit.damageText2.y = unit.y - 50;
 	unit.damageText2.textBasline = "alphabetic";
 
-	draggable.addChild(unit.damageBackground2);
-	draggable.addChild(unit.damageText2);
+	chars.addChild(unit.damageBackground2);
+	chars.addChild(unit.damageText2);
 	//stage.update();
 	unit.showingDamage = true;
 	demageEffect(unit.damageText2, unit.damageBackground2);	
 
 	setTimeout(function (){
-		draggable.removeChild(unit.damageBackground2);
-		draggable.removeChild(unit.damageText2);
+		chars.removeChild(unit.damageBackground2);
+		chars.removeChild(unit.damageText2);
 		unit.showingDamage = false;
 		//stage.update();
 	}, 750);
@@ -995,8 +1006,8 @@ function attack(attacker, target){
 		sprite.y = attacker.y;
 		sprite.scaleX = 0.7;
 		sprite.scaleY = 0.7;
-		draggable.removeChild(attacker);	
-		draggable.addChild(sprite);
+		chars.removeChild(attacker);	
+		chars.addChild(sprite);
 
 		
 		var criticalHit = getRandom(getLuck(attacker));
@@ -1010,9 +1021,10 @@ function attack(attacker, target){
 			var damageAnimation = new createjs.Sprite(attacker.damageEffect, "damage");
 			damageAnimation.x = target.x;
 			damageAnimation.y = target.y;
-			draggable.addChild(damageAnimation);
 		}
 
+		chars.addChild(damageAnimation);
+		
 		attacker.outOfMoves = 1;
 		attacker.canAttack = 0;
 		remainingAttackTimes--;
@@ -1020,9 +1032,9 @@ function attack(attacker, target){
 
 
 		setTimeout(function() {
-			draggable.removeChild(sprite);
-			draggable.addChild(attacker);
-			draggable.removeChild(damageAnimation);
+			chars.removeChild(sprite);
+			chars.addChild(attacker);
+			chars.removeChild(damageAnimation);
 		}, 1000);
 
 		changed = true;
@@ -1051,11 +1063,11 @@ function destroyStats() {
 
 function destroyMenu() {
 	if (!isDisplayingMenu) return;
-	draggable.removeChild(menuBackground);
-	draggable.removeChild(moveButton);
-	draggable.removeChild(attackButton);
-	draggable.removeChild(skillButton);
-	draggable.removeChild(cancelButton);
+	chars.removeChild(menuBackground);
+	chars.removeChild(moveButton);
+	chars.removeChild(attackButton);
+	chars.removeChild(skillButton);
+	chars.removeChild(cancelButton);
 	changed = true;
 }
 
@@ -1129,18 +1141,18 @@ function movePlayer() {
 function sortIndices(unit) {
 	$.each(units, function(i, value) {
 		if (unit.y > value.y) {
-			if (draggable.getChildIndex(unit) > draggable.getChildIndex(value)) {
-				draggable.swapChildren(unit, value);
+			if (chars.getChildIndex(unit) < chars.getChildIndex(value)) {
+				chars.swapChildren(unit, value);
 			}
-			if (draggable.getChildIndex(unit.hp_bar) > draggable.getChildIndex(value)) {
-				draggable.swapChildren(unit.hp_bar, value);
+			if (chars.getChildIndex(unit.hp_bar) < chars.getChildIndex(value.hp_bar)) {
+				chars.swapChildren(unit.hp_bar, value.hp_bar);
 			}
 		} else if (unit.y < value.y) {
-			if (draggable.getChildIndex(unit) < draggable.getChildIndex(value)) {
-				draggable.swapChildren(unit, value);
+			if (chars.getChildIndex(unit) > chars.getChildIndex(value)) {
+				chars.swapChildren(unit, value);
 			}
-			if (draggable.getChildIndex(unit.hp_bar) < draggable.getChildIndex(value)) {
-				draggable.swapChildren(unit.hp_bar, value);
+			if (chars.getChildIndex(unit.hp_bar) > chars.getChildIndex(value.hp_bar)) {
+				chars.swapChildren(unit.hp_bar, value.hp_bar);
 			}
 		}
 	});
@@ -1410,11 +1422,15 @@ function update() {
 		resized = false;
 	}
 	if (changed) {
-		//stage.update();
+		stage.update();
 		changed = false;
 	}
 	upper.x = draggable.x;
 	upper.y = draggable.y;
+
+	chars.x = draggable.x;
+	chars.y = draggable.y;
+
 	stage.addChild(statsDisplay);
 	stage.addChild(unitCreationMenu);
 }
@@ -1544,7 +1560,6 @@ function highlightArea(tiles, imgSource, callBackEventNames, callBackFunctions) 
 
 
 	isInHighlight = true;
-	changed = true;
-
+	drawGame();
 }
 
