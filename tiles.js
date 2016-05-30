@@ -60,7 +60,7 @@ function spawnUnit(data, initial){
     if (data.address == "graphics/spritesheet/stand/ss_rogue_stand.png" || data.address == "graphics/spritesheet/stand/ss_scarecrow_stand.png") return;
 		var spriteSheet = new createjs.SpriteSheet({
           	"images": [data.address],
-          	"frames": {"regX": +10, "height": 142, "count": 2, "regY": -20, "width": 113 },
+          	"frames": {"regX": 0, "height": 142, "count": 2, "regY": -10, "width": 113 },
           	"animations": {
             	"stand":[0,1]
           	},
@@ -112,7 +112,7 @@ function spawnUnit(data, initial){
 
 		unit.regX = 56.5;
 		unit.regY = 130;
-		if (unit.team == 0) unit.scaleX = -0.7;
+		if (unit.team == 0 && data.skill_no != -1) unit.scaleX = -0.7;
         else unit.scaleX = 0.7
 		unit.scaleY = 0.7;
 		unit.skill = data.skill;
@@ -137,7 +137,7 @@ function spawnUnit(data, initial){
 		// Configure the hp bar of the unit
 		hp_bar = new createjs.Shape();
 		hp_bar.x = unit.x - 40;
-		hp_bar.y = unit.y - 90;
+		hp_bar.y = unit.y - 95;
 		if (unit.team === 0){
 			hp_bar.graphics.beginFill("#000000").drawRect(0, 0, 82, 12);
 			hp_bar.graphics.beginFill("#000000").drawRect(1, 1, 80, 10);
