@@ -116,7 +116,7 @@
 			"luck":0.85,
 			"x" : 0,
 			"y" : 2,
-			"moveRange" : 2,
+			"moveRange" : 2, 
 			"team": 0,
 			"attackRange" : 1,
 			"canMove" : 1,

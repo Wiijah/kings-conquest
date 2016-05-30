@@ -218,7 +218,7 @@ function spawnUnit(typeName, initial){
 
 
 			// In this case, we are selecting the unit to be attacked
-			if (selectedCharacter != unit && isAttacking) {
+			if (selectedCharacter != unit && isAttacking && selectedCharacter.team != unit.team) {
 				$.each(highlighted, function(i, coord) {
 					if (unit.row === coord.row && unit.column === coord.column) {
 						attack(selectedCharacter, unit);
@@ -1026,7 +1026,7 @@ function showDamage2(unit, critical, damage){
 
 
 function attack(attacker, target){
-	if (attacker.team != target.team) {
+	// if (attacker.team != target.team) {
 		
 		var sprite = new createjs.Sprite(attacker.spritesheet, "attack");
 		sprite.x = attacker.x;
@@ -1061,7 +1061,7 @@ function attack(attacker, target){
 		}, 1000);
 
 		changed = true;
-	} 
+	// } 
 }
 
 function clearSelectionEffects() {
