@@ -707,15 +707,15 @@ function createClickableImage(imgSource, x, y, callBack) {
 function showActionMenuNextToPlayer(unit) {
 
 
-	menuBackground = new createjs.Bitmap("graphics/ingame_menu/ingame_menu_background.png");
+	menuBackground = new createjs.Bitmap("graphics/ingame_menu/new_ingame_bg2.png");
 	menuBackground.x = unit.x + 43;
 	menuBackground.y = unit.y - 150;
-	menuBackground.scaleX = 0.6;
-    menuBackground.scaleY = 0.6;
+	menuBackground.scaleX = 0.7;
+    menuBackground.scaleY = 0.7;
 
-	moveSource = unit.canMove === 1 && unit.outOfMoves === 0 ? "graphics/ingame_menu/move.png"
-								    : "graphics/ingame_menu/move_gray.png";
-	moveButton = createClickableImage(moveSource, unit.x + 45, unit.y - 140, function() {
+	moveSource = unit.canMove === 1 && unit.outOfMoves === 0 ? "graphics/ingame_menu/new_move.png"
+								    : "graphics/ingame_menu/new_move_gray.png";
+	moveButton = createClickableImage(moveSource, unit.x + 48, unit.y - 147, function() {
 		if (unit.canMove) {
 			undoHighlights();
 			// drawRange(findReachableTiles(unit.column, unit.row, unit.moveRange, true), 0);
@@ -723,9 +723,9 @@ function showActionMenuNextToPlayer(unit) {
 		}
 	});
 
-	attackSource = unit.canAttack === 1 && unit.outOfMoves === 0 ? "graphics/ingame_menu/attack.png"
-								   : "graphics/ingame_menu/attack_gray.png";
-	attackButton = createClickableImage(attackSource, unit.x + 49, unit.y - 111, function() {
+	attackSource = unit.canAttack === 1 && unit.outOfMoves === 0 ? "graphics/ingame_menu/new_attack.png"
+								   : "graphics/ingame_menu/new_attack_gray.png";
+	attackButton = createClickableImage(attackSource, unit.x + 48, unit.y - 119, function() {
 		if (unit.canAttack) {
 			undoHighlights();
 			// isAttacking = true;
@@ -735,9 +735,9 @@ function showActionMenuNextToPlayer(unit) {
 		}
 	});
 
-	skillSource = unit.skillCoolDown === 0 && unit.outOfMoves === 0 ? "graphics/ingame_menu/skill.png"
-								   : "graphics/ingame_menu/skill_gray.png";
-	skillButton = createClickableImage(skillSource, unit.x + 48, unit.y - 77, function() {
+	skillSource = unit.skillCoolDown === 0 && unit.outOfMoves === 0 ? "graphics/ingame_menu/new_skill.png"
+								   : "graphics/ingame_menu/new_skill_gray.png";
+	skillButton = createClickableImage(skillSource, unit.x + 48, unit.y - 91, function() {
 		if (unit.skillCoolDown === 0) {
 			undoHighlights();
 			isCasting = true;
@@ -745,8 +745,8 @@ function showActionMenuNextToPlayer(unit) {
 		}
 	});
 
-	cancelSource = "graphics/ingame_menu/cancel.png";
-	cancelButton = createClickableImage(cancelSource, unit.x + 45.5, unit.y - 47, function() {
+	cancelSource = "graphics/ingame_menu/new_cancel.png";
+	cancelButton = createClickableImage(cancelSource, unit.x + 48, unit.y - 63, function() {
 		clearSelectionEffects();
 	});
 
