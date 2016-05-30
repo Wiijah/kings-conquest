@@ -838,17 +838,17 @@ function cast(skillNo, unit) {
 
 function castWizardSpellOnClick(event) {
 	$.each(units, function(i, unit) {
-		if (unit.column == event.target.column && unit.row == event.target.row && unit.team != event.target.team) {
+		if (unit.column == event.target.column && unit.row == event.target.row && unit.team != selectedCharacter.team) {
 			attack(selectedCharacter, unit);
             applyBuff(5, unit);
 		}
 		if (unit.column == event.target.column
-			&& (unit.row == event.target.row-1 || unit.row == event.target.row + 1) && unit.team != event.target.team) {
+			&& (unit.row == event.target.row-1 || unit.row == event.target.row + 1) && unit.team != selectedCharacter.team) {
 			attack(selectedCharacter, unit);
             applyBuff(5, unit);
 		}
 		if (unit.row == event.target.row
-			&& (unit.column == event.target.column-1 || unit.column == event.target.column + 1) && unit.team != event.target.team) {
+			&& (unit.column == event.target.column-1 || unit.column == event.target.column + 1) && unit.team != selectedCharacter.team) {
 			attack(selectedCharacter, unit);
             applyBuff(5, unit);
 		}
