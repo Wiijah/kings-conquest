@@ -44,23 +44,14 @@ var currentGold;
 var currentGoldDisplay;
 var turn = 0;
 var showUnitInfo = false;
+var resized = false;
+
 function resize() {
-	//stage.canvas.width = window.innerWidth;
+	// stage.canvas.width = window.innerWidth;
 	//stage.canvas.height = window.innerHeight;
 	//drawGame();
 	//drawStatsDisplay();
-}
-
-// drag
-var offset = new createjs.Point();
-function startDrag(event) {
-	offset.x = stage.mouseX - draggable.x;
-	offset.y = stage.mouseY - draggable.y;
-	stage.addEventListener("mousemove", doDrag);
-}
-function doDrag(event) {
-	draggable.x = event.stageX - offset.x;
-	draggable.y = event.stageY - offset.y;
+	resized = true;
 }
 
 // typeName : king, red_castle, wizard, etc
@@ -108,7 +99,7 @@ function spawnUnit(typeName, initial){
 		var unit = new createjs.Sprite(spriteSheet, "stand");
 
 		
-		createjs.Ticker.timingMode = createjs.Ticker.RAF;
+		createjs.Ticker.timingMode = createjs.Ticker.RAF;	
 			createjs.Ticker.addEventListener("tick", stage);
 		// Configure unit coordinates
 		unit.hp = jsonObj.hp;
@@ -122,12 +113,13 @@ function spawnUnit(typeName, initial){
 			"frames": {"width": 142, "height": 142, "count": 4, "regY": 110, "regX": 95},
 			"animations": {
 				"damage":{
-					frames: [0,1,2,3]
+					frames: [0,1,2,3],
+					next: false
 				}
 			},
-			framerate: 2
+			framerate: 4
 		});
-		unit.damageEffect = new createjs.Sprite(damageEffect);
+		unit.damageEffect = damageEffect;
 
 		
 		if (initial){
@@ -154,6 +146,7 @@ function spawnUnit(typeName, initial){
 		unit.skill = jsonObj.skill;
 		unit.address = jsonObj.address;
 		unit.info = jsonObj.info;
+
 		unit.spritesheet = new createjs.SpriteSheet({
 			"images": [jsonObj.spritesheet],
 			"frames": {"width": 142, "height": 142, "count": 4, "regY": 110, "regX": 95},
@@ -163,7 +156,7 @@ function spawnUnit(typeName, initial){
 					next: false	
 				}
 			},
-			framerate: 1
+			framerate: 4
 		});
 		unit.skill_no = jsonObj.skill_no;
 		unit.buffs = [];
@@ -203,6 +196,9 @@ function spawnUnit(typeName, initial){
 		// Add the unit and its hp bar to the stage
 		draggable.addChild(unit);
 		draggable.addChild(hp_bar);
+
+		unit.cache(0,0,150,150);
+		hp_bar.cache(0,0,100,120);
 
 		unit.addEventListener("click", function(event) {
 			if (isInHighlight && !isAttacking && !isCasting){
@@ -392,7 +388,7 @@ function initGame() {
 
 	changed = true;
 
-	//window.addEventListener('resize', resize, false);
+	window.addEventListener('resize', resize, false);
 }
 
 function removeBuff(buffType, unit) {
@@ -448,7 +444,6 @@ function applyBuff(buffType, unit) {
 
 
 function getHealth(unit) {
-
 	var base = unit.hp;
 	$.each(unit.buffs, function(i, value) {
 		if (value[0] == 0) {
@@ -512,6 +507,7 @@ function updateHP_bar(unit){
 			unit.hp_bar.graphics.beginFill("#3399ff").drawRect(1, 1, (getHealth(unit)/getMaxHealth(unit)) * 80, 10);
 		}
 	}
+	unit.hp_bar.updateCache();
 }
 
 function drawBottomInterface()  {
@@ -610,23 +606,27 @@ function createFloatingCards(listOfSources, correspondingUnit) {
 	}
 }
 
+function destroyGoldDisplay() {
+	stage.removeChild(coin_pic);
+	stage.removeChild(currentGoldDisplay);
+}
+
 function drawGoldDisplay() {
 	console.log("displaying gold bar");
-	var coin = new createjs.Bitmap("graphics/coin.png");
-	coin.x = stage.canvas.width - 170;
-	coin.y = 10;
-	coin.scaleX = 1;
-	coin.scaleY = 1;
 
-
+	coin_pic = new createjs.Bitmap("graphics/coin.png");
+	coin_pic.x = stage.canvas.width - 170;
+	coin_pic.y = 10;
+	coin_pic.scaleX = 1;
+	coin_pic.scaleY = 1
 
 	currentGoldDisplay = new createjs.Text("Gold: " + currentGold, "20px '04b_19'", "#ffffff");
-	currentGoldDisplay.x = coin.x + 40;
-	currentGoldDisplay.y = coin.y  +5;
+	currentGoldDisplay.x = coin_pic.x + 40;
+	currentGoldDisplay.y = coin_pic.y  +5;
 	currentGoldDisplay.textBasline = "alphabetic";
 
 	// stage.addChild(coin_background);
-	stage.addChild(coin);
+	stage.addChild(coin_pic);
 	stage.addChild(currentGoldDisplay);
 }
 
@@ -653,7 +653,7 @@ function displayStats(unit) {
 
 	bmp.y = 10;
 	bmp.x = 20; // 226
-	stage.update();
+	//stage.update();
 	console.log(unit.hp);
 	var text = unit.team == team ? new createjs.Text("HP : " + getHealth(unit) + "/" + getMaxHealth(unit) + "\n" +
 		"ATK : "  + getAttack(unit) + "\n" + "RNG : " + unit.attackRange + "\n" +
@@ -707,11 +707,11 @@ function createClickableImage(imgSource, x, y, callBack) {
 function showActionMenuNextToPlayer(unit) {
 
 
-	menuBackground = new createjs.Bitmap("graphics/ingame_menu/ingame_menu_background2.png");
-	menuBackground.x = unit.x + 40;
+	menuBackground = new createjs.Bitmap("graphics/ingame_menu/ingame_menu_background.png");
+	menuBackground.x = unit.x + 43;
 	menuBackground.y = unit.y - 150;
 	menuBackground.scaleX = 0.6;
-    menuBackground.scaleY = 0.65;
+    menuBackground.scaleY = 0.6;
 
 	moveSource = unit.canMove === 1 && unit.outOfMoves === 0 ? "graphics/ingame_menu/move.png"
 								    : "graphics/ingame_menu/move_gray.png";
@@ -749,7 +749,6 @@ function showActionMenuNextToPlayer(unit) {
 	cancelButton = createClickableImage(cancelSource, unit.x + 45.5, unit.y - 47, function() {
 		clearSelectionEffects();
 	});
-
 
 	draggable.addChild(menuBackground);
     draggable.addChild(moveButton);
@@ -959,13 +958,13 @@ var showingDamage;
 function demageEffect(damageText,damageBackground ){
 	damageText.y -= 0.1;
 	damageBackground.y -= 0.1;
-	stage.update(damageText,damageBackground);
+	//stage.update(damageText,damageBackground);
 	for (var i = 0; i < 100; i++) {
 		setTimeout(function (){
 			console.log("in loop!");
 			damageText.y -= 0.1;
 			damageBackground.y -= 0.1;
-			stage.update(damageText,damageBackground);
+	//		stage.update(damageText,damageBackground);
 		}, 5);
 		
 	}
@@ -1033,20 +1032,23 @@ function attack(attacker, target){
 		sprite.y = attacker.y;
 		sprite.scaleX = 0.7;
 		sprite.scaleY = 0.7;
-		draggable.removeChild(attacker);
+		draggable.removeChild(attacker);	
 		draggable.addChild(sprite);
 
+		
 		var criticalHit = getRandom(getLuck(attacker));
 		var damage = getAttack(attacker) * criticalHit
 
-
-		
 		if (!removeBuff(4, target)) {
 			showDamage(target, criticalHit, damage);
 			target.hp -= damage;
 			updateHP_bar(target);
+			
+			var damageAnimation = new createjs.Sprite(attacker.damageEffect, "damage");
+			damageAnimation.x = target.x;
+			damageAnimation.y = target.y;
+			draggable.addChild(damageAnimation);
 		}
-		
 
 		attacker.outOfMoves = 1;
 		attacker.canAttack = 0;
@@ -1098,7 +1100,7 @@ function undoHighlights() {
 	// console.log(isInHighlight);
 	if (!isInHighlight) return;
 	$.each(highlighted, function(i, tile) {
-		draggable.removeChild(tile);
+		upper.removeChild(tile);
 	});
 	$.each(sub_highlighted, function(i, tile) {
 		upper.removeChild(tile);
@@ -1164,17 +1166,17 @@ function movePlayer() {
 function sortIndices(unit) {
 	$.each(units, function(i, value) {
 		if (unit.y > value.y) {
-			if (draggable.getChildIndex(unit) < draggable.getChildIndex(value)) {
-				draggable.swapChildren(unit, value);
-			}
-			if (draggable.getChildIndex(unit.hp_bar) < draggable.getChildIndex(value)) {
-				draggable.swapChildren(unit.hp_bar, value);
-			}
-		} else if (unit.y < value.y) {
 			if (draggable.getChildIndex(unit) > draggable.getChildIndex(value)) {
 				draggable.swapChildren(unit, value);
 			}
 			if (draggable.getChildIndex(unit.hp_bar) > draggable.getChildIndex(value)) {
+				draggable.swapChildren(unit.hp_bar, value);
+			}
+		} else if (unit.y < value.y) {
+			if (draggable.getChildIndex(unit) < draggable.getChildIndex(value)) {
+				draggable.swapChildren(unit, value);
+			}
+			if (draggable.getChildIndex(unit.hp_bar) < draggable.getChildIndex(value)) {
 				draggable.swapChildren(unit.hp_bar, value);
 			}
 		}
@@ -1405,6 +1407,12 @@ function drawMap(data) {
 	}
 
 createjs.Ticker.addEventListener("tick", update);
+createjs.Ticker.on("tick", function() {
+
+	$.each(units, function(i, value) {
+		value.updateCache();
+	});
+}, this);	
 // createjs.Ticker.setFPS(30);
 function keyEvent(event) {
     switch(event.keyCode) {
@@ -1422,8 +1430,24 @@ function update() {
 	if (movingPlayer === true) {
 		movePlayer();
 	}
+	if (resized) {	
+		stage.canvas.width = window.innerWidth;
+		stage.canvas.height = window.innerHeight;
+		drawGame();
+		drawStatsDisplay();
+		destroyGoldDisplay();
+		drawGoldDisplay();
+
+		$.each(unitCards, function(i, value) {
+			stage.removeChild(value.text);
+			stage.removeChild(value);
+		});
+		unitCards = [];
+		drawUnitCreationMenu();
+		resized = false;
+	}
 	if (changed) {
-		stage.update();
+		//stage.update();
 		changed = false;
 	}
 	upper.x = draggable.x;
@@ -1545,7 +1569,7 @@ function highlightArea(tiles, imgSource, callBackEventNames, callBackFunctions) 
 			bmp.addEventListener(callBackEventNames[j], callBackFunctions[j]);
 			console.log(callBackEventNames[j]);
 		}
-		draggable.addChild(bmp);
+		upper.addChild(bmp);
 		highlighted.push(bmp);
 		$.each(units, function(i, value) {
 			if (draggable.getChildIndex(value) < draggable.getChildIndex(bmp)) {
