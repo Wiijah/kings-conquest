@@ -38,7 +38,8 @@
 			"canMove" : 0,
 			"canAttack" : 1,
 			"skillCoolDown" : 0,
-			"outOfMoves" : 0
+			"outOfMoves" : 0,
+			"damageEffect": "graphics/spritesheet/spell/ss_physical_attack.png"
 		},
 		"blue_castle": {
 			"address": "graphics/spritesheet/special_unit/ss_castle_blue.png",
@@ -58,7 +59,8 @@
 			"canMove" : 0,
 			"canAttack" : 1,
 			"skillCoolDown" : 0,
-			"outOfMoves" : 0
+			"outOfMoves" : 0,
+			"damageEffect": "graphics/spritesheet/spell/ss_physical_attack.png"
 		},
 		"king": {
 			"address": "graphics/spritesheet/stand/ss_king_stand.png",
@@ -78,7 +80,8 @@
 			"canMove" : 1,
 			"canAttack" : 1,
 			"skillCoolDown" : 0,
-			"outOfMoves" : 0
+			"outOfMoves" : 0,
+			"damageEffect": "graphics/spritesheet/spell/ss_physical_attack.png"
 		},
 		"wizard": {
 			"address": "graphics/spritesheet/stand/ss_wizard_stand.png",
@@ -98,7 +101,8 @@
 			"canMove" : 1,
 			"canAttack" : 1,
 			"skillCoolDown" : 0,
-			"outOfMoves" : 0
+			"outOfMoves" : 0,
+			"damageEffect": "graphics/spritesheet/spell/ss_fireball.png"
 		},
 		"knight": {
 			"address": "graphics/spritesheet/stand/ss_knight_stand.png",
@@ -118,7 +122,8 @@
 			"canMove" : 1,
 			"canAttack" : 1,
 			"skillCoolDown" : 0,
-			"outOfMoves" : 0
+			"outOfMoves" : 0,
+			"damageEffect": "graphics/spritesheet/spell/ss_physical_attack.png"
 		},
 		"archer": {
 			"address": "graphics/spritesheet/stand/ss_archer_stand.png",
@@ -138,7 +143,50 @@
 			"canMove" : 1,
 			"canAttack" : 1,
 			"skillCoolDown" : 0,
-			"outOfMoves" : 0
+			"outOfMoves" : 0,
+			"damageEffect" : "graphics/spritesheet/spell/ss_arrow.png"
+		},
+		"rogue": {
+			"address": "graphics/spritesheet/stand/ss_rogue_stand.png",
+			"spritesheet": "graphics/spritesheet/attack/ss_rogue_attack.png",
+			"info": "graphics/card/rogue_card.png",
+			"hp" : 160,
+			"max_hp" : 160,
+			"attack" : 10,
+			"skill": "steal", 
+			"skill_no": 5,
+			"luck":0.2,
+			"x" : 3,
+			"y" : 4,
+			"moveRange" : 5, 
+			"team": 1,
+			"attackRange" : 2,
+			"canMove" : 1,
+			"canAttack" : 1,
+			"skillCoolDown" : 0,
+			"outOfMoves" : 0,
+			"damageEffect": "graphics/spritesheet/spell/ss_physical_attack.png"
+		},
+		"scarecrow": {
+			"address": "graphics/spritesheet/stand/ss_scarecrow_stand.png",
+			"spritesheet": "graphics/spritesheet/attack/ss_scarecrow_attack.png",
+			"info": "graphics/card/rogue_card.png",
+			"hp" : 5000,
+			"max_hp" : 5000,
+			"attack" : 0,
+			"skill": "NULL", 
+			"skill_no": -1,
+			"luck":1,
+			"x" : 5,
+			"y" : 5,
+			"moveRange" : 0, 
+			"team": 1,
+			"attackRange" : 0,
+			"canMove" : 0,
+			"canAttack" : 0,
+			"skillCoolDown" : 0,
+			"outOfMoves" : 1,
+			"damageEffect": "graphics/spritesheet/spell/ss_physical_attack.png"
 		}
 	}
 }

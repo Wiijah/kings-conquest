@@ -87,6 +87,12 @@ function spawnUnit(typeName, initial){
 			case "archer":
 				jsonObj = eval(data.characters.archer); 
 				break;
+			// case "rogue":
+			// 	jsonObj = eval(data.characters.rogue);
+			// 	break;
+			// case "scarecrow":
+			// 	jsonObj = eval(data.characters.scarecrow);
+			// 	break;
 			default:
 				return "error";
 		}
@@ -100,6 +106,7 @@ function spawnUnit(typeName, initial){
     	});
 
 		var unit = new createjs.Sprite(spriteSheet, "stand");
+
 		
 		createjs.Ticker.timingMode = createjs.Ticker.RAF;
 			createjs.Ticker.addEventListener("tick", stage);
@@ -109,6 +116,18 @@ function spawnUnit(typeName, initial){
 		unit.attack = jsonObj.attack;
 		unit.base_attack = unit.attack;
 		unit.luck = jsonObj.luck;
+
+		var damageEffect = new createjs.SpriteSheet({
+			"images": [jsonObj.damageEffect],
+			"frames": {"width": 142, "height": 142, "count": 4, "regY": 110, "regX": 95},
+			"animations": {
+				"damage":{
+					frames: [0,1,2,3]
+				}
+			},
+			framerate: 2
+		});
+		unit.damageEffect = new createjs.Sprite(damageEffect);
 
 		
 		if (initial){
@@ -186,6 +205,9 @@ function spawnUnit(typeName, initial){
 		draggable.addChild(hp_bar);
 
 		unit.addEventListener("click", function(event) {
+			if (isInHighlight && !isAttacking && !isCasting){
+				return;
+			}
 			if (!movingPlayer && !isAttacking && !isCasting) {
 				clearSelectionEffects();
 				selectedCharacter = unit;;
@@ -233,7 +255,14 @@ function spawnUnit(typeName, initial){
 		});
 
 		unit.addEventListener("mouseover", function(event) {
-			if (isCasting) {
+			if (isCasting && selectedCharacter.skill_no == 4) {
+				var i;
+				for (i = 0; i < highlighted.length; i++) {
+					if (unit.row == highlighted[i].row && unit.column == highlighted[i].column) {
+						break;
+					}
+				}
+				if (i == highlighted.length) return;
 				for (i = 0; i < sub_highlighted.length; i++) {
 					upper.removeChild(sub_highlighted[i]);
 				}
@@ -286,19 +315,20 @@ function findFreeSpace(){
 			x = empty[i][0];
 			y = empty[i][1];
 			if (blockMaps[x][y] == 0) {
-				console.log(x + "," + y);
 				return [x,y];
 			}
 		}
 	}
 }
 
-	
 function initGame() {
+	createjs.Ticker.addEventListener("tick", keyEvent);
+    this.document.onkeydown = keyEvent;
 	stage.enableMouseOver(20);
 	$.getJSON('game-map.json', function(data) {
 		that.mapData = data['main'];
 
+		console.log("init game");
 		mapHeight = parseInt(data.map_dimensions.height);
 		mapWidth = parseInt(data.map_dimensions.width);
 
@@ -319,6 +349,7 @@ function initGame() {
 
 		//should only spawn 2 kings and castles
 		$.each(data.characters, function(i, value) {
+			console.log(i);
 			spawnUnit(i, true);
 		});
 	});
@@ -497,8 +528,9 @@ function drawUnitCreationMenu() {
 	listOfSources.push("graphics/card/knight_card.png");
 	listOfSources.push("graphics/card/archer_card.png");
 	listOfSources.push("graphics/card/wizard_card.png");
+	//listOfSources.push("graphics/card/rogue_card.png");
 
-	createFloatingCards(listOfSources, ["knight","archer","wizard"]);
+	createFloatingCards(listOfSources, ["knight","archer","wizard","rogue"]);
 	unitCreationMenu.x = 50;
 	unitCreationMenu.y = window.innerHeight - 130;
 	bottomInterface.addChild(unitCreationMenu);
@@ -510,7 +542,7 @@ function createFloatingCards(listOfSources, correspondingUnit) {
 		unitCards[i] = new createjs.Bitmap(listOfSources[i]);
 		var unit_card_text = new createjs.Text("$ 100", "12px 'Arial'", "#ffffff");
 		unitCards[i].y = 0;
-		unitCards[i].x = i * (330 / numOfCards);
+		unitCards[i].x = i * (110);
 		unitCards[i].scaleX = 0.60;
 		unitCards[i].scaleY = 0.60;
 		unitCards[i].index = i;
@@ -549,6 +581,16 @@ function createFloatingCards(listOfSources, correspondingUnit) {
 					changed = true;
 				});
 				break;
+			// case "rogue": 
+			// 	unitCards[i].addEventListener("click", function(event) {
+			// 		if (currentGold >= 100) {
+			// 			spawnUnit("rogue",false, 5,2,turn);
+			// 			currentGold -= 100;
+			// 			currentGoldDisplay.text = ("Gold: " + currentGold);
+			// 		}
+			// 		changed = true;
+			// 	});
+			// 	break;
 		}
 		
 		unitCards[i].addEventListener("mouseover", function(event) {
@@ -811,11 +853,16 @@ function cast(skillNo, unit) {
 
 	    	break;
 	    case 4: // Wizard's skill
+	    	isCasting = true;
+
 	    	// drawRange(findReachableTiles(selectedCharacter.column, selectedCharacter.row, selectedCharacter.attackRange, false), 2);
 	    	var reachableTiles = findReachableTiles(selectedCharacter.row, selectedCharacter.column, selectedCharacter.attackRange, false);
 	    	highlightArea(reachableTiles, "graphics/tile/red_tile.png", ["click", "mouseover", "mouseout"], [castWizardSpellOnClick, highlightWizardSpellCross, clearWizardSpellCross]);
+			break;
+		case 5:
+			remainingAttackTimes = 1;
+			performAttack();
 
-			
 	}
 }
 
@@ -877,7 +924,6 @@ function rcToCoord(x, y) {
 		
 	return result;
 }
-
 
 function getSurroundingTiles(row, col) {
 	var result = [];
@@ -1001,6 +1047,7 @@ function attack(attacker, target){
 			updateHP_bar(target);
 		}
 		
+
 		attacker.outOfMoves = 1;
 		attacker.canAttack = 0;
 		remainingAttackTimes--;
@@ -1010,6 +1057,7 @@ function attack(attacker, target){
 		setTimeout(function() {
 			draggable.removeChild(sprite);
 			draggable.addChild(attacker);
+			draggable.removeChild(damageAnimation);
 		}, 1000);
 
 		changed = true;
@@ -1357,11 +1405,20 @@ function drawMap(data) {
 	}
 
 createjs.Ticker.addEventListener("tick", update);
-createjs.Ticker.setFPS(30);
+// createjs.Ticker.setFPS(30);
+function keyEvent(event) {
+    switch(event.keyCode) {
+        case 27:
+            if (isDisplayingMenu) {
+            	destroyMenu();
+            	destroyStats();
+            }
+            break;
+
+    }
+} 
 
 function update() {
-
-
 	if (movingPlayer === true) {
 		movePlayer();
 	}
