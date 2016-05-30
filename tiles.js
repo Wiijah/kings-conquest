@@ -837,17 +837,17 @@ function cast(skillNo, unit) {
 
 function castWizardSpellOnClick(event) {
 	$.each(units, function(i, unit) {
-		if (unit.column == event.target.column && unit.row == event.target.row) {
+		if (unit.column == event.target.column && unit.row == event.target.row && unit.team != event.target.team) {
 			attack(selectedCharacter, unit);
             applyBuff(5, unit);
 		}
 		if (unit.column == event.target.column
-			&& (unit.row == event.target.row-1 || unit.row == event.target.row + 1)) {
+			&& (unit.row == event.target.row-1 || unit.row == event.target.row + 1) && unit.team != event.target.team) {
 			attack(selectedCharacter, unit);
             applyBuff(5, unit);
 		}
 		if (unit.row == event.target.row
-			&& (unit.column == event.target.column-1 || unit.column == event.target.column + 1)) {
+			&& (unit.column == event.target.column-1 || unit.column == event.target.column + 1) && unit.team != event.target.team) {
 			attack(selectedCharacter, unit);
             applyBuff(5, unit);
 		}
@@ -1147,12 +1147,18 @@ function sortIndices(unit) {
 			if (chars.getChildIndex(unit.hp_bar) < chars.getChildIndex(value.hp_bar)) {
 				chars.swapChildren(unit.hp_bar, value.hp_bar);
 			}
+			if (chars.getChildIndex(unit.hp_bar) < chars.getChildIndex(value)) {
+				chars.swapChildren(unit.hp_bar, value);
+			}
 		} else if (unit.y < value.y) {
 			if (chars.getChildIndex(unit) > chars.getChildIndex(value)) {
 				chars.swapChildren(unit, value);
 			}
 			if (chars.getChildIndex(unit.hp_bar) > chars.getChildIndex(value.hp_bar)) {
 				chars.swapChildren(unit.hp_bar, value.hp_bar);
+			}
+			if (chars.getChildIndex(unit) > chars.getChildIndex(value.hp_bar)) {
+				chars.swapChildren(unit, value.hp_bar);
 			}
 		}
 	});
