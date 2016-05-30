@@ -205,6 +205,9 @@ function spawnUnit(typeName, initial){
 		draggable.addChild(hp_bar);
 
 		unit.addEventListener("click", function(event) {
+			if (isInHighlight && !isAttacking && !isCasting){
+				return;
+			}
 			if (!movingPlayer && !isAttacking && !isCasting) {
 				clearSelectionEffects();
 				selectedCharacter = unit;;
