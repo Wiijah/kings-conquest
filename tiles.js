@@ -90,7 +90,10 @@ function spawnUnit(typeName, initial){
 			// case "rogue":
 			// 	jsonObj = eval(data.characters.rogue);
 			// 	break;
-			default:
+			// case "scarecrow":
+			// 	jsonObj = eval(data.characters.scarecrow);
+			// 	break;
+			// default:
 				return "error";
 		}
 		var spriteSheet = new createjs.SpriteSheet({
@@ -522,16 +525,16 @@ function createFloatingCards(listOfSources, correspondingUnit) {
 					changed = true;
 				});
 				break;
-			case "rogue": 
-				unitCards[i].addEventListener("click", function(event) {
-					if (currentGold >= 100) {
-						spawnUnit("rogue",false, 5,2,turn);
-						currentGold -= 100;
-						currentGoldDisplay.text = ("Gold: " + currentGold);
-					}
-					changed = true;
-				});
-				break;
+			// case "rogue": 
+			// 	unitCards[i].addEventListener("click", function(event) {
+			// 		if (currentGold >= 100) {
+			// 			spawnUnit("rogue",false, 5,2,turn);
+			// 			currentGold -= 100;
+			// 			currentGoldDisplay.text = ("Gold: " + currentGold);
+			// 		}
+			// 		changed = true;
+			// 	});
+			// 	break;
 		}
 		
 		unitCards[i].addEventListener("mouseover", function(event) {

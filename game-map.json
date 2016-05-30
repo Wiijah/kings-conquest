@@ -166,6 +166,27 @@
 			"skillCoolDown" : 0,
 			"outOfMoves" : 0,
 			"damageEffect": "graphics/spritesheet/spell/ss_physical_attack.png"
+		},
+		"scarecrow": {
+			"address": "graphics/spritesheet/stand/ss_scarecrow_stand.png",
+			"spritesheet": "graphics/spritesheet/attack/ss_scarecrow_attack.png",
+			"info": "graphics/card/rogue_card.png",
+			"hp" : 5000,
+			"max_hp" : 5000,
+			"attack" : 0,
+			"skill": "NULL", 
+			"skill_no": -1,
+			"luck":1,
+			"x" : 5,
+			"y" : 5,
+			"moveRange" : 0, 
+			"team": 1,
+			"attackRange" : 0,
+			"canMove" : 0,
+			"canAttack" : 0,
+			"skillCoolDown" : 0,
+			"outOfMoves" : 1,
+			"damageEffect": "graphics/spritesheet/spell/ss_physical_attack.png"
 		}
 	}
 }
