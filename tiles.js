@@ -364,6 +364,56 @@ function initGame() {
 	//window.addEventListener('resize', resize, false);
 }
 
+function removeBuff(buffType, unit) {
+    var success = false;
+
+    for (var i = 0; i < unit.buffs.length; i++) {
+        if (unit.buffs[i][0] === buffType) {
+            draggable.removeChild(unit.buffs[i][3]);
+            unit.buffs.splice(i, 1);
+            success = true;
+            break;
+        } 
+    }
+
+    for (var i = 0; i < unit.buffs.length; i++) {
+        unit.buffs[i][3].x = unit.hp_bar.x + i * 25;
+        stage.update();
+    }
+    return success;
+}
+
+
+function applyBuff(buffType, unit) {
+    for (var i = 0; i < unit.buffs.length; i++) {
+        if (unit.buffs[i][0] === buffType) {
+            draggable.removeChild(unit.buffs[i][3]);
+            unit.buffs.splice(i, 1);
+            break;
+        }
+    }
+	switch (buffType) {
+		case 0: // hp Buff 
+            break;
+		case 1: // max hp Buff
+            break;
+		case 2: // attack Buff
+			var buffIcon = new createjs.Bitmap("graphics/buff/buff_inc_attack.png");
+			unit.buffs.push([2, 1.2, 3, buffIcon]);
+			break;
+		case 3: // luck Buff
+            break;
+		case 4:	// shield Buff
+			var buffIcon = new createjs.Bitmap("graphics/buff/buff_shield.png");
+			unit.buffs.push([4, 0, -1, buffIcon]);
+			break;
+	}
+
+	buffIcon.x = unit.hp_bar.x + (unit.buffs.length - 1) * 25;
+	buffIcon.y = unit.hp_bar.y - 20;
+	buffIcon.scaleY = 0.8;
+	draggable.addChild(buffIcon);
+}
 
 
 function getHealth(unit) {
@@ -394,7 +444,7 @@ function getAttack(unit) {
 	var base = unit.attack;
 	$.each(unit.buffs, function(i, value) {
 		if (value[0] == 2) {
-			base += value[1];
+			base *= value[1]
 		} // if type == attack, add to base
 	});
 	return base;
@@ -415,6 +465,7 @@ function updateHP_bar(unit){
 	if (getHealth(unit) <= 0){
 		draggable.removeChild(unit);
 		draggable.removeChild(unit.hp_bar);
+        blockMaps[unit.row][unit.column] = 0;
 		units.splice(units.indexOf(unit), 1);
 	} else {
 		// unit.hp_bar.graphics.clear();
@@ -695,7 +746,8 @@ function cast(skillNo, unit) {
 					//value.buffs.push([0,add,3]);
 					//value.buffs.push([1,add,3]);
 					//buff dmg
-					value.buffs.push([2,5,3]);
+					applyBuff(2, value);
+					// value.buffs.push([2,5,3]);
 
 					destroyStats();
 					displayStats(unit);
@@ -731,22 +783,22 @@ function cast(skillNo, unit) {
 			break;
 	    case 3: // Warrior's skill
 	    	undoHighlights();
+            applyBuff(4, selectedCharacter);
+	   //  	var found = false;
 
-	    	var found = false;
-
-	    	$.each(selectedCharacter.buffs, function(i, value) {
-	    		if (value[0] == 5) {
-	    			found = true;
-	    		}
-	    	});
+	   //  	$.each(selectedCharacter.buffs, function(i, value) {
+	   //  		if (value[0] == 5) {
+	   //  			found = true;
+	   //  		}
+	   //  	});
 	    	
-	    	if (!found) {
-	    		selectedCharacter.buffs.push([5, 0, -1]);
-    			buff_icon = new createjs.Bitmap("graphics/buff_shield.png");
-				buff_icon.x = unit.x + 5;
-				buff_icon.y = unit.y - 70;
-				draggable.addChild(buff_icon);
-	    	}
+	   //  	if (!found) {
+	   //  		selectedCharacter.buffs.push([5, 0, -1]);
+    // 			buff_icon = new createjs.Bitmap("graphics/buff/buff_shield.png");
+				// buff_icon.x = unit.x + 5;
+				// buff_icon.y = unit.y - 70;
+				// draggable.addChild(buff_icon);
+	   //  	}
 
 
 	    	selectedCharacter.outOfMoves = 1;
@@ -926,9 +978,9 @@ function showDamage2(unit, critical, damage){
 	}, 750);
 }
 
-var buff_icon;
+
 function attack(attacker, target){
-	if (attacker.team != target.team){
+	if (attacker.team != target.team) {
 		
 		var sprite = new createjs.Sprite(attacker.spritesheet, "attack");
 		sprite.x = attacker.x;
@@ -940,24 +992,14 @@ function attack(attacker, target){
 
 		var criticalHit = getRandom(getLuck(attacker));
 		var damage = getAttack(attacker) * criticalHit
-		//console.log("target hp before: " + target.hp);
-		var shield = false;
-		$.each(target.buffs, function(i, value) {
-			if (value[0] == 5) {
-				shield = true;
-				draggable.removeChild(buff_icon);
-				var index = target.buffs.indexOf(value);
-				target.buffs.splice(index, 1);
-			}
-		});
+
+
 		
-		if (!shield) {
+		if (!removeBuff(4, target)) {
 			showDamage(target, criticalHit, damage);
 			target.hp -= damage;
 			updateHP_bar(target);
 		}
-		// console.log("attack attacker: " + attacker.column +","+ attacker.row);
-		// console.log("target hp: " + target.hp);
 		
 		attacker.outOfMoves = 1;
 		attacker.canAttack = 0;
@@ -1427,7 +1469,7 @@ function performAttack() {
 				}
 			}
 		});	
-	}]);
+	}]); 
 	
 }
 
