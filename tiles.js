@@ -56,8 +56,10 @@ function resize() {
 
 // typeName : king, red_castle, wizard, etc
 // initial: true / false
-function spawnUnit(data, isCreation){
-    if (data.address == "graphics/spritesheet/stand/ss_rogue_stand.png" || data.address == "graphics/spritesheet/stand/ss_scarecrow_stand.png") return;
+
+function spawnUnit(data, initial){
+	//|| data.address == "graphics/spritesheet/stand/ss_scarecrow_stand.png"
+    if (data.address == "graphics/spritesheet/stand/ss_rogue_stand.png") return;
 		var spriteSheet = new createjs.SpriteSheet({
           	"images": [data.address],
           	"frames": {"regX": 0, "height": 142, "count": 2, "regY": -10, "width": 113 },
@@ -1405,6 +1407,7 @@ function keyEvent(event) {
             if (isDisplayingMenu) {
             	destroyMenu();
             	destroyStats();
+            	clearSelectionEffects();
             }
             break;
 
