@@ -57,7 +57,7 @@ function resize() {
 // typeName : king, red_castle, wizard, etc
 // initial: true / false
 
-function spawnUnit(data, initial){
+function spawnUnit(data, isCreation){
 	//|| data.address == "graphics/spritesheet/stand/ss_scarecrow_stand.png"
     if (data.address == "graphics/spritesheet/stand/ss_rogue_stand.png") return;
 		var spriteSheet = new createjs.SpriteSheet({
