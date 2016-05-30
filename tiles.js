@@ -56,7 +56,7 @@ function resize() {
 
 // typeName : king, red_castle, wizard, etc
 // initial: true / false
-function spawnUnit(data, initial){
+function spawnUnit(data, isCreation){
     if (data.address == "graphics/spritesheet/stand/ss_rogue_stand.png" || data.address == "graphics/spritesheet/stand/ss_scarecrow_stand.png") return;
 		var spriteSheet = new createjs.SpriteSheet({
           	"images": [data.address],
@@ -92,23 +92,18 @@ function spawnUnit(data, initial){
 		});
 		unit.damageEffect = damageEffect;
 
-		
-		if (initial){
-			unit.team = data.team;
-			unit.column = data.y;
-			unit.row = data.x;
-			unit.x = originX +  (data.y - data.x) * 65;
-			unit.y = data.y * 32.5 + originY + data.x * 32.5;
-		} else {
-			unit.team = turn;
-			var empty = findFreeSpace();
-			x = empty[0];
-			y = empty[1];
-			unit.column = y;
-			unit.row = x;
-			unit.x = originX +  (y - x) * 65;
-			unit.y = y * 32.5 + originY + x * 32.5;
-		}
+		unit.team = data.team;
+        if (isCreation) {
+            var coord = findFreeSpace();
+            unit.row = coord[0];
+            unit.column = coord[1];
+        } else {
+		  unit.column = data.y;
+		  unit.row = data.x;
+        }
+		unit.x = originX +  (unit.column - unit.row) * 65;
+		unit.y = unit.column * 32.5 + originY + unit.row * 32.5;
+	
 
 		unit.regX = 56.5;
 		unit.regY = 130;
@@ -175,93 +170,7 @@ function spawnUnit(data, initial){
 		unit.cache(0,0,150,150);
 		hp_bar.cache(0,0,100,120);
 
-		unit.addEventListener("click", function(event) {
-			if (isInHighlight && !isAttacking && !isCasting){
-				return;
-			}
-			if (!movingPlayer && !isAttacking && !isCasting) {
-				clearSelectionEffects();
-				selectedCharacter = unit;;
-				showUnitInfo = true;
-				showActionMenuNextToPlayer(unit);
-				displayStats(unit);
-			}
-
-
-			// In this case, we are selecting the unit to be attacked
-			if (selectedCharacter != unit && isAttacking && selectedCharacter.team != unit.team) {
-				$.each(highlighted, function(i, coord) {
-					if (unit.row === coord.row && unit.column === coord.column) {
-						attack(selectedCharacter, unit);
-						clearSelectionEffects();
-						if (remainingAttackTimes > 0) {
-							remainingAttackTimes - 1;
-							performAttack();
-						}
-					}
-				});
-			}
-
-			if (selectedCharacter != unit && isCasting && selectedCharacter.team != unit.team) {
-
-				$.each(units, function(i, otherUnit) {
-					if (otherUnit.column == unit.column && otherUnit.row == unit.row) {
-						attack(selectedCharacter, otherUnit);
-					}
-					if (otherUnit.column == unit.column
-						&& (otherUnit.row == unit.row-1 || otherUnit.row == unit.row+1)) {
-						attack(selectedCharacter, otherUnit);
-					}
-					if (otherUnit.row == unit.row
-						&& (otherUnit.column == unit.column-1 || otherUnit.column == unit.column+1)) {
-						attack(selectedCharacter, otherUnit);
-					}
-					clearSelectionEffects();
-					selectedCharacter.outOfMoves = 0;
-					selectedCharacter.skillCoolDown = 3;
-					isCasting = false;
-				});
-			}
-			changed = true;
-		});
-
-		unit.addEventListener("mouseover", function(event) {
-			if (isCasting && selectedCharacter.skill_no == 4) {
-				var i;
-				for (i = 0; i < highlighted.length; i++) {
-					if (unit.row == highlighted[i].row && unit.column == highlighted[i].column) {
-						break;
-					}
-				}
-				if (i == highlighted.length) return;
-				for (i = 0; i < sub_highlighted.length; i++) {
-					upper.removeChild(sub_highlighted[i]);
-				}
-
-				sub_highlighted = [];
-
-				var surroudingTiles = getSurroundingTiles(unit.row, unit.column);
-				for (i = 0; i < surroudingTiles.length; i++) {
-					var bmp = new createjs.Bitmap("graphics/tile/green_tile.png");
-					bmp.x = (surroudingTiles[i][1]-surroudingTiles[i][0]) * 65 + 540;
-					bmp.y = (surroudingTiles[i][1]+surroudingTiles[i][0]) * 32.5 + 220;
-					bmp.regX = 65;
-					bmp.regY = 32.5;
-					bmp.row = surroudingTiles[i][0];
-					bmp.column = surroudingTiles[i][1];
-					upper.addChild(bmp);
-					sub_highlighted.push(bmp);
-				}
-				changed = true;
-			}
-		}); 
-		unit.addEventListener("mouseout", function(event) {
-			$.each(sub_highlighted, function(i, tile) {
-				upper.removeChild(tile);
-			});
-			sub_highlighted = [];
-			change = true;
-		});
+		addEventListenersToUnit(unit);
 	// });		
 }
 
@@ -301,7 +210,7 @@ function initGame() {
 
 	$.getJSON('game-map.json', function(data) {
 		that.mapData = data['main'];
-
+        that.classStats = data.classStats;
 		console.log("init game");
 		mapHeight = parseInt(data.map_dimensions.height);
 		mapWidth = parseInt(data.map_dimensions.width);
@@ -324,7 +233,7 @@ function initGame() {
 		//should only spawn 2 kings and castles
 		$.each(data.characters, function(i, value) {
 			// console.log(data.characters[i].x);
-			spawnUnit(data.characters[i], true);
+			spawnUnit(data.characters[i], false);
 		});
 	});
 
@@ -534,32 +443,17 @@ function createFloatingCards(listOfSources, correspondingUnit) {
 		switch(unitCards[i].unitName ){
 			case "knight": 
 				unitCards[i].addEventListener("click", function(event) {
-					if (currentGold >= 100) {
-						spawnUnit("knight",false, 5,5,turn);
-						currentGold -= 100;
-						currentGoldDisplay.text = ("Gold: " + currentGold);
-					}
-					changed = true;
+					createNewUnit("knight");
 				});
 				break;
 			case "archer": 
 				unitCards[i].addEventListener("click", function(event) {
-					if (currentGold >= 100) {
-						spawnUnit("archer",false, 5,4,turn);
-						currentGold -= 100;
-						currentGoldDisplay.text = ("Gold: " + currentGold);
-					}
-					changed = true;
+					createNewUnit("archer");
 				});
 				break;
 			case "wizard": 
 				unitCards[i].addEventListener("click", function(event) {
-					if (currentGold >= 100) {
-						spawnUnit("wizard",false, 5,3,turn);
-						currentGold -= 100;
-						currentGoldDisplay.text = ("Gold: " + currentGold);
-					}
-					changed = true;
+					createNewUnit("wizard");
 				});
 				break;
 			// case "rogue": 
@@ -589,6 +483,123 @@ function createFloatingCards(listOfSources, correspondingUnit) {
 		unitCreationMenu.addChild(unitCards[i].text);
 
 	}
+}
+
+function createNewUnit(unitType) {
+
+    switch (unitType) {
+        case "knight":
+            if (currentGold >= 100) {
+                spawnUnit(that.classStats.knightClass, true);
+                currentGold -= 100;
+            }
+            break;
+        case "wizard":
+            if (currentGold >= 100) {
+                spawnUnit(that.classStats.wizardClass, true);
+                currentGold -= 100;
+            }
+            break;
+        case "archer":
+            if (currentGold >= 100) {
+                spawnUnit(that.classStats.archerClass, true);
+                currentGold -= 100;
+            }
+            break;
+    }
+
+    currentGoldDisplay.text = ("Gold: " + currentGold);
+
+}
+
+function addEventListenersToUnit(unit) {
+    unit.addEventListener("click", function(event) {
+            if (isInHighlight && !isAttacking && !isCasting){
+                return;
+            }
+            if (!movingPlayer && !isAttacking && !isCasting) {
+                clearSelectionEffects();
+                selectedCharacter = unit;;
+                showUnitInfo = true;
+                showActionMenuNextToPlayer(unit);
+                displayStats(unit);
+            }
+
+
+            // In this case, we are selecting the unit to be attacked
+            if (selectedCharacter != unit && isAttacking && selectedCharacter.team != unit.team) {
+                $.each(highlighted, function(i, coord) {
+                    if (unit.row === coord.row && unit.column === coord.column) {
+                        attack(selectedCharacter, unit);
+                        clearSelectionEffects();
+                        if (remainingAttackTimes > 0) {
+                            remainingAttackTimes - 1;
+                            performAttack();
+                        }
+                    }
+                });
+            }
+
+            if (selectedCharacter != unit && isCasting && selectedCharacter.team != unit.team) {
+
+                $.each(units, function(i, otherUnit) {
+                    if (otherUnit.column == unit.column && otherUnit.row == unit.row) {
+                        attack(selectedCharacter, otherUnit);
+                    }
+                    if (otherUnit.column == unit.column
+                        && (otherUnit.row == unit.row-1 || otherUnit.row == unit.row+1)) {
+                        attack(selectedCharacter, otherUnit);
+                    }
+                    if (otherUnit.row == unit.row
+                        && (otherUnit.column == unit.column-1 || otherUnit.column == unit.column+1)) {
+                        attack(selectedCharacter, otherUnit);
+                    }
+                    clearSelectionEffects();
+                    selectedCharacter.outOfMoves = 0;
+                    selectedCharacter.skillCoolDown = 3;
+                    isCasting = false;
+                });
+            }
+            changed = true;
+        });
+
+        unit.addEventListener("mouseover", function(event) {
+            if (isCasting && selectedCharacter.skill_no == 4) {
+                var i;
+                for (i = 0; i < highlighted.length; i++) {
+                    if (unit.row == highlighted[i].row && unit.column == highlighted[i].column) {
+                        break;
+                    }
+                }
+                if (i == highlighted.length) return;
+                for (i = 0; i < sub_highlighted.length; i++) {
+                    upper.removeChild(sub_highlighted[i]);
+                }
+
+                sub_highlighted = [];
+
+                var surroudingTiles = getSurroundingTiles(unit.row, unit.column);
+                for (i = 0; i < surroudingTiles.length; i++) {
+                    var bmp = new createjs.Bitmap("graphics/tile/green_tile.png");
+                    bmp.x = (surroudingTiles[i][1]-surroudingTiles[i][0]) * 65 + 540;
+                    bmp.y = (surroudingTiles[i][1]+surroudingTiles[i][0]) * 32.5 + 220;
+                    bmp.regX = 65;
+                    bmp.regY = 32.5;
+                    bmp.row = surroudingTiles[i][0];
+                    bmp.column = surroudingTiles[i][1];
+                    upper.addChild(bmp);
+                    sub_highlighted.push(bmp);
+                }
+                changed = true;
+            }
+        }); 
+        unit.addEventListener("mouseout", function(event) {
+            $.each(sub_highlighted, function(i, tile) {
+                upper.removeChild(tile);
+            });
+            sub_highlighted = [];
+            change = true;
+        });
 }
 
 function destroyGoldDisplay() {
