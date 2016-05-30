@@ -75,7 +75,7 @@
 			"x" : 3,
 			"y" : 2,
 			"moveRange" : 3,
-			"team": 1,
+			"team": 0,
 			"attackRange" : 2,
 			"canMove" : 1,
 			"canAttack" : 1,
