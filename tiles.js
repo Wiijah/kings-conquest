@@ -60,7 +60,7 @@ function spawnUnit(data, initial){
     if (data.address == "graphics/spritesheet/stand/ss_rogue_stand.png" || data.address == "graphics/spritesheet/stand/ss_scarecrow_stand.png") return;
 		var spriteSheet = new createjs.SpriteSheet({
           	"images": [data.address],
-          	"frames": {"regX": +10, "height": 142, "count": 2, "regY": -20, "width": 113 },
+          	"frames": {"regX": 0, "height": 142, "count": 2, "regY": -10, "width": 113 },
           	"animations": {
             	"stand":[0,1]
           	},
@@ -137,7 +137,7 @@ function spawnUnit(data, initial){
 		// Configure the hp bar of the unit
 		hp_bar = new createjs.Shape();
 		hp_bar.x = unit.x - 40;
-		hp_bar.y = unit.y - 90;
+		hp_bar.y = unit.y - 95;
 		if (unit.team === 0){
 			hp_bar.graphics.beginFill("#000000").drawRect(0, 0, 82, 12);
 			hp_bar.graphics.beginFill("#000000").drawRect(1, 1, 80, 10);
@@ -690,15 +690,15 @@ function createClickableImage(imgSource, x, y, callBack) {
 function showActionMenuNextToPlayer(unit) {
 
 
-	menuBackground = new createjs.Bitmap("graphics/ingame_menu/ingame_menu_background.png");
+	menuBackground = new createjs.Bitmap("graphics/ingame_menu/new_ingame_bg2.png");
 	menuBackground.x = unit.x + 43;
 	menuBackground.y = unit.y - 150;
-	menuBackground.scaleX = 0.6;
-    menuBackground.scaleY = 0.6;
+	menuBackground.scaleX = 0.7;
+    menuBackground.scaleY = 0.7;
 
-	moveSource = unit.canMove === 1 && unit.outOfMoves === 0 ? "graphics/ingame_menu/move.png"
-								    : "graphics/ingame_menu/move_gray.png";
-	moveButton = createClickableImage(moveSource, unit.x + 45, unit.y - 140, function() {
+	moveSource = unit.canMove === 1 && unit.outOfMoves === 0 ? "graphics/ingame_menu/new_move.png"
+								    : "graphics/ingame_menu/new_move_gray.png";
+	moveButton = createClickableImage(moveSource, unit.x + 48, unit.y - 147, function() {
 		if (unit.canMove) {
 			undoHighlights();
 			// drawRange(findReachableTiles(unit.column, unit.row, unit.moveRange, true), 0);
@@ -706,9 +706,9 @@ function showActionMenuNextToPlayer(unit) {
 		}
 	});
 
-	attackSource = unit.canAttack === 1 && unit.outOfMoves === 0 ? "graphics/ingame_menu/attack.png"
-								   : "graphics/ingame_menu/attack_gray.png";
-	attackButton = createClickableImage(attackSource, unit.x + 49, unit.y - 111, function() {
+	attackSource = unit.canAttack === 1 && unit.outOfMoves === 0 ? "graphics/ingame_menu/new_attack.png"
+								   : "graphics/ingame_menu/new_attack_gray.png";
+	attackButton = createClickableImage(attackSource, unit.x + 48, unit.y - 119, function() {
 		if (unit.canAttack) {
 			undoHighlights();
 			// isAttacking = true;
@@ -718,9 +718,9 @@ function showActionMenuNextToPlayer(unit) {
 		}
 	});
 
-	skillSource = unit.skillCoolDown === 0 && unit.outOfMoves === 0 ? "graphics/ingame_menu/skill.png"
-								   : "graphics/ingame_menu/skill_gray.png";
-	skillButton = createClickableImage(skillSource, unit.x + 48, unit.y - 77, function() {
+	skillSource = unit.skillCoolDown === 0 && unit.outOfMoves === 0 ? "graphics/ingame_menu/new_skill.png"
+								   : "graphics/ingame_menu/new_skill_gray.png";
+	skillButton = createClickableImage(skillSource, unit.x + 48, unit.y - 91, function() {
 		if (unit.skillCoolDown === 0) {
 			undoHighlights();
 			isCasting = true;
@@ -728,8 +728,8 @@ function showActionMenuNextToPlayer(unit) {
 		}
 	});
 
-	cancelSource = "graphics/ingame_menu/cancel.png";
-	cancelButton = createClickableImage(cancelSource, unit.x + 45.5, unit.y - 47, function() {
+	cancelSource = "graphics/ingame_menu/new_cancel.png";
+	cancelButton = createClickableImage(cancelSource, unit.x + 48, unit.y - 63, function() {
 		clearSelectionEffects();
 	});
 
@@ -835,17 +835,17 @@ function cast(skillNo, unit) {
 
 function castWizardSpellOnClick(event) {
 	$.each(units, function(i, unit) {
-		if (unit.column == event.target.column && unit.row == event.target.row) {
+		if (unit.column == event.target.column && unit.row == event.target.row && unit.team != selectedCharacter.team) {
 			attack(selectedCharacter, unit);
             applyBuff(5, unit);
 		}
 		if (unit.column == event.target.column
-			&& (unit.row == event.target.row-1 || unit.row == event.target.row + 1)) {
+			&& (unit.row == event.target.row-1 || unit.row == event.target.row + 1) && unit.team != selectedCharacter.team) {
 			attack(selectedCharacter, unit);
             applyBuff(5, unit);
 		}
 		if (unit.row == event.target.row
-			&& (unit.column == event.target.column-1 || unit.column == event.target.column + 1)) {
+			&& (unit.column == event.target.column-1 || unit.column == event.target.column + 1) && unit.team != selectedCharacter.team) {
 			attack(selectedCharacter, unit);
             applyBuff(5, unit);
 		}
@@ -1144,12 +1144,18 @@ function sortIndices(unit) {
 			if (chars.getChildIndex(unit.hp_bar) < chars.getChildIndex(value.hp_bar)) {
 				chars.swapChildren(unit.hp_bar, value.hp_bar);
 			}
+			if (chars.getChildIndex(unit.hp_bar) < chars.getChildIndex(value)) {
+				chars.swapChildren(unit.hp_bar, value);
+			}
 		} else if (unit.y < value.y) {
 			if (chars.getChildIndex(unit) > chars.getChildIndex(value)) {
 				chars.swapChildren(unit, value);
 			}
 			if (chars.getChildIndex(unit.hp_bar) > chars.getChildIndex(value.hp_bar)) {
 				chars.swapChildren(unit.hp_bar, value.hp_bar);
+			}
+			if (chars.getChildIndex(unit) > chars.getChildIndex(value.hp_bar)) {
+				chars.swapChildren(unit, value.hp_bar);
 			}
 		}
 	});
