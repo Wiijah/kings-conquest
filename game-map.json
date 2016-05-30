@@ -254,7 +254,7 @@
 		"scarecrow": {
 			"address": "graphics/spritesheet/stand/ss_scarecrow_stand.png",
 			"spritesheet": "graphics/spritesheet/attack/ss_scarecrow_attack.png",
-			"info": "graphics/card/rogue_card.png",
+			"info": "graphics/card/castle_card.png",
 			"hp" : 5000,
 			"max_hp" : 5000,
 			"attack" : 0,
