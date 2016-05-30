@@ -15,6 +15,7 @@ $(document).ready(function() {
 });
 
 function room_start() {
+  fs_load();
   quickPost("ajax/room_ready", {room_id: room_id, ready: 'ready'}, function(data, status) {
     if (data.kc_error !== undefined) {
       lightbox_alert("Error", data.kc_error);
@@ -62,6 +63,9 @@ function room_refresh() {
       disablePage("index");
       lightbox_alert("Room Deleted", data.kc_error);
       return;
+    }
+    if (data.kc_success !== undefined && data.kc_success == "started") {
+      window.location.href = '../game/';
     }
     var players = data.players;
     console.log(data);

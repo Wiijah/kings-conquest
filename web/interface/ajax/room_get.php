@@ -10,7 +10,9 @@ $room = $result->fetch_object();
 if ($result->num_rows == 0 || $room->state == 'deleted') {
   die('{"kc_error":"This room no longer exists."}');
 }
-
+if ($room->state == 'ingame') {
+  die('{"kc_success":"started"}');
+}
 $result = $db->query("SELECT * FROM room_participants WHERE user_id = '{$user->id}' AND room_id = '{$room_id}' AND event = ''");
 if (!$participant = $result->fetch_object()) { //user not in room
   die('{"kc_error":"You are not in this room."}');
