@@ -197,6 +197,8 @@ function spawnUnit(typeName, initial){
 		draggable.addChild(unit);
 		draggable.addChild(hp_bar);
 
+		sortIndices(unit);
+
 		unit.cache(0,0,150,150);
 		hp_bar.cache(0,0,100,120);
 
@@ -380,6 +382,11 @@ function initGame() {
 	upper.x = draggable.x;
 	upper.y = draggable.y;
 	stage.addChild(upper);
+
+	chars = new createjs.Container();
+	chars.x = draggable.x;
+	chars.y = draggable.y;
+	stage.addChild(chars);
 	
 	drawStatsDisplay();
 	drawUnitCreationMenu();
@@ -1166,18 +1173,18 @@ function movePlayer() {
 function sortIndices(unit) {
 	$.each(units, function(i, value) {
 		if (unit.y > value.y) {
-			if (draggable.getChildIndex(unit) > draggable.getChildIndex(value)) {
-				draggable.swapChildren(unit, value);
-			}
-			if (draggable.getChildIndex(unit.hp_bar) > draggable.getChildIndex(value)) {
-				draggable.swapChildren(unit.hp_bar, value);
-			}
-		} else if (unit.y < value.y) {
 			if (draggable.getChildIndex(unit) < draggable.getChildIndex(value)) {
 				draggable.swapChildren(unit, value);
 			}
-			if (draggable.getChildIndex(unit.hp_bar) < draggable.getChildIndex(value)) {
-				draggable.swapChildren(unit.hp_bar, value);
+			if (draggable.getChildIndex(unit.hp_bar) < draggable.getChildIndex(value.hp_bar)) {
+				draggable.swapChildren(unit.hp_bar, value.hp_bar);
+			}
+		} else if (unit.y < value.y) {
+			if (draggable.getChildIndex(unit) > draggable.getChildIndex(value)) {
+				draggable.swapChildren(unit, value);
+			}
+			if (draggable.getChildIndex(unit.hp_bar) > draggable.getChildIndex(value.hp_bar)) {
+				draggable.swapChildren(unit.hp_bar, value.hp_bar);
 			}
 		}
 	});
@@ -1452,6 +1459,9 @@ function update() {
 	}
 	upper.x = draggable.x;
 	upper.y = draggable.y;
+	chars.x = draggable.x;
+	chars.y = draggable.y;
+
 	stage.addChild(statsDisplay);
 	stage.addChild(unitCreationMenu);
 }
