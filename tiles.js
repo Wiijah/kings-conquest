@@ -45,7 +45,6 @@ var currentGoldDisplay;
 var turn = 0;
 var showUnitInfo = false;
 var resized = false;
-var showHighLightTile = false;
 function resize() {
 	// stage.canvas.width = window.innerWidth;
 	//stage.canvas.height = window.innerHeight;
@@ -317,11 +316,13 @@ function applyBuff(buffType, unit) {
             break;
 		case 1: // max hp Buff
             break;
-		case 2: // attack Buff
+		case 2: // inc attack Buff
 			var buffIcon = new createjs.Bitmap("graphics/buff/buff_inc_attack.png");
 			unit.buffs.push([2, 1.2, 3, buffIcon]);
 			break;
-		case 3: // luck Buff
+		case 3: // dec attack Buff
+            var buttIcon = new createjs.Bitmap("graphics/buff/buff_dec_attack.png");
+            unit.buffs.push([3, 0.8, 3, buffIcon]);
             break;
 		case 4:	// shield Buff
 			var buffIcon = new createjs.Bitmap("graphics/buff/buff_shield.png");
@@ -813,10 +814,11 @@ function cast(skillNo, unit) {
 			// undoHighlights();
 			// drawRange(findReachableTiles(selectedCharacter.column, selectedCharacter.row, selectedCharacter.attackRange, false), 1);
 			var reachableTiles = findReachableTiles(selectedCharacter.column, selectedCharacter.row, selectedCharacter.attackRange, false);
-			isCasting = false;
+			isCasting = true;
 			undoHighlights();
 			remainingAttackTimes = 2;
 			performAttack();
+
 
 			
 			break;
@@ -1338,7 +1340,7 @@ function drawMap(data) {
 				maps[i][j].y = (j+i) * 32.5 + 220;
 				maps[i][j].regX = 65;
 				maps[i][j].regY = 32.5;
-				maps[i][j].addEventListener("mouseover",mouveOver);
+				maps[i][j].addEventListener("mouseover",mouseOver);
 				maps[i][j].addEventListener("mouseout", mouseOut);
 				maps[i][j].addEventListener("click", function(event) {
 					showUnitInfo = false;
@@ -1357,14 +1359,12 @@ function drawMap(data) {
 			stage.removeChild(tile_display);
 			stage.removeChild(tile_info_text);
 			stage.update();
-			showHighLightTile = false;
 		}
 	}
 
-	function mouveOver(evt) {
+	function mouseOver(evt) {
 		if (!isDragging) {
-			if (showHighLightTile){
-				upper.removeChild(highLight_tile);
+			if (upper.removeChild(highLight_tile)){
 				stage.removeChild(tile_display);
 				stage.removeChild(tile_info_text);
 				stage.update();
@@ -1397,7 +1397,6 @@ function drawMap(data) {
 			highLight_tile.regX = 65;
 			highLight_tile.regY = 32.5;
 			upper.addChild(highLight_tile);
-			showHighLightTile = true;
 		}
 		stage.update();
 	}

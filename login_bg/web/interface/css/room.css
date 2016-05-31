@@ -1,0 +1,19 @@
+.room_data {
+  margin-bottom: 10px;
+}
+.player_state {
+  position: absolute;
+  top: 7px;
+  right: 7px;
+  font-family: BebasNeueBook;
+  font-size: 15px;
+}
+.owner {
+  color: #EFDB00;
+}
+.ready {
+  color: #00FF00;
+}
+.not_ready {
+  color: #E00000;
+}
