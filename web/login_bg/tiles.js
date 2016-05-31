@@ -3,6 +3,9 @@ var MOVEMENT_STEP = 6.5
 
 var stage = new createjs.Stage("demoCanvas");
 
+var context = stage.canvas.getContext('2d');
+context.scale(0.5, 0.5);
+
 var that = this;
 var team = 0;
 
@@ -239,8 +242,8 @@ function initGame() {
 	});
 
 
-	stage.canvas.width = $("body").prop("clientWidth");
-	stage.canvas.height = $("body").prop("clientHeight");
+	stage.canvas.width = window.innerWidth;
+	stage.canvas.height = window.innerHeight;
 
 
 	draggable = new createjs.Container();
