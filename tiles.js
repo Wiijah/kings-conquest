@@ -45,7 +45,7 @@ var currentGoldDisplay;
 var turn = 0;
 var showUnitInfo = false;
 var resized = false;
-
+var showHighLightTile = false;
 function resize() {
 	// stage.canvas.width = window.innerWidth;
 	//stage.canvas.height = window.innerHeight;
@@ -1355,11 +1355,18 @@ function drawMap(data) {
 			stage.removeChild(tile_display);
 			stage.removeChild(tile_info_text);
 			stage.update();
+			showHighLightTile = false;
 		}
 	}
 
 	function mouveOver(evt) {
 		if (!isDragging) {
+			if (showHighLightTile){
+				upper.removeChild(highLight_tile);
+				stage.removeChild(tile_display);
+				stage.removeChild(tile_info_text);
+				stage.update();
+			}
 			stage.removeChild(tile_display);
 			stage.removeChild(tile_info_text);
 			var position = evt.target.name.split(",");
@@ -1387,8 +1394,8 @@ function drawMap(data) {
 			if (that.mapData[i][j] == 5) highLight_tile.y += 10;
 			highLight_tile.regX = 65;
 			highLight_tile.regY = 32.5;
-
 			upper.addChild(highLight_tile);
+			showHighLightTile = true;
 		}
 		stage.update();
 	}
