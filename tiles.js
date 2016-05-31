@@ -324,7 +324,7 @@ function applyBuff(buffType, unit) {
 			unit.buffs.push([2, 1.2, 3, buffIcon]);
 			break;
 		case 3: // dec attack Buff
-            var buttIcon = new createjs.Bitmap("graphics/buff/buff_dec_attack.png");
+            var buffIcon = new createjs.Bitmap("graphics/buff/buff_dec_attack.png");
             unit.buffs.push([3, 0.8, 3, buffIcon]);
             break;
 		case 4:	// shield Buff
@@ -369,7 +369,7 @@ function getMaxHealth(unit) {
 function getAttack(unit) {
 	var base = unit.attack;
 	$.each(unit.buffs, function(i, value) {
-		if (value[0] == 2) {
+		if (value[0] == 2 || value[0] == 3) {
 			base *= value[1]
 		} // if type == attack, add to base
 	});
@@ -847,7 +847,7 @@ function cast(skillNo, unit) {
 	    	var reachableTiles = findReachableTiles(selectedCharacter.row, selectedCharacter.column, selectedCharacter.attackRange, false);
 	    	highlightArea(reachableTiles, "graphics/tile/red_tile.png", ["click", "mouseover", "mouseout"], [castWizardSpellOnClick, highlightWizardSpellCross, clearWizardSpellCross]);
 			destroyStats();
-			displayStats();
+			destroyStats();
 			break;
 		case 5:
 			remainingAttackTimes = 1;
@@ -1044,7 +1044,9 @@ function attack(attacker, target){
 			damageAnimation.x = target.x;
 			damageAnimation.y = target.y;
 		}
-
+		if (isCasting) {
+			applyBuff(3, target);
+		}
 		chars.addChild(damageAnimation);
 		
 		attacker.outOfMoves = 1;
