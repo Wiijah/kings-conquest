@@ -1,0 +1,47 @@
+* { margin: 0; padding: 0; border: none; }
+
+body {
+    background-image: url("menu_elems/bg_blue_red.jpg");
+    background-position: top center; 
+}
+
+.menu_top {
+  position: absolute;
+  top: 0;
+  width: 70%;
+  left: 15%;
+}
+
+/* Offset the title (menu_top) */
+.menu_top_margin {
+  height: 26vw;
+  width: 100%;
+}
+
+.menu_btn_container {
+  padding-top: 40px;
+}
+.menu_btn_txt {
+  width: 100%;
+  position: absolute;
+  top: 2vw;
+  font-size: 2vw;
+  text-align: center;
+}
+.menu_btn {
+  width: 23vw;
+  position: relative;
+  margin: 0 auto;
+  padding-bottom: 20px;
+}
+
+.menu_scroll {
+  width: 100%;
+}
+@media only screen and (max-width: 400px) {
+  .menu_top {
+    width: 280px;
+    left: 50%;
+    margin-left: -140px; 
+  }
+}

@@ -1,0 +1,30 @@
+/* Fonts */
+
+/* BebasNeue */
+@font-face {
+    font-family: BebasNeueLight;
+    src: url('BebasNeue Light.otf');
+}
+@font-face {
+    font-family: BebasNeueRegular;
+    src: url('BebasNeue Regular.otf');
+}
+@font-face {
+    font-family: BebasNeueThin;
+    src: url('BebasNeue Thin.otf');
+}
+@font-face {
+    font-family: BebasNeueBook;
+    src: url('BebasNeue Book.otf');
+}
+@font-face {
+    font-family: BebasNeueBold;
+    src: url('BebasNeue Bold.otf');
+}
+
+/* Font shortcuts */
+.light { font-family: BebasNeueLight; }
+.regular { font-family: BebasNeueRegular; }
+.thin { font-family: BebasNeueThin; }
+.book { font-family: BebasNeueBook; }
+.bold { font-family: BebasNeueBold; }

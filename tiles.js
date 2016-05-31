@@ -43,6 +43,7 @@ var isCasting = false;
 var currentGold;
 var currentGoldDisplay;
 var resized = false;
+
 var turn = 0;
 var playableUnitCount = 0;
 
@@ -86,6 +87,7 @@ function turnStartPhase() {
 function turnEndPhase() {
     // Post-turn processing
 }
+
 
 
 
@@ -286,13 +288,16 @@ function initGame() {
 	});
 
 
-	stage.canvas.width = window.innerWidth;
-	stage.canvas.height = window.innerHeight;
+	stage.canvas.width = $("body").prop("clientWidth");//window.innerWidth;
+	stage.canvas.height = $("body").prop("clientHeight");//window.innerHeight;
 
 
 	draggable = new createjs.Container();
-	var box = new createjs.Shape();
-	draggable.addChild(box);
+	drag_box = new createjs.Shape();
+	drag_box.graphics.drawRect(-stage.canvas.width ,-stage.canvas.height ,stage.canvas.width * 2,stage.canvas.height * 2);
+	drag_box.hitArea = new createjs.Shape();
+	drag_box.hitArea.graphics.beginFill("#000").drawRect(-stage.canvas.width ,-stage.canvas.height ,stage.canvas.width * 2,stage.canvas.height * 2);
+	draggable.addChild(drag_box);
 	draggable.on("pressmove", function(event) {
 		if (isDragging) {
 			this.x = event.stageX - offX;
@@ -375,11 +380,13 @@ function applyBuff(buffType, unit) {
             break;
 		case 1: // max hp Buff
             break;
-		case 2: // attack Buff
+		case 2: // inc attack Buff
 			var buffIcon = new createjs.Bitmap("graphics/buff/buff_inc_attack.png");
 			unit.buffs.push([2, 1.2, 3, buffIcon]);
 			break;
-		case 3: // luck Buff
+		case 3: // dec attack Buff
+            var buffIcon = new createjs.Bitmap("graphics/buff/buff_dec_attack.png");
+            unit.buffs.push([3, 0.8, 3, buffIcon]);
             break;
 		case 4:	// shield Buff
 			var buffIcon = new createjs.Bitmap("graphics/buff/buff_shield.png");
@@ -423,7 +430,7 @@ function getMaxHealth(unit) {
 function getAttack(unit) {
 	var base = unit.attack;
 	$.each(unit.buffs, function(i, value) {
-		if (value[0] == 2) {
+		if (value[0] == 2 || value[0] == 3) {
 			base *= value[1]
 		} // if type == attack, add to base
 	});
@@ -701,14 +708,14 @@ function drawStatsDisplay() {
 
 function displayStats(unit) {
 	if(unit.team === 1){
-		var box = new createjs.Bitmap("graphics/stats_background_self.png");
+		var drag_box = new createjs.Bitmap("graphics/stats_background_self.png");
 	} else {
-		var box = new createjs.Bitmap("graphics/stats_background_opponent.png");
+		var drag_box = new createjs.Bitmap("graphics/stats_background_opponent.png");
 	}
 	
-	box.scaleX = 0.8;
-	box.scaleY = 0.8;
-	statsDisplay.addChild(box);
+	drag_box.scaleX = 0.8;
+	drag_box.scaleY = 0.8;
+	statsDisplay.addChild(drag_box);
 
 	var bmp = new createjs.Bitmap(unit.info);
 	bmp.scaleX = 0.75;
@@ -855,7 +862,6 @@ function cast(skillNo, unit) {
 					//buff dmg
 					applyBuff(2, value);
 					// value.buffs.push([2,5,3]);
-
 				}
 			});
 			isCasting = false;
@@ -870,6 +876,7 @@ function cast(skillNo, unit) {
             showActionMenuNextToPlayer(unit);
 
             changed = true;
+
 			// notify server
 
 			// display updated json
@@ -877,18 +884,18 @@ function cast(skillNo, unit) {
 		case 1: // Archer's skill
 
 			var reachableTiles = findReachableTiles(selectedCharacter.column, selectedCharacter.row, selectedCharacter.attackRange, false);
-			isCasting = false;
+			isCasting = true;
 			undoHighlights();
 			remainingAttackTimes = 2;
 			performAttack();
-
+	    	unit.skillCoolDown = 3;
+	    	destroyMenu();
+			destroyStats();
 			
 			break;
 	    case 3: // Warrior's skill
 	    	undoHighlights();
             applyBuff(4, selectedCharacter);
-
-
 	    	selectedCharacter.outOfMoves = 1;
 	    	unit.skillCoolDown = 3;
             playableUnitCount--;
@@ -897,7 +904,8 @@ function cast(skillNo, unit) {
 			showActionMenuNextToPlayer(selectedCharacter);
 
 			changed = true;
-
+			destroyMenu();
+			destroyStats();
 	    	break;
 	    case 4: // Wizard's skill
 	    	isCasting = true;
@@ -905,10 +913,14 @@ function cast(skillNo, unit) {
 	    	// drawRange(findReachableTiles(selectedCharacter.column, selectedCharacter.row, selectedCharacter.attackRange, false), 2);
 	    	var reachableTiles = findReachableTiles(selectedCharacter.row, selectedCharacter.column, selectedCharacter.attackRange, false);
 	    	highlightArea(reachableTiles, "graphics/tile/red_tile.png", ["click", "mouseover", "mouseout"], [castWizardSpellOnClick, highlightWizardSpellCross, clearWizardSpellCross]);
+			destroyStats();
+			destroyStats();
 			break;
 		case 5:
 			remainingAttackTimes = 1;
-			performAttack();
+			destroyStats();
+			destroyMenu();
+			destroyStats();
 
 	}
 }
@@ -1100,7 +1112,9 @@ function attack(attacker, target){
 			damageAnimation.x = target.x;
 			damageAnimation.y = target.y;
 		}
-
+		if (isCasting) {
+			applyBuff(3, target);
+		}
 		chars.addChild(damageAnimation);
 		
 		remainingAttackTimes--;
@@ -1130,10 +1144,10 @@ function destroyStats() {
 	stage.removeChild(statsDisplay);
 	// statsDisplay.removeChild(2, 3);
 
-	// var box = new createjs.Bitmap("graphics/stats_background.png");
-	// box.scaleX = 0.8;
-	// box.scaleY = 0.8;
-	// statsDisplay.addChild(box);
+	// var drag_box = new createjs.Bitmap("graphics/stats_background.png");
+	// drag_box.scaleX = 0.8;
+	// drag_box.scaleY = 0.8;
+	// statsDisplay.addChild(drag_box);
 	changed = true;
 }
 
@@ -1402,7 +1416,7 @@ function drawMap(data) {
 				maps[i][j].y = (j+i) * 32.5 + 220;
 				maps[i][j].regX = 65;
 				maps[i][j].regY = 32.5;
-				maps[i][j].addEventListener("mouseover",mouveOver);
+				maps[i][j].addEventListener("mouseover",mouseOver);
 				maps[i][j].addEventListener("mouseout", mouseOut);
 				maps[i][j].addEventListener("click", function(event) {
 					clearSelectionEffects();
@@ -1423,8 +1437,13 @@ function drawMap(data) {
 		}
 	}
 
-	function mouveOver(evt) {
+	function mouseOver(evt) {
 		if (!isDragging) {
+			if (upper.removeChild(highLight_tile)){
+				stage.removeChild(tile_display);
+				stage.removeChild(tile_info_text);
+				stage.update();
+			}
 			stage.removeChild(tile_display);
 			stage.removeChild(tile_info_text);
 			var position = evt.target.name.split(",");
@@ -1452,7 +1471,6 @@ function drawMap(data) {
 			if (that.mapData[i][j] == 5) highLight_tile.y += 10;
 			highLight_tile.regX = 65;
 			highLight_tile.regY = 32.5;
-
 			upper.addChild(highLight_tile);
 		}
 		stage.update();
@@ -1491,6 +1509,12 @@ function update() {
 		destroyGoldDisplay();
 		drawGoldDisplay();
 
+		drag_box = new createjs.Shape();
+		drag_box.graphics.drawRect(-stage.canvas.width ,-stage.canvas.height ,stage.canvas.width * 2,stage.canvas.height * 2);
+		drag_box.hitArea = new createjs.Shape();
+		drag_box.hitArea.graphics.beginFill("#000").drawRect(-stage.canvas.width ,-stage.canvas.height ,stage.canvas.width * 2,stage.canvas.height * 2);
+		draggable.addChild(drag_box);
+
 		$.each(unitCards, function(i, value) {
 			stage.removeChild(value.text);
 			stage.removeChild(value);
@@ -1508,6 +1532,10 @@ function update() {
 
 	chars.x = draggable.x;
 	chars.y = draggable.y;
+
+
+    drag_box.x = draggable.x;
+    drag_box.y = draggable.y; 
 
 	stage.addChild(statsDisplay);
 	stage.addChild(unitCreationMenu);
