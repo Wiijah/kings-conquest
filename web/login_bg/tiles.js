@@ -3,6 +3,9 @@ var MOVEMENT_STEP = 6.5
 
 var stage = new createjs.Stage("demoCanvas");
 
+var context = stage.canvas.getContext('2d');
+context.scale(0.5, 0.5);
+
 var that = this;
 var team = 0;
 
@@ -42,55 +45,9 @@ var remainingAttackTimes;
 var isCasting = false;
 var currentGold;
 var currentGoldDisplay;
-var resized = false;
-
 var turn = 0;
-var playableUnitCount = 0;
-
-
-function turnStartPhase() {
-    playableUnitCount = 0;
-    console.log("Starting turn");
-    for (var i = 0; i < units.length; i++) { 
-        // Increment the number of playable unit for the current player
-        if (units[i].team === turn) {
-            playableUnitCount += 1;
-            units[i].canMove = 1;
-            units[i].canAttack = 1;
-            units[i].outOfMoves = 0;
-        }
-
-        // Reduce the skill cooldown of each unit (if it hasn't cooled down yet)
-        if (units[i].skillCoolDown != 0) {
-            units[i].skillCoolDown--;
-        }
-
-        var buffsToBeRemoved = [];
-        // Decrement the buff duration for each unit
-        for (var j = 0; j < units[i].buffs.length; j++) {
-            units[i].buffs[j][2]--;
-            if (units[i].buffs[j][2] === 0) buffsToBeRemoved.push(units[i].buffs[j][0]);
-            if (units[i].buffs[j][0] === 5) {
-                // TODO: burn damage effect
-                units[i].hp -= units[i].max_hp * 0.02;
-                updateHP_bar(units[i]);
-            }
-        }
-
-        // Remove all the buffs with duration 0
-        for (var j = 0; j < buffsToBeRemoved.length; j++) {
-            removeBuff(buffsToBeRemoved[j], units[i]);
-        }
-    }    
-}
-
-function turnEndPhase() {
-    // Post-turn processing
-}
-
-
-
-
+var showUnitInfo = false;
+var resized = false;
 function resize() {
 	// stage.canvas.width = window.innerWidth;
 	//stage.canvas.height = window.innerHeight;
@@ -180,15 +137,15 @@ function spawnUnit(data, isCreation){
 		hp_bar = new createjs.Shape();
 		hp_bar.x = unit.x - 40;
 		hp_bar.y = unit.y - 95;
-		if (unit.team === 0){
-			hp_bar.graphics.beginFill("#000000").drawRect(0, 0, 82, 12);
-			hp_bar.graphics.beginFill("#000000").drawRect(1, 1, 80, 10);
-			hp_bar.graphics.beginFill("#ff0000").drawRect(1, 1, (getHealth(data)/getMaxHealth(data)) * 80, 10);
-		} else {
-			hp_bar.graphics.beginFill("#000000").drawRect(0, 0, 82, 12);
-			hp_bar.graphics.beginFill("#000000").drawRect(1, 1, 80, 10);
-			hp_bar.graphics.beginFill("#3399ff").drawRect(1, 1, (getHealth(data)/getMaxHealth(data)) * 80, 10);
-		}
+		// if (unit.team === 0){
+		// 	hp_bar.graphics.beginFill("#000000").drawRect(0, 0, 82, 12);
+		// 	hp_bar.graphics.beginFill("#000000").drawRect(1, 1, 80, 10);
+		// 	hp_bar.graphics.beginFill("#ff0000").drawRect(1, 1, (getHealth(data)/getMaxHealth(data)) * 80, 10);
+		// } else {
+		// 	hp_bar.graphics.beginFill("#000000").drawRect(0, 0, 82, 12);
+		// 	hp_bar.graphics.beginFill("#000000").drawRect(1, 1, 80, 10);
+		// 	hp_bar.graphics.beginFill("#3399ff").drawRect(1, 1, (getHealth(data)/getMaxHealth(data)) * 80, 10);
+		// }
 		unit.hp_bar = hp_bar;
 
 
@@ -217,7 +174,7 @@ function spawnUnit(data, isCreation){
 		unit.cache(0,0,150,150);
 		hp_bar.cache(0,0,100,120);
 
-		addEventListenersToUnit(unit);
+		//addEventListenersToUnit(unit);
 	// });		
 }
 
@@ -248,8 +205,6 @@ function findFreeSpace(){
 }
 
 function initGame() {
-
-
 	createjs.Ticker.addEventListener("tick", keyEvent);
     this.document.onkeydown = keyEvent;
 	stage.enableMouseOver(20);
@@ -284,20 +239,16 @@ function initGame() {
 			// console.log(data.characters[i].x);
 			spawnUnit(data.characters[i], false);
 		});
-        turnStartPhase();
 	});
 
 
 	stage.canvas.width = window.innerWidth;
-	stage.canvas.height = window.innerHeight; //$("body").prop("clientHeight");
+	stage.canvas.height = window.innerHeight;
 
 
 	draggable = new createjs.Container();
-	drag_box = new createjs.Shape();
-	drag_box.graphics.drawRect(-stage.canvas.width ,-stage.canvas.height ,stage.canvas.width * 2,stage.canvas.height * 2);
-	drag_box.hitArea = new createjs.Shape();
-	drag_box.hitArea.graphics.beginFill("#000").drawRect(-stage.canvas.width ,-stage.canvas.height ,stage.canvas.width * 2,stage.canvas.height * 2);
-	draggable.addChild(drag_box);
+	var box = new createjs.Shape();
+	draggable.addChild(box);
 	draggable.on("pressmove", function(event) {
 		if (isDragging) {
 			this.x = event.stageX - offX;
@@ -328,18 +279,6 @@ function initGame() {
 	drawStatsDisplay();
 	drawUnitCreationMenu();
 	drawBottomInterface();
-
-    setInterval(function(){ 
-        if (!movingPlayer && !isAttacking && !isCasting && !isInHighlight) {
-            if (playableUnitCount === 0) {
-                clearSelectionEffects();
-                console.log("turn ended for current player");
-                turnEndPhase();
-                turn = 1 - turn;
-                turnStartPhase();
-            }
-        }
-    }, 5000);
 
 
 	changed = true;
@@ -385,7 +324,7 @@ function applyBuff(buffType, unit) {
 			unit.buffs.push([2, 1.2, 3, buffIcon]);
 			break;
 		case 3: // dec attack Buff
-            var buffIcon = new createjs.Bitmap("graphics/buff/buff_dec_attack.png");
+            var buttIcon = new createjs.Bitmap("graphics/buff/buff_dec_attack.png");
             unit.buffs.push([3, 0.8, 3, buffIcon]);
             break;
 		case 4:	// shield Buff
@@ -430,7 +369,7 @@ function getMaxHealth(unit) {
 function getAttack(unit) {
 	var base = unit.attack;
 	$.each(unit.buffs, function(i, value) {
-		if (value[0] == 2 || value[0] == 3) {
+		if (value[0] == 2) {
 			base *= value[1]
 		} // if type == attack, add to base
 	});
@@ -458,15 +397,15 @@ function updateHP_bar(unit){
 		// unit.hp_bar.graphics.clear();
 		// unit.hp_bar.graphics.beginFill("#000000").drawRect(0, 0, 80, 10);
 		// unit.hp_bar.graphics.beginFill("#ff0000").drawRect(0, 0, (getHealth(unit) / getMaxHealth(unit)) * 80, 10);
-		if (unit.team == 0){
-			unit.hp_bar.graphics.beginFill("#000000").drawRect(0, 0, 82, 12);
-			unit.hp_bar.graphics.beginFill("#000000").drawRect(1, 1, 80, 10);
-			unit.hp_bar.graphics.beginFill("#ff0000").drawRect(1, 1, (getHealth(unit)/getMaxHealth(unit)) * 80, 10);
-		} else {
-			unit.hp_bar.graphics.beginFill("#000000").drawRect(0, 0, 82, 12);
-			unit.hp_bar.graphics.beginFill("#000000").drawRect(1, 1, 80, 10);
-			unit.hp_bar.graphics.beginFill("#3399ff").drawRect(1, 1, (getHealth(unit)/getMaxHealth(unit)) * 80, 10);
-		}
+		// if (unit.team == 0){
+		// 	unit.hp_bar.graphics.beginFill("#000000").drawRect(0, 0, 82, 12);
+		// 	unit.hp_bar.graphics.beginFill("#000000").drawRect(1, 1, 80, 10);
+		// 	unit.hp_bar.graphics.beginFill("#ff0000").drawRect(1, 1, (getHealth(unit)/getMaxHealth(unit)) * 80, 10);
+		// } else {
+		// 	unit.hp_bar.graphics.beginFill("#000000").drawRect(0, 0, 82, 12);
+		// 	unit.hp_bar.graphics.beginFill("#000000").drawRect(1, 1, 80, 10);
+		// 	unit.hp_bar.graphics.beginFill("#3399ff").drawRect(1, 1, (getHealth(unit)/getMaxHealth(unit)) * 80, 10);
+		// }
 	}
 	unit.hp_bar.updateCache();
 }
@@ -546,8 +485,8 @@ function createFloatingCards(listOfSources, correspondingUnit) {
 			changed = true;
 		});
 
-		unitCreationMenu.addChild(unitCards[i]);
-		unitCreationMenu.addChild(unitCards[i].text);
+		//unitCreationMenu.addChild(unitCards[i]);
+		//unitCreationMenu.addChild(unitCards[i].text);
 
 	}
 }
@@ -586,8 +525,9 @@ function addEventListenersToUnit(unit) {
             }
             if (!movingPlayer && !isAttacking && !isCasting) {
                 clearSelectionEffects();
-                selectedCharacter = unit;
-                if (unit.team == turn) showActionMenuNextToPlayer(unit);
+                selectedCharacter = unit;;
+                showUnitInfo = true;
+                showActionMenuNextToPlayer(unit);
                 displayStats(unit);
             }
 
@@ -601,17 +541,11 @@ function addEventListenersToUnit(unit) {
                         if (remainingAttackTimes > 0) {
                             remainingAttackTimes - 1;
                             performAttack();
-                        } else {
-                            selectedCharacter.canAttack = 0;
-                            selectedCharacter.outOfMoves = 1;
-                            playableUnitCount--;
-                            console.log(playableUnitCount);
                         }
                     }
                 });
             }
 
-            // In this case, we are selecting the unit to be attacked by the wizard spell
             if (selectedCharacter != unit && isCasting && selectedCharacter.team != unit.team) {
 
                 $.each(units, function(i, otherUnit) {
@@ -628,9 +562,8 @@ function addEventListenersToUnit(unit) {
                         attack(selectedCharacter, otherUnit);
                     }
                     clearSelectionEffects();
-                    selectedCharacter.outOfMoves = 1;
+                    selectedCharacter.outOfMoves = 0;
                     selectedCharacter.skillCoolDown = 3;
-                    playableUnitCount--;
                     isCasting = false;
 
                 });
@@ -696,8 +629,8 @@ function drawGoldDisplay() {
 	currentGoldDisplay.textBasline = "alphabetic";
 
 	// stage.addChild(coin_background);
-	stage.addChild(coin_pic);
-	stage.addChild(currentGoldDisplay);
+	//stage.addChild(coin_pic);
+	//stage.addChild(currentGoldDisplay);
 }
 
 function drawStatsDisplay() {
@@ -708,14 +641,14 @@ function drawStatsDisplay() {
 
 function displayStats(unit) {
 	if(unit.team === 1){
-		var drag_box = new createjs.Bitmap("graphics/stats_background_self.png");
+		var box = new createjs.Bitmap("graphics/stats_background_self.png");
 	} else {
-		var drag_box = new createjs.Bitmap("graphics/stats_background_opponent.png");
+		var box = new createjs.Bitmap("graphics/stats_background_opponent.png");
 	}
 	
-	drag_box.scaleX = 0.8;
-	drag_box.scaleY = 0.8;
-	statsDisplay.addChild(drag_box);
+	box.scaleX = 0.8;
+	box.scaleY = 0.8;
+	statsDisplay.addChild(box);
 
 	var bmp = new createjs.Bitmap(unit.info);
 	bmp.scaleX = 0.75;
@@ -796,15 +729,11 @@ function showActionMenuNextToPlayer(unit) {
 								   : "graphics/ingame_menu/new_attack_gray.png";
 	attackButton = createClickableImage(attackSource, unit.x + 48, unit.y - 119, function() {
 		if (unit.canAttack) {
-            console.log(draggable.getNumChildren());
 			undoHighlights();
-            console.log(draggable.getNumChildren());
 			// isAttacking = true;
 			// drawRange(findReachableTiles(unit.column, unit.row, unit.attackRange, false), 1);
 			remainingAttackTimes = 1;
-            console.log(draggable.getNumChildren());
 			performAttack();
-            console.log(draggable.getNumChildren());
 		}
 	});
 
@@ -862,50 +791,53 @@ function cast(skillNo, unit) {
 					//buff dmg
 					applyBuff(2, value);
 					// value.buffs.push([2,5,3]);
+
+					destroyStats();
+					displayStats(unit);
+
+
+					selectedCharacter.outOfMoves = 1;
+					unit.skillCoolDown = 3;
+					destroyMenu();
+					showActionMenuNextToPlayer(unit);
+
+					changed = true;
 				}
 			});
 			isCasting = false;
-            destroyStats();
-            displayStats(unit);
-
-
-            selectedCharacter.outOfMoves = 1;
-            unit.skillCoolDown = 3;
-            playableUnitCount--;
-            destroyMenu();
-            showActionMenuNextToPlayer(unit);
-
-            changed = true;
-
 			// notify server
 
 			// display updated json
 			break;
 		case 1: // Archer's skill
+		 //    var atk = selectedCharacter.attack;
+		 //    selectedCharacter.attack = 2 * atk;
 
+			// isAttacking = true;
+			// undoHighlights();
+			// drawRange(findReachableTiles(selectedCharacter.column, selectedCharacter.row, selectedCharacter.attackRange, false), 1);
 			var reachableTiles = findReachableTiles(selectedCharacter.column, selectedCharacter.row, selectedCharacter.attackRange, false);
 			isCasting = true;
 			undoHighlights();
 			remainingAttackTimes = 2;
 			performAttack();
-	    	unit.skillCoolDown = 3;
-	    	destroyMenu();
-			destroyStats();
+
+
 			
 			break;
 	    case 3: // Warrior's skill
 	    	undoHighlights();
             applyBuff(4, selectedCharacter);
+
+
 	    	selectedCharacter.outOfMoves = 1;
 	    	unit.skillCoolDown = 3;
-            playableUnitCount--;
 	    	isCasting = false;
 			destroyMenu();
 			showActionMenuNextToPlayer(selectedCharacter);
 
 			changed = true;
-			destroyMenu();
-			destroyStats();
+
 	    	break;
 	    case 4: // Wizard's skill
 	    	isCasting = true;
@@ -913,14 +845,10 @@ function cast(skillNo, unit) {
 	    	// drawRange(findReachableTiles(selectedCharacter.column, selectedCharacter.row, selectedCharacter.attackRange, false), 2);
 	    	var reachableTiles = findReachableTiles(selectedCharacter.row, selectedCharacter.column, selectedCharacter.attackRange, false);
 	    	highlightArea(reachableTiles, "graphics/tile/red_tile.png", ["click", "mouseover", "mouseout"], [castWizardSpellOnClick, highlightWizardSpellCross, clearWizardSpellCross]);
-			destroyStats();
-			destroyStats();
 			break;
 		case 5:
 			remainingAttackTimes = 1;
-			destroyStats();
-			destroyMenu();
-			destroyStats();
+			performAttack();
 
 	}
 }
@@ -941,13 +869,12 @@ function castWizardSpellOnClick(event) {
 			attack(selectedCharacter, unit);
             applyBuff(5, unit);
 		}
+		clearSelectionEffects();
+		selectedCharacter.outOfMoves = 1;
+		selectedCharacter.skillCoolDown = 3;
+		isCasting = false;
+		changed = true;
 	});
-    clearSelectionEffects();
-    selectedCharacter.outOfMoves = 1;
-    playableUnitCount--;
-    selectedCharacter.skillCoolDown = 3;
-    isCasting = false;
-    changed = true;
 } 
 
 
@@ -1112,11 +1039,11 @@ function attack(attacker, target){
 			damageAnimation.x = target.x;
 			damageAnimation.y = target.y;
 		}
-		if (isCasting) {
-			applyBuff(3, target);
-		}
+
 		chars.addChild(damageAnimation);
 		
+		attacker.outOfMoves = 1;
+		attacker.canAttack = 0;
 		remainingAttackTimes--;
 		isAttacking = false;
 
@@ -1144,10 +1071,10 @@ function destroyStats() {
 	stage.removeChild(statsDisplay);
 	// statsDisplay.removeChild(2, 3);
 
-	// var drag_box = new createjs.Bitmap("graphics/stats_background.png");
-	// drag_box.scaleX = 0.8;
-	// drag_box.scaleY = 0.8;
-	// statsDisplay.addChild(drag_box);
+	// var box = new createjs.Bitmap("graphics/stats_background.png");
+	// box.scaleX = 0.8;
+	// box.scaleY = 0.8;
+	// statsDisplay.addChild(box);
 	changed = true;
 }
 
@@ -1386,29 +1313,29 @@ function drawMap(data) {
 		for (j = 0; j < mapWidth; j++) {
 			var terrain = data[i][j];
             if (terrain == 5) blockMaps[i][j] = 1;
-			// if (terrain == 5) {
-			// 	img = imageNumber(terrain);
-			// 	var spriteSheet = new createjs.SpriteSheet({
-	  //         		"images": [img],
-	  //         		"frames": {"regX": 0, "height": 130, "count": 2, "regY": 0, "width": 130 },
-	  //         		"animations": {
-	  //           	"water":[0,1]
-	  //         		},
-	  //         		framerate: 1
-   //      		});
-			// 	maps[i][j] = new createjs.Sprite(spriteSheet, "water");
-			// 	maps[i][j].name = i + "," + j + "," + tile_type + "," + tile_info_address;
-			// 	maps[i][j].x = (j-i) * 65 + 540;
-			// 	maps[i][j].y = (j+i) * 32.5 + 220;
-			// 	maps[i][j].regX = 65;
-			// 	maps[i][j].regY = 32.5;
-			// 	maps[i][j].addEventListener("mouseover",mouveOver);
-			// 	maps[i][j].addEventListener("mouseout", mouseOut);
-			// 	maps[i][j].addEventListener("click", function(event) {
-			// 		showUnitInfo = false;
-			// 		clearSelectionEffects();
-			// 	});
-			//} else {
+			if (terrain == 5) {
+				img = imageNumber(terrain);
+				var spriteSheet = new createjs.SpriteSheet({
+	          		"images": [img],
+	          		"frames": {"regX": 0, "height": 130, "count": 2, "regY": 0, "width": 130 },
+	          		"animations": {
+	            	"water":[0,1]
+	          		},
+	          		framerate: 1
+        		});
+				maps[i][j] = new createjs.Sprite(spriteSheet, "water");
+				maps[i][j].name = i + "," + j + "," + tile_type + "," + tile_info_address;
+				maps[i][j].x = (j-i) * 65 + 540;
+				maps[i][j].y = (j+i) * 32.5 + 220;
+				maps[i][j].regX = 65;
+				maps[i][j].regY = 32.5;
+				// maps[i][j].addEventListener("mouseover",mouveOver);
+				// maps[i][j].addEventListener("mouseout", mouseOut);
+				// maps[i][j].addEventListener("click", function(event) {
+				// 	showUnitInfo = false;
+				// 	clearSelectionEffects();
+				// });
+			} else {
 				img = imageNumber(terrain);
 				maps[i][j] = new createjs.Bitmap(img);
 				maps[i][j].name = i + "," + j + "," + tile_type + "," + tile_info_address;
@@ -1416,12 +1343,13 @@ function drawMap(data) {
 				maps[i][j].y = (j+i) * 32.5 + 220;
 				maps[i][j].regX = 65;
 				maps[i][j].regY = 32.5;
-				maps[i][j].addEventListener("mouseover",mouseOver);
-				maps[i][j].addEventListener("mouseout", mouseOut);
-				maps[i][j].addEventListener("click", function(event) {
-					clearSelectionEffects();
-				});
-			//}
+				//maps[i][j].addEventListener("mouseover",mouseOver);
+				//maps[i][j].addEventListener("mouseout", mouseOut);
+				//maps[i][j].addEventListener("click", function(event) {
+				//	showUnitInfo = false;
+				//	clearSelectionEffects();
+				//});
+			}
 			draggable.addChild(maps[i][j]);
 		}
 	}
@@ -1502,18 +1430,12 @@ function update() {
 		movePlayer();
 	}
 	if (resized) {	
-		stage.canvas.width = window.innerWidth;
-		stage.canvas.height = window.innerHeight;
+		stage.canvas.width = $("body").prop("clientWidth");
+		stage.canvas.height = $("body").prop("clientHeight");
 		drawGame();
 		drawStatsDisplay();
 		destroyGoldDisplay();
 		drawGoldDisplay();
-
-		drag_box = new createjs.Shape();
-		drag_box.graphics.drawRect(-stage.canvas.width ,-stage.canvas.height ,stage.canvas.width * 2,stage.canvas.height * 2);
-		drag_box.hitArea = new createjs.Shape();
-		drag_box.hitArea.graphics.beginFill("#000").drawRect(-stage.canvas.width ,-stage.canvas.height ,stage.canvas.width * 2,stage.canvas.height * 2);
-		draggable.addChild(drag_box);
 
 		$.each(unitCards, function(i, value) {
 			stage.removeChild(value.text);
@@ -1532,10 +1454,6 @@ function update() {
 
 	chars.x = draggable.x;
 	chars.y = draggable.y;
-
-
-    drag_box.x = draggable.x;
-    drag_box.y = draggable.y; 
 
 	stage.addChild(statsDisplay);
 	stage.addChild(unitCreationMenu);
@@ -1565,14 +1483,14 @@ function imageNumber(number) {
 			tile_info_address = "graphics/tile_info/tile_stone_path.png";
 			tile_type = "Stone Path";
 			return "graphics/tile/3d_tile/stone_path.png";
-		// case 5 :
-		// 	tile_info_address = "graphics/tile_info/tile_water.png";
-		// 	tile_type = "Water";
-		// 	return "graphics/tile/3d_tile/ss_water.png";
 		case 5 :
 			tile_info_address = "graphics/tile_info/tile_water.png";
 			tile_type = "Water";
-			return "graphics/tile/3d_tile/water_half.png";
+			return "graphics/tile/3d_tile/ss_water.png";
+		// case 5 :
+		// 	tile_info_address = "graphics/tile_info/tile_water.png";
+		// 	tile_type = "Water";
+		// 	return "graphics/tile/3d_tile/water_half.png";
 		case 6 :
 			tile_info_address = "graphics/tile_info/tile_wood_bridge.png";
 			tile_type = "Wood Bridge";
@@ -1633,10 +1551,6 @@ function performAttack() {
 				if (remainingAttackTimes > 0) {
 					performAttack();
 				}
-                selectedCharacter.outOfMoves = 1;
-                selectedCharacter.canAttack = 0;
-                playableUnitCount--;
-                console.log(playableUnitCount);
 			}
 		});	
 	}]); 
