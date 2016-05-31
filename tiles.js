@@ -245,8 +245,11 @@ function initGame() {
 
 
 	draggable = new createjs.Container();
-	var box = new createjs.Shape();
-	draggable.addChild(box);
+	drag_box = new createjs.Shape();
+	drag_box.graphics.drawRect(-stage.canvas.width ,-stage.canvas.height ,stage.canvas.width * 2,stage.canvas.height * 2);
+	drag_box.hitArea = new createjs.Shape();
+	drag_box.hitArea.graphics.beginFill("#000").drawRect(-stage.canvas.width ,-stage.canvas.height ,stage.canvas.width * 2,stage.canvas.height * 2);
+	draggable.addChild(drag_box);
 	draggable.on("pressmove", function(event) {
 		if (isDragging) {
 			this.x = event.stageX - offX;
@@ -637,14 +640,14 @@ function drawStatsDisplay() {
 
 function displayStats(unit) {
 	if(unit.team === 1){
-		var box = new createjs.Bitmap("graphics/stats_background_self.png");
+		var drag_box = new createjs.Bitmap("graphics/stats_background_self.png");
 	} else {
-		var box = new createjs.Bitmap("graphics/stats_background_opponent.png");
+		var drag_box = new createjs.Bitmap("graphics/stats_background_opponent.png");
 	}
 	
-	box.scaleX = 0.8;
-	box.scaleY = 0.8;
-	statsDisplay.addChild(box);
+	drag_box.scaleX = 0.8;
+	drag_box.scaleY = 0.8;
+	statsDisplay.addChild(drag_box);
 
 	var bmp = new createjs.Bitmap(unit.info);
 	bmp.scaleX = 0.75;
@@ -1066,10 +1069,10 @@ function destroyStats() {
 	stage.removeChild(statsDisplay);
 	// statsDisplay.removeChild(2, 3);
 
-	// var box = new createjs.Bitmap("graphics/stats_background.png");
-	// box.scaleX = 0.8;
-	// box.scaleY = 0.8;
-	// statsDisplay.addChild(box);
+	// var drag_box = new createjs.Bitmap("graphics/stats_background.png");
+	// drag_box.scaleX = 0.8;
+	// drag_box.scaleY = 0.8;
+	// statsDisplay.addChild(drag_box);
 	changed = true;
 }
 
@@ -1435,6 +1438,12 @@ function update() {
 		destroyGoldDisplay();
 		drawGoldDisplay();
 
+		drag_box = new createjs.Shape();
+		drag_box.graphics.drawRect(-stage.canvas.width ,-stage.canvas.height ,stage.canvas.width * 2,stage.canvas.height * 2);
+		drag_box.hitArea = new createjs.Shape();
+		drag_box.hitArea.graphics.beginFill("#000").drawRect(-stage.canvas.width ,-stage.canvas.height ,stage.canvas.width * 2,stage.canvas.height * 2);
+		draggable.addChild(drag_box);
+
 		$.each(unitCards, function(i, value) {
 			stage.removeChild(value.text);
 			stage.removeChild(value);
@@ -1452,6 +1461,10 @@ function update() {
 
 	chars.x = draggable.x;
 	chars.y = draggable.y;
+
+
+    drag_box.x = draggable.x;
+    drag_box.y = draggable.y; 
 
 	stage.addChild(statsDisplay);
 	stage.addChild(unitCreationMenu);
