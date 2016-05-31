@@ -792,8 +792,7 @@ function cast(skillNo, unit) {
 					applyBuff(2, value);
 					// value.buffs.push([2,5,3]);
 
-					destroyStats();
-					displayStats(unit);
+					
 
 
 					selectedCharacter.outOfMoves = 1;
@@ -805,6 +804,8 @@ function cast(skillNo, unit) {
 				}
 			});
 			isCasting = false;
+			destroyMenu();
+			destroyStats();
 			// notify server
 
 			// display updated json
@@ -821,15 +822,14 @@ function cast(skillNo, unit) {
 			undoHighlights();
 			remainingAttackTimes = 2;
 			performAttack();
-
-
+	    	unit.skillCoolDown = 3;
+	    	destroyMenu();
+			destroyStats();
 			
 			break;
 	    case 3: // Warrior's skill
 	    	undoHighlights();
             applyBuff(4, selectedCharacter);
-
-
 	    	selectedCharacter.outOfMoves = 1;
 	    	unit.skillCoolDown = 3;
 	    	isCasting = false;
@@ -837,7 +837,8 @@ function cast(skillNo, unit) {
 			showActionMenuNextToPlayer(selectedCharacter);
 
 			changed = true;
-
+			destroyMenu();
+			destroyStats();
 	    	break;
 	    case 4: // Wizard's skill
 	    	isCasting = true;
@@ -845,10 +846,14 @@ function cast(skillNo, unit) {
 	    	// drawRange(findReachableTiles(selectedCharacter.column, selectedCharacter.row, selectedCharacter.attackRange, false), 2);
 	    	var reachableTiles = findReachableTiles(selectedCharacter.row, selectedCharacter.column, selectedCharacter.attackRange, false);
 	    	highlightArea(reachableTiles, "graphics/tile/red_tile.png", ["click", "mouseover", "mouseout"], [castWizardSpellOnClick, highlightWizardSpellCross, clearWizardSpellCross]);
+			destroyStats();
+			displayStats();
 			break;
 		case 5:
 			remainingAttackTimes = 1;
-			performAttack();
+			destroyStats();
+			destroyMenu();
+			destroyStats();
 
 	}
 }
