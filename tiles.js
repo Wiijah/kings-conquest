@@ -72,7 +72,7 @@ function showTurnInfo(){
 
 
 function turnStartPhase() {
-	//showTurnInfo();
+	showTurnInfo();
     playableUnitCount = 0;
     console.log("Starting turn");
     for (var i = 0; i < units.length; i++) { 
