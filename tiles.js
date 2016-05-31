@@ -72,8 +72,18 @@ function turnStartPhase() {
             if (units[i].buffs[j][2] === 0) buffsToBeRemoved.push(units[i].buffs[j][0]);
             if (units[i].buffs[j][0] === 5) {
                 // TODO: burn damage effect
-                units[i].hp -= units[i].max_hp * 0.02;
+                var damage = units[i].max_hp * 0.02;
+                var fire = new createjs.Sprite(units[i].burnEffect, "burn");
+                showDamage(units[i], 1, damage);
+                fire.x = units[i].x;
+                fire.y = units[i].y;
+                chars.addChild(fire);
+
+                units[i].hp -= damage;
                 updateHP_bar(units[i]);
+                setTimeout(function() {
+					chars.removeChild(fire);
+				}, 1000);
             }
         }
 
@@ -81,6 +91,7 @@ function turnStartPhase() {
         for (var j = 0; j < buffsToBeRemoved.length; j++) {
             removeBuff(buffsToBeRemoved[j], units[i]);
         }
+
     }    
 }
 
@@ -138,6 +149,33 @@ function spawnUnit(data, isCreation){
 			framerate: 4
 		});
 		unit.damageEffect = damageEffect;
+
+		var burnEffect = new createjs.SpriteSheet({
+			"images": [that.buffEffects.burning],
+			"frames": {"width": 142, "height": 142, "count": 4, "regY": 110, "regX": 95},
+			"animations": {
+				"burn":{
+					frames: [0,1,2,3],
+					next: false
+				}
+			},
+			framerate: 4
+		});
+		unit.burnEffect = burnEffect;
+
+		var healEffect = new createjs.SpriteSheet({
+			"images": [that.buffEffects.heal],
+			"frames": {"width": 142, "height": 142, "count": 4, "regY": 110, "regX": 95},
+			"animations": {
+				"heal":{
+					frames: [0,1,2,3],
+					next: false
+				}
+			},
+			framerate: 4
+		});
+		unit.healEffect = healEffect;
+
 
 		unit.team = data.team;
         if (isCreation) {
@@ -273,7 +311,7 @@ function initGame() {
 		}
 
 
-
+		that.buffEffects = data.buffEffects;
 		currentGold = data.currentGold;
 		drawGoldDisplay();
 		
@@ -286,7 +324,6 @@ function initGame() {
 		});
         turnStartPhase();
 	});
-
 
 	stage.canvas.width = window.innerWidth;
 	stage.canvas.height = window.innerHeight; //$("body").prop("clientHeight");
@@ -454,6 +491,9 @@ function updateHP_bar(unit){
 		chars.removeChild(unit.hp_bar);
         blockMaps[unit.row][unit.column] = 0;
 		units.splice(units.indexOf(unit), 1);
+		for (var i = 0; i <= unit.buffs.length; i++) {
+			removeBuff(i, unit);
+		}
 	} else {
 		// unit.hp_bar.graphics.clear();
 		// unit.hp_bar.graphics.beginFill("#000000").drawRect(0, 0, 80, 10);
@@ -856,24 +896,29 @@ function cast(skillNo, unit) {
 					} else {
 						value.hp = value.max_hp;
 					}
+					var heal = new createjs.Sprite(units[i].healEffect, "heal");
+					heal.x = value.x;
+					heal.y = value.y;
+					chars.addChild(heal);
 					updateHP_bar(value);
 					//value.buffs.push([0,add,3]);
 					//value.buffs.push([1,add,3]);
 					//buff dmg
 					applyBuff(2, value);
 					// value.buffs.push([2,5,3]);
+					setTimeout(function() {
+						chars.removeChild(heal);
+					}, 1000);
 				}
 			});
 			isCasting = false;
             destroyStats();
-            displayStats(unit);
 
 
             selectedCharacter.outOfMoves = 1;
             unit.skillCoolDown = 3;
             playableUnitCount--;
             destroyMenu();
-            showActionMenuNextToPlayer(unit);
 
             changed = true;
 
@@ -1104,13 +1149,23 @@ function attack(attacker, target){
 		var damage = getAttack(attacker) * criticalHit
 
 		if (!removeBuff(4, target)) {
-			showDamage(target, criticalHit, damage);
-			target.hp -= damage;
-			updateHP_bar(target);
-			
-			var damageAnimation = new createjs.Sprite(attacker.damageEffect, "damage");
-			damageAnimation.x = target.x;
-			damageAnimation.y = target.y;
+			if (remainingAttackTimes == 2) {
+				showDamage2(target, criticalHit, damage);
+				target.hp -= damage;
+				updateHP_bar(target);
+				
+				var damageAnimation = new createjs.Sprite(attacker.damageEffect, "damage");
+				damageAnimation.x = target.x;
+				damageAnimation.y = target.y;
+			} else {
+				showDamage(target, criticalHit, damage);
+				target.hp -= damage;
+				updateHP_bar(target);
+				
+				var damageAnimation = new createjs.Sprite(attacker.damageEffect, "damage");
+				damageAnimation.x = target.x;
+				damageAnimation.y = target.y;
+			}
 		}
 		if (isCasting) {
 			applyBuff(3, target);
@@ -1486,13 +1541,16 @@ createjs.Ticker.on("tick", function() {
 // createjs.Ticker.setFPS(30);
 function keyEvent(event) {
     switch(event.keyCode) {
-        case 27:
+        case 27:  //esc
             if (isDisplayingMenu) {
-            	destroyMenu();
-            	destroyStats();
             	clearSelectionEffects();
             }
             break;
+        case 13: //enter
+        	clearSelectionEffects();
+        	turn = 1 - turn;
+        	turnEndPhase();
+        	turnStartPhase();
 
     }
 } 
@@ -1632,11 +1690,12 @@ function performAttack() {
 				clearSelectionEffects();
 				if (remainingAttackTimes > 0) {
 					performAttack();
-				}
-                selectedCharacter.outOfMoves = 1;
-                selectedCharacter.canAttack = 0;
-                playableUnitCount--;
-                console.log(playableUnitCount);
+				} else {
+                    selectedCharacter.canAttack = 0;
+                    selectedCharacter.outOfMoves = 1;
+                    playableUnitCount--;
+                    console.log(playableUnitCount);
+                }
 			}
 		});	
 	}]); 
