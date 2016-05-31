@@ -46,9 +46,33 @@ var resized = false;
 
 var turn = 0;
 var playableUnitCount = 0;
+function showTurnInfo(){
+	stage.removeChild(playerLabel);
+	stage.removeChild(playerLabelBg);
+	if (turn) {
+		var playerLabelBg = new createjs.Shape();
+		playerLabelBg.graphics.beginFill("#000000").drawRect(-stage.canvas.width ,stage.canvas.height - stage.canvas.height/2 ,stage.canvas.width * 2,80);
+		var playerLabel = new createjs.Text("Player2 Turn", "30px Arial", "#0000ff");
+	} else {
+		var playerLabelBg = new createjs.Shape();
+		playerLabelBg.graphics.beginFill("#000000").drawRect(-stage.canvas.width ,stage.canvas.height - stage.canvas.height/2 ,stage.canvas.width * 2,80);
+		var playerLabel = new createjs.Text("Player1 Turn", "30px Arial", "#ff0000");
+	}
+	playerLabel.x = stage.canvas.width - stage.canvas.width / 2 - 100;
+	playerLabel.y = stage.canvas.height -  stage.canvas.height / 2 + 20;
+	playerLabelBg.alpha = 0.7;
+
+	stage.addChild(playerLabelBg);
+	stage.addChild(playerLabel);
+	setTimeout(function() {
+		stage.removeChild(playerLabel);
+		stage.removeChild(playerLabelBg);
+	}, 1000);
+}
 
 
 function turnStartPhase() {
+	//showTurnInfo();
     playableUnitCount = 0;
     console.log("Starting turn");
     for (var i = 0; i < units.length; i++) { 
@@ -71,9 +95,21 @@ function turnStartPhase() {
             units[i].buffs[j][2]--;
             if (units[i].buffs[j][2] === 0) buffsToBeRemoved.push(units[i].buffs[j][0]);
             if (units[i].buffs[j][0] === 5) {
-                // TODO: burn damage effect
-                units[i].hp -= units[i].max_hp * 0.02;
+               	
+
+                var damage = units[i].max_hp * 0.02;
+                chars.removeChild(fire);
+                var fire = new createjs.Sprite(units[i].burnEffect, "burn");
+                showDamage(units[i], 1, damage);
+                fire.x = units[i].x;
+                fire.y = units[i].y;
+                chars.addChild(fire);
+
+                units[i].hp -= damage;
                 updateHP_bar(units[i]);
+                setTimeout(function() {
+					chars.removeChild(fire);
+				}, 1000);
             }
         }
 
@@ -81,6 +117,7 @@ function turnStartPhase() {
         for (var j = 0; j < buffsToBeRemoved.length; j++) {
             removeBuff(buffsToBeRemoved[j], units[i]);
         }
+
     }    
 }
 
@@ -138,6 +175,33 @@ function spawnUnit(data, isCreation){
 			framerate: 4
 		});
 		unit.damageEffect = damageEffect;
+
+		var burnEffect = new createjs.SpriteSheet({
+			"images": [that.buffEffects.burning],
+			"frames": {"width": 142, "height": 142, "count": 4, "regY": 110, "regX": 95},
+			"animations": {
+				"burn":{
+					frames: [0,1,2,3],
+					next: false
+				}
+			},
+			framerate: 4
+		});
+		unit.burnEffect = burnEffect;
+
+		var healEffect = new createjs.SpriteSheet({
+			"images": [that.buffEffects.heal],
+			"frames": {"width": 142, "height": 142, "count": 4, "regY": 110, "regX": 95},
+			"animations": {
+				"heal":{
+					frames: [0,1,2,3],
+					next: false
+				}
+			},
+			framerate: 4
+		});
+		unit.healEffect = healEffect;
+
 
 		unit.team = data.team;
         if (isCreation) {
@@ -273,7 +337,7 @@ function initGame() {
 		}
 
 
-
+		that.buffEffects = data.buffEffects;
 		currentGold = data.currentGold;
 		drawGoldDisplay();
 		
@@ -286,7 +350,6 @@ function initGame() {
 		});
         turnStartPhase();
 	});
-
 
 	stage.canvas.width = window.innerWidth;
 	stage.canvas.height = window.innerHeight; //$("body").prop("clientHeight");
@@ -454,6 +517,9 @@ function updateHP_bar(unit){
 		chars.removeChild(unit.hp_bar);
         blockMaps[unit.row][unit.column] = 0;
 		units.splice(units.indexOf(unit), 1);
+		for (var i = 0; i <= unit.buffs.length; i++) {
+			removeBuff(i, unit);
+		}
 	} else {
 		// unit.hp_bar.graphics.clear();
 		// unit.hp_bar.graphics.beginFill("#000000").drawRect(0, 0, 80, 10);
@@ -724,7 +790,7 @@ function displayStats(unit) {
 	bmp.y = 10;
 	bmp.x = 20; // 226
 	//stage.update();
-	var text = unit.team == team ? new createjs.Text("HP : " + getHealth(unit) + "/" + getMaxHealth(unit) + "\n" +
+	var text = unit.team == turn ? new createjs.Text("HP : " + getHealth(unit) + "/" + getMaxHealth(unit) + "\n" +
 		"ATK : "  + getAttack(unit) + "\n" + "RNG : " + unit.attackRange + "\n" +
 		"SKILL : " + unit.skill +  "\n" + "CD: " + unit.skillCoolDown  + "\n" +
 		"MOV. RANGE : " + unit.moveRange + "\n" +
@@ -856,25 +922,25 @@ function cast(skillNo, unit) {
 					} else {
 						value.hp = value.max_hp;
 					}
+					var heal = new createjs.Sprite(units[i].healEffect, "heal");
+					heal.x = value.x;
+					heal.y = value.y;
+					chars.addChild(heal);
 					updateHP_bar(value);
 					//value.buffs.push([0,add,3]);
 					//value.buffs.push([1,add,3]);
 					//buff dmg
 					applyBuff(2, value);
 					// value.buffs.push([2,5,3]);
+					setTimeout(function() {
+						chars.removeChild(heal);
+					}, 1000);
 				}
 			});
 			isCasting = false;
-            destroyStats();
-            displayStats(unit);
-
-
             selectedCharacter.outOfMoves = 1;
             unit.skillCoolDown = 3;
             playableUnitCount--;
-            destroyMenu();
-            showActionMenuNextToPlayer(unit);
-
             changed = true;
 
 			// notify server
@@ -886,12 +952,9 @@ function cast(skillNo, unit) {
 			var reachableTiles = findReachableTiles(selectedCharacter.column, selectedCharacter.row, selectedCharacter.attackRange, false);
 			isCasting = true;
 			undoHighlights();
-			remainingAttackTimes = 2;
 			performAttack();
+			remainingAttackTimes = 2;
 	    	unit.skillCoolDown = 3;
-	    	destroyMenu();
-			destroyStats();
-			
 			break;
 	    case 3: // Warrior's skill
 	    	undoHighlights();
@@ -900,29 +963,21 @@ function cast(skillNo, unit) {
 	    	unit.skillCoolDown = 3;
             playableUnitCount--;
 	    	isCasting = false;
-			destroyMenu();
-			showActionMenuNextToPlayer(selectedCharacter);
-
 			changed = true;
-			destroyMenu();
-			destroyStats();
 	    	break;
 	    case 4: // Wizard's skill
 	    	isCasting = true;
-
+	    	isAttacking = false;
 	    	// drawRange(findReachableTiles(selectedCharacter.column, selectedCharacter.row, selectedCharacter.attackRange, false), 2);
 	    	var reachableTiles = findReachableTiles(selectedCharacter.row, selectedCharacter.column, selectedCharacter.attackRange, false);
 	    	highlightArea(reachableTiles, "graphics/tile/red_tile.png", ["click", "mouseover", "mouseout"], [castWizardSpellOnClick, highlightWizardSpellCross, clearWizardSpellCross]);
-			destroyStats();
-			destroyStats();
 			break;
 		case 5:
 			remainingAttackTimes = 1;
-			destroyStats();
-			destroyMenu();
-			destroyStats();
-
+			break;
 	}
+	destroyMenu();
+	destroyStats();
 }
 
 function castWizardSpellOnClick(event) {
@@ -1035,6 +1090,8 @@ function demageEffect(damageText,damageBackground ){
 	
 }
 function showDamage(unit, critical, damage){
+	chars.removeChild(unit.damageBackground);
+	chars.removeChild(unit.damageText);
 	unit.damageBackground = new createjs.Shape();
 	if (critical == 2) {
 		unit.damageBackground.graphics.beginFill("#ffeb00").drawRect(unit.x - 10, unit.y - 50, 40, 20);
@@ -1043,6 +1100,21 @@ function showDamage(unit, critical, damage){
 		unit.damageBackground.graphics.beginFill("#ff0000").drawRect(unit.x - 10, unit.y - 50, 40, 20);
 		unit.damageText = new createjs.Text(damage, "20px Arial", "#000000");
 	}
+
+
+	// if (critical == 2) {
+	// 	unit.damageBackground = new createjs.Text(damage, "bold 25px Arial", "#000000");
+	// 	unit.damageText = new createjs.Text(damage, "bold 20px Arial", "#ffeb00");
+	// } else {
+	// 	unit.damageBackground = new createjs.Text(damage, "bold 25px Arial", "#000000");
+	// 	unit.damageText = new createjs.Text(damage, "bold 20px Arial", "#ff0000");
+	// }
+
+
+	// unit.damageBackground.x = unit.x - 2;
+	// unit.damageBackground.y = unit.y - 55;
+	// unit.damageBackground.textBasline = "alphabetic";
+
 	unit.damageText.x = unit.x;
 	unit.damageText.y = unit.y - 50;
 	unit.damageText.textBasline = "alphabetic";
@@ -1060,32 +1132,7 @@ function showDamage(unit, critical, damage){
 		//stage.update();
 	}, 750);
 }
-function showDamage2(unit, critical, damage){
-	unit.damageBackground2 = new createjs.Shape();
-	if (critical == 2) {
-		unit.damageBackground2.graphics.beginFill("#ffeb00").drawRect(unit.x - 10, unit.y - 50, 40, 20);
-		unit.damageText2 = new createjs.Text(damage, "20px Arial", "#000000");
-	} else {
-		unit.damageBackground2.graphics.beginFill("#ff0000").drawRect(unit.x - 10, unit.y - 50, 40, 20);
-		unit.damageText2 = new createjs.Text(damage, "20px Arial", "#000000");
-	}
-	unit.damageText2.x = unit.x;
-	unit.damageText2.y = unit.y - 50;
-	unit.damageText2.textBasline = "alphabetic";
 
-	chars.addChild(unit.damageBackground2);
-	chars.addChild(unit.damageText2);
-	//stage.update();
-	unit.showingDamage = true;
-	demageEffect(unit.damageText2, unit.damageBackground2);	
-
-	setTimeout(function (){
-		chars.removeChild(unit.damageBackground2);
-		chars.removeChild(unit.damageText2);
-		unit.showingDamage = false;
-		//stage.update();
-	}, 750);
-}
 
 
 function attack(attacker, target){
@@ -1104,6 +1151,7 @@ function attack(attacker, target){
 		var damage = getAttack(attacker) * criticalHit
 
 		if (!removeBuff(4, target)) {
+			
 			showDamage(target, criticalHit, damage);
 			target.hp -= damage;
 			updateHP_bar(target);
@@ -1111,8 +1159,10 @@ function attack(attacker, target){
 			var damageAnimation = new createjs.Sprite(attacker.damageEffect, "damage");
 			damageAnimation.x = target.x;
 			damageAnimation.y = target.y;
+			
 		}
-		if (isCasting) {
+		console.log("in attacking");
+		if (isCasting && isAttacking) {
 			applyBuff(3, target);
 		}
 		chars.addChild(damageAnimation);
@@ -1486,13 +1536,16 @@ createjs.Ticker.on("tick", function() {
 // createjs.Ticker.setFPS(30);
 function keyEvent(event) {
     switch(event.keyCode) {
-        case 27:
+        case 27:  //esc
             if (isDisplayingMenu) {
-            	destroyMenu();
-            	destroyStats();
             	clearSelectionEffects();
             }
             break;
+        case 13: //enter
+        	clearSelectionEffects();
+        	turn = 1 - turn;
+        	turnEndPhase();
+        	turnStartPhase();
 
     }
 } 
@@ -1632,11 +1685,12 @@ function performAttack() {
 				clearSelectionEffects();
 				if (remainingAttackTimes > 0) {
 					performAttack();
-				}
-                selectedCharacter.outOfMoves = 1;
-                selectedCharacter.canAttack = 0;
-                playableUnitCount--;
-                console.log(playableUnitCount);
+				} else {
+                    selectedCharacter.canAttack = 0;
+                    selectedCharacter.outOfMoves = 1;
+                    playableUnitCount--;
+                    console.log(playableUnitCount);
+                }
 			}
 		});	
 	}]); 
