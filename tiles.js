@@ -42,9 +42,52 @@ var remainingAttackTimes;
 var isCasting = false;
 var currentGold;
 var currentGoldDisplay;
-var turn = 0;
-var showUnitInfo = false;
 var resized = false;
+var turn = 0;
+var playableUnitCount = 0;
+
+
+function turnStartPhase() {
+    playableUnitCount = 0;
+    console.log("Starting turn");
+    for (var i = 0; i < units.length; i++) { 
+        // Increment the number of playable unit for the current player
+        if (units[i].team === turn) {
+            playableUnitCount += 1;
+            units[i].canMove = 1;
+            units[i].canAttack = 1;
+            units[i].outOfMoves = 0;
+        }
+
+        // Reduce the skill cooldown of each unit (if it hasn't cooled down yet)
+        if (units[i].skillCoolDown != 0) {
+            units[i].skillCoolDown--;
+        }
+
+        var buffsToBeRemoved = [];
+        // Decrement the buff duration for each unit
+        for (var j = 0; j < units[i].buffs.length; j++) {
+            units[i].buffs[j][2]--;
+            if (units[i].buffs[j][2] === 0) buffsToBeRemoved.push(units[i].buffs[j][0]);
+            if (units[i].buffs[j][0] === 5) {
+                // TODO: burn damage effect
+                units[i].hp -= units[i].max_hp * 0.02;
+                updateHP_bar(units[i]);
+            }
+        }
+
+        // Remove all the buffs with duration 0
+        for (var j = 0; j < buffsToBeRemoved.length; j++) {
+            removeBuff(buffsToBeRemoved[j], units[i]);
+        }
+    }    
+}
+
+function turnEndPhase() {
+    // Post-turn processing
+}
+
+
 
 function resize() {
 	// stage.canvas.width = window.innerWidth;
@@ -203,6 +246,8 @@ function findFreeSpace(){
 }
 
 function initGame() {
+
+
 	createjs.Ticker.addEventListener("tick", keyEvent);
     this.document.onkeydown = keyEvent;
 	stage.enableMouseOver(20);
@@ -237,6 +282,7 @@ function initGame() {
 			// console.log(data.characters[i].x);
 			spawnUnit(data.characters[i], false);
 		});
+        turnStartPhase();
 	});
 
 
@@ -277,6 +323,18 @@ function initGame() {
 	drawStatsDisplay();
 	drawUnitCreationMenu();
 	drawBottomInterface();
+
+    setInterval(function(){ 
+        if (!movingPlayer && !isAttacking && !isCasting && !isInHighlight) {
+            if (playableUnitCount === 0) {
+                clearSelectionEffects();
+                console.log("turn ended for current player");
+                turnEndPhase();
+                turn = 1 - turn;
+                turnStartPhase();
+            }
+        }
+    }, 5000);
 
 
 	changed = true;
@@ -521,9 +579,8 @@ function addEventListenersToUnit(unit) {
             }
             if (!movingPlayer && !isAttacking && !isCasting) {
                 clearSelectionEffects();
-                selectedCharacter = unit;;
-                showUnitInfo = true;
-                showActionMenuNextToPlayer(unit);
+                selectedCharacter = unit;
+                if (unit.team == turn) showActionMenuNextToPlayer(unit);
                 displayStats(unit);
             }
 
@@ -537,11 +594,17 @@ function addEventListenersToUnit(unit) {
                         if (remainingAttackTimes > 0) {
                             remainingAttackTimes - 1;
                             performAttack();
+                        } else {
+                            selectedCharacter.canAttack = 0;
+                            selectedCharacter.outOfMoves = 1;
+                            playableUnitCount--;
+                            console.log(playableUnitCount);
                         }
                     }
                 });
             }
 
+            // In this case, we are selecting the unit to be attacked by the wizard spell
             if (selectedCharacter != unit && isCasting && selectedCharacter.team != unit.team) {
 
                 $.each(units, function(i, otherUnit) {
@@ -558,8 +621,9 @@ function addEventListenersToUnit(unit) {
                         attack(selectedCharacter, otherUnit);
                     }
                     clearSelectionEffects();
-                    selectedCharacter.outOfMoves = 0;
+                    selectedCharacter.outOfMoves = 1;
                     selectedCharacter.skillCoolDown = 3;
+                    playableUnitCount--;
                     isCasting = false;
 
                 });
@@ -725,11 +789,15 @@ function showActionMenuNextToPlayer(unit) {
 								   : "graphics/ingame_menu/new_attack_gray.png";
 	attackButton = createClickableImage(attackSource, unit.x + 48, unit.y - 119, function() {
 		if (unit.canAttack) {
+            console.log(draggable.getNumChildren());
 			undoHighlights();
+            console.log(draggable.getNumChildren());
 			// isAttacking = true;
 			// drawRange(findReachableTiles(unit.column, unit.row, unit.attackRange, false), 1);
 			remainingAttackTimes = 1;
+            console.log(draggable.getNumChildren());
 			performAttack();
+            console.log(draggable.getNumChildren());
 		}
 	});
 
@@ -788,30 +856,26 @@ function cast(skillNo, unit) {
 					applyBuff(2, value);
 					// value.buffs.push([2,5,3]);
 
-					destroyStats();
-					displayStats(unit);
-
-
-					selectedCharacter.outOfMoves = 1;
-					unit.skillCoolDown = 3;
-					destroyMenu();
-					showActionMenuNextToPlayer(unit);
-
-					changed = true;
 				}
 			});
 			isCasting = false;
+            destroyStats();
+            displayStats(unit);
+
+
+            selectedCharacter.outOfMoves = 1;
+            unit.skillCoolDown = 3;
+            playableUnitCount--;
+            destroyMenu();
+            showActionMenuNextToPlayer(unit);
+
+            changed = true;
 			// notify server
 
 			// display updated json
 			break;
 		case 1: // Archer's skill
-		 //    var atk = selectedCharacter.attack;
-		 //    selectedCharacter.attack = 2 * atk;
 
-			// isAttacking = true;
-			// undoHighlights();
-			// drawRange(findReachableTiles(selectedCharacter.column, selectedCharacter.row, selectedCharacter.attackRange, false), 1);
 			var reachableTiles = findReachableTiles(selectedCharacter.column, selectedCharacter.row, selectedCharacter.attackRange, false);
 			isCasting = false;
 			undoHighlights();
@@ -827,6 +891,7 @@ function cast(skillNo, unit) {
 
 	    	selectedCharacter.outOfMoves = 1;
 	    	unit.skillCoolDown = 3;
+            playableUnitCount--;
 	    	isCasting = false;
 			destroyMenu();
 			showActionMenuNextToPlayer(selectedCharacter);
@@ -864,12 +929,13 @@ function castWizardSpellOnClick(event) {
 			attack(selectedCharacter, unit);
             applyBuff(5, unit);
 		}
-		clearSelectionEffects();
-		selectedCharacter.outOfMoves = 1;
-		selectedCharacter.skillCoolDown = 3;
-		isCasting = false;
-		changed = true;
 	});
+    clearSelectionEffects();
+    selectedCharacter.outOfMoves = 1;
+    playableUnitCount--;
+    selectedCharacter.skillCoolDown = 3;
+    isCasting = false;
+    changed = true;
 } 
 
 
@@ -1037,8 +1103,6 @@ function attack(attacker, target){
 
 		chars.addChild(damageAnimation);
 		
-		attacker.outOfMoves = 1;
-		attacker.canAttack = 0;
 		remainingAttackTimes--;
 		isAttacking = false;
 
@@ -1341,7 +1405,6 @@ function drawMap(data) {
 				maps[i][j].addEventListener("mouseover",mouveOver);
 				maps[i][j].addEventListener("mouseout", mouseOut);
 				maps[i][j].addEventListener("click", function(event) {
-					showUnitInfo = false;
 					clearSelectionEffects();
 				});
 			//}
@@ -1542,6 +1605,10 @@ function performAttack() {
 				if (remainingAttackTimes > 0) {
 					performAttack();
 				}
+                selectedCharacter.outOfMoves = 1;
+                selectedCharacter.canAttack = 0;
+                playableUnitCount--;
+                console.log(playableUnitCount);
 			}
 		});	
 	}]); 
