@@ -1,7 +1,7 @@
 var ICON_SCALE_FACTOR = 0.65;
 var MOVEMENT_STEP = 6.5
 
-var stage = new createjs.Stage("demoCanvas");
+var stage = new createjs.Stage("gameCanvas");
 
 var that = this;
 var team = 0;

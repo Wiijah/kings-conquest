@@ -1,10 +1,9 @@
 var ICON_SCALE_FACTOR = 0.65;
-var MOVEMENT_STEP = 6.5
+var MOVEMENT_STEP = 6.5;
 
-var stage = new createjs.Stage("demoCanvas");
-
-var context = stage.canvas.getContext('2d');
-context.scale(0.5, 0.5);
+var stage = new createjs.Stage("gameCanvas");
+stage.scaleX = 0.675;
+stage.scaleY = stage.scaleX;
 
 var that = this;
 var team = 0;
@@ -58,6 +57,15 @@ function resize() {
 
 // typeName : king, red_castle, wizard, etc
 // initial: true / false
+
+
+$(function(){
+    var x = 0;
+    setInterval(function(){
+        x-=4;
+        $('body').css('background-position', x + 'px 0');
+    }, 1);
+})
 
 function spawnUnit(data, isCreation){
 	//|| data.address == "graphics/spritesheet/stand/ss_scarecrow_stand.png"
@@ -242,24 +250,14 @@ function initGame() {
 	});
 
 
-	stage.canvas.width = window.innerWidth;
-	stage.canvas.height = window.innerHeight;
+	stage.canvas.width = $("body").prop("clientWidth");
+	stage.canvas.height = $("body").prop("clientHeight");
 
 
 	draggable = new createjs.Container();
 	var box = new createjs.Shape();
 	draggable.addChild(box);
-	draggable.on("pressmove", function(event) {
-		if (isDragging) {
-			this.x = event.stageX - offX;
-    		this.y = event.stageY - offY;
-    	} else if (!isInHighlight) {
-    		offX = stage.mouseX - draggable.x;
-    		offY = stage.mouseY - draggable.y;
-    		isDragging = true;
-    		draggable.removeChild(highLight_tile);
-    	}
-	});
+	
 	draggable.on("pressup", function(event) {
 		if (isDragging) {
 			isDragging = false;
@@ -1430,8 +1428,8 @@ function update() {
 		movePlayer();
 	}
 	if (resized) {	
-		stage.canvas.width = $("body").prop("clientWidth");
-		stage.canvas.height = $("body").prop("clientHeight");
+		stage.canvas.width = window.innerWidth;
+		stage.canvas.height = window.innerHeight;
 		drawGame();
 		drawStatsDisplay();
 		destroyGoldDisplay();
@@ -1511,14 +1509,6 @@ function imageNumber(number) {
 			return "error";
 	}
 }
-
-$(function(){
-    var x = 0;
-    setInterval(function(){
-        x-=0.5;
-        $('body').css('background-position', x + 'px 0');
-    }, 10);
-})
 
 
 function moveCharacter(unit) {
