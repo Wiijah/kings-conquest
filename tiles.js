@@ -312,8 +312,11 @@ function findFreeSpace(){
 }
 
 function initGame() {
+	var audio = new Audio('Test.mp3');
+	audio.loop = true;
+	audio.play();
 
-
+	
 	createjs.Ticker.addEventListener("tick", keyEvent);
     this.document.onkeydown = keyEvent;
 	stage.enableMouseOver(20);
