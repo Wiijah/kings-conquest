@@ -30,7 +30,7 @@ if (!isset($_SESSION['id'])) {
   </script>
 </head>
 <body>
+<input type="password" style="display:none;" /> <!-- prevent autocomplete -->
 <?php
 require_once 'lightbox.php';
 ?>
-<input type="password" style="display:none;" /> <!-- prevent autocomplete -->

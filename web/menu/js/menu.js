@@ -1,4 +1,4 @@
-var MENU_SLIDE_SPEED = 750;
+var MENU_ANIM_TIME = 300;
 
 $(document).ready(function() {
 
@@ -54,22 +54,23 @@ $(document).ready(function() {
 
   /* Open up register form if click on register button */
   $('body').on('click', '.goto_register', function() {
-    $(".menu_container:visible").fadeOut(MENU_SLIDE_SPEED, function(){
-        $("#register_container").fadeIn(MENU_SLIDE_SPEED);
-    });
+    show_menu_container("#register_container");
   });
 
   /* Open up login form if click on login button */
   $('body').on('click', '.goto_login', function() {
-    $(".menu_container:visible").fadeOut(MENU_SLIDE_SPEED, function(){
-        $("#login_container").fadeIn(MENU_SLIDE_SPEED);
-    });
+    show_menu_container("#login_container");
   });
 
   /* Open up home */
   $('body').on('click', '.goto_home', function() {
-    $(".menu_container:visible").fadeOut(MENU_SLIDE_SPEED, function(){
-        $("#home_container").fadeIn(MENU_SLIDE_SPEED);
-    });
+    show_menu_container("#home_container");
   });
 });
+
+function show_menu_container(id) {
+  var visible = $(".menu_container:visible");
+  visible.slideUp(MENU_ANIM_TIME, function(){
+      $(id).fadeIn(MENU_ANIM_TIME);
+  });
+}
