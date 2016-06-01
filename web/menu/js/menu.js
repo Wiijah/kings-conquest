@@ -1,4 +1,8 @@
+var MENU_SLIDE_SPEED = 750;
+
 $(document).ready(function() {
+
+  /* Login AJAX */
   $('body').on('click', '#btn_login', function() {
     fs_load();
     var username = $('#username').val();
@@ -10,6 +14,55 @@ $(document).ready(function() {
         return;
       }
       window.location.href = '../interface/';
+    });
+  });
+
+
+  /* Register AJAX */
+  $('body').on('click', '#btn_register', function() {
+    fs_load();
+    var username = $('#reg_user').val();
+    var email1 = $('#reg_email1').val();
+    var email2 = $('#reg_email2').val();
+    var password1 = $('#reg_pass1').val();
+    var password2 = $('#reg_pass2').val();
+
+    if (email1 != email2) {
+      lightbox_alert("Error", "Emails don't match. Please try again.");
+      return;
+    }
+    if (password1 != password2) {
+      lightbox_alert("Error", "Passwords don't match. Please try again.");
+      return;
+    }
+    if (!isStrLenCorrect(username, 3, 20)) {
+      lightbox_alert("Error", "Username should be between 3 to 20 characters.");
+      return;
+    }
+    if (!isStrLenCorrect(password1, 3, 32)) {
+      lightbox_alert("Error", "Your password must be between 3 to 32 characters.");
+      return;
+    }
+    quickPost("ajax/register", {username: username, email: email1, password: password1}, function(data, status) {
+      if (data.kc_error !== undefined) {
+        lightbox_alert("Error", data.kc_error);
+        return;
+      }
+      window.location.href = '../interface/';
+    });
+  });
+
+  /* Open up register form if click on register button */
+  $('body').on('click', '#goto_register', function() {
+    $(".menu_container").slideUp(MENU_SLIDE_SPEED, function(){
+        $("#register_container").slideDown(MENU_SLIDE_SPEED);
+    });
+  });
+
+  /* Open up login form if click on login button */
+  $('body').on('click', '#goto_login', function() {
+    $(".menu_container").slideUp(MENU_SLIDE_SPEED, function(){
+        $("#login_container").slideDown(MENU_SLIDE_SPEED);
     });
   });
 });

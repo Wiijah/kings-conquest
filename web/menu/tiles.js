@@ -58,20 +58,13 @@ function resize() {
 // typeName : king, red_castle, wizard, etc
 // initial: true / false
 
-$(function(){
-    var x = 0;
+$(document).ready(function() {
+    var bg_x = 0;
     setInterval(function(){
-        x+=4;
-        $('.clouds').css('background-position', x + 'px 0');
-    }, 120);
-});
-
-$(function(){
-    var x = 0;
-    setInterval(function(){
-        x-=4;
-        $('body').css('background-position', x + 'px 0');
-    }, 120);
+        bg_x += 5;
+        $('body').css('background-position', '-' + bg_x + 'px 0');
+        $('.clouds').css('background-position', bg_x + 'px 0');
+    }, 125);
 });
 
 function spawnUnit(data, isCreation){

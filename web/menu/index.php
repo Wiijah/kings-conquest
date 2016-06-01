@@ -24,7 +24,11 @@ require_once '../common.php';
   <div id="slogan">Turn-based Fantasy Multiplayer Game</div>
 
   <div id="right_container">
-  <div class='title'><h1>Login</h1></div>
+
+<!-- start login -->
+
+<div id="login_container" class="menu_container">
+  <?php echo genTitle("Login"); ?>
 
   <div class="login_box">
   Username or Email
@@ -36,9 +40,40 @@ require_once '../common.php';
   <input type="submit" value="Login" class="login_btn" id="btn_login" />
   <br /><br />
   <div class="white_line"></div>
-  <br />Don't have an account? Click <a>here</a> to register!
+  <br />Don't have an account? Click <a id="goto_register">here</a> to register!
   <br />Forgot your password? Click <a>here</a>.
   </div>
+</div>
+<!-- end login -->
+
+<!-- start register -->
+<div id="register_container" class="menu_container">
+  <?php echo genTitle("Register"); ?>
+  <div class="login_box">
+  Username
+  <br /><input type="text" class="login_text" id="reg_user" /><br /><br />
+
+  Email
+  <br /><input type="text" class="login_text" id="reg_email1" /><br /><br />
+
+  Re-enter Email
+  <br /><input type="text" class="login_text" id="reg_email2" /><br /><br />
+
+  Password
+  <br /><input type="password" class="login_text" id="reg_pass1" /><br /><br />
+
+  Password
+  <br /><input type="password" class="login_text" id="reg_pass2" /><br /><br />
+
+  <input type="submit" value="Register" class="login_btn" id="btn_register" />
+  <br /><br />
+  <div class="white_line"></div>
+  <br />Already have an account? Click <a id="goto_login">here</a> to login!
+  </div>
+</div> 
+<!-- end register -->
+
+
 <br /><br />
   <div class="white_line"></div><br />
   <div class="footer">&copy; 2016 Kings' Conquest</div>
