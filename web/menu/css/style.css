@@ -24,7 +24,7 @@
   overflow: auto;
 }
 .home_highlight {
-  color: #d57802;
+  color: #FFA600;
 }
 .home_hover {
   opacity: 0.8;
@@ -36,11 +36,13 @@
   float: left;
   position: relative;
   text-align: center;
-  width: 50%;
+  width: 49.5%;
   margin-bottom: 20px;
 }
 .home_right {
-  float: left;
+  display: inline-block;
+  width: 49.5%;
+  float: right;
   position: relative;
   text-align: center;
 }

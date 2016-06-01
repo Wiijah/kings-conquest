@@ -54,22 +54,22 @@ $(document).ready(function() {
 
   /* Open up register form if click on register button */
   $('body').on('click', '.goto_register', function() {
-    $(".menu_container:visible").slideUp(MENU_SLIDE_SPEED, function(){
-        $("#register_container").slideDown(MENU_SLIDE_SPEED);
+    $(".menu_container:visible").fadeOut(MENU_SLIDE_SPEED, function(){
+        $("#register_container").fadeIn(MENU_SLIDE_SPEED);
     });
   });
 
   /* Open up login form if click on login button */
   $('body').on('click', '.goto_login', function() {
-    $(".menu_container:visible").slideUp(MENU_SLIDE_SPEED, function(){
-        $("#login_container").slideDown(MENU_SLIDE_SPEED);
+    $(".menu_container:visible").fadeOut(MENU_SLIDE_SPEED, function(){
+        $("#login_container").fadeIn(MENU_SLIDE_SPEED);
     });
   });
 
   /* Open up home */
   $('body').on('click', '.goto_home', function() {
-    $(".menu_container:visible").slideUp(MENU_SLIDE_SPEED, function(){
-        $("#home_container").slideDown(MENU_SLIDE_SPEED);
+    $(".menu_container:visible").fadeOut(MENU_SLIDE_SPEED, function(){
+        $("#home_container").fadeIn(MENU_SLIDE_SPEED);
     });
   });
 });
