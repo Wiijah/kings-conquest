@@ -647,7 +647,6 @@ function createNewUnit(unitType) {
             }
             break;
         }
-       // currentGoldDisplay = new createjs.Text("Gold: " + p2currentGold, "20px '04b_19'", "#ffffff");
 	} else {
 		switch (unitType) {
         case "knight":
@@ -669,7 +668,6 @@ function createNewUnit(unitType) {
             }
             break;
         }
-        //currentGoldDisplay = new createjs.Text("Gold: " + p1currentGold, "20px '04b_19'", "#ffffff");
     }
     destroyGoldDisplay();
     drawGoldDisplay();
