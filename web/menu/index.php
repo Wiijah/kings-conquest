@@ -25,6 +25,31 @@ require_once '../common.php';
 
   <div id="right_container">
 
+
+<!-- start home -->
+
+<div id="home_container" class="menu_container">
+<div class="home_left goto_login">
+<img src="images/big_blue_king.png" class="home_king" /><br />
+<img src="images/btn_brush.png" class="home_btn" />
+<div class="home_btn_text">Login</div>
+</div>
+
+<div class="home_right goto_register">
+<img src="images/big_red_king.png" class="home_king" /><br />
+<img src="images/btn_brush.png" class="home_btn" />
+<div class="home_btn_text">Register</div>
+</div>
+
+<div class="home_box">
+Kings' Conquest is a <span class='home_highlight'>turned-based multiplayer
+game</span> aimed at fans of the <span class='home_highlight'>fantasy</span> or
+<span class='home_highlight'>strategy</span> genre.
+</div>
+
+</div>
+<!-- end home -->
+
 <!-- start login -->
 
 <div id="login_container" class="menu_container">
@@ -40,7 +65,7 @@ require_once '../common.php';
   <input type="submit" value="Login" class="login_btn" id="btn_login" />
   <br /><br />
   <div class="white_line"></div>
-  <br />Don't have an account? Click <a id="goto_register">here</a> to register!
+  <br />Don't have an account? Click <a class="goto_register">here</a> to register!
   <br />Forgot your password? Click <a>here</a>.
   </div>
 </div>
@@ -68,7 +93,7 @@ require_once '../common.php';
   <input type="submit" value="Register" class="login_btn" id="btn_register" />
   <br /><br />
   <div class="white_line"></div>
-  <br />Already have an account? Click <a id="goto_login">here</a> to login!
+  <br />Already have an account? Click <a class="goto_login">here</a> to login!
   </div>
 </div> 
 <!-- end register -->

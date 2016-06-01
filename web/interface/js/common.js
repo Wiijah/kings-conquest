@@ -91,11 +91,7 @@ function rawPost(url, data, callback) {
 function nothing() {}
 
 function handle_ajax_error(jqXHR, textStatus, errorThrown) {
-  //if (textStatus==="timeout") {
-     lightbox_alert("Server Error", "There was an error connecting to the server. Please try again later.");
-  //   return;
-  //} 
- //lightbox_alert("There was an error connecting to the server. Please try again later.");
+   //lightbox_alert("Server Error", "There was an error connecting to the server. Please try again later.");
 }
 
 /* Function that checks if a string's length is between two numbers. */

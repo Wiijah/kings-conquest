@@ -53,15 +53,15 @@ $(document).ready(function() {
   });
 
   /* Open up register form if click on register button */
-  $('body').on('click', '#goto_register', function() {
-    $(".menu_container").slideUp(MENU_SLIDE_SPEED, function(){
+  $('body').on('click', '.goto_register', function() {
+    $(".menu_container:visible").slideUp(MENU_SLIDE_SPEED, function(){
         $("#register_container").slideDown(MENU_SLIDE_SPEED);
     });
   });
 
   /* Open up login form if click on login button */
-  $('body').on('click', '#goto_login', function() {
-    $(".menu_container").slideUp(MENU_SLIDE_SPEED, function(){
+  $('body').on('click', '.goto_login', function() {
+    $(".menu_container:visible").slideUp(MENU_SLIDE_SPEED, function(){
         $("#login_container").slideDown(MENU_SLIDE_SPEED);
     });
   });
