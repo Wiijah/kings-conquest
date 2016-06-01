@@ -48,6 +48,13 @@ var resized = false;
 
 var turn = 0;
 var playableUnitCount = 0;
+
+
+var	archerSkillDone = false;
+var undoMove = [];
+var undo = false;
+
+
 function showTurnInfo(){
 	stage.removeChild(playerLabel);
 	stage.removeChild(playerLabelBg);
@@ -135,6 +142,14 @@ function turnStartPhase() {
     });
     //draggable.x = -kingX;
     //draggable.y = -kingY;
+
+
+ //    setTimeout(function() {
+	// 	clearSelectionEffects();
+ //    	turn = 1 - turn;
+ //    	turnEndPhase();
+ //    	turnStartPhase();
+	// }, 6000);
 }
 
 function turnEndPhase() {
@@ -232,7 +247,7 @@ function spawnUnit(data, isCreation){
         }
 		unit.x = originX +  (unit.column - unit.row) * 65;
 		unit.y = unit.column * 32.5 + originY + unit.row * 32.5;
-	
+		//lalala	
 
 		unit.regX = 56.5;
 		unit.regY = 130;
@@ -742,7 +757,7 @@ function addEventListenersToUnit(unit) {
                             selectedCharacter.canAttack = 0;
                             selectedCharacter.outOfMoves = 1;
                             playableUnitCount--;
-                            console.log(playableUnitCount);
+                            //console.log(playableUnitCount);
                         }
                     }
                 });
@@ -1025,13 +1040,13 @@ function cast(skillNo, unit) {
             unit.skillCoolDown = 3;
             playableUnitCount--;
             changed = true;
-
+            undoMove.pop();
 			// notify server
 
 			// display updated json
 			break;
 		case 1: // Archer's skill
-
+			archerSkillDone = false;
 			var reachableTiles = findReachableTiles(selectedCharacter.column, selectedCharacter.row, selectedCharacter.attackRange, false);
 			isCasting = true;
 			undoHighlights();
@@ -1047,6 +1062,7 @@ function cast(skillNo, unit) {
             playableUnitCount--;
 	    	isCasting = false;
 			changed = true;
+			undoMove.pop();
 	    	break;
 	    case 4: // Wizard's skill
 	    	isCasting = true;
@@ -1084,6 +1100,7 @@ function castWizardSpellOnClick(event) {
     selectedCharacter.outOfMoves = 1;
     playableUnitCount--;
     selectedCharacter.skillCoolDown = 3;
+   	undoMove.pop();
     isCasting = false;
     changed = true;
 } 
@@ -1220,7 +1237,6 @@ function showDamage(unit, critical, damage){
 
 function attack(attacker, target){
 	// if (attacker.team != target.team) {
-		
 		var sprite = new createjs.Sprite(attacker.spritesheet, "attack");
 		sprite.x = attacker.x;
 		sprite.y = attacker.y;
@@ -1361,7 +1377,13 @@ function movePlayer() {
 
       	sortIndices(selectedCharacter);
         movingPlayer = false;
-        selectedCharacter.canMove = 0;
+        if (undo){
+        	selectedCharacter.canMove = 1;
+        	undo = false;
+        } else {
+        	selectedCharacter.canMove = 0;
+        }
+       
 
 		showActionMenuNextToPlayer(selectedCharacter);
       }
@@ -1682,6 +1704,28 @@ function keyEvent(event) {
 				}
 			}
 			break;
+		case 32: //space
+			if(undoMove.length != 0){
+				if(!archerSkillDone){
+					selectedCharacter.skillCoolDown = 0;
+					selectedCharacter.outOfMoves = 0;
+				}
+				selectedCharacter = undoMove.pop();
+				undo = true;
+				var fromX = selectedCharacter.row;
+				var fromY = selectedCharacter.column;
+				var toX = selectedCharacter.prevRow;
+				var toY = selectedCharacter.prevColumn;
+				console.log("current row:" + fromX + ", current column:" + fromY);
+				console.log("prev row:" + toX + ", prev column:" + toY);
+				findPath(fromX, fromY, toX, toY);
+				blockMaps[fromX][fromY] = 0;
+				move();
+				blockMaps[toX][toY] = 1;
+				selectedCharacter.row = toX;
+				selectedCharacter.column = toY;
+				clearSelectionEffects();
+			}
 		case 70:
 //			goFullScreen();
 			break;
@@ -1812,6 +1856,8 @@ $(function(){
 
 
 function moveCharacter(unit) {
+  	unit.prevRow = unit.row;
+ 	unit.prevColumn = unit.column;
 	var reachableTiles = findReachableTiles(unit.row, unit.column, unit.moveRange, true);
 	highlightArea(reachableTiles, "graphics/tile/green_tile.png", ["click"], [function(event) {
 		var fromX = selectedCharacter.row;
@@ -1824,8 +1870,9 @@ function moveCharacter(unit) {
 		selectedCharacter.row = tile.row;
 		selectedCharacter.column = tile.column;
 		clearSelectionEffects();
+		undoMove.pop();
+		undoMove.push(selectedCharacter);
 	}]);
-
 }
 
 function performAttack() {
@@ -1852,8 +1899,9 @@ function performAttack() {
 
 			}
 		});	
+	archerSkillDone = true;
+	undoMove.pop()
 	}]); 
-	
 }
 
 function highlightArea(tiles, imgSource, callBackEventNames, callBackFunctions) {
