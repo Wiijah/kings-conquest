@@ -644,18 +644,21 @@ function createNewUnit(unitType) {
             if (p2currentGold >= 100) {
                 spawnUnit(that.classStats.knightClass, true);
                 p2currentGold -= 100;
+                playableUnitCount++;
             }
             break;
         case "wizard":
             if (p2currentGold >= 100) {
                 spawnUnit(that.classStats.wizardClass, true);
                 p2currentGold -= 100;
+                playableUnitCount++;
             }
             break;
         case "archer":
             if (p2currentGold >= 100) {
                 spawnUnit(that.classStats.archerClass, true);
                 p2currentGold -= 100;
+                playableUnitCount++;
             }
             break;
         }
@@ -665,18 +668,21 @@ function createNewUnit(unitType) {
             if (p1currentGold >= 100) {
                 spawnUnit(that.classStats.knightClass, true);
                 p1currentGold -= 100;
+                playableUnitCount++;
             }
             break;
         case "wizard":
             if (p1currentGold >= 100) {
                 spawnUnit(that.classStats.wizardClass, true);
                 p1currentGold -= 100;
+                playableUnitCount++;
             }
             break;
         case "archer":
             if (p1currentGold >= 100) {
                 spawnUnit(that.classStats.archerClass, true);
                 p1currentGold -= 100;
+                playableUnitCount++;
             }
             break;
         }
@@ -1184,7 +1190,11 @@ function attack(attacker, target){
 		var sprite = new createjs.Sprite(attacker.spritesheet, "attack");
 		sprite.x = attacker.x;
 		sprite.y = attacker.y;
-		sprite.scaleX = 0.7;
+		if (attacker.x > target.x) {
+ 			sprite.scaleX = 0.7;
+		} else {
+			sprite.scaleX = -0.7;
+		}
 		sprite.scaleY = 0.7;
 		chars.removeChild(attacker);	
 		chars.addChild(sprite);
@@ -1604,8 +1614,8 @@ function keyEvent(event) {
         case 67:
         	draggable.x = 0;
         	draggable.y = 0;
-        	break;
-        case 77:
+        	break; 
+        case 77: //m
         	if (isDisplayingMenu) {
         		if (selectedCharacter.canMove) {
 					undoHighlights();
@@ -1614,7 +1624,7 @@ function keyEvent(event) {
 				}
         	}
         	break;
-        case 65:
+        case 65: //a
         	if (isDisplayingMenu) {
 		        if (selectedCharacter.canAttack) {
 					undoHighlights();
@@ -1625,7 +1635,7 @@ function keyEvent(event) {
 				}
 			}
 			break;
-		case 83:
+		case 83: //s
 			if (isDisplayingMenu) {
 				if (selectedCharacter.skillCoolDown === 0) {
 					undoHighlights();
