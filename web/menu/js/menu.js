@@ -35,8 +35,8 @@ $(document).ready(function() {
       lightbox_alert("Error", "Passwords don't match. Please try again.");
       return;
     }
-    if (!isStrLenCorrect(username, 3, 20)) {
-      lightbox_alert("Error", "Username should be between 3 to 20 characters.");
+    if (!isStrLenCorrect(username, 3, 16)) {
+      lightbox_alert("Error", "Username should be between 3 to 16 characters.");
       return;
     }
     if (!isStrLenCorrect(password1, 3, 32)) {
