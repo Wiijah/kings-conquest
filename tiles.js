@@ -43,6 +43,7 @@ var isCasting = false;
 var p1currentGold;
 var p2currentGold;
 var currentGoldDisplay;
+var mapDrawn = false;
 var resized = false;
 
 var turn = 0;
@@ -122,6 +123,17 @@ function turnStartPhase() {
         }
 
     }    
+    var kingX;
+    var kingY;
+
+    $.each(units, function(i, value) {
+    	if (value.team == turn && value.address == "graphics/spritesheet/stand/ss_king_stand.png") {
+    		kingX = value.x;
+    		kingY = value.y;
+    	}
+    });
+    //draggable.x = -kingX;
+    //draggable.y = -kingY;
 }
 
 function turnEndPhase() {
@@ -363,9 +375,9 @@ function initGame() {
 
 	draggable = new createjs.Container();
 	drag_box = new createjs.Shape();
-	drag_box.graphics.drawRect(-stage.canvas.width ,-stage.canvas.height ,stage.canvas.width * 2,stage.canvas.height * 2);
+	drag_box.graphics.drawRect(-stage.canvas.width*50,-stage.canvas.height*50,stage.canvas.width * 100,stage.canvas.height * 100);
 	drag_box.hitArea = new createjs.Shape();
-	drag_box.hitArea.graphics.beginFill("#000").drawRect(-stage.canvas.width ,-stage.canvas.height ,stage.canvas.width * 2,stage.canvas.height * 2);
+	drag_box.hitArea.graphics.beginFill("#000").drawRect(-stage.canvas.width * 50,-stage.canvas.height * 50,stage.canvas.width * 100,stage.canvas.height * 100);
 	draggable.addChild(drag_box);
 	draggable.on("pressmove", function(event) {
 		if (isDragging) {
@@ -1462,6 +1474,15 @@ function findReachableTiles(x, y, range, isMoving) {
 
 function drawMap(data) {
 
+
+	if (mapDrawn) {
+		for (var i = 0; i < maps.length; i++) {
+			for (var j = 0; j < maps[i].length; j++) {
+				draggable.removeChild(maps[i][j]);
+			}
+		}
+	}
+
 	maps = new Array(mapHeight);
 	for (var i = 0; i < mapHeight; i++) {
 		maps[i] = new Array(mapWidth);
@@ -1513,6 +1534,7 @@ function drawMap(data) {
 			draggable.addChild(maps[i][j]);
 		}
 	}
+	mapDrawn = true;
 
 }
 
@@ -1579,6 +1601,42 @@ function keyEvent(event) {
             	clearSelectionEffects();
             }
             break;
+        case 67:
+        	draggable.x = 0;
+        	draggable.y = 0;
+        	break;
+        case 77:
+        	if (isDisplayingMenu) {
+        		if (selectedCharacter.canMove) {
+					undoHighlights();
+					// drawRange(findReachableTiles(unit.column, unit.row, unit.moveRange, true), 0);
+					moveCharacter(selectedCharacter);
+				}
+        	}
+        	break;
+        case 65:
+        	if (isDisplayingMenu) {
+		        if (selectedCharacter.canAttack) {
+					undoHighlights();
+					// isAttacking = true;
+					// drawRange(findReachableTiles(unit.column, unit.row, unit.attackRange, false), 1);
+					remainingAttackTimes = 1;
+					performAttack();
+				}
+			}
+			break;
+		case 83:
+			if (isDisplayingMenu) {
+				if (selectedCharacter.skillCoolDown === 0) {
+					undoHighlights();
+					isCasting = true;
+					cast(selectedCharacter.skill_no, selectedCharacter);
+				}
+			}
+			break;
+		case 70:
+//			goFullScreen();
+			break;
         case 13: //enter
         	clearSelectionEffects();
         	turn = 1 - turn;
@@ -1586,7 +1644,17 @@ function keyEvent(event) {
         	turnStartPhase();
 
     }
-} 
+}
+
+function goFullScreen(){
+    var canvas = document.getElementById("demoCanvas");
+    if(canvas.requestFullScreen)
+        canvas.requestFullScreen();
+    else if(canvas.webkitRequestFullScreen)
+        canvas.webkitRequestFullScreen();
+    else if(canvas.mozRequestFullScreen)
+        canvas.mozRequestFullScreen();
+}
 
 function update() {
 	if (movingPlayer === true) {
@@ -1601,9 +1669,9 @@ function update() {
 		drawGoldDisplay();
 
 		drag_box = new createjs.Shape();
-		drag_box.graphics.drawRect(-stage.canvas.width ,-stage.canvas.height ,stage.canvas.width * 2,stage.canvas.height * 2);
+		drag_box.graphics.drawRect(-stage.canvas.width * 50,-stage.canvas.height ,stage.canvas.width * 100,stage.canvas.height * 100);
 		drag_box.hitArea = new createjs.Shape();
-		drag_box.hitArea.graphics.beginFill("#000").drawRect(-stage.canvas.width ,-stage.canvas.height ,stage.canvas.width * 2,stage.canvas.height * 2);
+		drag_box.hitArea.graphics.beginFill("#000").drawRect(-stage.canvas.width * 50,-stage.canvas.height ,stage.canvas.width * 100,stage.canvas.height * 100);
 		draggable.addChild(drag_box);
 
 		$.each(unitCards, function(i, value) {
@@ -1721,14 +1789,18 @@ function performAttack() {
 				attack(selectedCharacter, unit);
 				selectedCharacter.attack = selectedCharacter.base_attack;
 				clearSelectionEffects();
+				
 				if (remainingAttackTimes > 0) {
-					performAttack();
+					setTimeout(function() {
+						performAttack();
+					}, 1000);
 				} else {
                     selectedCharacter.canAttack = 0;
                     selectedCharacter.outOfMoves = 1;
                     playableUnitCount--;
                     console.log(playableUnitCount);
-                }
+            	}
+
 			}
 		});	
 	}]); 
