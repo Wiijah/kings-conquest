@@ -42,6 +42,7 @@ var remainingAttackTimes;
 var isCasting = false;
 var currentGold;
 var currentGoldDisplay;
+var mapDrawn = false;
 var resized = false;
 
 var turn = 0;
@@ -119,6 +120,17 @@ function turnStartPhase() {
         }
 
     }    
+    var kingX;
+    var kingY;
+
+    $.each(units, function(i, value) {
+    	if (value.team == turn && value.address == "graphics/spritesheet/stand/ss_king_stand.png") {
+    		kingX = value.x;
+    		kingY = value.y;
+    	}
+    });
+    //draggable.x = -kingX;
+    //draggable.y = -kingY;
 }
 
 function turnEndPhase() {
@@ -1176,7 +1188,7 @@ function attack(attacker, target){
 
 		setTimeout(function() {
 			chars.removeChild(sprite);
-			if (remainingAttackTimes > 0) chars.addChild(attacker);
+			chars.addChild(attacker);
 			chars.removeChild(damageAnimation);
 		}, 1000);
 
@@ -1427,6 +1439,15 @@ function findReachableTiles(x, y, range, isMoving) {
 
 function drawMap(data) {
 
+
+	if (mapDrawn) {
+		for (var i = 0; i < maps.length; i++) {
+			for (var j = 0; j < maps[i].length; j++) {
+				draggable.removeChild(maps[i][j]);
+			}
+		}
+	}
+
 	maps = new Array(mapHeight);
 	for (var i = 0; i < mapHeight; i++) {
 		maps[i] = new Array(mapWidth);
@@ -1478,6 +1499,7 @@ function drawMap(data) {
 			draggable.addChild(maps[i][j]);
 		}
 	}
+	mapDrawn = true;
 
 }
 
@@ -1732,16 +1754,18 @@ function performAttack() {
 				attack(selectedCharacter, unit);
 				selectedCharacter.attack = selectedCharacter.base_attack;
 				clearSelectionEffects();
-				setTimeout(function() {
-					if (remainingAttackTimes > 0) {
+				
+				if (remainingAttackTimes > 0) {
+					setTimeout(function() {
 						performAttack();
-					} else {
-	                    selectedCharacter.canAttack = 0;
-	                    selectedCharacter.outOfMoves = 1;
-	                    playableUnitCount--;
-	                    console.log(playableUnitCount);
-                	}
-				}, 1000);
+					}, 1000);
+				} else {
+                    selectedCharacter.canAttack = 0;
+                    selectedCharacter.outOfMoves = 1;
+                    playableUnitCount--;
+                    console.log(playableUnitCount);
+            	}
+
 			}
 		});	
 	}]); 
