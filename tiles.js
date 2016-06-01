@@ -20,7 +20,7 @@ var blockMap;
 var tile_display;
 var highLight_tile;
 var tile_info_text;
-
+var endGame = false;
 
 var moveButton;
 var attackButton;
@@ -79,38 +79,38 @@ function turnStartPhase() {
 	showTurnInfo();
     playableUnitCount = 0;
     console.log("Starting turn");
-    for (var i = 0; i < units.length; i++) { 
-        // Increment the number of playable unit for the current player
-        if (units[i].team === turn) {
+    $.each(units, function(i, value) {
+    	// Increment the number of playable unit for the current player
+        if (value.team === turn) {
             playableUnitCount += 1;
-            units[i].canMove = 1;
-            units[i].canAttack = 1;
-            units[i].outOfMoves = 0;
+            value.canMove = 1;
+            value.canAttack = 1;
+            value.outOfMoves = 0;
         }
 
         // Reduce the skill cooldown of each unit (if it hasn't cooled down yet)
-        if (units[i].skillCoolDown != 0) {
-            units[i].skillCoolDown--;
+        if (value.skillCoolDown != 0) {
+            value.skillCoolDown--;
         }
 
         var buffsToBeRemoved = [];
         // Decrement the buff duration for each unit
-        for (var j = 0; j < units[i].buffs.length; j++) {
-            units[i].buffs[j][2]--;
-            if (units[i].buffs[j][2] === 0) buffsToBeRemoved.push(units[i].buffs[j][0]);
-            if (units[i].buffs[j][0] === 5) {
+        for (var j = 0; j < value.buffs.length; j++) {
+            value.buffs[j][2]--;
+            if (value.buffs[j][2] === 0) buffsToBeRemoved.push(value.buffs[j][0]);
+            if (value.buffs[j][0] === 5) {
                	
 
-                var damage = units[i].max_hp * 0.02;
+                var damage = value.max_hp * 0.02;
                 chars.removeChild(fire);
-                var fire = new createjs.Sprite(units[i].burnEffect, "burn");
-                showDamage(units[i], 1, damage);
-                fire.x = units[i].x;
-                fire.y = units[i].y;
+                var fire = new createjs.Sprite(value.burnEffect, "burn");
+                showDamage(value, 1, damage);
+                fire.x = value.x;
+                fire.y = value.y;
                 chars.addChild(fire);
 
-                units[i].hp -= damage;
-                updateHP_bar(units[i]);
+                value.hp -= damage;
+                updateHP_bar(value);
                 setTimeout(function() {
 					chars.removeChild(fire);
 				}, 1000);
@@ -119,10 +119,11 @@ function turnStartPhase() {
 
         // Remove all the buffs with duration 0
         for (var j = 0; j < buffsToBeRemoved.length; j++) {
-            removeBuff(buffsToBeRemoved[j], units[i]);
+            removeBuff(buffsToBeRemoved[j], value);
         }
 
-    }    
+    });
+       
     var kingX;
     var kingY;
 
@@ -191,7 +192,7 @@ function spawnUnit(data, isCreation){
 		});
 		unit.damageEffect = damageEffect;
 
-		unit.burnEffect = new createjs.SpriteSheet({
+		var burnEffect = new createjs.SpriteSheet({
 			"images": [that.buffEffects.burning],
 			"frames": {"width": 142, "height": 142, "count": 4, "regY": 110, "regX": 95},
 			"animations": {
@@ -202,8 +203,9 @@ function spawnUnit(data, isCreation){
 			},
 			framerate: 4
 		});
+		unit.burnEffect = burnEffect;
 
-		unit.healEffect = new createjs.SpriteSheet({
+		var healEffect = new createjs.SpriteSheet({
 			"images": [that.buffEffects.heal],
 			"frames": {"width": 142, "height": 142, "count": 4, "regY": 110, "regX": 95},
 			"animations": {
@@ -214,6 +216,7 @@ function spawnUnit(data, isCreation){
 			},
 			framerate: 4
 		});
+		unit.healEffect = healEffect;
 
 
 		unit.team = data.team;
@@ -538,6 +541,28 @@ function updateHP_bar(unit){
 		for (var i = 0; i <= unit.buffs.length; i++) {
 			removeBuff(i, unit);
 		}
+		if (unit.address == "graphics/spritesheet/stand/ss_king_stand.png") {
+		    var endLabelBg = new createjs.Shape();
+			endLabelBg.graphics.beginFill("#000000").drawRect(-stage.canvas.width ,stage.canvas.height - stage.canvas.height/2 ,stage.canvas.width * 2,80);
+			if (turn){
+				var endLabel = new createjs.Text("Player2 Win", "30px Arial", "#0000ff");
+			} else {
+				var endLabel = new createjs.Text("Player1 Win", "30px Arial", "#ff0000");
+			}
+			var restartLabel = new createjs.Text("Press \" r \" to restart", "15px Arial", "#ffffff");
+			
+			endLabel.x = stage.canvas.width - stage.canvas.width / 2 - 100;
+			endLabel.y = stage.canvas.height -  stage.canvas.height / 2 + 20;
+			restartLabel.x = endLabel.x + 20;
+			restartLabel.y = endLabel.y + 35;
+			endLabelBg.alpha = 0.7;
+
+			stage.addChild(endLabelBg);
+			stage.addChild(restartLabel);
+			stage.addChild(endLabel);
+			endGame = true;
+			stage.mouseChildren = false;
+		 }
 	} else {
 		// unit.hp_bar.graphics.clear();
 		// unit.hp_bar.graphics.beginFill("#000000").drawRect(0, 0, 80, 10);
@@ -644,44 +669,48 @@ function createNewUnit(unitType) {
             if (p2currentGold >= 100) {
                 spawnUnit(that.classStats.knightClass, true);
                 p2currentGold -= 100;
+                playableUnitCount++;
             }
             break;
         case "wizard":
             if (p2currentGold >= 100) {
                 spawnUnit(that.classStats.wizardClass, true);
                 p2currentGold -= 100;
+                playableUnitCount++;
             }
             break;
         case "archer":
             if (p2currentGold >= 100) {
                 spawnUnit(that.classStats.archerClass, true);
                 p2currentGold -= 100;
+                playableUnitCount++;
             }
             break;
         }
-       // currentGoldDisplay = new createjs.Text("Gold: " + p2currentGold, "20px '04b_19'", "#ffffff");
 	} else {
 		switch (unitType) {
         case "knight":
             if (p1currentGold >= 100) {
                 spawnUnit(that.classStats.knightClass, true);
                 p1currentGold -= 100;
+                playableUnitCount++;
             }
             break;
         case "wizard":
             if (p1currentGold >= 100) {
                 spawnUnit(that.classStats.wizardClass, true);
                 p1currentGold -= 100;
+                playableUnitCount++;
             }
             break;
         case "archer":
             if (p1currentGold >= 100) {
                 spawnUnit(that.classStats.archerClass, true);
                 p1currentGold -= 100;
+                playableUnitCount++;
             }
             break;
         }
-        //currentGoldDisplay = new createjs.Text("Gold: " + p1currentGold, "20px '04b_19'", "#ffffff");
     }
     destroyGoldDisplay();
     drawGoldDisplay();
@@ -1195,7 +1224,11 @@ function attack(attacker, target){
 		var sprite = new createjs.Sprite(attacker.spritesheet, "attack");
 		sprite.x = attacker.x;
 		sprite.y = attacker.y;
-		sprite.scaleX = 0.7;
+		if (attacker.x > target.x) {
+ 			sprite.scaleX = 0.7;
+		} else {
+			sprite.scaleX = -0.7;
+		}
 		sprite.scaleY = 0.7;
 		chars.removeChild(attacker);	
 		chars.addChild(sprite);
@@ -1615,8 +1648,8 @@ function keyEvent(event) {
         case 67:
         	draggable.x = 0;
         	draggable.y = 0;
-        	break;
-        case 77:
+        	break; 
+        case 77: //m
         	if (isDisplayingMenu) {
         		if (selectedCharacter.canMove) {
 					undoHighlights();
@@ -1625,7 +1658,7 @@ function keyEvent(event) {
 				}
         	}
         	break;
-        case 65:
+        case 65: //a
         	if (isDisplayingMenu) {
 		        if (selectedCharacter.canAttack) {
 					undoHighlights();
@@ -1636,7 +1669,11 @@ function keyEvent(event) {
 				}
 			}
 			break;
-		case 83:
+		case 82: //r
+			if (endGame){
+				location.reload();
+			}
+		case 83: //s
 			if (isDisplayingMenu) {
 				if (selectedCharacter.skillCoolDown === 0) {
 					undoHighlights();
@@ -1649,11 +1686,12 @@ function keyEvent(event) {
 //			goFullScreen();
 			break;
         case 13: //enter
-        	clearSelectionEffects();
-        	turn = 1 - turn;
-        	turnEndPhase();
-        	turnStartPhase();
-
+        	if (!endGame) {
+	        	clearSelectionEffects();
+	        	turn = 1 - turn;
+	        	turnEndPhase();
+	        	turnStartPhase();
+	        }
     }
 }
 
