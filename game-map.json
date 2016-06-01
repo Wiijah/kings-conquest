@@ -18,7 +18,8 @@
 		"width": 14,
 		"height": 13
 	},
-	"currentGold": 5000,
+	"P1currentGold": 5000,
+	"P2currentGold": 5000,
 	"buffEffects":{
 		"heal" : "graphics/spritesheet/spell/ss_heal.png",
 		"burning": "graphics/spritesheet/spell/ss_burning.png"
