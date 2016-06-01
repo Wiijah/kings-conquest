@@ -721,19 +721,28 @@ function addEventListenersToUnit(unit) {
 
             // In this case, we are selecting the unit to be attacked by the wizard spell
             if (selectedCharacter != unit && isCasting && selectedCharacter.team != unit.team) {
-
+                for (var i = 0; i < highlighted.length; i++) {
+                    if (highlighted[i].row === unit.row && highlighted[i].column === unit.column) {
+                        break;
+                    }
+                    console.log(i);
+                    if (i == highlighted.length - 1) return;
+                }
                 $.each(units, function(i, otherUnit) {
 
                     if (otherUnit.column == unit.column && otherUnit.row == unit.row && otherUnit.team != selectedCharacter.team) {
                         attack(selectedCharacter, otherUnit);
+                        applyBuff(5, otherUnit);
                     }
                     if (otherUnit.column == unit.column
                         && (otherUnit.row == unit.row-1 || otherUnit.row == unit.row+1) && otherUnit.team != selectedCharacter.team) {
                         attack(selectedCharacter, otherUnit);
+                        applyBuff(5, otherUnit);
                     }
                     if (otherUnit.row == unit.row
                         && (otherUnit.column == unit.column-1 || otherUnit.column == unit.column+1) && otherUnit.team != selectedCharacter.team) {
                         attack(selectedCharacter, otherUnit);
+                        applyBuff(5, otherUnit);
                     }
                     clearSelectionEffects();
                     selectedCharacter.outOfMoves = 1;
