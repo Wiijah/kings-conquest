@@ -65,4 +65,11 @@ $(document).ready(function() {
         $("#login_container").slideDown(MENU_SLIDE_SPEED);
     });
   });
+
+  /* Open up home */
+  $('body').on('click', '.goto_home', function() {
+    $(".menu_container:visible").slideUp(MENU_SLIDE_SPEED, function(){
+        $("#home_container").slideDown(MENU_SLIDE_SPEED);
+    });
+  });
 });

@@ -29,13 +29,13 @@ require_once '../common.php';
 <!-- start home -->
 
 <div id="home_container" class="menu_container">
-<div class="home_left goto_login">
+<div class="home_left goto_login home_hover">
 <img src="images/big_blue_king.png" class="home_king" /><br />
 <img src="images/btn_brush.png" class="home_btn" />
 <div class="home_btn_text">Login</div>
 </div>
 
-<div class="home_right goto_register">
+<div class="home_right goto_register home_hover">
 <img src="images/big_red_king.png" class="home_king" /><br />
 <img src="images/btn_brush.png" class="home_btn" />
 <div class="home_btn_text">Register</div>
@@ -68,6 +68,7 @@ game</span> aimed at fans of the <span class='home_highlight'>fantasy</span> or
   <br />Don't have an account? Click <a class="goto_register">here</a> to register!
   <br />Forgot your password? Click <a>here</a>.
   </div>
+  <div class="goto_home_btn goto_home">Home</div>
 </div>
 <!-- end login -->
 
@@ -95,9 +96,9 @@ game</span> aimed at fans of the <span class='home_highlight'>fantasy</span> or
   <div class="white_line"></div>
   <br />Already have an account? Click <a class="goto_login">here</a> to login!
   </div>
+  <div class="goto_home_btn goto_home">Home</div>
 </div> 
 <!-- end register -->
-
 
 <br /><br />
   <div class="white_line"></div><br />
