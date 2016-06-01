@@ -1182,34 +1182,41 @@ function movePlayer() {
       destX = path[0][0],
       destY = path[0][1];
 
+
+  var coefficientX = 0;
+  var coefficientY = 0;
+
+
   if (playerX < destX && playerY < destY) {
-    selectedCharacter.x += MOVEMENT_STEP;
-    selectedCharacter.y += MOVEMENT_STEP / 2;
-
-    selectedCharacter.hp_bar.x += MOVEMENT_STEP;
-    selectedCharacter.hp_bar.y += MOVEMENT_STEP / 2;
+    coefficientX = 1.0;
+    coefficientY = 1.0;
   } else if (playerX > destX && playerY > destY) {
-    selectedCharacter.x -= MOVEMENT_STEP;
-    selectedCharacter.y -= MOVEMENT_STEP / 2;
-
-
-    selectedCharacter.hp_bar.x -= MOVEMENT_STEP;
-    selectedCharacter.hp_bar.y -= MOVEMENT_STEP / 2;
+    coefficientX = -1.0;
+    coefficientY = -1.0;
   } else if (playerX < destX && playerY > destY) {
-    selectedCharacter.x += MOVEMENT_STEP;
-    selectedCharacter.y -= MOVEMENT_STEP / 2;
+    coefficientX = 1.0;
+    coefficientY = -1.0;
+  } else if (playerX > destX && playerY < destY) {
+    coefficientX = -1.0;
+    coefficientY = 1.0;
+  } 
 
 
-    selectedCharacter.hp_bar.x += MOVEMENT_STEP;
-    selectedCharacter.hp_bar.y -= MOVEMENT_STEP / 2;
-  } else if (playerX > destX && playerY < destY){
-  	selectedCharacter.x -= MOVEMENT_STEP;
-  	selectedCharacter.y += MOVEMENT_STEP / 2;
+
+  var stepX = coefficientX * MOVEMENT_STEP;
+  var stepY = coefficientY * MOVEMENT_STEP / 2;
 
 
-    selectedCharacter.hp_bar.x -= MOVEMENT_STEP;
-    selectedCharacter.hp_bar.y += MOVEMENT_STEP / 2;
+  selectedCharacter.x += stepX;
+  selectedCharacter.y += stepY;
+  selectedCharacter.hp_bar.x += stepX;
+  selectedCharacter.hp_bar.y += stepY;
+
+  for (var i = 0; i < selectedCharacter.buffs.length; i++) {
+    selectedCharacter.buffs[i][3].x += stepX;
+    selectedCharacter.buffs[i][3].y += stepY;
   }
+
 
   if ((playerX === destX) && (playerY === destY)) {
       path.splice(0,1);
