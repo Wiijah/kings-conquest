@@ -5,9 +5,6 @@ if (!isset($_SESSION['id'])) {
   header ("Location: ../{$LOGIN_FORM_DIR}");
   die();
 }
-function genTitle($title) {
-  return "<div class='title'><h1>{$title}</h1></div>";
-}
 ?>
 <!DOCTYPE html>
 <html>
@@ -24,6 +21,7 @@ function genTitle($title) {
   <!-- JS -->
   <script src="../utils/jquery.js"></script>
   <script src="js/common.js"></script>
+  <script src="js/style.js"></script>
   <script src="js/lightbox.js"></script>
   <script>
   <!--
