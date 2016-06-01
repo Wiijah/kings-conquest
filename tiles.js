@@ -40,7 +40,8 @@ var movingPlayer = false;
 var isAttacking = false;
 var remainingAttackTimes;
 var isCasting = false;
-var currentGold;
+var p1currentGold;
+var p2currentGold;
 var currentGoldDisplay;
 var resized = false;
 
@@ -72,6 +73,8 @@ function showTurnInfo(){
 
 
 function turnStartPhase() {
+	destroyGoldDisplay();
+    drawGoldDisplay();
 	showTurnInfo();
     playableUnitCount = 0;
     console.log("Starting turn");
@@ -176,7 +179,7 @@ function spawnUnit(data, isCreation){
 		});
 		unit.damageEffect = damageEffect;
 
-		var burnEffect = new createjs.SpriteSheet({
+		unit.burnEffect = new createjs.SpriteSheet({
 			"images": [that.buffEffects.burning],
 			"frames": {"width": 142, "height": 142, "count": 4, "regY": 110, "regX": 95},
 			"animations": {
@@ -187,9 +190,8 @@ function spawnUnit(data, isCreation){
 			},
 			framerate: 4
 		});
-		unit.burnEffect = burnEffect;
 
-		var healEffect = new createjs.SpriteSheet({
+		unit.healEffect = new createjs.SpriteSheet({
 			"images": [that.buffEffects.heal],
 			"frames": {"width": 142, "height": 142, "count": 4, "regY": 110, "regX": 95},
 			"animations": {
@@ -200,15 +202,16 @@ function spawnUnit(data, isCreation){
 			},
 			framerate: 4
 		});
-		unit.healEffect = healEffect;
 
 
 		unit.team = data.team;
         if (isCreation) {
+        	unit.team = turn;
             var coord = findFreeSpace();
             unit.row = coord[0];
             unit.column = coord[1];
         } else {
+          unit.team = data.team;
 		  unit.column = data.y;
 		  unit.row = data.x;
         }
@@ -316,7 +319,7 @@ function initGame() {
 	audio.loop = true;
 	audio.play();
 
-	
+
 	createjs.Ticker.addEventListener("tick", keyEvent);
     this.document.onkeydown = keyEvent;
 	stage.enableMouseOver(20);
@@ -341,9 +344,9 @@ function initGame() {
 
 
 		that.buffEffects = data.buffEffects;
-		currentGold = data.currentGold;
+		p1currentGold = data.P1currentGold;
+		p2currentGold = data.P2currentGold;
 		drawGoldDisplay();
-		
 		that.drawMap(that.mapData);
 
 		//should only spawn 2 kings and castles
@@ -621,31 +624,55 @@ function createFloatingCards(listOfSources, correspondingUnit) {
 	}
 }
 
+//really bad
 function createNewUnit(unitType) {
-
-    switch (unitType) {
+	if (turn){
+		switch (unitType) {
         case "knight":
-            if (currentGold >= 100) {
+            if (p2currentGold >= 100) {
                 spawnUnit(that.classStats.knightClass, true);
-                currentGold -= 100;
+                p2currentGold -= 100;
             }
             break;
         case "wizard":
-            if (currentGold >= 100) {
+            if (p2currentGold >= 100) {
                 spawnUnit(that.classStats.wizardClass, true);
-                currentGold -= 100;
+                p2currentGold -= 100;
             }
             break;
         case "archer":
-            if (currentGold >= 100) {
+            if (p2currentGold >= 100) {
                 spawnUnit(that.classStats.archerClass, true);
-                currentGold -= 100;
+                p2currentGold -= 100;
             }
             break;
+        }
+       // currentGoldDisplay = new createjs.Text("Gold: " + p2currentGold, "20px '04b_19'", "#ffffff");
+	} else {
+		switch (unitType) {
+        case "knight":
+            if (p1currentGold >= 100) {
+                spawnUnit(that.classStats.knightClass, true);
+                p1currentGold -= 100;
+            }
+            break;
+        case "wizard":
+            if (p1currentGold >= 100) {
+                spawnUnit(that.classStats.wizardClass, true);
+                p1currentGold -= 100;
+            }
+            break;
+        case "archer":
+            if (p1currentGold >= 100) {
+                spawnUnit(that.classStats.archerClass, true);
+                p1currentGold -= 100;
+            }
+            break;
+        }
+        //currentGoldDisplay = new createjs.Text("Gold: " + p1currentGold, "20px '04b_19'", "#ffffff");
     }
-
-    currentGoldDisplay.text = ("Gold: " + currentGold);
-
+    destroyGoldDisplay();
+    drawGoldDisplay();
 }
 
 function addEventListenersToUnit(unit) {
@@ -752,14 +779,17 @@ function destroyGoldDisplay() {
 }
 
 function drawGoldDisplay() {
-
 	coin_pic = new createjs.Bitmap("graphics/coin.png");
 	coin_pic.x = stage.canvas.width - 170;
 	coin_pic.y = 10;
 	coin_pic.scaleX = 1;
 	coin_pic.scaleY = 1
-
-	currentGoldDisplay = new createjs.Text("Gold: " + currentGold, "20px '04b_19'", "#ffffff");
+	if (turn){
+		currentGoldDisplay = new createjs.Text("Gold: " + p2currentGold, "20px '04b_19'", "#ffffff");
+	} else {
+		currentGoldDisplay = new createjs.Text("Gold: " + p1currentGold, "20px '04b_19'", "#ffffff");
+	}
+	
 	currentGoldDisplay.x = coin_pic.x + 40;
 	currentGoldDisplay.y = coin_pic.y  +5;
 	currentGoldDisplay.textBasline = "alphabetic";
