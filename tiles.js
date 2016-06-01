@@ -245,8 +245,11 @@ function initGame() {
 
 
 	draggable = new createjs.Container();
-	var box = new createjs.Shape();
-	draggable.addChild(box);
+	drag_box = new createjs.Shape();
+	drag_box.graphics.drawRect(-stage.canvas.width*50,-stage.canvas.height*50,stage.canvas.width * 100,stage.canvas.height * 100);
+	drag_box.hitArea = new createjs.Shape();
+	drag_box.hitArea.graphics.beginFill("#000").drawRect(-stage.canvas.width * 50,-stage.canvas.height * 50,stage.canvas.width * 100,stage.canvas.height * 100);
+	draggable.addChild(drag_box);
 	draggable.on("pressmove", function(event) {
 		if (isDragging) {
 			this.x = event.stageX - offX;
@@ -637,14 +640,14 @@ function drawStatsDisplay() {
 
 function displayStats(unit) {
 	if(unit.team === 1){
-		var box = new createjs.Bitmap("graphics/stats_background_self.png");
+		var drag_box = new createjs.Bitmap("graphics/stats_background_self.png");
 	} else {
-		var box = new createjs.Bitmap("graphics/stats_background_opponent.png");
+		var drag_box = new createjs.Bitmap("graphics/stats_background_opponent.png");
 	}
 	
-	box.scaleX = 0.8;
-	box.scaleY = 0.8;
-	statsDisplay.addChild(box);
+	drag_box.scaleX = 0.8;
+	drag_box.scaleY = 0.8;
+	statsDisplay.addChild(drag_box);
 
 	var bmp = new createjs.Bitmap(unit.info);
 	bmp.scaleX = 0.75;
@@ -1045,7 +1048,7 @@ function attack(attacker, target){
 
 		setTimeout(function() {
 			chars.removeChild(sprite);
-			chars.addChild(attacker);
+			if (remainingAttackTimes > 0) chars.addChild(attacker);
 			chars.removeChild(damageAnimation);
 		}, 1000);
 
@@ -1066,10 +1069,10 @@ function destroyStats() {
 	stage.removeChild(statsDisplay);
 	// statsDisplay.removeChild(2, 3);
 
-	// var box = new createjs.Bitmap("graphics/stats_background.png");
-	// box.scaleX = 0.8;
-	// box.scaleY = 0.8;
-	// statsDisplay.addChild(box);
+	// var drag_box = new createjs.Bitmap("graphics/stats_background.png");
+	// drag_box.scaleX = 0.8;
+	// drag_box.scaleY = 0.8;
+	// statsDisplay.addChild(drag_box);
 	changed = true;
 }
 
@@ -1419,9 +1422,54 @@ function keyEvent(event) {
             	clearSelectionEffects();
             }
             break;
-
+        case 67:
+        	draggable.x = 0;
+        	draggable.y = 0;
+        	break;
+        case 77:
+        	if (isDisplayingMenu) {
+        		if (selectedCharacter.canMove) {
+					undoHighlights();
+					// drawRange(findReachableTiles(unit.column, unit.row, unit.moveRange, true), 0);
+					moveCharacter(selectedCharacter);
+				}
+        	}
+        	break;
+        case 65:
+        	if (isDisplayingMenu) {
+		        if (selectedCharacter.canAttack) {
+					undoHighlights();
+					// isAttacking = true;
+					// drawRange(findReachableTiles(unit.column, unit.row, unit.attackRange, false), 1);
+					remainingAttackTimes = 1;
+					performAttack();
+				}
+			}
+			break;
+		case 83:
+			if (isDisplayingMenu) {
+				if (selectedCharacter.skillCoolDown === 0) {
+					undoHighlights();
+					isCasting = true;
+					cast(selectedCharacter.skill_no, selectedCharacter);
+				}
+			}
+			break;
+		case 70:
+			goFullScreen();
+			break;
     }
-} 
+}
+
+function goFullScreen(){
+    var canvas = document.getElementById("demoCanvas");
+    if(canvas.requestFullScreen)
+        canvas.requestFullScreen();
+    else if(canvas.webkitRequestFullScreen)
+        canvas.webkitRequestFullScreen();
+    else if(canvas.mozRequestFullScreen)
+        canvas.mozRequestFullScreen();
+}
 
 function update() {
 	if (movingPlayer === true) {
@@ -1434,6 +1482,12 @@ function update() {
 		drawStatsDisplay();
 		destroyGoldDisplay();
 		drawGoldDisplay();
+
+		drag_box = new createjs.Shape();
+		drag_box.graphics.drawRect(-stage.canvas.width * 50,-stage.canvas.height ,stage.canvas.width * 100,stage.canvas.height * 100);
+		drag_box.hitArea = new createjs.Shape();
+		drag_box.hitArea.graphics.beginFill("#000").drawRect(-stage.canvas.width * 50,-stage.canvas.height ,stage.canvas.width * 100,stage.canvas.height * 100);
+		draggable.addChild(drag_box);
 
 		$.each(unitCards, function(i, value) {
 			stage.removeChild(value.text);
@@ -1452,6 +1506,10 @@ function update() {
 
 	chars.x = draggable.x;
 	chars.y = draggable.y;
+
+
+    drag_box.x = draggable.x;
+    drag_box.y = draggable.y; 
 
 	stage.addChild(statsDisplay);
 	stage.addChild(unitCreationMenu);
@@ -1546,9 +1604,11 @@ function performAttack() {
 				attack(selectedCharacter, unit);
 				selectedCharacter.attack = selectedCharacter.base_attack;
 				clearSelectionEffects();
-				if (remainingAttackTimes > 0) {
-					performAttack();
-				}
+				setTimeout(function() {
+					if (remainingAttackTimes > 0) {
+						performAttack();
+					}
+				}, 1000);
 			}
 		});	
 	}]); 
