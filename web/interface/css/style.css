@@ -20,24 +20,6 @@ ul, ol {
 
 
 /* General CSS */
-/* General Button */
-.btn {
-  position: relative;
-  text-align: center;
-  border-radius: 0.4vw;
-  cursor: pointer;
-  background-image: url("../images/btn_bg.png");
-  background-clip: padding-box;
-  border: 0.3vw solid;
-  border-color: rgba(255,255,255,.2);
-  padding: 0.8vw 1vw 0.3vw 1.2vw;
-}
-.btn:hover {
-  box-shadow: 0 0 3px #888;
-  text-shadow: 0 0 2px #FFF, 0 0 1px #FFF, 1px 1px 7px #FFF, 0 0 0 #FFF;
-  background-image: url("../images/btn_bg_hover.png");
-  border-color: rgba(255,255,255,.3);
-}
 .box {
   border-radius: 0.3vw;
   background-color: rgba(0, 0, 0, 0.5);
@@ -75,25 +57,6 @@ ul, ol {
   border-color: rgba(255, 255, 255, .5);
 } 
 
-/* Circle */
-.circle {
-  border-radius: 50%;
-  behavior: url(PIE.htc);
-}
-/* Circle Btn */
-.circle_btn {
-  text-align: center;
-  vertical-align: center;
-  cursor: pointer;
-  border-radius: 50%;
-  behavior: url(PIE.htc);
-  width: 35px;
-  height: 35px;
-  padding: 2px;
-  font-size: 26px;
-  background: rgba(0, 0, 0, .5);
-  border: 3px solid rgba(255, 255, 255, .5);
-}
 
 /* Form table */
 .form_table {
@@ -236,8 +199,8 @@ h1:after {
 
 body {
   position: relative;
-  background-image: url("../images/bg_blue_red.jpg");
-  background-position: top center; 
+  background-image: url("../../images/background.jpg");
+  background-position: top left; 
   background-attachment: fixed;
   font-family: BebasNeueLight;
   color: #FFF;

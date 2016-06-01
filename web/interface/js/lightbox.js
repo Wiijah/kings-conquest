@@ -1,4 +1,4 @@
-var LB_FS = 300; //lightbox fade speed
+var LB_FS = 1; //lightbox fade speed
 
 /* Lightbox utility methods */
 
@@ -44,9 +44,9 @@ $(document).ready(function() {
 // Show the black background surrounding the lightbox
 function lightbox_open(id) {
   lightbox_quick_close(); // prevent more than one lightbox showing
-  $("#lightbox_behind").fadeIn(LB_FS);
+  $("#lightbox_behind").show();
   //Fade the lightbox in
-  $("#lightbox_"+id).fadeIn(LB_FS);
+  $("#lightbox_"+id).show();
   $("#fs_load").hide();
 }
 /* Generic lightbox alert */
@@ -59,9 +59,9 @@ function lightbox_alert(title, message) {
 /* Function that fades out all lightbox related objects */
 function lightbox_close() {
   if (page_disabled) return; //if session expired, force alert box open
-  $("#lightbox_behind").fadeOut(LB_FS);
-  $(".lightbox_error").fadeOut(LB_FS);
-  $(".lightbox_container").fadeOut(LB_FS);
+  $("#lightbox_behind").hide();
+  $(".lightbox_error").hide();
+  $(".lightbox_container").hide();
 }
 
 /* Close all FS loading and old lightboxes */
@@ -72,7 +72,7 @@ function lightbox_quick_close() {
 }
 
 function fs_load() {
-  $("#fs_load").fadeIn(LB_FS);
+  $("#fs_load").show();
 }
 
 function in_dev() {
