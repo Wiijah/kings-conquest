@@ -18,7 +18,8 @@
 		"width": 14,
 		"height": 13
 	},
-	"currentGold": 5000,
+	"P1currentGold": 5000,
+	"P2currentGold": 5000,
 	"buffEffects":{
 		"heal" : "graphics/spritesheet/spell/ss_heal.png",
 		"burning": "graphics/spritesheet/spell/ss_burning.png"
@@ -99,7 +100,7 @@
 			"skill": "RED",
 			"skill_no": -1,
 			"luck":1,
-			"x" : 0,
+			"x" : 1,
 			"y" : 0,
 			"moveRange" : 0, 
 			"team": 0,
@@ -326,7 +327,7 @@
 			"info": "graphics/card/castle_card.png",
 			"hp" : 5000,
 			"max_hp" : 5000,
-			"attack" : 0,
+			"attack" : 1000,
 			"skill": "NULL", 
 			"skill_no": -1,
 			"luck":1,
@@ -334,9 +335,9 @@
 			"y" : 2,
 			"moveRange" : 0, 
 			"team": 1,
-			"attackRange" : 0,
+			"attackRange" : 10,
 			"canMove" : 0,
-			"canAttack" : 0,
+			"canAttack" : 1,
 			"skillCoolDown" : 0,
 			"outOfMoves" : 1,
 			"damageEffect": "graphics/spritesheet/spell/ss_physical_attack.png"

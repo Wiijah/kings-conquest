@@ -20,7 +20,7 @@ var blockMap;
 var tile_display;
 var highLight_tile;
 var tile_info_text;
-
+var endGame = false;
 
 var moveButton;
 var attackButton;
@@ -40,8 +40,10 @@ var movingPlayer = false;
 var isAttacking = false;
 var remainingAttackTimes;
 var isCasting = false;
-var currentGold;
+var p1currentGold;
+var p2currentGold;
 var currentGoldDisplay;
+var mapDrawn = false;
 var resized = false;
 
 var turn = 0;
@@ -72,41 +74,43 @@ function showTurnInfo(){
 
 
 function turnStartPhase() {
-	//showTurnInfo();
+	destroyGoldDisplay();
+    drawGoldDisplay();
+	showTurnInfo();
     playableUnitCount = 0;
     console.log("Starting turn");
-    for (var i = 0; i < units.length; i++) { 
-        // Increment the number of playable unit for the current player
-        if (units[i].team === turn) {
+    $.each(units, function(i, value) {
+    	// Increment the number of playable unit for the current player
+        if (value.team === turn) {
             playableUnitCount += 1;
-            units[i].canMove = 1;
-            units[i].canAttack = 1;
-            units[i].outOfMoves = 0;
+            value.canMove = 1;
+            value.canAttack = 1;
+            value.outOfMoves = 0;
         }
 
         // Reduce the skill cooldown of each unit (if it hasn't cooled down yet)
-        if (units[i].skillCoolDown != 0) {
-            units[i].skillCoolDown--;
+        if (value.skillCoolDown != 0) {
+            value.skillCoolDown--;
         }
 
         var buffsToBeRemoved = [];
         // Decrement the buff duration for each unit
-        for (var j = 0; j < units[i].buffs.length; j++) {
-            units[i].buffs[j][2]--;
-            if (units[i].buffs[j][2] === 0) buffsToBeRemoved.push(units[i].buffs[j][0]);
-            if (units[i].buffs[j][0] === 5) {
+        for (var j = 0; j < value.buffs.length; j++) {
+            value.buffs[j][2]--;
+            if (value.buffs[j][2] === 0) buffsToBeRemoved.push(value.buffs[j][0]);
+            if (value.buffs[j][0] === 5) {
                	
 
-                var damage = units[i].max_hp * 0.02;
+                var damage = value.max_hp * 0.02;
                 chars.removeChild(fire);
-                var fire = new createjs.Sprite(units[i].burnEffect, "burn");
-                showDamage(units[i], 1, damage);
-                fire.x = units[i].x;
-                fire.y = units[i].y;
+                var fire = new createjs.Sprite(value.burnEffect, "burn");
+                showDamage(value, 1, damage);
+                fire.x = value.x;
+                fire.y = value.y;
                 chars.addChild(fire);
 
-                units[i].hp -= damage;
-                updateHP_bar(units[i]);
+                value.hp -= damage;
+                updateHP_bar(value);
                 setTimeout(function() {
 					chars.removeChild(fire);
 				}, 1000);
@@ -115,10 +119,22 @@ function turnStartPhase() {
 
         // Remove all the buffs with duration 0
         for (var j = 0; j < buffsToBeRemoved.length; j++) {
-            removeBuff(buffsToBeRemoved[j], units[i]);
+            removeBuff(buffsToBeRemoved[j], value);
         }
 
-    }    
+    });
+       
+    var kingX;
+    var kingY;
+
+    $.each(units, function(i, value) {
+    	if (value.team == turn && value.address == "graphics/spritesheet/stand/ss_king_stand.png") {
+    		kingX = value.x;
+    		kingY = value.y;
+    	}
+    });
+    //draggable.x = -kingX;
+    //draggable.y = -kingY;
 }
 
 function turnEndPhase() {
@@ -205,10 +221,12 @@ function spawnUnit(data, isCreation){
 
 		unit.team = data.team;
         if (isCreation) {
+        	unit.team = turn;
             var coord = findFreeSpace();
             unit.row = coord[0];
             unit.column = coord[1];
         } else {
+          unit.team = data.team;
 		  unit.column = data.y;
 		  unit.row = data.x;
         }
@@ -312,6 +330,9 @@ function findFreeSpace(){
 }
 
 function initGame() {
+	var audio = new Audio('Test.mp3');
+	audio.loop = true;
+	audio.play();
 
 
 	createjs.Ticker.addEventListener("tick", keyEvent);
@@ -338,9 +359,9 @@ function initGame() {
 
 
 		that.buffEffects = data.buffEffects;
-		currentGold = data.currentGold;
+		p1currentGold = data.P1currentGold;
+		p2currentGold = data.P2currentGold;
 		drawGoldDisplay();
-		
 		that.drawMap(that.mapData);
 
 		//should only spawn 2 kings and castles
@@ -357,9 +378,9 @@ function initGame() {
 
 	draggable = new createjs.Container();
 	drag_box = new createjs.Shape();
-	drag_box.graphics.drawRect(-stage.canvas.width ,-stage.canvas.height ,stage.canvas.width * 2,stage.canvas.height * 2);
+	drag_box.graphics.drawRect(-stage.canvas.width*50,-stage.canvas.height*50,stage.canvas.width * 100,stage.canvas.height * 100);
 	drag_box.hitArea = new createjs.Shape();
-	drag_box.hitArea.graphics.beginFill("#000").drawRect(-stage.canvas.width ,-stage.canvas.height ,stage.canvas.width * 2,stage.canvas.height * 2);
+	drag_box.hitArea.graphics.beginFill("#000").drawRect(-stage.canvas.width * 50,-stage.canvas.height * 50,stage.canvas.width * 100,stage.canvas.height * 100);
 	draggable.addChild(drag_box);
 	draggable.on("pressmove", function(event) {
 		if (isDragging) {
@@ -520,6 +541,28 @@ function updateHP_bar(unit){
 		for (var i = 0; i <= unit.buffs.length; i++) {
 			removeBuff(i, unit);
 		}
+		if (unit.address == "graphics/spritesheet/stand/ss_king_stand.png") {
+		    var endLabelBg = new createjs.Shape();
+			endLabelBg.graphics.beginFill("#000000").drawRect(-stage.canvas.width ,stage.canvas.height - stage.canvas.height/2 ,stage.canvas.width * 2,80);
+			if (turn){
+				var endLabel = new createjs.Text("Player2 Win", "30px Arial", "#0000ff");
+			} else {
+				var endLabel = new createjs.Text("Player1 Win", "30px Arial", "#ff0000");
+			}
+			var restartLabel = new createjs.Text("Press \" r \" to restart", "15px Arial", "#ffffff");
+			
+			endLabel.x = stage.canvas.width - stage.canvas.width / 2 - 100;
+			endLabel.y = stage.canvas.height -  stage.canvas.height / 2 + 20;
+			restartLabel.x = endLabel.x + 20;
+			restartLabel.y = endLabel.y + 35;
+			endLabelBg.alpha = 0.7;
+
+			stage.addChild(endLabelBg);
+			stage.addChild(restartLabel);
+			stage.addChild(endLabel);
+			endGame = true;
+			stage.mouseChildren = false;
+		 }
 	} else {
 		// unit.hp_bar.graphics.clear();
 		// unit.hp_bar.graphics.beginFill("#000000").drawRect(0, 0, 80, 10);
@@ -618,31 +661,59 @@ function createFloatingCards(listOfSources, correspondingUnit) {
 	}
 }
 
+//really bad
 function createNewUnit(unitType) {
-
-    switch (unitType) {
+	if (turn){
+		switch (unitType) {
         case "knight":
-            if (currentGold >= 100) {
+            if (p2currentGold >= 100) {
                 spawnUnit(that.classStats.knightClass, true);
-                currentGold -= 100;
+                p2currentGold -= 100;
+                playableUnitCount++;
             }
             break;
         case "wizard":
-            if (currentGold >= 100) {
+            if (p2currentGold >= 100) {
                 spawnUnit(that.classStats.wizardClass, true);
-                currentGold -= 100;
+                p2currentGold -= 100;
+                playableUnitCount++;
             }
             break;
         case "archer":
-            if (currentGold >= 100) {
+            if (p2currentGold >= 100) {
                 spawnUnit(that.classStats.archerClass, true);
-                currentGold -= 100;
+                p2currentGold -= 100;
+                playableUnitCount++;
             }
             break;
+        }
+	} else {
+		switch (unitType) {
+        case "knight":
+            if (p1currentGold >= 100) {
+                spawnUnit(that.classStats.knightClass, true);
+                p1currentGold -= 100;
+                playableUnitCount++;
+            }
+            break;
+        case "wizard":
+            if (p1currentGold >= 100) {
+                spawnUnit(that.classStats.wizardClass, true);
+                p1currentGold -= 100;
+                playableUnitCount++;
+            }
+            break;
+        case "archer":
+            if (p1currentGold >= 100) {
+                spawnUnit(that.classStats.archerClass, true);
+                p1currentGold -= 100;
+                playableUnitCount++;
+            }
+            break;
+        }
     }
-
-    currentGoldDisplay.text = ("Gold: " + currentGold);
-
+    destroyGoldDisplay();
+    drawGoldDisplay();
 }
 
 function addEventListenersToUnit(unit) {
@@ -679,19 +750,28 @@ function addEventListenersToUnit(unit) {
 
             // In this case, we are selecting the unit to be attacked by the wizard spell
             if (selectedCharacter != unit && isCasting && selectedCharacter.team != unit.team) {
-
+                for (var i = 0; i < highlighted.length; i++) {
+                    if (highlighted[i].row === unit.row && highlighted[i].column === unit.column) {
+                        break;
+                    }
+                    console.log(i);
+                    if (i == highlighted.length - 1) return;
+                }
                 $.each(units, function(i, otherUnit) {
 
                     if (otherUnit.column == unit.column && otherUnit.row == unit.row && otherUnit.team != selectedCharacter.team) {
                         attack(selectedCharacter, otherUnit);
+                        applyBuff(5, otherUnit);
                     }
                     if (otherUnit.column == unit.column
                         && (otherUnit.row == unit.row-1 || otherUnit.row == unit.row+1) && otherUnit.team != selectedCharacter.team) {
                         attack(selectedCharacter, otherUnit);
+                        applyBuff(5, otherUnit);
                     }
                     if (otherUnit.row == unit.row
                         && (otherUnit.column == unit.column-1 || otherUnit.column == unit.column+1) && otherUnit.team != selectedCharacter.team) {
                         attack(selectedCharacter, otherUnit);
+                        applyBuff(5, otherUnit);
                     }
                     clearSelectionEffects();
                     selectedCharacter.outOfMoves = 1;
@@ -749,14 +829,17 @@ function destroyGoldDisplay() {
 }
 
 function drawGoldDisplay() {
-
 	coin_pic = new createjs.Bitmap("graphics/coin.png");
 	coin_pic.x = stage.canvas.width - 170;
 	coin_pic.y = 10;
 	coin_pic.scaleX = 1;
 	coin_pic.scaleY = 1
-
-	currentGoldDisplay = new createjs.Text("Gold: " + currentGold, "20px '04b_19'", "#ffffff");
+	if (turn){
+		currentGoldDisplay = new createjs.Text("Gold: " + p2currentGold, "20px '04b_19'", "#ffffff");
+	} else {
+		currentGoldDisplay = new createjs.Text("Gold: " + p1currentGold, "20px '04b_19'", "#ffffff");
+	}
+	
 	currentGoldDisplay.x = coin_pic.x + 40;
 	currentGoldDisplay.y = coin_pic.y  +5;
 	currentGoldDisplay.textBasline = "alphabetic";
@@ -1141,7 +1224,11 @@ function attack(attacker, target){
 		var sprite = new createjs.Sprite(attacker.spritesheet, "attack");
 		sprite.x = attacker.x;
 		sprite.y = attacker.y;
-		sprite.scaleX = 0.7;
+		if (attacker.x > target.x) {
+ 			sprite.scaleX = 0.7;
+		} else {
+			sprite.scaleX = -0.7;
+		}
 		sprite.scaleY = 0.7;
 		chars.removeChild(attacker);	
 		chars.addChild(sprite);
@@ -1232,34 +1319,41 @@ function movePlayer() {
       destX = path[0][0],
       destY = path[0][1];
 
+
+  var coefficientX = 0;
+  var coefficientY = 0;
+
+
   if (playerX < destX && playerY < destY) {
-    selectedCharacter.x += MOVEMENT_STEP;
-    selectedCharacter.y += MOVEMENT_STEP / 2;
-
-    selectedCharacter.hp_bar.x += MOVEMENT_STEP;
-    selectedCharacter.hp_bar.y += MOVEMENT_STEP / 2;
+    coefficientX = 1.0;
+    coefficientY = 1.0;
   } else if (playerX > destX && playerY > destY) {
-    selectedCharacter.x -= MOVEMENT_STEP;
-    selectedCharacter.y -= MOVEMENT_STEP / 2;
-
-
-    selectedCharacter.hp_bar.x -= MOVEMENT_STEP;
-    selectedCharacter.hp_bar.y -= MOVEMENT_STEP / 2;
+    coefficientX = -1.0;
+    coefficientY = -1.0;
   } else if (playerX < destX && playerY > destY) {
-    selectedCharacter.x += MOVEMENT_STEP;
-    selectedCharacter.y -= MOVEMENT_STEP / 2;
+    coefficientX = 1.0;
+    coefficientY = -1.0;
+  } else if (playerX > destX && playerY < destY) {
+    coefficientX = -1.0;
+    coefficientY = 1.0;
+  } 
 
 
-    selectedCharacter.hp_bar.x += MOVEMENT_STEP;
-    selectedCharacter.hp_bar.y -= MOVEMENT_STEP / 2;
-  } else if (playerX > destX && playerY < destY){
-  	selectedCharacter.x -= MOVEMENT_STEP;
-  	selectedCharacter.y += MOVEMENT_STEP / 2;
+
+  var stepX = coefficientX * MOVEMENT_STEP;
+  var stepY = coefficientY * MOVEMENT_STEP / 2;
 
 
-    selectedCharacter.hp_bar.x -= MOVEMENT_STEP;
-    selectedCharacter.hp_bar.y += MOVEMENT_STEP / 2;
+  selectedCharacter.x += stepX;
+  selectedCharacter.y += stepY;
+  selectedCharacter.hp_bar.x += stepX;
+  selectedCharacter.hp_bar.y += stepY;
+
+  for (var i = 0; i < selectedCharacter.buffs.length; i++) {
+    selectedCharacter.buffs[i][3].x += stepX;
+    selectedCharacter.buffs[i][3].y += stepY;
   }
+
 
   if ((playerX === destX) && (playerY === destY)) {
       path.splice(0,1);
@@ -1424,6 +1518,15 @@ function findReachableTiles(x, y, range, isMoving) {
 
 function drawMap(data) {
 
+
+	if (mapDrawn) {
+		for (var i = 0; i < maps.length; i++) {
+			for (var j = 0; j < maps[i].length; j++) {
+				draggable.removeChild(maps[i][j]);
+			}
+		}
+	}
+
 	maps = new Array(mapHeight);
 	for (var i = 0; i < mapHeight; i++) {
 		maps[i] = new Array(mapWidth);
@@ -1475,6 +1578,7 @@ function drawMap(data) {
 			draggable.addChild(maps[i][j]);
 		}
 	}
+	mapDrawn = true;
 
 }
 
@@ -1541,14 +1645,65 @@ function keyEvent(event) {
             	clearSelectionEffects();
             }
             break;
+        case 67:
+        	draggable.x = 0;
+        	draggable.y = 0;
+        	break; 
+        case 77: //m
+        	if (isDisplayingMenu) {
+        		if (selectedCharacter.canMove) {
+					undoHighlights();
+					// drawRange(findReachableTiles(unit.column, unit.row, unit.moveRange, true), 0);
+					moveCharacter(selectedCharacter);
+				}
+        	}
+        	break;
+        case 65: //a
+        	if (isDisplayingMenu) {
+		        if (selectedCharacter.canAttack) {
+					undoHighlights();
+					// isAttacking = true;
+					// drawRange(findReachableTiles(unit.column, unit.row, unit.attackRange, false), 1);
+					remainingAttackTimes = 1;
+					performAttack();
+				}
+			}
+			break;
+		case 82: //r
+			if (endGame){
+				location.reload();
+			}
+		case 83: //s
+			if (isDisplayingMenu) {
+				if (selectedCharacter.skillCoolDown === 0) {
+					undoHighlights();
+					isCasting = true;
+					cast(selectedCharacter.skill_no, selectedCharacter);
+				}
+			}
+			break;
+		case 70:
+//			goFullScreen();
+			break;
         case 13: //enter
-        	clearSelectionEffects();
-        	turn = 1 - turn;
-        	turnEndPhase();
-        	turnStartPhase();
-
+        	if (!endGame) {
+	        	clearSelectionEffects();
+	        	turn = 1 - turn;
+	        	turnEndPhase();
+	        	turnStartPhase();
+	        }
     }
-} 
+}
+
+function goFullScreen(){
+    var canvas = document.getElementById("demoCanvas");
+    if(canvas.requestFullScreen)
+        canvas.requestFullScreen();
+    else if(canvas.webkitRequestFullScreen)
+        canvas.webkitRequestFullScreen();
+    else if(canvas.mozRequestFullScreen)
+        canvas.mozRequestFullScreen();
+}
 
 function update() {
 	if (movingPlayer === true) {
@@ -1563,9 +1718,9 @@ function update() {
 		drawGoldDisplay();
 
 		drag_box = new createjs.Shape();
-		drag_box.graphics.drawRect(-stage.canvas.width ,-stage.canvas.height ,stage.canvas.width * 2,stage.canvas.height * 2);
+		drag_box.graphics.drawRect(-stage.canvas.width * 50,-stage.canvas.height ,stage.canvas.width * 100,stage.canvas.height * 100);
 		drag_box.hitArea = new createjs.Shape();
-		drag_box.hitArea.graphics.beginFill("#000").drawRect(-stage.canvas.width ,-stage.canvas.height ,stage.canvas.width * 2,stage.canvas.height * 2);
+		drag_box.hitArea.graphics.beginFill("#000").drawRect(-stage.canvas.width * 50,-stage.canvas.height ,stage.canvas.width * 100,stage.canvas.height * 100);
 		draggable.addChild(drag_box);
 
 		$.each(unitCards, function(i, value) {
@@ -1683,14 +1838,18 @@ function performAttack() {
 				attack(selectedCharacter, unit);
 				selectedCharacter.attack = selectedCharacter.base_attack;
 				clearSelectionEffects();
+				
 				if (remainingAttackTimes > 0) {
-					performAttack();
+					setTimeout(function() {
+						performAttack();
+					}, 1000);
 				} else {
                     selectedCharacter.canAttack = 0;
                     selectedCharacter.outOfMoves = 1;
                     playableUnitCount--;
                     console.log(playableUnitCount);
-                }
+            	}
+
 			}
 		});	
 	}]); 
