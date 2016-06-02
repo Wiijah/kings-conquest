@@ -27,7 +27,6 @@ var attackButton;
 var skillButton;
 var cancelButton;
 var menuBackground;
-var coin_pic;
 
 var bottomInterface  = new createjs.Container();
 var statsDisplay = new createjs.Container();
@@ -370,7 +369,6 @@ function initGame() {
 	stage.addChild(chars);
 
 	$.getJSON('ajax/game_state', function(data) {
-		team = data.team;
 		that.mapData = data['main'];
         that.classStats = data.classStats;
 		console.log("init game");
