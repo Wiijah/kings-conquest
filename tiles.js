@@ -371,9 +371,6 @@ function findFreeSpace(){
 }
 
 function initGame() {
-	var audio = new Audio('Test.mp3');
-	audio.loop = true;
-	audio.play();
 
 
 	createjs.Ticker.addEventListener("tick", keyEvent);
@@ -471,12 +468,29 @@ function initGame() {
 
 	window.addEventListener('resize', resize, false);
 
-	var muteIcon = new createjs.Bitmap("graphics/mute2.png");
+	drawMenuDisplay();
+	stage.update();
+
+
+}
+var muteIcon;
+var playIcon;
+function destroyMenuDisplay(){
+	stage.removeChild(muteIcon);
+	stage.removeChild(playIcon);
+}
+function drawMenuDisplay(){
+	var audio = new Audio('Test.mp3');
+	audio.loop = true;
+	audio.play();
+
+	muteIcon = new createjs.Bitmap("graphics/mute2.png");
 	muteIcon.x = stage.canvas.width - 220;
 	muteIcon.y = 5;
 	muteIcon.scaleX = 0.7;
 	muteIcon.scaleY = 0.7;
-	var playIcon = new createjs.Bitmap("graphics/mute.png");
+	
+	playIcon = new createjs.Bitmap("graphics/mute.png");
 	playIcon.x = stage.canvas.width - 220;
 	playIcon.y = 5;
 	playIcon.scaleX = 0.7;
@@ -496,12 +510,9 @@ function initGame() {
 		stage.removeChild(playIcon);
 		stage.addChild(muteIcon);
 	});
-
 	stage.update();
 
-
 }
-
 function removeBuff(buffType, unit) {
     var success = false;
 
@@ -829,7 +840,7 @@ function createNewUnit(unitType, row, column) {
 
 function addEventListenersToUnit(unit) {
     unit.addEventListener("click", function(event) {
-    	
+
             if (isInHighlight && !isAttacking && !isCasting){
                 return;
             }
@@ -1850,6 +1861,8 @@ function update() {
 		stage.canvas.width = window.innerWidth;
 		stage.canvas.height = window.innerHeight;
 		drawGame();
+		destroyMenuDisplay();
+		drawMenuDisplay();
 		drawStatsDisplay();
 		destroyGoldDisplay();
 		drawGoldDisplay();
