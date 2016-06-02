@@ -16,7 +16,7 @@ var highlighted = [];
 var sub_highlighted = [];
 var units = [];
 var maps;
-var blockMap;
+var blockMaps;
 var tile_display;
 var highLight_tile;
 var tile_info_text;
@@ -54,6 +54,7 @@ var	archerSkillDone = false;
 var undoMove = [];
 var undo = false;
 
+var bgMusic = true;
 
 function showTurnInfo(){
 	stage.removeChild(playerLabel);
@@ -129,7 +130,6 @@ function turnStartPhase() {
         for (var j = 0; j < buffsToBeRemoved.length; j++) {
             removeBuff(buffsToBeRemoved[j], value);
         }
-
     });
        
     var kingX;
@@ -137,7 +137,6 @@ function turnStartPhase() {
 
     $.each(units, function(i, value) {
     	if (value.team == turn && value.address == "graphics/spritesheet/stand/ss_king_stand.png") {
-    		console.log(value.x + "," + value.y);
     		kingX = value.x;
     		kingY = value.y;
     	}
@@ -145,13 +144,6 @@ function turnStartPhase() {
     draggable.x = 575 - kingX;
     draggable.y = 382.5 - kingY;
 
-
- //    setTimeout(function() {
-	// 	clearSelectionEffects();
- //    	turn = 1 - turn;
- //    	turnEndPhase();
- //    	turnStartPhase();
-	// }, 6000);
 }
 
 function turnEndPhase() {
@@ -171,10 +163,11 @@ function resize() {
 
 // typeName : king, red_castle, wizard, etc
 // initial: true / false
-
 function spawnUnit(data, isCreation, row, column){
+	chars.removeChild(spawnAnimation);
+
 	//|| data.address == "graphics/spritesheet/stand/ss_scarecrow_stand.png"
-    if (data.address == "graphics/spritesheet/stand/ss_rogue_stand.png") return;
+  //  if (data.address == "graphics/spritesheet/stand/ss_rogue_stand.png") return;
 		var spriteSheet = new createjs.SpriteSheet({
           	"images": [data.address],
           	"frames": {"regX": 0, "height": 142, "count": 2, "regY": -10, "width": 113 },
@@ -188,13 +181,28 @@ function spawnUnit(data, isCreation, row, column){
 
 		
 		createjs.Ticker.timingMode = createjs.Ticker.RAF;	
-			createjs.Ticker.addEventListener("tick", stage);
+		createjs.Ticker.addEventListener("tick", stage);
 		// Configure unit coordinates
 		unit.hp = data.hp;
 		unit.max_hp = data.max_hp;
 		unit.attack = data.attack;
 		unit.base_attack = unit.attack;
 		unit.luck = data.luck;
+
+		var spawnSpriteSheet = new createjs.SpriteSheet({
+	      	"images": ["graphics/spritesheet/special_unit/ss_unit_creation.png"],
+	      	"frames": {"width": 142, "height": 142, "count": 4, "regY": 110, "regX": 65},
+			"animations": {
+				"damage":{
+					frames: [0,1,2,3],
+					next: false
+				}
+			},
+			framerate: 4
+		});
+
+		unit.spawnSpriteSheet = spawnSpriteSheet;
+		var spawnAnimation = new createjs.Sprite(spawnSpriteSheet, "spawn");
 
 		var damageEffect = new createjs.SpriteSheet({
 			"images": [data.damageEffect],
@@ -235,6 +243,7 @@ function spawnUnit(data, isCreation, row, column){
 		});
 		unit.healEffect = healEffect;
 
+	var unit = new createjs.Sprite(spriteSheet, "stand");
 
 		unit.team = data.team;
         if (isCreation) {
@@ -290,33 +299,39 @@ function spawnUnit(data, isCreation, row, column){
 		unit.hp_bar = hp_bar;
 
 
-		// Configure move and attack range of the unit
-		unit.moveRange = data.moveRange;
-		unit.attackRange = data.attackRange;
+	// Configure move and attack range of the unit
+	unit.moveRange = data.moveRange;
+	unit.attackRange = data.attackRange;
 
-		// Configure action control informations
-		unit.canMove = data.canMove;
-		unit.canAttack = data.canAttack;
-		unit.skillCoolDown = data.skillCoolDown;
-		unit.outOfMoves = data.outOfMoves;
+	// Configure action control informations
+	unit.canMove = data.canMove;
+	unit.canAttack = data.canAttack;
+	unit.skillCoolDown = data.skillCoolDown;
+	unit.outOfMoves = data.outOfMoves;
 
-		// Adding the unit to the list of units in the game
-		units.push(unit);
+	// Adding the unit to the list of units in the game
+	units.push(unit);
+  console.log(unit.row + " " + unit.column);
 
+	blockMaps[unit.row][unit.column] = 1;
 
-		blockMaps[unit.row][unit.column] = 1;
+	// Add the unit and its hp bar to the stage
+	draggable.addChild(unit);
+	draggable.addChild(hp_bar);
 
-		// Add the unit and its hp bar to the stage
-		draggable.addChild(unit);
-		draggable.addChild(hp_bar);
-
-		sortIndices(unit);
+	sortIndices(unit);
 
 		unit.cache(0,0,150,150);
 		hp_bar.cache(0,0,100,120);
+		spawnAnimation.x = unit.x;
+		spawnAnimation.y = unit.y;
+		chars.addChild(spawnAnimation);
+		setTimeout(function() {
+			chars.removeChild(spawnAnimation);
+		}, 1000);
 
-		addEventListenersToUnit(unit);
-	// });		
+
+	addEventListenersToUnit(unit);
 }
 
 function findFreeSpace(){
@@ -346,11 +361,6 @@ function findFreeSpace(){
 }
 
 function initGame() {
-	var audio = new Audio('Test.mp3');
-	audio.loop = true;
-	audio.play();
-
-
 	createjs.Ticker.addEventListener("tick", keyEvent);
     this.document.onkeydown = keyEvent;
 	stage.enableMouseOver(20);
@@ -445,8 +455,52 @@ function initGame() {
 	changed = true;
 
 	window.addEventListener('resize', resize, false);
-}
 
+	drawMenuDisplay();
+	stage.update();
+
+
+}
+var muteIcon;
+var playIcon;
+function destroyMenuDisplay(){
+	stage.removeChild(muteIcon);
+	stage.removeChild(playIcon);
+}
+function drawMenuDisplay(){
+	// var audio = new Audio('Test.mp3');
+	// audio.loop = true;
+	// audio.play();
+
+	muteIcon = new createjs.Bitmap("graphics/mute2.png");
+	muteIcon.x = stage.canvas.width - 220;
+	muteIcon.y = 5;
+	muteIcon.scaleX = 0.7;
+	muteIcon.scaleY = 0.7;
+	
+	playIcon = new createjs.Bitmap("graphics/mute.png");
+	playIcon.x = stage.canvas.width - 220;
+	playIcon.y = 5;
+	playIcon.scaleX = 0.7;
+	playIcon.scaleY = 0.7;
+
+
+	stage.addChild(muteIcon);
+	muteIcon.addEventListener("click", function(event) {
+		audio.pause();
+		bgMusic = false;
+		stage.removeChild(muteIcon);
+		stage.addChild(playIcon);
+	});
+	playIcon.addEventListener("click", function(event) {
+		audio.play();
+		bgMusic = true;
+		stage.removeChild(playIcon);
+		stage.addChild(muteIcon);
+	});
+	stage.update();
+
+}
 function removeBuff(buffType, unit) {
     var success = false;
 
@@ -717,63 +771,19 @@ function createFloatingCards(listOfSources, correspondingUnit) {
 	}
 }
 
-//really bad
 function createNewUnit(unitType, row, column) {
-	if (turn){
-		switch (unitType) {
-        case "knight":
-            if (p2currentGold >= 100) {
-                spawnUnit(that.classStats.knightClass, true, row, column);
-                p2currentGold -= 100;
-                playableUnitCount++;
-            }
-            break;
-        case "wizard":
-            if (p2currentGold >= 100) {
-                spawnUnit(that.classStats.wizardClass, true, row, column);
-                p2currentGold -= 100;
-                playableUnitCount++;
-            }
-            break;
-        case "archer":
-            if (p2currentGold >= 100) {
-                spawnUnit(that.classStats.archerClass, true, row, column);
-                p2currentGold -= 100;
-                playableUnitCount++;
-            }
-            break;
-        }
-	} else {
-		switch (unitType) {
-        case "knight":
-            if (p1currentGold >= 100) {
-                spawnUnit(that.classStats.knightClass, true, row, column);
-                p1currentGold -= 100;
-                playableUnitCount++;
-            }
-            break;
-        case "wizard":
-            if (p1currentGold >= 100) {
-                spawnUnit(that.classStats.wizardClass, true, row, column);
-                p1currentGold -= 100;
-                playableUnitCount++;
-            }
-            break;
-        case "archer":
-            if (p1currentGold >= 100) {
-                spawnUnit(that.classStats.archerClass, true, row, column);
-                p1currentGold -= 100;
-                playableUnitCount++;
-            }
-            break;
-        }
-    }
+    serverValidate("create", null, [unitType, row, column]);
     destroyGoldDisplay();
     drawGoldDisplay();
 }
 
+function findCharById(id) {
+	return 1;
+}
+
 function addEventListenersToUnit(unit) {
     unit.addEventListener("click", function(event) {
+
             if (isInHighlight && !isAttacking && !isCasting){
                 return;
             }
@@ -789,17 +799,18 @@ function addEventListenersToUnit(unit) {
             if (selectedCharacter != unit && isAttacking && selectedCharacter.team != unit.team) {
                 $.each(highlighted, function(i, coord) {
                     if (unit.row === coord.row && unit.column === coord.column) {
-                        attack(selectedCharacter, unit);
-                        clearSelectionEffects();
-                        if (remainingAttackTimes > 0) {
-                            remainingAttackTimes - 1;
-                            performAttack();
-                        } else {
-                            selectedCharacter.canAttack = 0;
-                            selectedCharacter.outOfMoves = 1;
-                            playableUnitCount--;
-                            //console.log(playableUnitCount);
-                        }
+                    	serverValidate("attack", selectedCharacter, [unit], function(attacker, target, dmg) {
+                    		attack(attacker, target, unit);
+	                        clearSelectionEffects();
+	                        if (remainingAttackTimes > 0) {
+	                            remainingAttackTimes - 1;
+	                            performAttack();
+	                        } else {
+	                            attacker.canAttack = 0;
+	                            attacker.outOfMoves = 1;
+	                            playableUnitCount--;
+	                        }
+                    	});
                     }
                 });
             }
@@ -810,7 +821,6 @@ function addEventListenersToUnit(unit) {
                     if (highlighted[i].row === unit.row && highlighted[i].column === unit.column) {
                         break;
                     }
-                    console.log(i);
                     if (i == highlighted.length - 1) return;
                 }
                 $.each(units, function(i, otherUnit) {
@@ -1001,15 +1011,11 @@ function showActionMenuNextToPlayer(unit) {
 								   : "graphics/ingame_menu/new_attack_gray.png";
 	attackButton = createClickableImage(attackSource, unit.x + 48, unit.y - 119, function() {
 		if (unit.canAttack) {
-            console.log(draggable.getNumChildren());
 			undoHighlights();
-            console.log(draggable.getNumChildren());
 			// isAttacking = true;
 			// drawRange(findReachableTiles(unit.column, unit.row, unit.attackRange, false), 1);
 			remainingAttackTimes = 1;
-            console.log(draggable.getNumChildren());
 			performAttack();
-            console.log(draggable.getNumChildren());
 		}
 	});
 
@@ -1052,7 +1058,6 @@ function cast(skillNo, unit) {
 	switch (skillNo) {
 		case 0: // King's skill
 			// display effect
-			console.log(unit.x + "," + unit.y);
 			$.each(units, function(i, value) {
 				if (value.team === selectedCharacter.team) {
 					//buff health
@@ -1090,10 +1095,10 @@ function cast(skillNo, unit) {
 		case 1: // Archer's skill
 			archerSkillDone = false;
 			var reachableTiles = findReachableTiles(selectedCharacter.column, selectedCharacter.row, selectedCharacter.attackRange, false);
-			isCasting = true;
+			isCasting = false;
 			undoHighlights();
-			performAttack();
 			remainingAttackTimes = 2;
+			performAttack();
 	    	unit.skillCoolDown = 3;
 			break;
 	    case 3: // Warrior's skill
@@ -1306,7 +1311,6 @@ function attack(attacker, target){
 			damageAnimation.y = target.y;
 			
 		}
-		console.log("in attacking");
 		if (isCasting && isAttacking) {
 			applyBuff(3, target);
 		}
@@ -1801,6 +1805,8 @@ function update() {
 		stage.canvas.width = window.innerWidth;
 		stage.canvas.height = window.innerHeight;
 		drawGame();
+		destroyMenuDisplay();
+		drawMenuDisplay();
 		drawStatsDisplay();
 		destroyGoldDisplay();
 		drawGoldDisplay();
@@ -1904,19 +1910,48 @@ function moveCharacter(unit) {
  	unit.prevColumn = unit.column;
 	var reachableTiles = findReachableTiles(unit.row, unit.column, unit.moveRange, true);
 	highlightArea(reachableTiles, "graphics/tile/green_tile.png", ["click"], [function(event) {
+		// server request
 		var fromX = selectedCharacter.row;
 		var fromY = selectedCharacter.column;
 		var tile = event.target;
 		findPath(fromX, fromY, tile.row, tile.column);
-		blockMaps[fromX][fromY] = 0;
-		move();
-		blockMaps[tile.row][tile.column] = 1;
-		selectedCharacter.row = tile.row;
-		selectedCharacter.column = tile.column;
-		clearSelectionEffects();
-		undoMove.pop();
-		undoMove.push(selectedCharacter);
+
+		serverValidate("move", selectedCharacter, [path]);
 	}]);
+}
+
+function serverValidate(type, unit, additionalArgs) {
+	if (type == "move") {
+		rawPost("ajax/move_unit.php", {"id" : "0", "path" : JSON.stringify(path)}, function(data) {
+			console.log(data);
+			if (data.error_code != 0) {
+				console.log("ERROR");
+				return;
+			}
+			path = data.path;
+			handleMove(data.action);
+		});
+	}
+	if (type == "create") {
+		rawPost("ajax/build_unit", {"name" : additionalArgs[0], "x": additionalArgs[1], "y": additionalArgs[2]}, function(data) {
+			console.log(data);
+			if (data.error_code != 0) {
+				console.log("ERROR");
+				return;
+			}
+			handleCreate(data.action);
+		});
+	}
+	if (type === "attack") {
+		rawPost("ajax/attack_unit.php", "{attacker_id : 0, target_id : 1}", function(data) {
+			console.log(data);
+			if (data.error_code != 0) {
+				console.log("ERROR");
+				return;
+			}
+			handleAttack(data.action);
+		});
+	}
 }
 
 function performAttack() {
@@ -1926,26 +1961,49 @@ function performAttack() {
 		var tile = event.target;
 		$.each(units, function(i, unit) {
 			if (unit.row == tile.row && unit.column == tile.column && selectedCharacter.team != unit.team){
-				attack(selectedCharacter, unit);
-				selectedCharacter.attack = selectedCharacter.base_attack;
-				clearSelectionEffects();
-				
-				if (remainingAttackTimes > 0) {
-					setTimeout(function() {
-						performAttack();
-					}, 1000);
-				} else {
-                    selectedCharacter.canAttack = 0;
-                    selectedCharacter.outOfMoves = 1;
-                    playableUnitCount--;
-                    console.log(playableUnitCount);
-            	}
-
+				serverValidate("attack", selectedCharacter, [unit])
 			}
 		});	
 	archerSkillDone = true;
 	undoMove.pop()
 	}]); 
+}
+
+function handleMove(action) {
+	blockMaps[fromX][fromY] = 0;
+	move();
+	blockMaps[tile.row][tile.column] = 1;
+	selectedCharacter.row = tile.row;
+	selectedCharacter.column = tile.column;
+	clearSelectionEffects();
+	undoMove.pop();
+	undoMove.push(selectedCharacter);
+};
+
+function handleAttack(action) {
+	var unit = findCharById(action.attacker_id);
+	var target = findCharById(action.target_id);
+	attack(unit, target);
+	unit.attack = unit.base_attack;
+	clearSelectionEffects();
+	
+	if (remainingAttackTimes > 0) {
+		setTimeout(function() {
+			performAttack();
+		}, 1000);
+	} else {
+        unit.canAttack = 0;
+        unit.outOfMoves = 1;
+        playableUnitCount--;
+        console.log(playableUnitCount);
+	}
+}
+
+function handleCreate(action) {
+  console.log("action: " + getFirstProp(action.unit));
+	spawnUnit(getFirstProp(action.unit), false);
+	currentGold = action.currentGold;
+    playableUnitCount++;
 }
 
 function highlightArea(tiles, imgSource, callBackEventNames, callBackFunctions) {
@@ -1976,3 +2034,10 @@ function highlightArea(tiles, imgSource, callBackEventNames, callBackFunctions) 
 	drawGame();
 }
 
+/* S. Helper Functions */
+function getFirstProp(obj) {
+  for(var key in obj) {
+    if(obj.hasOwnProperty(key)) return obj[key];
+  }
+  return 0;
+}

@@ -19,18 +19,18 @@ function create_unit($name, $x, $y, $team) {
 function init_units() {
   global $TEAM_COLOURS;
   /* Red Team */
-  create_unit("King", 3, 2, $TEAM_COLOURS['red']);
-  create_unit("Red Castle", 0, 0, $TEAM_COLOURS['red']);
-  create_unit("Wizard", 3, 3, $TEAM_COLOURS['red']);
-  create_unit("Knight", 0, 2, $TEAM_COLOURS['red']);
-  create_unit("Archer", 0, 3, $TEAM_COLOURS['red']);
+  create_unit("king", 3, 2, $TEAM_COLOURS['red']);
+  create_unit("red castle", 0, 0, $TEAM_COLOURS['red']);
+  create_unit("wizard", 3, 3, $TEAM_COLOURS['red']);
+  create_unit("knight", 0, 2, $TEAM_COLOURS['red']);
+  create_unit("archer", 0, 3, $TEAM_COLOURS['red']);
 
   /* Blue Team */
-  create_unit("King", 9, 11, $TEAM_COLOURS['blue']);
-  create_unit("Blue Castle", 12, 13, $TEAM_COLOURS['blue']);
-  create_unit("Wizard", 9, 10, $TEAM_COLOURS['blue']);
-  create_unit("Knight", 12, 10, $TEAM_COLOURS['blue']);
-  create_unit("Archer", 12, 11, $TEAM_COLOURS['blue']);
+  create_unit("king", 9, 11, $TEAM_COLOURS['blue']);
+  create_unit("blue castle", 12, 13, $TEAM_COLOURS['blue']);
+  create_unit("wizard", 9, 10, $TEAM_COLOURS['blue']);
+  create_unit("knight", 12, 10, $TEAM_COLOURS['blue']);
+  create_unit("archer", 12, 11, $TEAM_COLOURS['blue']);
 }
 
 function jsonUnit($unit) {

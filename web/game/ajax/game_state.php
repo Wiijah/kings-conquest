@@ -24,6 +24,9 @@ while ($part = $result->fetch_object()) {
   $out .= jsonPair("P{$i}currentGold", $part->gold).",";
 }
 
+/* Player Info */
+$out .= jsonPair("team", $TEAM_COLOURS[$player->colour]).",";
+
 /* Buffs */
 $out .= '"buffEffects": {';
 $result = $db->query("SELECT * FROM buffs ORDER BY buff_id ASC");
