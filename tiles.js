@@ -414,7 +414,7 @@ function initGame() {
 		if (isDragging) {
 			isDragging = false;
 		}
-	})
+	});
 	stage.addChild(draggable);
 
 	upper = new createjs.Container();
@@ -1168,9 +1168,9 @@ function getSurroundingTiles(row, col) {
 function getRandom(luck){
   	var num = Math.random();
  	if(num < luck){ 
- 		return 1;
+ 		return 2;
   	} else {
-  		return 2; 
+  		return 1; 
 	} 
 }
 var showingDamage;
@@ -1368,6 +1368,8 @@ function movePlayer() {
   selectedCharacter.hp_bar.x += stepX;
   selectedCharacter.hp_bar.y += stepY;
 
+  draggable.x = draggable.x - stepX;
+  draggable.y = draggable.y - stepY;
   for (var i = 0; i < selectedCharacter.buffs.length; i++) {
     selectedCharacter.buffs[i][3].x += stepX;
     selectedCharacter.buffs[i][3].y += stepY;
