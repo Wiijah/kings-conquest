@@ -1,6 +1,7 @@
 <?php
 /* Ready or start a new game from a room. */
 require_once 'ajax_common.php';
+require_once '../../game/includes/game_lib.php';
 
 $room_id = secureInt($_POST['room_id']);
 $ready = secureStr($_POST['ready']);
@@ -32,6 +33,9 @@ if ($part->state == 'owner') {
   if ($num_of_players_ready < $num_of_players) {
     kc_error("All players need to be ready before you can start the game.");
   }
+
+  init_units(); //create the units
+  
   $db->query("UPDATE rooms SET state = 'ingame' WHERE room_id = {$room_id}");
 } else { //not owner, so just set ready
   $db->query("UPDATE room_participants SET state = '{$ready}' WHERE user_id = '{$user->id}'");

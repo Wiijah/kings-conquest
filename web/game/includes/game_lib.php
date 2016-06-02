@@ -19,7 +19,7 @@ function init_units() {
   global $TEAM_COLOURS;
   /* Red Team */
   create_unit("King", 3, 2, $TEAM_COLOURS['red']);
-  create_unit("Red Castle", 1, 0, $TEAM_COLOURS['red']);
+  create_unit("Red Castle", 0, 0, $TEAM_COLOURS['red']);
   create_unit("Wizard", 3, 3, $TEAM_COLOURS['red']);
   create_unit("Knight", 0, 2, $TEAM_COLOURS['red']);
   create_unit("Archer", 0, 3, $TEAM_COLOURS['red']);
