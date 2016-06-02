@@ -14,8 +14,6 @@ $room_id = $player->room_id;
 
 require_once '../includes/game_lib.php';
 
-
-
 if (!isset($_SESSION['id'])) {
   die('{"session_error":"session_expired"}');
 }
@@ -36,5 +34,11 @@ function jsonPair($key, $value, $braces = false) {
   if ($braces) return "{".$out."}";
   return $out;
 }
+
+function action($type, $other_fields) {
+  return '"action" : {"action_type": "'.$type.'", '.$other_fields.'}';
+}
+
+$SUCCESS = '"error_code": 0';
 
 ?>
