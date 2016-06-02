@@ -3,15 +3,18 @@
 header('Access-Control-Allow-Origin: *');
 header("Content-Type: application/json; charset=UTF-8");
 
-require_once '../../common.php';
-/* Error enums */
+/* Error codes */
 $ERROR_NOT_IG = 2;
-
+require_once '../../common.php';
 $result = $db->query("SELECT * FROM room_participants WHERE user_id = '{$user->id}' AND event = ''");
 if (!$player = $result->fetch_object()) {
  die(game_error($ERROR_NOT_IG)); //Error, not in game.
 }
 $room_id = $player->room_id;
+
+require_once '../includes/game_lib.php';
+
+
 
 if (!isset($_SESSION['id'])) {
   die('{"session_error":"session_expired"}');
@@ -33,4 +36,5 @@ function jsonPair($key, $value, $braces = false) {
   if ($braces) return "{".$out."}";
   return $out;
 }
+
 ?>
