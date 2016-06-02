@@ -98,3 +98,14 @@ function handle_ajax_error(jqXHR, textStatus, errorThrown) {
 function isStrLenCorrect(str, min, max) {
   return str.length >= min && str.length <= max;
 }
+
+/* Synchronous AJAX. */
+function syncPost(url, data, callback) {
+  return $.ajax({
+    url: url,
+    dataType: 'json',
+    async: false,
+    data: data,
+    success: callback
+  });
+}

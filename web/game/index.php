@@ -1,3 +1,28 @@
+<?php
+require_once '../common.php';
+
+if (!isset($_SESSION['id'])) { //user not logged in
+  header ("Location: ../{$LOGIN_FORM_DIR}");
+  die();
+}
+$result = $db->query("SELECT * FROM room_participants WHERE user_id = '{$user->id}' AND event = ''");
+if (!$player = $result->fetch_object()) { //player is not in game
+  header ("Location: ../{$LOGGEDIN_DIR}/");
+  die();
+}
+$room_id = $player->room_id;
+
+$result = $db->query("SELECT * FROM rooms WHERE room_id = {$room_id}");
+$room = $result->fetch_object();
+if ($result->num_rows == 0 || $room->state == 'deleted') { //user isn't in a room
+  header ("Location: ../{$LOGGEDIN_DIR}/");
+  die();
+}
+if ($room->state != 'ingame') { // game not started yet
+  header ("Location: ../{$LOGGEDIN_DIR}/room");
+  die();
+}
+?>
 <html>
   <head>
     <script src="https://code.createjs.com/createjs-2015.11.26.min.js"></script>

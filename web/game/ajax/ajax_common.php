@@ -15,7 +15,7 @@ $room_id = $player->room_id;
 require_once '../includes/game_lib.php';
 
 if (!isset($_SESSION['id'])) {
-  die('{"session_error":"session_expired"}');
+  die('{"error_code": 3}');
 }
 
 function game_error($msg) {
