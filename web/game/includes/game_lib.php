@@ -1,10 +1,12 @@
 <?php
 
 /* Team enumerations */
+$TEAM_COLOURS = array("red" => 0, "blue" => 1);
 $TEAM_RED = 0;
 $TEAM_BLUE = 1;
 
 function create_unit($name, $x, $y, $team) {
+  global $db;
   global $room_id;
   $result = $db->query("SELECT * FROM classes WHERE name = '{$name}'");
   $class = $result->fetch_object();
@@ -14,18 +16,19 @@ function create_unit($name, $x, $y, $team) {
 }
 
 function init_units() {
+  global $TEAM_COLOURS;
   /* Red Team */
-  create_unit("King", 3, 2, $TEAM_RED);
-  create_unit("Red Castle", 1, 0, $TEAM_RED);
-  create_unit("Wizard", 3, 3, $TEAM_RED);
-  create_unit("Knight", 0, 2, $TEAM_RED);
-  create_unit("Archer", 0, 3, $TEAM_RED);
+  create_unit("King", 3, 2, $TEAM_COLOURS['red']);
+  create_unit("Red Castle", 1, 0, $TEAM_COLOURS['red']);
+  create_unit("Wizard", 3, 3, $TEAM_COLOURS['red']);
+  create_unit("Knight", 0, 2, $TEAM_COLOURS['red']);
+  create_unit("Archer", 0, 3, $TEAM_COLOURS['red']);
 
   /* Blue Team */
-  create_unit("King", 9, 11, $TEAM_BLUE);
-  create_unit("Blue Castle", 12, 13, $TEAM_BLUE);
-  create_unit("Wizard", 9, 10, $TEAM_BLUE);
-  create_unit("Knight", 12, 10, $TEAM_BLUE);
-  create_unit("Archer", 12, 11, $TEAM_BLUE);
+  create_unit("King", 9, 11, $TEAM_COLOURS['blue']);
+  create_unit("Blue Castle", 12, 13, $TEAM_COLOURS['blue']);
+  create_unit("Wizard", 9, 10, $TEAM_COLOURS['blue']);
+  create_unit("Knight", 12, 10, $TEAM_COLOURS['blue']);
+  create_unit("Archer", 12, 11, $TEAM_COLOURS['blue']);
 }
 ?>

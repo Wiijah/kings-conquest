@@ -68,49 +68,31 @@ $out .= "}";
 
 /* Start units */
 $out .= ', "characters": {';
-$result = $db->query("SELECT * FROM units WHERE room_id = {$room_id}");
-$out .= '"kingRed": {
-      "address": "graphics/spritesheet/stand/ss_king_stand.png",
-      "spritesheet": "graphics/spritesheet/attack/ss_king_attack.png",
-      "info": "graphics/card/king_card.png",
-      "hp" : 400,
-      "max_hp" : 400,
-      "attack" : 25,
-      "skill": "Buffer",
-      "skill_no": 0,
-      "luck": 0.2,
-      "x" : 3,
-      "y" : 2,
-      "moveRange" : 3,
-      "team": 0,
-      "attackRange" : 2,
-      "canMove" : 1,
-      "canAttack" : 1,
-      "skillCoolDown" : 0,
-      "outOfMoves" : 0,
-      "damageEffect": "graphics/spritesheet/spell/ss_physical_attack.png"
-    },
-    "kingBlue": {
-      "address": "graphics/spritesheet/stand/ss_king_stand.png",
-      "spritesheet": "graphics/spritesheet/attack/ss_king_attack.png",
-      "info": "graphics/card/king_card.png",
-      "hp" : 400,
-      "max_hp" : 400,
-      "attack" : 25,
-      "skill": "Buffer",
-      "skill_no": 0,
-      "luck": 0.2,
-      "x" : 9,
-      "y" : 11,
-      "moveRange" : 3,
-      "team": 1,
-      "attackRange" : 2,
-      "canMove" : 1,
-      "canAttack" : 1,
-      "skillCoolDown" : 0,
-      "outOfMoves" : 0,
-      "damageEffect": "graphics/spritesheet/spell/ss_physical_attack.png"
+$result = $db->query("SELECT * FROM units JOIN classes ON units.class_id = classes.class_id WHERE room_id = {$room_id}");
+$comma = "";
+while ($unit = $result->fetch_object()) {
+  $out .= $comma.'"'.$unit->unit_id.'": {
+      '.jsonStr("address", $unit->address).','.
+        jsonStr("spritesheet", $unit->spritesheet).','.
+        jsonPair("hp", $unit->hp).','.
+        jsonPair("max_hp", $unit->max_hp).','.
+        jsonPair("attack", $unit->attack).','.
+        jsonStr("skill", $unit->skill).','.
+        jsonPair("luck", $unit->luck).','.
+        jsonPair("x", $unit->x).','.
+        jsonPair("y", $unit->y).','.
+        jsonPair("moveRange", $unit->moveRange).','.
+        jsonPair("team", $unit->team).','.
+        jsonPair("attackRange", $unit->attackRange).','.
+        jsonPair("canMove", $unit->canMove).','.
+        jsonPair("canAttack", $unit->canAttack).','.
+        jsonPair("skillCoolDown", $unit->skillCoolDown).','.
+        jsonPair("outOfMoves", $unit->outOfMoves).','.
+        jsonStr("damageEffect", $unit->damageEffect).'
+
     }';
+  $comma = ",";
+}
 $out .= '}';
 /* End units */
   
