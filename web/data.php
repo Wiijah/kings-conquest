@@ -4,7 +4,7 @@
 $APP_NAME = "Kings' Conquest";
 $QUOTE = "Conquer or be conquered.";
 $LOGGEDIN_DIR = "interface";
-$LOGIN_FORM_DIR = "login";
+$LOGIN_FORM_DIR = "menu";
 
 //including trailing slash
 $DOMAIN = "localhost/kingsconquest/";

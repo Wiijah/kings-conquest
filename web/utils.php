@@ -8,6 +8,9 @@ function isStrLenCorrect($string, $min, $max) {
   return $len >= $min && $len <= $max;
 }
 
+function genTitle($title) {
+  return "<div class='title'><h1>{$title}</h1></div>";
+}
 // Password encryption
 /*$options = array(
     'salt' => "a93d92454321l3p09o6009"
