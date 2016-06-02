@@ -188,12 +188,9 @@ input:-webkit-autofill {
   background: url('../images/facebook_white.png') no-repeat;
   background-position: 8px 50%;
   width: 165px;
-  background-color: #428bca;
+  background-color: rgba(0, 0, 0, 0.8);
   text-align: right;
   padding-right: 4px;
-}
-.ft_btn:hover {
-  background-color: #428bca;
 }
 
 .white_line {

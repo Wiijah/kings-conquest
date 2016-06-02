@@ -1,5 +1,41 @@
 var MENU_ANIM_TIME = 0;
 
+/* Facebook Login */
+$(document).ready(function() {
+  /* FB's code */
+  $.ajaxSetup({ cache: true });
+  $.getScript('//connect.facebook.net/en_US/sdk.js', function(){
+    FB.init({
+      appId: '190990184598813',
+      version: 'v2.5' // or v2.0, v2.1, v2.2, v2.3
+    });     
+    $('#loginbutton,#feedbutton').removeAttr('disabled');
+  });
+  /* End FB's code */
+
+  $('body').on('click', '#btn_fb', function() {
+    fb_login();
+  });
+});
+var debug;
+function fb_login() {
+  fs_load();
+  FB.login(function(response) {
+    if (response.status === 'connected') {
+      console.log("Access token:" + response.authResponse.accessToken);
+      rawPost('ajax/login_fb', {access_token : response.authResponse.accessToken}, function(data) {
+        if (data.kc_error !== undefined) {
+          lightbox_alert("Error", data.kc_error);
+          return;
+        }
+        window.location.href = '../interface/';
+      });
+    } else {
+      lightbox_alert("Error", "Failed to login.");
+    }
+  });
+}
+
 $(document).ready(function() {
 
   /* Login AJAX */

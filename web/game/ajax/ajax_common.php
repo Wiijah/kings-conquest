@@ -9,6 +9,7 @@ $ERROR_NOT_IG = 2; // user is not currently in a game
 $ERROR_NOT_LOGGED_IN = 3; // user is not logged in
 $ERROR_NOT_ENOUGH_GOLD = 4; // not enough gold to build unit
 $ERROR_BAD_INPUT = 5; // user tried malicious input
+$ERROR_BLOCKED = 6; // user tried to build a unit in an obstacle
 
 require_once '../../common.php';
 $result = $db->query("SELECT * FROM room_participants WHERE user_id = '{$user->id}' AND event = ''");

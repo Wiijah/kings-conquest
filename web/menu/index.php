@@ -48,10 +48,8 @@ if (isset($_SESSION['id'])) {
 <div class="home_box">
 Kings' Conquest is a <span class='home_highlight'>turned-based multiplayer
 game</span> aimed at fans of the <span class='home_highlight'>fantasy</span> or
-<span class='home_highlight'>strategy</span> genre.
-<br /><br />
-<img src="images/browsers.png" id="browsers" /><br />
-No downloads or installations needed, just play from any modern browser!
+<span class='home_highlight'>strategy</span> genre.<br /><br />
+The game requires no explicit downloads or installations.
 </div>
 
 </div>
