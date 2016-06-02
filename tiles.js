@@ -172,7 +172,7 @@ function resize() {
 // typeName : king, red_castle, wizard, etc
 // initial: true / false
 
-function spawnUnit(data, isCreation){
+function spawnUnit(data, isCreation, row, column){
 	//|| data.address == "graphics/spritesheet/stand/ss_scarecrow_stand.png"
     if (data.address == "graphics/spritesheet/stand/ss_rogue_stand.png" || data.address == "graphics/spritesheet/stand/ss_scarecrow_stand.png") return;
 		var spriteSheet = new createjs.SpriteSheet({
@@ -239,9 +239,8 @@ function spawnUnit(data, isCreation){
 		unit.team = data.team;
         if (isCreation) {
         	unit.team = turn;
-            var coord = findFreeSpace();
-            unit.row = coord[0];
-            unit.column = coord[1];
+            unit.row = row;
+            unit.column = column;
         } else {
           unit.team = data.team;
 		  unit.column = data.y;
@@ -597,12 +596,14 @@ function updateHP_bar(unit){
 	unit.hp_bar.updateCache();
 }
 
+
 function drawBottomInterface()  {
 	bottomInterface.x = 0;
 	bottomInterface.y = stage.canvas.height - 240;
 	// bottomInterface.y = 0;
 	draggable.addChild(bottomInterface);
 }
+
 
 
 
@@ -619,8 +620,25 @@ function drawUnitCreationMenu() {
 	bottomInterface.addChild(unitCreationMenu);
 }
 
+function findAvailableAndNonAvailableSpawnTiles() {
+    var availableSpawnTiles = [];
+    var nonAvailableSpawnTiles = [];
+    for (var i = 0; i < 4; i++) {
+        for (var j = 0; j < 4; j++) {
+            if (blockMaps[i][j] === 0) {
+                availableSpawnTiles.push([i, j]);
+            } else {
+                nonAvailableSpawnTiles.push([i, j]);
+            }
+        }
+    }
+    return [availableSpawnTiles, nonAvailableSpawnTiles];
+}
+
+
 function createFloatingCards(listOfSources, correspondingUnit) {
 	var numOfCards = listOfSources.length;
+    var newUnitSpawnTiles = [];
 	for (i = 0; i < listOfSources.length; i++) {
 		unitCards[i] = new createjs.Bitmap(listOfSources[i]);
 		var unit_card_text = new createjs.Text("$ 100", "12px 'Arial'", "#ffffff");
@@ -636,18 +654,39 @@ function createFloatingCards(listOfSources, correspondingUnit) {
 		switch(unitCards[i].unitName ){
 			case "knight": 
 				unitCards[i].addEventListener("click", function(event) {
-					createNewUnit("knight");
+                    var spawnTiles = findAvailableAndNonAvailableSpawnTiles();
+                    highlightArea(spawnTiles[0], "graphics/tile/green_tile.png", ["click"], [function(event) {
+                        var tile = event.target;
+                        createNewUnit("knight", tile.row, tile.column);
+                        clearSelectionEffects();
+                    }]);
+                    highlightArea(spawnTiles[1], "graphics/tile/red_tile.png", [], []);
+					// createNewUnit("knight");
 				});
 				break;
 			case "archer": 
 				unitCards[i].addEventListener("click", function(event) {
-					createNewUnit("archer");
-				});
+                    var spawnTiles = findAvailableAndNonAvailableSpawnTiles();
+                    highlightArea(spawnTiles[0], "graphics/tile/green_tile.png", ["click"], [function(event) {
+                        var tile = event.target;
+                        createNewUnit("archer", tile.row, tile.column);
+                        clearSelectionEffects();
+                    }]);
+                    highlightArea(spawnTiles[1], "graphics/tile/red_tile.png", [], []);
+                    // createNewUnit("knight");
+                });
 				break;
 			case "wizard": 
 				unitCards[i].addEventListener("click", function(event) {
-					createNewUnit("wizard");
-				});
+                    var spawnTiles = findAvailableAndNonAvailableSpawnTiles();
+                    highlightArea(spawnTiles[0], "graphics/tile/green_tile.png", ["click"], [function(event) {
+                        var tile = event.target;
+                        createNewUnit("wizard", tile.row, tile.column);
+                        clearSelectionEffects();
+                    }]);
+                    highlightArea(spawnTiles[1], "graphics/tile/red_tile.png", [], []);
+                    // createNewUnit("knight");
+                });
 				break;
 			// case "rogue": 
 			// 	unitCards[i].addEventListener("click", function(event) {
@@ -679,26 +718,26 @@ function createFloatingCards(listOfSources, correspondingUnit) {
 }
 
 //really bad
-function createNewUnit(unitType) {
+function createNewUnit(unitType, row, column) {
 	if (turn){
 		switch (unitType) {
         case "knight":
             if (p2currentGold >= 100) {
-                spawnUnit(that.classStats.knightClass, true);
+                spawnUnit(that.classStats.knightClass, true, row, column);
                 p2currentGold -= 100;
                 playableUnitCount++;
             }
             break;
         case "wizard":
             if (p2currentGold >= 100) {
-                spawnUnit(that.classStats.wizardClass, true);
+                spawnUnit(that.classStats.wizardClass, true, row, column);
                 p2currentGold -= 100;
                 playableUnitCount++;
             }
             break;
         case "archer":
             if (p2currentGold >= 100) {
-                spawnUnit(that.classStats.archerClass, true);
+                spawnUnit(that.classStats.archerClass, true, row, column);
                 p2currentGold -= 100;
                 playableUnitCount++;
             }
@@ -708,21 +747,21 @@ function createNewUnit(unitType) {
 		switch (unitType) {
         case "knight":
             if (p1currentGold >= 100) {
-                spawnUnit(that.classStats.knightClass, true);
+                spawnUnit(that.classStats.knightClass, true, row, column);
                 p1currentGold -= 100;
                 playableUnitCount++;
             }
             break;
         case "wizard":
             if (p1currentGold >= 100) {
-                spawnUnit(that.classStats.wizardClass, true);
+                spawnUnit(that.classStats.wizardClass, true, row, column);
                 p1currentGold -= 100;
                 playableUnitCount++;
             }
             break;
         case "archer":
             if (p1currentGold >= 100) {
-                spawnUnit(that.classStats.archerClass, true);
+                spawnUnit(that.classStats.archerClass, true, row, column);
                 p1currentGold -= 100;
                 playableUnitCount++;
             }
