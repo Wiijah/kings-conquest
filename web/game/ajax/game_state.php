@@ -7,14 +7,14 @@ $out = "{";
 $result = $db->query("SELECT * FROM maps WHERE map_id = 1");
 $map = $result->fetch_object();
 
-$out .= jsonPair("main", $map->points);
+$out .= jsonPair("main", $map->points).", ";
 
 $map_object = json_decode($map->points, true);
 $width = count($map_object[0]);
 $height = count($map_object);
 
 /* Print map dimensions */
-$out .= jsonPair("map_dimensions", jsonPair("width", $width) . ", " . jsonPair("height", $height));
+$out .= jsonPair("map_dimensions", jsonPair("width", $width) . ", " . jsonPair("height", $height)) . ", ";
 
 /* Print player information */
 $result = $db->query("SELECT * FROM room_participants WHERE room_id = '{$room_id}' AND event = '' ORDER BY part_id ASC");
@@ -24,9 +24,17 @@ while ($part = $result->fetch_object()) {
   $out .= jsonPair("P{$i}currentGold", $part->gold).",";
 }
 
+/* Buffs */
+$out .= '"buffs": [';
+$result = $db->query("SELECT * FROM buffs ORDER BY buff_id ASC");
+while ($buff = $result->fetch_object()) {
+  $out .= jsonStr($buff->buff_name, $buff->graphics);
+}
+$out .= '], ';
+
 /* Classes */
 $result = $db->query("SELECT * FROM classes ORDER BY class_id ASC");
-$out .= '"classes": [';
+$out .= '"classStats": [';
 while ($class = $result->fetch_object()) {
   $out .= "{";
 
@@ -54,7 +62,7 @@ $out .= "]";
 /* End classes */
 
 /* Start units */
-$out .= ', "units": [';
+$out .= ', "characters": [';
 $result = $db->query("SELECT * FROM units WHERE room_id = {$room_id}");
 
 $out .= ']';
