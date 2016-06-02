@@ -17,6 +17,7 @@ $unit = $result->fetch_object();
 
 $out = "{";
 $out .= $SUCCESS.",";
+$out .= jsonPair("gold", $player->gold).",";
 $out .= action("create_unit", jsonPair("unit", "{".jsonUnit($unit)."}"));
 $out .= "}";
 echo $out;
