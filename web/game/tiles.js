@@ -958,7 +958,7 @@ function displayStats(unit) {
 }
 
 function drawGame() {
-	$.getJSON('game-map.json', function(data) {
+	$.getJSON('ajax/game_state', function(data) {
 		that.mapData = data['main'];
 		that.drawMap(that.mapData);
 
