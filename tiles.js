@@ -174,7 +174,7 @@ function resize() {
 
 function spawnUnit(data, isCreation){
 	//|| data.address == "graphics/spritesheet/stand/ss_scarecrow_stand.png"
-    if (data.address == "graphics/spritesheet/stand/ss_rogue_stand.png") return;
+    if (data.address == "graphics/spritesheet/stand/ss_rogue_stand.png" || data.address == "graphics/spritesheet/stand/ss_scarecrow_stand.png") return;
 		var spriteSheet = new createjs.SpriteSheet({
           	"images": [data.address],
           	"frames": {"regX": 0, "height": 142, "count": 2, "regY": -10, "width": 113 },
