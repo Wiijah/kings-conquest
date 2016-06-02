@@ -42,6 +42,7 @@ var remainingAttackTimes;
 var isCasting = false;
 var currentGold;
 var currentGoldDisplay;
+var mapDrawn = false;
 var resized = false;
 
 var turn = 0;
@@ -119,6 +120,17 @@ function turnStartPhase() {
         }
 
     }    
+    var kingX;
+    var kingY;
+
+    $.each(units, function(i, value) {
+    	if (value.team == turn && value.address == "graphics/spritesheet/stand/ss_king_stand.png") {
+    		kingX = value.x;
+    		kingY = value.y;
+    	}
+    });
+    //draggable.x = -kingX;
+    //draggable.y = -kingY;
 }
 
 function turnEndPhase() {
@@ -626,18 +638,30 @@ function createNewUnit(unitType) {
     switch (unitType) {
         case "knight":
             if (currentGold >= 100) {
+            	serverValidate("create", null, [100], function() {
+            		if (true) {
+            			currentGold = currentGold; // currentGold = serverGold;
+
+                		spawnUnit(that.classStats.knightClass, true);
+                		currentGold -= 100;
+            		} else {
+            			//redrawGame
+            		}	
+            	});
                 spawnUnit(that.classStats.knightClass, true);
                 currentGold -= 100;
             }
             break;
         case "wizard":
             if (currentGold >= 100) {
+            	serverValidate("create", null, [100], function() {});
                 spawnUnit(that.classStats.wizardClass, true);
                 currentGold -= 100;
             }
             break;
         case "archer":
             if (currentGold >= 100) {
+            	serverValidate("create", null, [100], function() {});
                 spawnUnit(that.classStats.archerClass, true);
                 currentGold -= 100;
             }
@@ -1176,7 +1200,7 @@ function attack(attacker, target){
 
 		setTimeout(function() {
 			chars.removeChild(sprite);
-			if (remainingAttackTimes > 0) chars.addChild(attacker);
+			chars.addChild(attacker);
 			chars.removeChild(damageAnimation);
 		}, 1000);
 
@@ -1427,6 +1451,15 @@ function findReachableTiles(x, y, range, isMoving) {
 
 function drawMap(data) {
 
+
+	if (mapDrawn) {
+		for (var i = 0; i < maps.length; i++) {
+			for (var j = 0; j < maps[i].length; j++) {
+				draggable.removeChild(maps[i][j]);
+			}
+		}
+	}
+
 	maps = new Array(mapHeight);
 	for (var i = 0; i < mapHeight; i++) {
 		maps[i] = new Array(mapWidth);
@@ -1478,6 +1511,7 @@ function drawMap(data) {
 			draggable.addChild(maps[i][j]);
 		}
 	}
+	mapDrawn = true;
 
 }
 
@@ -1708,10 +1742,14 @@ $(function(){
 function moveCharacter(unit) {
 	var reachableTiles = findReachableTiles(unit.row, unit.column, unit.moveRange, true);
 	highlightArea(reachableTiles, "graphics/tile/green_tile.png", ["click"], [function(event) {
+		// server request
 		var fromX = selectedCharacter.row;
 		var fromY = selectedCharacter.column;
 		var tile = event.target;
 		findPath(fromX, fromY, tile.row, tile.column);
+
+		serverValidate("move", selectedCharacter, [path], function() {});
+
 		blockMaps[fromX][fromY] = 0;
 		move();
 		blockMaps[tile.row][tile.column] = 1;
@@ -1720,6 +1758,27 @@ function moveCharacter(unit) {
 		clearSelectionEffects();
 	}]);
 
+}
+
+function serverValidate(type, unit, additionalArgs, callback) {
+	if (type == "move") {
+		//move request
+	}
+	if (type == "create") {
+		var xhttp = new XMLHttpRequest();
+		xhttp.onreadystatechange = function() {
+			if (xhttp.readystate == 4 && xhttp.state == 200) {
+				var response = JSON.parse(xhttp.responseText);
+				if (response.error_code == 0) {
+					console.log("JSON OK");
+				}
+			}
+		};
+		xhttp.open("POST", "ajax/unit_create.php", true);
+		xhttp.send();
+		// yes + currentGold
+		// OR no + currentState
+	}
 }
 
 function performAttack() {
@@ -1732,16 +1791,18 @@ function performAttack() {
 				attack(selectedCharacter, unit);
 				selectedCharacter.attack = selectedCharacter.base_attack;
 				clearSelectionEffects();
-				setTimeout(function() {
-					if (remainingAttackTimes > 0) {
+				
+				if (remainingAttackTimes > 0) {
+					setTimeout(function() {
 						performAttack();
-					} else {
-	                    selectedCharacter.canAttack = 0;
-	                    selectedCharacter.outOfMoves = 1;
-	                    playableUnitCount--;
-	                    console.log(playableUnitCount);
-                	}
-				}, 1000);
+					}, 1000);
+				} else {
+                    selectedCharacter.canAttack = 0;
+                    selectedCharacter.outOfMoves = 1;
+                    playableUnitCount--;
+                    console.log(playableUnitCount);
+            	}
+
 			}
 		});	
 	}]); 
