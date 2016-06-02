@@ -4,7 +4,6 @@ header('Access-Control-Allow-Origin: *');
 header("Content-Type: application/json; charset=UTF-8");
 
 require_once '../../common.php';
-
 /* Error enums */
 $ERROR_NOT_IG = 2;
 
@@ -19,14 +18,19 @@ if (!isset($_SESSION['id'])) {
 }
 
 function game_error($msg) {
-  return '{"game_error":"'.$msg.'"}';
+  return '{"error_code":"'.$msg.'"}';
 }
 
-function jsonStr($key, $value) {
-  return '{"'.$key.'":"'.$value.'"}';
+function jsonStr($key, $value, $braces = false) {
+  $out = '"'.$key.'":"'.$value.'"';
+  if ($braces) return "{".$out."}";
+  
+  return $out;
 }
 
-function jsonPair($key, $value) {
-  return '{"'.$key.'": '.$value.'}';
+function jsonPair($key, $value, $braces = false) {
+  $out = '"'.$key.'": '.$value;
+  if ($braces) return "{".$out."}";
+  return $out;
 }
 ?>
