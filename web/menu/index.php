@@ -49,6 +49,9 @@ if (isset($_SESSION['id'])) {
 Kings' Conquest is a <span class='home_highlight'>turned-based multiplayer
 game</span> aimed at fans of the <span class='home_highlight'>fantasy</span> or
 <span class='home_highlight'>strategy</span> genre.
+<br /><br />
+<img src="images/browsers.png" id="browsers" /><br />
+No downloads or installations needed, just play from any modern browser!
 </div>
 
 </div>
@@ -67,6 +70,8 @@ game</span> aimed at fans of the <span class='home_highlight'>fantasy</span> or
   <br /><input type="password" class="login_text" id="password" />
   <br /><br />
   <input type="submit" value="Login" class="login_btn" id="btn_login" />
+
+  <input type="submit" value="Login with Facebook" class="login_btn fb_btn" id="btn_fb" />
   <br /><br />
   <div class="white_line"></div>
   <br />Don't have an account? Click <a class="goto_register">here</a> to register!

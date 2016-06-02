@@ -1,4 +1,4 @@
-var MENU_ANIM_TIME = 300;
+var MENU_ANIM_TIME = 0;
 
 $(document).ready(function() {
 

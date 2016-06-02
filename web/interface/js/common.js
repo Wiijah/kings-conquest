@@ -72,7 +72,7 @@ function quickPost(url, data, callback) {
       if (data.session_error !== undefined && !session_expired){
         session_expired = true;
 
-        disablePage("../login");
+        disablePage("../menu");
 
         lightbox_alert("Session Expired", "You are not logged in. Please log yourself back in.");
       }
