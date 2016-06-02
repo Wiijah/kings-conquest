@@ -37,7 +37,7 @@ $(document).ready(function() {
         url: url,
         data: data,
         success: callback,
-        error: nothing,
+        error: handle_ajax_error,
         timeout: 10000
       });
     }
@@ -54,8 +54,8 @@ function btn_with_load(btn, func) {
   });
 }
 
+/* Disable the current page the user is visiting */
 function disablePage(url) {
-
   page_disabled = true;
 
   //remove closing lightbox features
@@ -72,7 +72,7 @@ function quickPost(url, data, callback) {
       if (data.session_error !== undefined && !session_expired){
         session_expired = true;
 
-        disablePage("../login");
+        disablePage("../menu");
 
         lightbox_alert("Session Expired", "You are not logged in. Please log yourself back in.");
       }
@@ -80,8 +80,19 @@ function quickPost(url, data, callback) {
    });
 }
 
+/* Minimal features of an AJAX post request. */
+function rawPost(url, data, callback) {
+   return $.quickPost(url, data, function(data, status){
+      callback(data, status);
+   });
+}
+
 /* Function that does nothing, useful for passing callback functions that do nothing. */
 function nothing() {}
+
+function handle_ajax_error(jqXHR, textStatus, errorThrown) {
+   //lightbox_alert("Server Error", "There was an error connecting to the server. Please try again later.");
+}
 
 /* Function that checks if a string's length is between two numbers. */
 function isStrLenCorrect(str, min, max) {

@@ -1,7 +1,9 @@
 var ICON_SCALE_FACTOR = 0.65;
-var MOVEMENT_STEP = 6.5
+var MOVEMENT_STEP = 6.5;
 
 var stage = new createjs.Stage("gameCanvas");
+stage.scaleX = 0.675;
+stage.scaleY = stage.scaleX;
 
 var that = this;
 var team = 0;
@@ -20,7 +22,7 @@ var blockMap;
 var tile_display;
 var highLight_tile;
 var tile_info_text;
-var endGame = false;
+
 
 var moveButton;
 var attackButton;
@@ -40,127 +42,11 @@ var movingPlayer = false;
 var isAttacking = false;
 var remainingAttackTimes;
 var isCasting = false;
-var p1currentGold;
-var p2currentGold;
+var currentGold;
 var currentGoldDisplay;
-var mapDrawn = false;
-var resized = false;
-
 var turn = 0;
-var playableUnitCount = 0;
-
-
-var	archerSkillDone = false;
-var undoMove = [];
-var undo = false;
-
-
-function showTurnInfo(){
-	stage.removeChild(playerLabel);
-	stage.removeChild(playerLabelBg);
-	if (turn) {
-		var playerLabelBg = new createjs.Shape();
-		playerLabelBg.graphics.beginFill("#000000").drawRect(-stage.canvas.width ,stage.canvas.height - stage.canvas.height/2 ,stage.canvas.width * 2,80);
-		var playerLabel = new createjs.Text("Player2 Turn", "30px Arial", "#0000ff");
-	} else {
-		var playerLabelBg = new createjs.Shape();
-		playerLabelBg.graphics.beginFill("#000000").drawRect(-stage.canvas.width ,stage.canvas.height - stage.canvas.height/2 ,stage.canvas.width * 2,80);
-		var playerLabel = new createjs.Text("Player1 Turn", "30px Arial", "#ff0000");
-	}
-	playerLabel.x = stage.canvas.width - stage.canvas.width / 2 - 100;
-	playerLabel.y = stage.canvas.height -  stage.canvas.height / 2 + 20;
-	playerLabelBg.alpha = 0.7;
-
-	stage.addChild(playerLabelBg);
-	stage.addChild(playerLabel);
-	setTimeout(function() {
-		stage.removeChild(playerLabel);
-		stage.removeChild(playerLabelBg);
-	}, 1000);
-}
-
-
-function turnStartPhase() {
-	undoMove = [];
-	destroyGoldDisplay();
-    drawGoldDisplay();
-	showTurnInfo();
-    playableUnitCount = 0;
-    console.log("Starting turn");
-    $.each(units, function(i, value) {
-    	// Increment the number of playable unit for the current player
-        if (value.team === turn) {
-            playableUnitCount += 1;
-            value.canMove = 1;
-            value.canAttack = 1;
-            value.outOfMoves = 0;
-        }
-
-        // Reduce the skill cooldown of each unit (if it hasn't cooled down yet)
-        if (value.skillCoolDown != 0) {
-            value.skillCoolDown--;
-        }
-
-        var buffsToBeRemoved = [];
-        // Decrement the buff duration for each unit
-        for (var j = 0; j < value.buffs.length; j++) {
-            value.buffs[j][2]--;
-            if (value.buffs[j][2] === 0) buffsToBeRemoved.push(value.buffs[j][0]);
-            if (value.buffs[j][0] === 5) {
-               	
-
-                var damage = value.max_hp * 0.02;
-                chars.removeChild(fire);
-                var fire = new createjs.Sprite(value.burnEffect, "burn");
-                showDamage(value, 1, damage);
-                fire.x = value.x;
-                fire.y = value.y;
-                chars.addChild(fire);
-
-                value.hp -= damage;
-                updateHP_bar(value);
-                setTimeout(function() {
-					chars.removeChild(fire);
-				}, 1000);
-            }
-        }
-
-        // Remove all the buffs with duration 0
-        for (var j = 0; j < buffsToBeRemoved.length; j++) {
-            removeBuff(buffsToBeRemoved[j], value);
-        }
-
-    });
-       
-    var kingX;
-    var kingY;
-
-    $.each(units, function(i, value) {
-    	if (value.team == turn && value.address == "graphics/spritesheet/stand/ss_king_stand.png") {
-    		console.log(value.x + "," + value.y);
-    		kingX = value.x;
-    		kingY = value.y;
-    	}
-    });
-    draggable.x = 575 - kingX;
-    draggable.y = 382.5 - kingY;
-
-
- //    setTimeout(function() {
-	// 	clearSelectionEffects();
- //    	turn = 1 - turn;
- //    	turnEndPhase();
- //    	turnStartPhase();
-	// }, 6000);
-}
-
-function turnEndPhase() {
-    // Post-turn processing
-}
-
-
-
-
+var showUnitInfo = false;
+var resized = false;
 function resize() {
 	// stage.canvas.width = window.innerWidth;
 	//stage.canvas.height = window.innerHeight;
@@ -172,7 +58,16 @@ function resize() {
 // typeName : king, red_castle, wizard, etc
 // initial: true / false
 
-function spawnUnit(data, isCreation, row, column){
+$(document).ready(function() {
+    var bg_x = 0;
+    setInterval(function(){
+        bg_x += 5;
+        $('body').css('background-position', '-' + bg_x + 'px 0');
+        $('.clouds').css('background-position', bg_x + 'px 0');
+    }, 125);
+});
+
+function spawnUnit(data, isCreation){
 	//|| data.address == "graphics/spritesheet/stand/ss_scarecrow_stand.png"
     if (data.address == "graphics/spritesheet/stand/ss_rogue_stand.png") return;
 		var spriteSheet = new createjs.SpriteSheet({
@@ -209,46 +104,18 @@ function spawnUnit(data, isCreation, row, column){
 		});
 		unit.damageEffect = damageEffect;
 
-		var burnEffect = new createjs.SpriteSheet({
-			"images": [that.buffEffects.burning],
-			"frames": {"width": 142, "height": 142, "count": 4, "regY": 110, "regX": 95},
-			"animations": {
-				"burn":{
-					frames: [0,1,2,3],
-					next: false
-				}
-			},
-			framerate: 4
-		});
-		unit.burnEffect = burnEffect;
-
-		var healEffect = new createjs.SpriteSheet({
-			"images": [that.buffEffects.heal],
-			"frames": {"width": 142, "height": 142, "count": 4, "regY": 110, "regX": 95},
-			"animations": {
-				"heal":{
-					frames: [0,1,2,3],
-					next: false
-				}
-			},
-			framerate: 4
-		});
-		unit.healEffect = healEffect;
-
-
 		unit.team = data.team;
         if (isCreation) {
-        	unit.team = turn;
-            unit.row = row;
-            unit.column = column;
+            var coord = findFreeSpace();
+            unit.row = coord[0];
+            unit.column = coord[1];
         } else {
-          unit.team = data.team;
 		  unit.column = data.y;
 		  unit.row = data.x;
         }
 		unit.x = originX +  (unit.column - unit.row) * 65;
 		unit.y = unit.column * 32.5 + originY + unit.row * 32.5;
-		//lalala	
+	
 
 		unit.regX = 56.5;
 		unit.regY = 130;
@@ -278,15 +145,15 @@ function spawnUnit(data, isCreation, row, column){
 		hp_bar = new createjs.Shape();
 		hp_bar.x = unit.x - 40;
 		hp_bar.y = unit.y - 95;
-		if (unit.team === 0){
-			hp_bar.graphics.beginFill("#000000").drawRect(0, 0, 82, 12);
-			hp_bar.graphics.beginFill("#000000").drawRect(1, 1, 80, 10);
-			hp_bar.graphics.beginFill("#ff0000").drawRect(1, 1, (getHealth(data)/getMaxHealth(data)) * 80, 10);
-		} else {
-			hp_bar.graphics.beginFill("#000000").drawRect(0, 0, 82, 12);
-			hp_bar.graphics.beginFill("#000000").drawRect(1, 1, 80, 10);
-			hp_bar.graphics.beginFill("#3399ff").drawRect(1, 1, (getHealth(data)/getMaxHealth(data)) * 80, 10);
-		}
+		// if (unit.team === 0){
+		// 	hp_bar.graphics.beginFill("#000000").drawRect(0, 0, 82, 12);
+		// 	hp_bar.graphics.beginFill("#000000").drawRect(1, 1, 80, 10);
+		// 	hp_bar.graphics.beginFill("#ff0000").drawRect(1, 1, (getHealth(data)/getMaxHealth(data)) * 80, 10);
+		// } else {
+		// 	hp_bar.graphics.beginFill("#000000").drawRect(0, 0, 82, 12);
+		// 	hp_bar.graphics.beginFill("#000000").drawRect(1, 1, 80, 10);
+		// 	hp_bar.graphics.beginFill("#3399ff").drawRect(1, 1, (getHealth(data)/getMaxHealth(data)) * 80, 10);
+		// }
 		unit.hp_bar = hp_bar;
 
 
@@ -315,14 +182,14 @@ function spawnUnit(data, isCreation, row, column){
 		unit.cache(0,0,150,150);
 		hp_bar.cache(0,0,100,120);
 
-		addEventListenersToUnit(unit);
+		//addEventListenersToUnit(unit);
 	// });		
 }
 
 function findFreeSpace(){
 	if (turn == 0){
 		//red castle postion[0,0]
-		var empty = findReachableTiles(1, 0, 10, false);
+		var empty = findReachableTiles(0, 0, 10, false);
 		var x,y;
 		for (i = 1; i < empty.length; i++){
 			x = empty[i][0];
@@ -346,11 +213,6 @@ function findFreeSpace(){
 }
 
 function initGame() {
-	var audio = new Audio('Test.mp3');
-	audio.loop = true;
-	audio.play();
-
-
 	createjs.Ticker.addEventListener("tick", keyEvent);
     this.document.onkeydown = keyEvent;
 	stage.enableMouseOver(20);
@@ -374,10 +236,10 @@ function initGame() {
 		}
 
 
-		that.buffEffects = data.buffEffects;
-		p1currentGold = data.P1currentGold;
-		p2currentGold = data.P2currentGold;
+
+		currentGold = data.currentGold;
 		drawGoldDisplay();
+		
 		that.drawMap(that.mapData);
 
 		//should only spawn 2 kings and castles
@@ -385,35 +247,22 @@ function initGame() {
 			// console.log(data.characters[i].x);
 			spawnUnit(data.characters[i], false);
 		});
-        turnStartPhase();
 	});
 
-	stage.canvas.width = window.innerWidth;
-	stage.canvas.height = window.innerHeight; //$("body").prop("clientHeight");
+
+	stage.canvas.width = $("body").prop("clientWidth");
+	stage.canvas.height = $("body").prop("clientHeight") + 200;
 
 
 	draggable = new createjs.Container();
-	drag_box = new createjs.Shape();
-	drag_box.graphics.drawRect(-stage.canvas.width*50,-stage.canvas.height*50,stage.canvas.width * 100,stage.canvas.height * 100);
-	drag_box.hitArea = new createjs.Shape();
-	drag_box.hitArea.graphics.beginFill("#000").drawRect(-stage.canvas.width * 50,-stage.canvas.height * 50,stage.canvas.width * 100,stage.canvas.height * 100);
-	draggable.addChild(drag_box);
-	draggable.on("pressmove", function(event) {
-		if (isDragging) {
-			this.x = event.stageX - offX;
-    		this.y = event.stageY - offY;
-    	} else if (!isInHighlight) {
-    		offX = stage.mouseX - draggable.x;
-    		offY = stage.mouseY - draggable.y;
-    		isDragging = true;
-    		draggable.removeChild(highLight_tile);
-    	}
-	});
+	var box = new createjs.Shape();
+	draggable.addChild(box);
+	
 	draggable.on("pressup", function(event) {
 		if (isDragging) {
 			isDragging = false;
 		}
-	});
+	})
 	stage.addChild(draggable);
 
 	upper = new createjs.Container();
@@ -428,18 +277,6 @@ function initGame() {
 	drawStatsDisplay();
 	drawUnitCreationMenu();
 	drawBottomInterface();
-
-    setInterval(function(){ 
-        if (!movingPlayer && !isAttacking && !isCasting && !isInHighlight) {
-            if (playableUnitCount === 0) {
-                clearSelectionEffects();
-                console.log("turn ended for current player");
-                turnEndPhase();
-                turn = 1 - turn;
-                turnStartPhase();
-            }
-        }
-    }, 5000);
 
 
 	changed = true;
@@ -485,7 +322,7 @@ function applyBuff(buffType, unit) {
 			unit.buffs.push([2, 1.2, 3, buffIcon]);
 			break;
 		case 3: // dec attack Buff
-            var buffIcon = new createjs.Bitmap("graphics/buff/buff_dec_attack.png");
+            var buttIcon = new createjs.Bitmap("graphics/buff/buff_dec_attack.png");
             unit.buffs.push([3, 0.8, 3, buffIcon]);
             break;
 		case 4:	// shield Buff
@@ -530,7 +367,7 @@ function getMaxHealth(unit) {
 function getAttack(unit) {
 	var base = unit.attack;
 	$.each(unit.buffs, function(i, value) {
-		if (value[0] == 2 || value[0] == 3) {
+		if (value[0] == 2) {
 			base *= value[1]
 		} // if type == attack, add to base
 	});
@@ -554,48 +391,22 @@ function updateHP_bar(unit){
 		chars.removeChild(unit.hp_bar);
         blockMaps[unit.row][unit.column] = 0;
 		units.splice(units.indexOf(unit), 1);
-		for (var i = 0; i <= unit.buffs.length; i++) {
-			removeBuff(i, unit);
-		}
-		if (unit.address == "graphics/spritesheet/stand/ss_king_stand.png") {
-		    var endLabelBg = new createjs.Shape();
-			endLabelBg.graphics.beginFill("#000000").drawRect(-stage.canvas.width ,stage.canvas.height - stage.canvas.height/2 ,stage.canvas.width * 2,80);
-			if (turn){
-				var endLabel = new createjs.Text("Player2 Win", "30px Arial", "#0000ff");
-			} else {
-				var endLabel = new createjs.Text("Player1 Win", "30px Arial", "#ff0000");
-			}
-			var restartLabel = new createjs.Text("Press \" r \" to restart", "15px Arial", "#ffffff");
-			
-			endLabel.x = stage.canvas.width - stage.canvas.width / 2 - 100;
-			endLabel.y = stage.canvas.height -  stage.canvas.height / 2 + 20;
-			restartLabel.x = endLabel.x + 20;
-			restartLabel.y = endLabel.y + 35;
-			endLabelBg.alpha = 0.7;
-
-			stage.addChild(endLabelBg);
-			stage.addChild(restartLabel);
-			stage.addChild(endLabel);
-			endGame = true;
-			stage.mouseChildren = false;
-		 }
 	} else {
 		// unit.hp_bar.graphics.clear();
 		// unit.hp_bar.graphics.beginFill("#000000").drawRect(0, 0, 80, 10);
 		// unit.hp_bar.graphics.beginFill("#ff0000").drawRect(0, 0, (getHealth(unit) / getMaxHealth(unit)) * 80, 10);
-		if (unit.team == 0){
-			unit.hp_bar.graphics.beginFill("#000000").drawRect(0, 0, 82, 12);
-			unit.hp_bar.graphics.beginFill("#000000").drawRect(1, 1, 80, 10);
-			unit.hp_bar.graphics.beginFill("#ff0000").drawRect(1, 1, (getHealth(unit)/getMaxHealth(unit)) * 80, 10);
-		} else {
-			unit.hp_bar.graphics.beginFill("#000000").drawRect(0, 0, 82, 12);
-			unit.hp_bar.graphics.beginFill("#000000").drawRect(1, 1, 80, 10);
-			unit.hp_bar.graphics.beginFill("#3399ff").drawRect(1, 1, (getHealth(unit)/getMaxHealth(unit)) * 80, 10);
-		}
+		// if (unit.team == 0){
+		// 	unit.hp_bar.graphics.beginFill("#000000").drawRect(0, 0, 82, 12);
+		// 	unit.hp_bar.graphics.beginFill("#000000").drawRect(1, 1, 80, 10);
+		// 	unit.hp_bar.graphics.beginFill("#ff0000").drawRect(1, 1, (getHealth(unit)/getMaxHealth(unit)) * 80, 10);
+		// } else {
+		// 	unit.hp_bar.graphics.beginFill("#000000").drawRect(0, 0, 82, 12);
+		// 	unit.hp_bar.graphics.beginFill("#000000").drawRect(1, 1, 80, 10);
+		// 	unit.hp_bar.graphics.beginFill("#3399ff").drawRect(1, 1, (getHealth(unit)/getMaxHealth(unit)) * 80, 10);
+		// }
 	}
 	unit.hp_bar.updateCache();
 }
-
 
 function drawBottomInterface()  {
 	bottomInterface.x = 0;
@@ -603,7 +414,6 @@ function drawBottomInterface()  {
 	// bottomInterface.y = 0;
 	draggable.addChild(bottomInterface);
 }
-
 
 
 
@@ -620,25 +430,8 @@ function drawUnitCreationMenu() {
 	bottomInterface.addChild(unitCreationMenu);
 }
 
-function findAvailableAndNonAvailableSpawnTiles() {
-    var availableSpawnTiles = [];
-    var nonAvailableSpawnTiles = [];
-    for (var i = 0; i < 4; i++) {
-        for (var j = 0; j < 4; j++) {
-            if (blockMaps[i][j] === 0) {
-                availableSpawnTiles.push([i, j]);
-            } else {
-                nonAvailableSpawnTiles.push([i, j]);
-            }
-        }
-    }
-    return [availableSpawnTiles, nonAvailableSpawnTiles];
-}
-
-
 function createFloatingCards(listOfSources, correspondingUnit) {
 	var numOfCards = listOfSources.length;
-    var newUnitSpawnTiles = [];
 	for (i = 0; i < listOfSources.length; i++) {
 		unitCards[i] = new createjs.Bitmap(listOfSources[i]);
 		var unit_card_text = new createjs.Text("$ 100", "12px 'Arial'", "#ffffff");
@@ -654,39 +447,18 @@ function createFloatingCards(listOfSources, correspondingUnit) {
 		switch(unitCards[i].unitName ){
 			case "knight": 
 				unitCards[i].addEventListener("click", function(event) {
-                    var spawnTiles = findAvailableAndNonAvailableSpawnTiles();
-                    highlightArea(spawnTiles[0], "graphics/tile/green_tile.png", ["click"], [function(event) {
-                        var tile = event.target;
-                        createNewUnit("knight", tile.row, tile.column);
-                        clearSelectionEffects();
-                    }]);
-                    highlightArea(spawnTiles[1], "graphics/tile/red_tile.png", [], []);
-					// createNewUnit("knight");
+					createNewUnit("knight");
 				});
 				break;
 			case "archer": 
 				unitCards[i].addEventListener("click", function(event) {
-                    var spawnTiles = findAvailableAndNonAvailableSpawnTiles();
-                    highlightArea(spawnTiles[0], "graphics/tile/green_tile.png", ["click"], [function(event) {
-                        var tile = event.target;
-                        createNewUnit("archer", tile.row, tile.column);
-                        clearSelectionEffects();
-                    }]);
-                    highlightArea(spawnTiles[1], "graphics/tile/red_tile.png", [], []);
-                    // createNewUnit("knight");
-                });
+					createNewUnit("archer");
+				});
 				break;
 			case "wizard": 
 				unitCards[i].addEventListener("click", function(event) {
-                    var spawnTiles = findAvailableAndNonAvailableSpawnTiles();
-                    highlightArea(spawnTiles[0], "graphics/tile/green_tile.png", ["click"], [function(event) {
-                        var tile = event.target;
-                        createNewUnit("wizard", tile.row, tile.column);
-                        clearSelectionEffects();
-                    }]);
-                    highlightArea(spawnTiles[1], "graphics/tile/red_tile.png", [], []);
-                    // createNewUnit("knight");
-                });
+					createNewUnit("wizard");
+				});
 				break;
 			// case "rogue": 
 			// 	unitCards[i].addEventListener("click", function(event) {
@@ -711,65 +483,37 @@ function createFloatingCards(listOfSources, correspondingUnit) {
 			changed = true;
 		});
 
-		unitCreationMenu.addChild(unitCards[i]);
-		unitCreationMenu.addChild(unitCards[i].text);
+		//unitCreationMenu.addChild(unitCards[i]);
+		//unitCreationMenu.addChild(unitCards[i].text);
 
 	}
 }
 
-//really bad
-function createNewUnit(unitType, row, column) {
-	if (turn){
-		switch (unitType) {
+function createNewUnit(unitType) {
+
+    switch (unitType) {
         case "knight":
-            if (p2currentGold >= 100) {
-                spawnUnit(that.classStats.knightClass, true, row, column);
-                p2currentGold -= 100;
-                playableUnitCount++;
+            if (currentGold >= 100) {
+                spawnUnit(that.classStats.knightClass, true);
+                currentGold -= 100;
             }
             break;
         case "wizard":
-            if (p2currentGold >= 100) {
-                spawnUnit(that.classStats.wizardClass, true, row, column);
-                p2currentGold -= 100;
-                playableUnitCount++;
+            if (currentGold >= 100) {
+                spawnUnit(that.classStats.wizardClass, true);
+                currentGold -= 100;
             }
             break;
         case "archer":
-            if (p2currentGold >= 100) {
-                spawnUnit(that.classStats.archerClass, true, row, column);
-                p2currentGold -= 100;
-                playableUnitCount++;
+            if (currentGold >= 100) {
+                spawnUnit(that.classStats.archerClass, true);
+                currentGold -= 100;
             }
             break;
-        }
-	} else {
-		switch (unitType) {
-        case "knight":
-            if (p1currentGold >= 100) {
-                spawnUnit(that.classStats.knightClass, true, row, column);
-                p1currentGold -= 100;
-                playableUnitCount++;
-            }
-            break;
-        case "wizard":
-            if (p1currentGold >= 100) {
-                spawnUnit(that.classStats.wizardClass, true, row, column);
-                p1currentGold -= 100;
-                playableUnitCount++;
-            }
-            break;
-        case "archer":
-            if (p1currentGold >= 100) {
-                spawnUnit(that.classStats.archerClass, true, row, column);
-                p1currentGold -= 100;
-                playableUnitCount++;
-            }
-            break;
-        }
     }
-    destroyGoldDisplay();
-    drawGoldDisplay();
+
+    currentGoldDisplay.text = ("Gold: " + currentGold);
+
 }
 
 function addEventListenersToUnit(unit) {
@@ -779,8 +523,9 @@ function addEventListenersToUnit(unit) {
             }
             if (!movingPlayer && !isAttacking && !isCasting) {
                 clearSelectionEffects();
-                selectedCharacter = unit;
-                if (unit.team == turn) showActionMenuNextToPlayer(unit);
+                selectedCharacter = unit;;
+                showUnitInfo = true;
+                showActionMenuNextToPlayer(unit);
                 displayStats(unit);
             }
 
@@ -794,45 +539,29 @@ function addEventListenersToUnit(unit) {
                         if (remainingAttackTimes > 0) {
                             remainingAttackTimes - 1;
                             performAttack();
-                        } else {
-                            selectedCharacter.canAttack = 0;
-                            selectedCharacter.outOfMoves = 1;
-                            playableUnitCount--;
-                            //console.log(playableUnitCount);
                         }
                     }
                 });
             }
 
-            // In this case, we are selecting the unit to be attacked by the wizard spell
             if (selectedCharacter != unit && isCasting && selectedCharacter.team != unit.team) {
-                for (var i = 0; i < highlighted.length; i++) {
-                    if (highlighted[i].row === unit.row && highlighted[i].column === unit.column) {
-                        break;
-                    }
-                    console.log(i);
-                    if (i == highlighted.length - 1) return;
-                }
+
                 $.each(units, function(i, otherUnit) {
 
                     if (otherUnit.column == unit.column && otherUnit.row == unit.row && otherUnit.team != selectedCharacter.team) {
                         attack(selectedCharacter, otherUnit);
-                        applyBuff(5, otherUnit);
                     }
                     if (otherUnit.column == unit.column
                         && (otherUnit.row == unit.row-1 || otherUnit.row == unit.row+1) && otherUnit.team != selectedCharacter.team) {
                         attack(selectedCharacter, otherUnit);
-                        applyBuff(5, otherUnit);
                     }
                     if (otherUnit.row == unit.row
                         && (otherUnit.column == unit.column-1 || otherUnit.column == unit.column+1) && otherUnit.team != selectedCharacter.team) {
                         attack(selectedCharacter, otherUnit);
-                        applyBuff(5, otherUnit);
                     }
                     clearSelectionEffects();
-                    selectedCharacter.outOfMoves = 1;
+                    selectedCharacter.outOfMoves = 0;
                     selectedCharacter.skillCoolDown = 3;
-                    playableUnitCount--;
                     isCasting = false;
 
                 });
@@ -885,24 +614,21 @@ function destroyGoldDisplay() {
 }
 
 function drawGoldDisplay() {
+
 	coin_pic = new createjs.Bitmap("graphics/coin.png");
 	coin_pic.x = stage.canvas.width - 170;
 	coin_pic.y = 10;
 	coin_pic.scaleX = 1;
 	coin_pic.scaleY = 1
-	if (turn){
-		currentGoldDisplay = new createjs.Text("Gold: " + p2currentGold, "20px '04b_19'", "#ffffff");
-	} else {
-		currentGoldDisplay = new createjs.Text("Gold: " + p1currentGold, "20px '04b_19'", "#ffffff");
-	}
-	
+
+	currentGoldDisplay = new createjs.Text("Gold: " + currentGold, "20px '04b_19'", "#ffffff");
 	currentGoldDisplay.x = coin_pic.x + 40;
 	currentGoldDisplay.y = coin_pic.y  +5;
 	currentGoldDisplay.textBasline = "alphabetic";
 
 	// stage.addChild(coin_background);
-	stage.addChild(coin_pic);
-	stage.addChild(currentGoldDisplay);
+	//stage.addChild(coin_pic);
+	//stage.addChild(currentGoldDisplay);
 }
 
 function drawStatsDisplay() {
@@ -913,14 +639,14 @@ function drawStatsDisplay() {
 
 function displayStats(unit) {
 	if(unit.team === 1){
-		var drag_box = new createjs.Bitmap("graphics/stats_background_self.png");
+		var box = new createjs.Bitmap("graphics/stats_background_self.png");
 	} else {
-		var drag_box = new createjs.Bitmap("graphics/stats_background_opponent.png");
+		var box = new createjs.Bitmap("graphics/stats_background_opponent.png");
 	}
 	
-	drag_box.scaleX = 0.8;
-	drag_box.scaleY = 0.8;
-	statsDisplay.addChild(drag_box);
+	box.scaleX = 0.8;
+	box.scaleY = 0.8;
+	statsDisplay.addChild(box);
 
 	var bmp = new createjs.Bitmap(unit.info);
 	bmp.scaleX = 0.75;
@@ -929,7 +655,7 @@ function displayStats(unit) {
 	bmp.y = 10;
 	bmp.x = 20; // 226
 	//stage.update();
-	var text = unit.team == turn ? new createjs.Text("HP : " + getHealth(unit) + "/" + getMaxHealth(unit) + "\n" +
+	var text = unit.team == team ? new createjs.Text("HP : " + getHealth(unit) + "/" + getMaxHealth(unit) + "\n" +
 		"ATK : "  + getAttack(unit) + "\n" + "RNG : " + unit.attackRange + "\n" +
 		"SKILL : " + unit.skill +  "\n" + "CD: " + unit.skillCoolDown  + "\n" +
 		"MOV. RANGE : " + unit.moveRange + "\n" +
@@ -1001,15 +727,11 @@ function showActionMenuNextToPlayer(unit) {
 								   : "graphics/ingame_menu/new_attack_gray.png";
 	attackButton = createClickableImage(attackSource, unit.x + 48, unit.y - 119, function() {
 		if (unit.canAttack) {
-            console.log(draggable.getNumChildren());
 			undoHighlights();
-            console.log(draggable.getNumChildren());
 			// isAttacking = true;
 			// drawRange(findReachableTiles(unit.column, unit.row, unit.attackRange, false), 1);
 			remainingAttackTimes = 1;
-            console.log(draggable.getNumChildren());
 			performAttack();
-            console.log(draggable.getNumChildren());
 		}
 	});
 
@@ -1052,7 +774,6 @@ function cast(skillNo, unit) {
 	switch (skillNo) {
 		case 0: // King's skill
 			// display effect
-			console.log(unit.x + "," + unit.y);
 			$.each(units, function(i, value) {
 				if (value.team === selectedCharacter.team) {
 					//buff health
@@ -1062,63 +783,72 @@ function cast(skillNo, unit) {
 					} else {
 						value.hp = value.max_hp;
 					}
-					var heal = new createjs.Sprite(units[i].healEffect, "heal");
-					heal.x = value.x;
-					heal.y = value.y;
-					chars.addChild(heal);
 					updateHP_bar(value);
 					//value.buffs.push([0,add,3]);
 					//value.buffs.push([1,add,3]);
 					//buff dmg
 					applyBuff(2, value);
 					// value.buffs.push([2,5,3]);
-					setTimeout(function() {
-						chars.removeChild(heal);
-					}, 1000);
+
+					destroyStats();
+					displayStats(unit);
+
+
+					selectedCharacter.outOfMoves = 1;
+					unit.skillCoolDown = 3;
+					destroyMenu();
+					showActionMenuNextToPlayer(unit);
+
+					changed = true;
 				}
 			});
 			isCasting = false;
-            selectedCharacter.outOfMoves = 1;
-            unit.skillCoolDown = 3;
-            playableUnitCount--;
-            changed = true;
-            undoMove.pop();
 			// notify server
 
 			// display updated json
 			break;
 		case 1: // Archer's skill
-			archerSkillDone = false;
+		 //    var atk = selectedCharacter.attack;
+		 //    selectedCharacter.attack = 2 * atk;
+
+			// isAttacking = true;
+			// undoHighlights();
+			// drawRange(findReachableTiles(selectedCharacter.column, selectedCharacter.row, selectedCharacter.attackRange, false), 1);
 			var reachableTiles = findReachableTiles(selectedCharacter.column, selectedCharacter.row, selectedCharacter.attackRange, false);
 			isCasting = true;
 			undoHighlights();
-			performAttack();
 			remainingAttackTimes = 2;
-	    	unit.skillCoolDown = 3;
+			performAttack();
+
+
+			
 			break;
 	    case 3: // Warrior's skill
 	    	undoHighlights();
             applyBuff(4, selectedCharacter);
+
+
 	    	selectedCharacter.outOfMoves = 1;
 	    	unit.skillCoolDown = 3;
-            playableUnitCount--;
 	    	isCasting = false;
+			destroyMenu();
+			showActionMenuNextToPlayer(selectedCharacter);
+
 			changed = true;
-			undoMove.pop();
+
 	    	break;
 	    case 4: // Wizard's skill
 	    	isCasting = true;
-	    	isAttacking = false;
+
 	    	// drawRange(findReachableTiles(selectedCharacter.column, selectedCharacter.row, selectedCharacter.attackRange, false), 2);
 	    	var reachableTiles = findReachableTiles(selectedCharacter.row, selectedCharacter.column, selectedCharacter.attackRange, false);
 	    	highlightArea(reachableTiles, "graphics/tile/red_tile.png", ["click", "mouseover", "mouseout"], [castWizardSpellOnClick, highlightWizardSpellCross, clearWizardSpellCross]);
 			break;
 		case 5:
 			remainingAttackTimes = 1;
-			break;
+			performAttack();
+
 	}
-	destroyMenu();
-	destroyStats();
 }
 
 function castWizardSpellOnClick(event) {
@@ -1137,14 +867,12 @@ function castWizardSpellOnClick(event) {
 			attack(selectedCharacter, unit);
             applyBuff(5, unit);
 		}
+		clearSelectionEffects();
+		selectedCharacter.outOfMoves = 1;
+		selectedCharacter.skillCoolDown = 3;
+		isCasting = false;
+		changed = true;
 	});
-    clearSelectionEffects();
-    selectedCharacter.outOfMoves = 1;
-    playableUnitCount--;
-    selectedCharacter.skillCoolDown = 3;
-   	undoMove.pop();
-    isCasting = false;
-    changed = true;
 } 
 
 
@@ -1207,9 +935,9 @@ function getSurroundingTiles(row, col) {
 function getRandom(luck){
   	var num = Math.random();
  	if(num < luck){ 
- 		return 2;
+ 		return 1;
   	} else {
-  		return 1; 
+  		return 2; 
 	} 
 }
 var showingDamage;
@@ -1232,8 +960,6 @@ function demageEffect(damageText,damageBackground ){
 	
 }
 function showDamage(unit, critical, damage){
-	chars.removeChild(unit.damageBackground);
-	chars.removeChild(unit.damageText);
 	unit.damageBackground = new createjs.Shape();
 	if (critical == 2) {
 		unit.damageBackground.graphics.beginFill("#ffeb00").drawRect(unit.x - 10, unit.y - 50, 40, 20);
@@ -1242,21 +968,6 @@ function showDamage(unit, critical, damage){
 		unit.damageBackground.graphics.beginFill("#ff0000").drawRect(unit.x - 10, unit.y - 50, 40, 20);
 		unit.damageText = new createjs.Text(damage, "20px Arial", "#000000");
 	}
-
-
-	// if (critical == 2) {
-	// 	unit.damageBackground = new createjs.Text(damage, "bold 25px Arial", "#000000");
-	// 	unit.damageText = new createjs.Text(damage, "bold 20px Arial", "#ffeb00");
-	// } else {
-	// 	unit.damageBackground = new createjs.Text(damage, "bold 25px Arial", "#000000");
-	// 	unit.damageText = new createjs.Text(damage, "bold 20px Arial", "#ff0000");
-	// }
-
-
-	// unit.damageBackground.x = unit.x - 2;
-	// unit.damageBackground.y = unit.y - 55;
-	// unit.damageBackground.textBasline = "alphabetic";
-
 	unit.damageText.x = unit.x;
 	unit.damageText.y = unit.y - 50;
 	unit.damageText.textBasline = "alphabetic";
@@ -1274,19 +985,41 @@ function showDamage(unit, critical, damage){
 		//stage.update();
 	}, 750);
 }
+function showDamage2(unit, critical, damage){
+	unit.damageBackground2 = new createjs.Shape();
+	if (critical == 2) {
+		unit.damageBackground2.graphics.beginFill("#ffeb00").drawRect(unit.x - 10, unit.y - 50, 40, 20);
+		unit.damageText2 = new createjs.Text(damage, "20px Arial", "#000000");
+	} else {
+		unit.damageBackground2.graphics.beginFill("#ff0000").drawRect(unit.x - 10, unit.y - 50, 40, 20);
+		unit.damageText2 = new createjs.Text(damage, "20px Arial", "#000000");
+	}
+	unit.damageText2.x = unit.x;
+	unit.damageText2.y = unit.y - 50;
+	unit.damageText2.textBasline = "alphabetic";
 
+	chars.addChild(unit.damageBackground2);
+	chars.addChild(unit.damageText2);
+	//stage.update();
+	unit.showingDamage = true;
+	demageEffect(unit.damageText2, unit.damageBackground2);	
+
+	setTimeout(function (){
+		chars.removeChild(unit.damageBackground2);
+		chars.removeChild(unit.damageText2);
+		unit.showingDamage = false;
+		//stage.update();
+	}, 750);
+}
 
 
 function attack(attacker, target){
 	// if (attacker.team != target.team) {
+		
 		var sprite = new createjs.Sprite(attacker.spritesheet, "attack");
 		sprite.x = attacker.x;
 		sprite.y = attacker.y;
-		if (attacker.x > target.x) {
- 			sprite.scaleX = 0.7;
-		} else {
-			sprite.scaleX = -0.7;
-		}
+		sprite.scaleX = 0.7;
 		sprite.scaleY = 0.7;
 		chars.removeChild(attacker);	
 		chars.addChild(sprite);
@@ -1296,7 +1029,6 @@ function attack(attacker, target){
 		var damage = getAttack(attacker) * criticalHit
 
 		if (!removeBuff(4, target)) {
-			
 			showDamage(target, criticalHit, damage);
 			target.hp -= damage;
 			updateHP_bar(target);
@@ -1304,14 +1036,12 @@ function attack(attacker, target){
 			var damageAnimation = new createjs.Sprite(attacker.damageEffect, "damage");
 			damageAnimation.x = target.x;
 			damageAnimation.y = target.y;
-			
 		}
-		console.log("in attacking");
-		if (isCasting && isAttacking) {
-			applyBuff(3, target);
-		}
+
 		chars.addChild(damageAnimation);
 		
+		attacker.outOfMoves = 1;
+		attacker.canAttack = 0;
 		remainingAttackTimes--;
 		isAttacking = false;
 
@@ -1339,10 +1069,10 @@ function destroyStats() {
 	stage.removeChild(statsDisplay);
 	// statsDisplay.removeChild(2, 3);
 
-	// var drag_box = new createjs.Bitmap("graphics/stats_background.png");
-	// drag_box.scaleX = 0.8;
-	// drag_box.scaleY = 0.8;
-	// statsDisplay.addChild(drag_box);
+	// var box = new createjs.Bitmap("graphics/stats_background.png");
+	// box.scaleX = 0.8;
+	// box.scaleY = 0.8;
+	// statsDisplay.addChild(box);
 	changed = true;
 }
 
@@ -1377,43 +1107,34 @@ function movePlayer() {
       destX = path[0][0],
       destY = path[0][1];
 
-
-  var coefficientX = 0;
-  var coefficientY = 0;
-
-
   if (playerX < destX && playerY < destY) {
-    coefficientX = 1.0;
-    coefficientY = 1.0;
+    selectedCharacter.x += MOVEMENT_STEP;
+    selectedCharacter.y += MOVEMENT_STEP / 2;
+
+    selectedCharacter.hp_bar.x += MOVEMENT_STEP;
+    selectedCharacter.hp_bar.y += MOVEMENT_STEP / 2;
   } else if (playerX > destX && playerY > destY) {
-    coefficientX = -1.0;
-    coefficientY = -1.0;
+    selectedCharacter.x -= MOVEMENT_STEP;
+    selectedCharacter.y -= MOVEMENT_STEP / 2;
+
+
+    selectedCharacter.hp_bar.x -= MOVEMENT_STEP;
+    selectedCharacter.hp_bar.y -= MOVEMENT_STEP / 2;
   } else if (playerX < destX && playerY > destY) {
-    coefficientX = 1.0;
-    coefficientY = -1.0;
-  } else if (playerX > destX && playerY < destY) {
-    coefficientX = -1.0;
-    coefficientY = 1.0;
-  } 
+    selectedCharacter.x += MOVEMENT_STEP;
+    selectedCharacter.y -= MOVEMENT_STEP / 2;
 
 
+    selectedCharacter.hp_bar.x += MOVEMENT_STEP;
+    selectedCharacter.hp_bar.y -= MOVEMENT_STEP / 2;
+  } else if (playerX > destX && playerY < destY){
+  	selectedCharacter.x -= MOVEMENT_STEP;
+  	selectedCharacter.y += MOVEMENT_STEP / 2;
 
-  var stepX = coefficientX * MOVEMENT_STEP;
-  var stepY = coefficientY * MOVEMENT_STEP / 2;
 
-
-  selectedCharacter.x += stepX;
-  selectedCharacter.y += stepY;
-  selectedCharacter.hp_bar.x += stepX;
-  selectedCharacter.hp_bar.y += stepY;
-
-  draggable.x = draggable.x - stepX;
-  draggable.y = draggable.y - stepY;
-  for (var i = 0; i < selectedCharacter.buffs.length; i++) {
-    selectedCharacter.buffs[i][3].x += stepX;
-    selectedCharacter.buffs[i][3].y += stepY;
+    selectedCharacter.hp_bar.x -= MOVEMENT_STEP;
+    selectedCharacter.hp_bar.y += MOVEMENT_STEP / 2;
   }
-
 
   if ((playerX === destX) && (playerY === destY)) {
       path.splice(0,1);
@@ -1421,13 +1142,7 @@ function movePlayer() {
 
       	sortIndices(selectedCharacter);
         movingPlayer = false;
-        if (undo){
-        	selectedCharacter.canMove = 1;
-        	undo = false;
-        } else {
-        	selectedCharacter.canMove = 0;
-        }
-       
+        selectedCharacter.canMove = 0;
 
 		showActionMenuNextToPlayer(selectedCharacter);
       }
@@ -1584,15 +1299,6 @@ function findReachableTiles(x, y, range, isMoving) {
 
 function drawMap(data) {
 
-
-	if (mapDrawn) {
-		for (var i = 0; i < maps.length; i++) {
-			for (var j = 0; j < maps[i].length; j++) {
-				draggable.removeChild(maps[i][j]);
-			}
-		}
-	}
-
 	maps = new Array(mapHeight);
 	for (var i = 0; i < mapHeight; i++) {
 		maps[i] = new Array(mapWidth);
@@ -1605,29 +1311,29 @@ function drawMap(data) {
 		for (j = 0; j < mapWidth; j++) {
 			var terrain = data[i][j];
             if (terrain == 5) blockMaps[i][j] = 1;
-			// if (terrain == 5) {
-			// 	img = imageNumber(terrain);
-			// 	var spriteSheet = new createjs.SpriteSheet({
-	  //         		"images": [img],
-	  //         		"frames": {"regX": 0, "height": 130, "count": 2, "regY": 0, "width": 130 },
-	  //         		"animations": {
-	  //           	"water":[0,1]
-	  //         		},
-	  //         		framerate: 1
-   //      		});
-			// 	maps[i][j] = new createjs.Sprite(spriteSheet, "water");
-			// 	maps[i][j].name = i + "," + j + "," + tile_type + "," + tile_info_address;
-			// 	maps[i][j].x = (j-i) * 65 + 540;
-			// 	maps[i][j].y = (j+i) * 32.5 + 220;
-			// 	maps[i][j].regX = 65;
-			// 	maps[i][j].regY = 32.5;
-			// 	maps[i][j].addEventListener("mouseover",mouveOver);
-			// 	maps[i][j].addEventListener("mouseout", mouseOut);
-			// 	maps[i][j].addEventListener("click", function(event) {
-			// 		showUnitInfo = false;
-			// 		clearSelectionEffects();
-			// 	});
-			//} else {
+			if (terrain == 5) {
+				img = imageNumber(terrain);
+				var spriteSheet = new createjs.SpriteSheet({
+	          		"images": [img],
+	          		"frames": {"regX": 0, "height": 130, "count": 2, "regY": 0, "width": 130 },
+	          		"animations": {
+	            	"water":[0,1]
+	          		},
+	          		framerate: 1
+        		});
+				maps[i][j] = new createjs.Sprite(spriteSheet, "water");
+				maps[i][j].name = i + "," + j + "," + tile_type + "," + tile_info_address;
+				maps[i][j].x = (j-i) * 65 + 540;
+				maps[i][j].y = (j+i) * 32.5 + 220;
+				maps[i][j].regX = 65;
+				maps[i][j].regY = 32.5;
+				// maps[i][j].addEventListener("mouseover",mouveOver);
+				// maps[i][j].addEventListener("mouseout", mouseOut);
+				// maps[i][j].addEventListener("click", function(event) {
+				// 	showUnitInfo = false;
+				// 	clearSelectionEffects();
+				// });
+			} else {
 				img = imageNumber(terrain);
 				maps[i][j] = new createjs.Bitmap(img);
 				maps[i][j].name = i + "," + j + "," + tile_type + "," + tile_info_address;
@@ -1635,16 +1341,16 @@ function drawMap(data) {
 				maps[i][j].y = (j+i) * 32.5 + 220;
 				maps[i][j].regX = 65;
 				maps[i][j].regY = 32.5;
-				maps[i][j].addEventListener("mouseover",mouseOver);
-				maps[i][j].addEventListener("mouseout", mouseOut);
-				maps[i][j].addEventListener("click", function(event) {
-					clearSelectionEffects();
-				});
-			//}
+				//maps[i][j].addEventListener("mouseover",mouseOver);
+				//maps[i][j].addEventListener("mouseout", mouseOut);
+				//maps[i][j].addEventListener("click", function(event) {
+				//	showUnitInfo = false;
+				//	clearSelectionEffects();
+				//});
+			}
 			draggable.addChild(maps[i][j]);
 		}
 	}
-	mapDrawn = true;
 
 }
 
@@ -1706,92 +1412,16 @@ createjs.Ticker.on("tick", function() {
 // createjs.Ticker.setFPS(30);
 function keyEvent(event) {
     switch(event.keyCode) {
-        case 27:  //esc
+        case 27:
             if (isDisplayingMenu) {
+            	destroyMenu();
+            	destroyStats();
             	clearSelectionEffects();
             }
             break;
-        case 67:
-        	draggable.x = 0;
-        	draggable.y = 0;
-        	break; 
-        case 77: //m
-        	if (isDisplayingMenu) {
-        		if (selectedCharacter.canMove) {
-					undoHighlights();
-					// drawRange(findReachableTiles(unit.column, unit.row, unit.moveRange, true), 0);
-					moveCharacter(selectedCharacter);
-				}
-        	}
-        	break;
-        case 65: //a
-        	if (isDisplayingMenu) {
-		        if (selectedCharacter.canAttack) {
-					undoHighlights();
-					// isAttacking = true;
-					// drawRange(findReachableTiles(unit.column, unit.row, unit.attackRange, false), 1);
-					remainingAttackTimes = 1;
-					performAttack();
-				}
-			}
-			break;
-		case 82: //r
-			if (endGame){
-				location.reload();
-			}
-		case 83: //s
-			if (isDisplayingMenu) {
-				if (selectedCharacter.skillCoolDown === 0) {
-					undoHighlights();
-					isCasting = true;
-					cast(selectedCharacter.skill_no, selectedCharacter);
-				}
-			}
-			break;
-		case 32: //space
-			if(undoMove.length != 0){
-				if(!archerSkillDone){
-					selectedCharacter.skillCoolDown = 0;
-					selectedCharacter.outOfMoves = 0;
-				}
-				selectedCharacter = undoMove.pop();
-				undo = true;
-				var fromX = selectedCharacter.row;
-				var fromY = selectedCharacter.column;
-				var toX = selectedCharacter.prevRow;
-				var toY = selectedCharacter.prevColumn;
-				console.log("current row:" + fromX + ", current column:" + fromY);
-				console.log("prev row:" + toX + ", prev column:" + toY);
-				findPath(fromX, fromY, toX, toY);
-				blockMaps[fromX][fromY] = 0;
-				move();
-				blockMaps[toX][toY] = 1;
-				selectedCharacter.row = toX;
-				selectedCharacter.column = toY;
-				clearSelectionEffects();
-			}
-		case 70:
-//			goFullScreen();
-			break;
-        case 13: //enter
-        	if (!endGame) {
-	        	clearSelectionEffects();
-	        	turn = 1 - turn;
-	        	turnEndPhase();
-	        	turnStartPhase();
-	        }
-    }
-}
 
-function goFullScreen(){
-    var canvas = document.getElementById("demoCanvas");
-    if(canvas.requestFullScreen)
-        canvas.requestFullScreen();
-    else if(canvas.webkitRequestFullScreen)
-        canvas.webkitRequestFullScreen();
-    else if(canvas.mozRequestFullScreen)
-        canvas.mozRequestFullScreen();
-}
+    }
+} 
 
 function update() {
 	if (movingPlayer === true) {
@@ -1799,17 +1429,11 @@ function update() {
 	}
 	if (resized) {	
 		stage.canvas.width = window.innerWidth;
-		stage.canvas.height = window.innerHeight;
+		stage.canvas.height = window.innerHeight + 200;
 		drawGame();
 		drawStatsDisplay();
 		destroyGoldDisplay();
 		drawGoldDisplay();
-
-		drag_box = new createjs.Shape();
-		drag_box.graphics.drawRect(-stage.canvas.width * 50,-stage.canvas.height ,stage.canvas.width * 100,stage.canvas.height * 100);
-		drag_box.hitArea = new createjs.Shape();
-		drag_box.hitArea.graphics.beginFill("#000").drawRect(-stage.canvas.width * 50,-stage.canvas.height ,stage.canvas.width * 100,stage.canvas.height * 100);
-		draggable.addChild(drag_box);
 
 		$.each(unitCards, function(i, value) {
 			stage.removeChild(value.text);
@@ -1828,10 +1452,6 @@ function update() {
 
 	chars.x = draggable.x;
 	chars.y = draggable.y;
-
-
-    drag_box.x = draggable.x;
-    drag_box.y = draggable.y; 
 
 	stage.addChild(statsDisplay);
 	stage.addChild(unitCreationMenu);
@@ -1861,14 +1481,14 @@ function imageNumber(number) {
 			tile_info_address = "graphics/tile_info/tile_stone_path.png";
 			tile_type = "Stone Path";
 			return "graphics/tile/3d_tile/stone_path.png";
-		// case 5 :
-		// 	tile_info_address = "graphics/tile_info/tile_water.png";
-		// 	tile_type = "Water";
-		// 	return "graphics/tile/3d_tile/ss_water.png";
 		case 5 :
 			tile_info_address = "graphics/tile_info/tile_water.png";
 			tile_type = "Water";
-			return "graphics/tile/3d_tile/water_half.png";
+			return "graphics/tile/3d_tile/ss_water.png";
+		// case 5 :
+		// 	tile_info_address = "graphics/tile_info/tile_water.png";
+		// 	tile_type = "Water";
+		// 	return "graphics/tile/3d_tile/water_half.png";
 		case 6 :
 			tile_info_address = "graphics/tile_info/tile_wood_bridge.png";
 			tile_type = "Wood Bridge";
@@ -1890,18 +1510,8 @@ function imageNumber(number) {
 	}
 }
 
-$(function(){
-    var x = 0;
-    setInterval(function(){
-        x-=0.5;
-        $('body').css('background-position', x + 'px 0');
-    }, 10);
-})
-
 
 function moveCharacter(unit) {
-  	unit.prevRow = unit.row;
- 	unit.prevColumn = unit.column;
 	var reachableTiles = findReachableTiles(unit.row, unit.column, unit.moveRange, true);
 	highlightArea(reachableTiles, "graphics/tile/green_tile.png", ["click"], [function(event) {
 		var fromX = selectedCharacter.row;
@@ -1914,9 +1524,8 @@ function moveCharacter(unit) {
 		selectedCharacter.row = tile.row;
 		selectedCharacter.column = tile.column;
 		clearSelectionEffects();
-		undoMove.pop();
-		undoMove.push(selectedCharacter);
 	}]);
+
 }
 
 function performAttack() {
@@ -1929,23 +1538,13 @@ function performAttack() {
 				attack(selectedCharacter, unit);
 				selectedCharacter.attack = selectedCharacter.base_attack;
 				clearSelectionEffects();
-				
 				if (remainingAttackTimes > 0) {
-					setTimeout(function() {
-						performAttack();
-					}, 1000);
-				} else {
-                    selectedCharacter.canAttack = 0;
-                    selectedCharacter.outOfMoves = 1;
-                    playableUnitCount--;
-                    console.log(playableUnitCount);
-            	}
-
+					performAttack();
+				}
 			}
 		});	
-	archerSkillDone = true;
-	undoMove.pop()
 	}]); 
+	
 }
 
 function highlightArea(tiles, imgSource, callBackEventNames, callBackFunctions) {
