@@ -81,6 +81,7 @@ function showTurnInfo(){
 
 
 function turnStartPhase() {
+	undoMove = [];
 	destroyGoldDisplay();
     drawGoldDisplay();
 	showTurnInfo();
@@ -136,12 +137,13 @@ function turnStartPhase() {
 
     $.each(units, function(i, value) {
     	if (value.team == turn && value.address == "graphics/spritesheet/stand/ss_king_stand.png") {
+    		console.log(value.x + "," + value.y);
     		kingX = value.x;
     		kingY = value.y;
     	}
     });
-    //draggable.x = -kingX;
-    //draggable.y = -kingY;
+    draggable.x = 575 - kingX;
+    draggable.y = 382.5 - kingY;
 
 
  //    setTimeout(function() {
@@ -321,7 +323,7 @@ function spawnUnit(data, isCreation){
 function findFreeSpace(){
 	if (turn == 0){
 		//red castle postion[0,0]
-		var empty = findReachableTiles(0, 0, 10, false);
+		var empty = findReachableTiles(1, 0, 10, false);
 		var x,y;
 		for (i = 1; i < empty.length; i++){
 			x = empty[i][0];
@@ -1011,6 +1013,7 @@ function cast(skillNo, unit) {
 	switch (skillNo) {
 		case 0: // King's skill
 			// display effect
+			console.log(unit.x + "," + unit.y);
 			$.each(units, function(i, value) {
 				if (value.team === selectedCharacter.team) {
 					//buff health
