@@ -54,6 +54,7 @@ var	archerSkillDone = false;
 var undoMove = [];
 var undo = false;
 
+var bgMusic = true;
 
 function showTurnInfo(){
 	stage.removeChild(playerLabel);
@@ -171,10 +172,12 @@ function resize() {
 
 // typeName : king, red_castle, wizard, etc
 // initial: true / false
-
 function spawnUnit(data, isCreation, row, column){
+	chars.removeChild(spawnAnimation);
+
 	//|| data.address == "graphics/spritesheet/stand/ss_scarecrow_stand.png"
-    if (data.address == "graphics/spritesheet/stand/ss_rogue_stand.png" || data.address == "graphics/spritesheet/stand/ss_scarecrow_stand.png") return;
+
+    if (data.address == "graphics/spritesheet/stand/ss_rogue_stand.png") return;
 		var spriteSheet = new createjs.SpriteSheet({
           	"images": [data.address],
           	"frames": {"regX": 0, "height": 142, "count": 2, "regY": -10, "width": 113 },
@@ -188,13 +191,28 @@ function spawnUnit(data, isCreation, row, column){
 
 		
 		createjs.Ticker.timingMode = createjs.Ticker.RAF;	
-			createjs.Ticker.addEventListener("tick", stage);
+		createjs.Ticker.addEventListener("tick", stage);
 		// Configure unit coordinates
 		unit.hp = data.hp;
 		unit.max_hp = data.max_hp;
 		unit.attack = data.attack;
 		unit.base_attack = unit.attack;
 		unit.luck = data.luck;
+
+		var spawnSpriteSheet = new createjs.SpriteSheet({
+	      	"images": ["graphics/spritesheet/special_unit/ss_unit_creation.png"],
+	      	"frames": {"width": 142, "height": 142, "count": 4, "regY": 110, "regX": 65},
+			"animations": {
+				"damage":{
+					frames: [0,1,2,3],
+					next: false
+				}
+			},
+			framerate: 4
+		});
+
+		unit.spawnSpriteSheet = spawnSpriteSheet;
+		var spawnAnimation = new createjs.Sprite(spawnSpriteSheet, "spawn");
 
 		var damageEffect = new createjs.SpriteSheet({
 			"images": [data.damageEffect],
@@ -314,6 +332,13 @@ function spawnUnit(data, isCreation, row, column){
 
 		unit.cache(0,0,150,150);
 		hp_bar.cache(0,0,100,120);
+		spawnAnimation.x = unit.x;
+		spawnAnimation.y = unit.y;
+		chars.addChild(spawnAnimation);
+		setTimeout(function() {
+			chars.removeChild(spawnAnimation);
+		}, 1000);
+
 
 		addEventListenersToUnit(unit);
 	// });		
@@ -445,6 +470,36 @@ function initGame() {
 	changed = true;
 
 	window.addEventListener('resize', resize, false);
+
+	var muteIcon = new createjs.Bitmap("graphics/mute2.png");
+	muteIcon.x = stage.canvas.width - 220;
+	muteIcon.y = 5;
+	muteIcon.scaleX = 0.7;
+	muteIcon.scaleY = 0.7;
+	var playIcon = new createjs.Bitmap("graphics/mute.png");
+	playIcon.x = stage.canvas.width - 220;
+	playIcon.y = 5;
+	playIcon.scaleX = 0.7;
+	playIcon.scaleY = 0.7;
+
+
+	stage.addChild(muteIcon);
+	muteIcon.addEventListener("click", function(event) {
+		audio.pause();
+		bgMusic = false;
+		stage.removeChild(muteIcon);
+		stage.addChild(playIcon);
+	});
+	playIcon.addEventListener("click", function(event) {
+		audio.play();
+		bgMusic = true;
+		stage.removeChild(playIcon);
+		stage.addChild(muteIcon);
+	});
+
+	stage.update();
+
+
 }
 
 function removeBuff(buffType, unit) {
@@ -774,6 +829,7 @@ function createNewUnit(unitType, row, column) {
 
 function addEventListenersToUnit(unit) {
     unit.addEventListener("click", function(event) {
+    	
             if (isInHighlight && !isAttacking && !isCasting){
                 return;
             }
@@ -810,7 +866,6 @@ function addEventListenersToUnit(unit) {
                     if (highlighted[i].row === unit.row && highlighted[i].column === unit.column) {
                         break;
                     }
-                    console.log(i);
                     if (i == highlighted.length - 1) return;
                 }
                 $.each(units, function(i, otherUnit) {
@@ -1001,15 +1056,11 @@ function showActionMenuNextToPlayer(unit) {
 								   : "graphics/ingame_menu/new_attack_gray.png";
 	attackButton = createClickableImage(attackSource, unit.x + 48, unit.y - 119, function() {
 		if (unit.canAttack) {
-            console.log(draggable.getNumChildren());
 			undoHighlights();
-            console.log(draggable.getNumChildren());
 			// isAttacking = true;
 			// drawRange(findReachableTiles(unit.column, unit.row, unit.attackRange, false), 1);
 			remainingAttackTimes = 1;
-            console.log(draggable.getNumChildren());
 			performAttack();
-            console.log(draggable.getNumChildren());
 		}
 	});
 
@@ -1052,7 +1103,6 @@ function cast(skillNo, unit) {
 	switch (skillNo) {
 		case 0: // King's skill
 			// display effect
-			console.log(unit.x + "," + unit.y);
 			$.each(units, function(i, value) {
 				if (value.team === selectedCharacter.team) {
 					//buff health
@@ -1306,7 +1356,6 @@ function attack(attacker, target){
 			damageAnimation.y = target.y;
 			
 		}
-		console.log("in attacking");
 		if (isCasting && isAttacking) {
 			applyBuff(3, target);
 		}
