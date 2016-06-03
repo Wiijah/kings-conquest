@@ -25,10 +25,33 @@
 		"burning": "graphics/spritesheet/spell/ss_burning.png"
 	},
 	"classStats": {
+		"totemClass": {
+			"address": "graphics/spritesheet/special_unit/ss_totem_stand.png",
+			"spritesheet": "graphics/spritesheet/special_unit/ss_totem_heal.png",
+			"info": "graphics/card/totem_card.png",
+			"commandable": 0,
+			"hp" : 1,
+			"max_hp" : 1,
+			"attack" : -1,
+			"skill": "N/A",
+			"skill_no": -1,
+			"luck":-1,
+			"x" : 3,
+			"y" : 3,
+			"moveRange" : 0,
+			"team": 0,
+			"attackRange" : 0,
+			"canMove" : 1,
+			"canAttack" : 1,
+			"skillCoolDown" : 0,
+			"outOfMoves" : 0,
+			"damageEffect": "graphics/spritesheet/special_unit/ss_totem_heal.png"
+		}, 
 		"wizardClass": {
 			"address": "graphics/spritesheet/stand/ss_wizard_stand.png",
 			"spritesheet": "graphics/spritesheet/attack/ss_wizard_attack.png",
 			"info": "graphics/card/wizard_card.png",
+			"commandable": 1,
 			"hp" : 200,
 			"max_hp" : 200,
 			"attack" : 15,
@@ -50,6 +73,7 @@
 			"address": "graphics/spritesheet/stand/ss_archer_stand.png",
 			"spritesheet": "graphics/spritesheet/attack/ss_archer_attack.png",
 			"info": "graphics/card/archer_card.png",
+			"commandable": 1,
 			"hp" : 200,
 			"max_hp" : 200,
 			"attack" : 20,
@@ -71,6 +95,7 @@
 			"address": "graphics/spritesheet/stand/ss_knight_stand.png",
 			"spritesheet": "graphics/spritesheet/attack/ss_knight_attack.png",
 			"info": "graphics/card/knight_card.png",
+			"commandable": 1,
 			"hp" : 300,
 			"max_hp" : 300,
 			"attack" : 40,
@@ -91,9 +116,11 @@
 	},
 	"characters": {
 		"red_castle": {
+			"className": "castle",
 			"address": "graphics/spritesheet/special_unit/ss_castle_red.png",
 			"spritesheet": "graphics/spritesheet/attack/ss_archer_attack.png",
 			"info": "graphics/card/castle_card.png",
+			"commandable": 0,
 			"hp" : 999,
 			"max_hp" : 999,
 			"attack" : 999,
@@ -112,9 +139,11 @@
 			"damageEffect": "graphics/spritesheet/spell/ss_physical_attack.png"
 		},
 		"blue_castle": {
+			"className": "castle",
 			"address": "graphics/spritesheet/special_unit/ss_castle_blue.png",
 			"spritesheet": "graphics/spritesheet/attack/ss_archer_attack.png",
 			"info": "graphics/card/castle_card.png",
+			"commandable": 0,
 			"hp" : 999,
 			"max_hp" : 999,
 			"attack" : 999,
@@ -133,9 +162,11 @@
 			"damageEffect": "graphics/spritesheet/spell/ss_physical_attack.png"
 		},
 		"kingRed": {
+			"className": "king",
 			"address": "graphics/spritesheet/stand/ss_king_stand.png",
 			"spritesheet": "graphics/spritesheet/attack/ss_king_attack.png",
 			"info": "graphics/card/king_card.png",
+			"commandable": 1,
 			"hp" : 400,
 			"max_hp" : 400,
 			"attack" : 25,
@@ -154,9 +185,11 @@
 			"damageEffect": "graphics/spritesheet/spell/ss_physical_attack.png"
 		},
 		"kingBlue": {
+			"className": "king",
 			"address": "graphics/spritesheet/stand/ss_king_stand.png",
 			"spritesheet": "graphics/spritesheet/attack/ss_king_attack.png",
 			"info": "graphics/card/king_card.png",
+			"commandable": 1,
 			"hp" : 400,
 			"max_hp" : 400,
 			"attack" : 25,
@@ -175,9 +208,11 @@
 			"damageEffect": "graphics/spritesheet/spell/ss_physical_attack.png"
 		},
 		"wizardRed": {
+			"className": "wiard",
 			"address": "graphics/spritesheet/stand/ss_wizard_stand.png",
 			"spritesheet": "graphics/spritesheet/attack/ss_wizard_attack.png",
 			"info": "graphics/card/wizard_card.png",
+			"commandable": 1,
 			"hp" : 200,
 			"max_hp" : 200,
 			"attack" : 15,
@@ -196,9 +231,11 @@
 			"damageEffect": "graphics/spritesheet/spell/ss_fireball.png"
 		},
 		"wizardBlue": {
+			"className": "wiard",
 			"address": "graphics/spritesheet/stand/ss_wizard_stand.png",
 			"spritesheet": "graphics/spritesheet/attack/ss_wizard_attack.png",
 			"info": "graphics/card/wizard_card.png",
+			"commandable": 1,
 			"hp" : 200,
 			"max_hp" : 200,
 			"attack" : 15,
@@ -217,9 +254,11 @@
 			"damageEffect": "graphics/spritesheet/spell/ss_fireball.png"
 		},
 		"knightRed": {
+			"className": "knight",
 			"address": "graphics/spritesheet/stand/ss_knight_stand.png",
 			"spritesheet": "graphics/spritesheet/attack/ss_knight_attack.png",
 			"info": "graphics/card/knight_card.png",
+			"commandable": 1,
 			"hp" : 300,
 			"max_hp" : 300,
 			"attack" : 40,
@@ -238,9 +277,11 @@
 			"damageEffect": "graphics/spritesheet/spell/ss_physical_attack.png"
 		},
 		"knightBlue": {
+			"className": "knight",
 			"address": "graphics/spritesheet/stand/ss_knight_stand.png",
 			"spritesheet": "graphics/spritesheet/attack/ss_knight_attack.png",
 			"info": "graphics/card/knight_card.png",
+			"commandable": 1,
 			"hp" : 300,
 			"max_hp" : 300,
 			"attack" : 40,
@@ -259,9 +300,11 @@
 			"damageEffect": "graphics/spritesheet/spell/ss_physical_attack.png"
 		},
 		"archerRed": {
+			"className": "archer",
 			"address": "graphics/spritesheet/stand/ss_archer_stand.png",
 			"spritesheet": "graphics/spritesheet/attack/ss_archer_attack.png",
 			"info": "graphics/card/archer_card.png",
+			"commandable": 1,
 			"hp" : 200,
 			"max_hp" : 200,
 			"attack" : 20,
@@ -280,9 +323,11 @@
 			"damageEffect" : "graphics/spritesheet/spell/ss_arrow.png"
 		},
 		"archerBlue": {
+			"className": "archer",
 			"address": "graphics/spritesheet/stand/ss_archer_stand.png",
 			"spritesheet": "graphics/spritesheet/attack/ss_archer_attack.png",
 			"info": "graphics/card/archer_card.png",
+			"commandable": 1,
 			"hp" : 200,
 			"max_hp" : 200,
 			"attack" : 20,
@@ -304,6 +349,7 @@
 			"address": "graphics/spritesheet/stand/ss_rogue_stand.png",
 			"spritesheet": "graphics/spritesheet/attack/ss_rogue_attack.png",
 			"info": "graphics/card/rogue_card.png",
+			"commandable": 1,
 			"hp" : 160,
 			"max_hp" : 160,
 			"attack" : 10,
@@ -325,6 +371,7 @@
 			"address": "graphics/spritesheet/stand/ss_scarecrow_stand.png",
 			"spritesheet": "graphics/spritesheet/attack/ss_scarecrow_attack.png",
 			"info": "graphics/card/castle_card.png",
+			"commandable": 0,
 			"hp" : 5000,
 			"max_hp" : 5000,
 			"attack" : 1000,

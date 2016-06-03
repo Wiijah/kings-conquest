@@ -10,7 +10,7 @@ var isDragging = false;
 var offX;
 var offY;
 
-var selectedCharacter;
+
 var path = [];
 var highlighted = [];
 var sub_highlighted = [];
@@ -21,6 +21,8 @@ var tile_display;
 var highLight_tile;
 var tile_info_text;
 var endGame = false;
+var playIcon;
+var muteIcon;
 
 var moveButton;
 var attackButton;
@@ -45,6 +47,7 @@ var p2currentGold;
 var currentGoldDisplay;
 var mapDrawn = false;
 var resized = false;
+var bgMusic = true;
 
 var turn = 0;
 var playableUnitCount = 0;
@@ -54,7 +57,6 @@ var	archerSkillDone = false;
 var undoMove = [];
 var undo = false;
 
-var bgMusic = true;
 
 function showTurnInfo(){
 	stage.removeChild(playerLabel);
@@ -80,6 +82,46 @@ function showTurnInfo(){
 	}, 1000);
 }
 
+function destroyMenuDisplay(){
+    stage.removeChild(muteIcon);
+    stage.removeChild(playIcon);
+}
+
+function drawMenuDisplay(){
+    var audio = new Audio('Test.mp3');
+    audio.loop = true;
+    audio.play();
+
+    muteIcon = new createjs.Bitmap("graphics/mute2.png");
+    muteIcon.x = stage.canvas.width - 220;
+    muteIcon.y = 5;
+    muteIcon.scaleX = 0.7;
+    muteIcon.scaleY = 0.7;
+    
+    playIcon = new createjs.Bitmap("graphics/mute.png");
+    playIcon.x = stage.canvas.width - 220;
+    playIcon.y = 5;
+    playIcon.scaleX = 0.7;
+    playIcon.scaleY = 0.7;
+
+
+    stage.addChild(muteIcon);
+    muteIcon.addEventListener("click", function(event) {
+        audio.pause();
+        bgMusic = false;
+        stage.removeChild(muteIcon);
+        stage.addChild(playIcon);
+    });
+    playIcon.addEventListener("click", function(event) {
+        audio.play();
+        bgMusic = true;
+        stage.removeChild(playIcon);
+        stage.addChild(muteIcon);
+    });
+    stage.update();
+
+}
+
 
 function turnStartPhase() {
 	undoMove = [];
@@ -87,7 +129,9 @@ function turnStartPhase() {
     drawGoldDisplay();
 	showTurnInfo();
     playableUnitCount = 0;
-    console.log("Starting turn");
+    var totems = [];
+
+
     $.each(units, function(i, value) {
     	// Increment the number of playable unit for the current player
         if (value.team === turn) {
@@ -96,6 +140,8 @@ function turnStartPhase() {
             value.canAttack = 1;
             value.outOfMoves = 0;
         }
+
+        // if (value.)
 
         // Reduce the skill cooldown of each unit (if it hasn't cooled down yet)
         if (value.skillCoolDown != 0) {
@@ -132,6 +178,7 @@ function turnStartPhase() {
         }
 
     });
+
        
     var kingX;
     var kingY;
@@ -172,12 +219,10 @@ function resize() {
 
 // typeName : king, red_castle, wizard, etc
 // initial: true / false
+
 function spawnUnit(data, isCreation, row, column){
-	chars.removeChild(spawnAnimation);
-
 	//|| data.address == "graphics/spritesheet/stand/ss_scarecrow_stand.png"
-
-    if (data.address == "graphics/spritesheet/stand/ss_rogue_stand.png") return;
+    if (data.address == "graphics/spritesheet/stand/ss_rogue_stand.png" || data.address == "graphics/spritesheet/stand/ss_scarecrow_stand.png") return;
 		var spriteSheet = new createjs.SpriteSheet({
           	"images": [data.address],
           	"frames": {"regX": 0, "height": 142, "count": 2, "regY": -10, "width": 113 },
@@ -191,28 +236,29 @@ function spawnUnit(data, isCreation, row, column){
 
 		
 		createjs.Ticker.timingMode = createjs.Ticker.RAF;	
-		createjs.Ticker.addEventListener("tick", stage);
-		// Configure unit coordinates
+			createjs.Ticker.addEventListener("tick", stage);
+
+        unit.commandable = data.commandable == 1 ? true : false;
 		unit.hp = data.hp;
 		unit.max_hp = data.max_hp;
 		unit.attack = data.attack;
 		unit.base_attack = unit.attack;
 		unit.luck = data.luck;
 
-		var spawnSpriteSheet = new createjs.SpriteSheet({
-	      	"images": ["graphics/spritesheet/special_unit/ss_unit_creation.png"],
-	      	"frames": {"width": 142, "height": 142, "count": 4, "regY": 110, "regX": 65},
-			"animations": {
-				"damage":{
-					frames: [0,1,2,3],
-					next: false
-				}
-			},
-			framerate: 4
-		});
+        var spawnSpriteSheet = new createjs.SpriteSheet({
+              "images": ["graphics/spritesheet/special_unit/ss_unit_creation.png"],
+              "frames": {"width": 142, "height": 142, "count": 4, "regY": 110, "regX": 65},
+            "animations": {
+                "damage":{
+                    frames: [0,1,2,3], 
+                    next: false
+                }
+            },
+            framerate: 4
+        });
 
-		unit.spawnSpriteSheet = spawnSpriteSheet;
-		var spawnAnimation = new createjs.Sprite(spawnSpriteSheet, "spawn");
+        unit.spawnSpriteSheet = spawnSpriteSheet;
+        var spawnAnimation = new createjs.Sprite(spawnSpriteSheet, "spawn");
 
 		var damageEffect = new createjs.SpriteSheet({
 			"images": [data.damageEffect],
@@ -332,13 +378,13 @@ function spawnUnit(data, isCreation, row, column){
 
 		unit.cache(0,0,150,150);
 		hp_bar.cache(0,0,100,120);
-		spawnAnimation.x = unit.x;
-		spawnAnimation.y = unit.y;
-		chars.addChild(spawnAnimation);
-		setTimeout(function() {
-			chars.removeChild(spawnAnimation);
-		}, 1000);
 
+        spawnAnimation.x = unit.x;
+        spawnAnimation.y = unit.y;
+        chars.addChild(spawnAnimation);
+        setTimeout(function() {
+            chars.removeChild(spawnAnimation);
+        }, 1000);
 
 		addEventListenersToUnit(unit);
 	// });		
@@ -450,6 +496,7 @@ function initGame() {
 	drawStatsDisplay();
 	drawUnitCreationMenu();
 	drawBottomInterface();
+    drawMenuDisplay();
 
     setInterval(function(){ 
         if (!movingPlayer && !isAttacking && !isCasting && !isInHighlight) {
@@ -467,52 +514,8 @@ function initGame() {
 	changed = true;
 
 	window.addEventListener('resize', resize, false);
-
-	drawMenuDisplay();
-	stage.update();
-
-
 }
-var muteIcon;
-var playIcon;
-function destroyMenuDisplay(){
-	stage.removeChild(muteIcon);
-	stage.removeChild(playIcon);
-}
-function drawMenuDisplay(){
-	var audio = new Audio('Test.mp3');
-	audio.loop = true;
-	audio.play();
 
-	muteIcon = new createjs.Bitmap("graphics/mute2.png");
-	muteIcon.x = stage.canvas.width - 220;
-	muteIcon.y = 5;
-	muteIcon.scaleX = 0.7;
-	muteIcon.scaleY = 0.7;
-	
-	playIcon = new createjs.Bitmap("graphics/mute.png");
-	playIcon.x = stage.canvas.width - 220;
-	playIcon.y = 5;
-	playIcon.scaleX = 0.7;
-	playIcon.scaleY = 0.7;
-
-
-	stage.addChild(muteIcon);
-	muteIcon.addEventListener("click", function(event) {
-		audio.pause();
-		bgMusic = false;
-		stage.removeChild(muteIcon);
-		stage.addChild(playIcon);
-	});
-	playIcon.addEventListener("click", function(event) {
-		audio.play();
-		bgMusic = true;
-		stage.removeChild(playIcon);
-		stage.addChild(muteIcon);
-	});
-	stage.update();
-
-}
 function removeBuff(buffType, unit) {
     var success = false;
 
@@ -678,26 +681,34 @@ function drawUnitCreationMenu() {
 	listOfSources.push("graphics/card/knight_card.png");
 	listOfSources.push("graphics/card/archer_card.png");
 	listOfSources.push("graphics/card/wizard_card.png");
-	//listOfSources.push("graphics/card/rogue_card.png");
+	listOfSources.push("graphics/card/totem_card.png");
 
-	createFloatingCards(listOfSources, ["knight","archer","wizard","rogue"]);
+	createFloatingCards(listOfSources, ["knight","archer","wizard","totem"]);
 	unitCreationMenu.x = 50;
 	unitCreationMenu.y = window.innerHeight - 130;
 	bottomInterface.addChild(unitCreationMenu);
 }
 
-function findAvailableAndNonAvailableSpawnTiles() {
+function findAvailableAndNonAvailableSpawnTiles(range) {
     var availableSpawnTiles = [];
     var nonAvailableSpawnTiles = [];
-    for (var i = 0; i < 4; i++) {
-        for (var j = 0; j < 4; j++) {
-            if (blockMaps[i][j] === 0) {
-                availableSpawnTiles.push([i, j]);
+    var originX = turn == 0 ? 0 : 12;
+    var originY = turn == 0 ? 0 : 13;
+    var di = turn == 0 ? 1 : -1;
+    var dj = turn == 0 ? 1 : -1;
+
+    for (var i = 0; i < range; i++) {
+        if (originX + i * di >= mapHeight || originX + i * di < 0) break;
+        for (var j = 0; j < range; j++) {
+            if (originY + j * dj >= mapWidth || originY + j * dj < 0) break;
+            if (blockMaps[originX + i * di][originY + j * dj] === 0) {
+                availableSpawnTiles.push([originX + i * di, originY + j * dj]);
             } else {
-                nonAvailableSpawnTiles.push([i, j]);
+                nonAvailableSpawnTiles.push([originX + i * di, originY + j * dj]);
             }
         }
     }
+
     return [availableSpawnTiles, nonAvailableSpawnTiles];
 }
 
@@ -720,7 +731,7 @@ function createFloatingCards(listOfSources, correspondingUnit) {
 		switch(unitCards[i].unitName ){
 			case "knight": 
 				unitCards[i].addEventListener("click", function(event) {
-                    var spawnTiles = findAvailableAndNonAvailableSpawnTiles();
+                    var spawnTiles = findAvailableAndNonAvailableSpawnTiles(4);
                     highlightArea(spawnTiles[0], "graphics/tile/green_tile.png", ["click"], [function(event) {
                         var tile = event.target;
                         createNewUnit("knight", tile.row, tile.column);
@@ -732,7 +743,7 @@ function createFloatingCards(listOfSources, correspondingUnit) {
 				break;
 			case "archer": 
 				unitCards[i].addEventListener("click", function(event) {
-                    var spawnTiles = findAvailableAndNonAvailableSpawnTiles();
+                    var spawnTiles = findAvailableAndNonAvailableSpawnTiles(4);
                     highlightArea(spawnTiles[0], "graphics/tile/green_tile.png", ["click"], [function(event) {
                         var tile = event.target;
                         createNewUnit("archer", tile.row, tile.column);
@@ -744,7 +755,7 @@ function createFloatingCards(listOfSources, correspondingUnit) {
 				break;
 			case "wizard": 
 				unitCards[i].addEventListener("click", function(event) {
-                    var spawnTiles = findAvailableAndNonAvailableSpawnTiles();
+                    var spawnTiles = findAvailableAndNonAvailableSpawnTiles(4);
                     highlightArea(spawnTiles[0], "graphics/tile/green_tile.png", ["click"], [function(event) {
                         var tile = event.target;
                         createNewUnit("wizard", tile.row, tile.column);
@@ -754,6 +765,18 @@ function createFloatingCards(listOfSources, correspondingUnit) {
                     // createNewUnit("knight");
                 });
 				break;
+            case "totem":
+                unitCards[i].addEventListener("click", function(event) {
+                    var spawnTiles = findAvailableAndNonAvailableSpawnTiles(15);
+                    highlightArea(spawnTiles[0], "graphics/tile/green_tile.png", ["click"], [function(event) {
+                        var tile = event.target;
+                        createNewUnit("totem", tile.row, tile.column);
+                        clearSelectionEffects();
+                    }]);
+                    highlightArea(spawnTiles[1], "graphics/tile/red_tile.png", [], []);
+                    // createNewUnit("knight");
+                });
+                break;
 			// case "rogue": 
 			// 	unitCards[i].addEventListener("click", function(event) {
 			// 		if (currentGold >= 100) {
@@ -808,6 +831,12 @@ function createNewUnit(unitType, row, column) {
                 playableUnitCount++;
             }
             break;
+        case "totem":
+            if (p2currentGold >= 100) {
+                spawnUnit(that.classStats.totemClass, true, row, column);
+                p2currentGold -= 100;
+            }
+            break;
         }
 	} else {
 		switch (unitType) {
@@ -832,6 +861,12 @@ function createNewUnit(unitType, row, column) {
                 playableUnitCount++;
             }
             break;
+        case "totem":
+            if (p1currentGold >= 100) {
+                spawnUnit(that.classStats.totemClass, true, row, column);
+                p1currentGold -= 100;
+            }
+            break;
         }
     }
     destroyGoldDisplay();
@@ -840,25 +875,13 @@ function createNewUnit(unitType, row, column) {
 
 function addEventListenersToUnit(unit) {
     unit.addEventListener("click", function(event) {
-    	  if(selectedCharacter != null){
-	    	  var x1 = draggable.x + stage.canvas.width;
-			  var x2 = unit.x;
-			  var y1 = draggable.y + stage.canvas.height;
-			  var y2 = unit.y;
-			  var d = Math.sqrt( (x1-x2)*(x1-x2) + (y1-y2)*(y1-y2));
-			  if (d > 350){
-			  	draggable.x = 575 - x2;
-	    		draggable.y = 382.5 - y2;
-			  }
-			  console.log(d);
-		}
             if (isInHighlight && !isAttacking && !isCasting){
                 return;
             }
             if (!movingPlayer && !isAttacking && !isCasting) {
                 clearSelectionEffects();
                 selectedCharacter = unit;
-                if (unit.team == turn) showActionMenuNextToPlayer(unit);
+                if (unit.team == turn && unit.commandable) showActionMenuNextToPlayer(unit);
                 displayStats(unit);
             }
 
@@ -888,6 +911,7 @@ function addEventListenersToUnit(unit) {
                     if (highlighted[i].row === unit.row && highlighted[i].column === unit.column) {
                         break;
                     }
+                    console.log(i);
                     if (i == highlighted.length - 1) return;
                 }
                 $.each(units, function(i, otherUnit) {
@@ -1078,11 +1102,15 @@ function showActionMenuNextToPlayer(unit) {
 								   : "graphics/ingame_menu/new_attack_gray.png";
 	attackButton = createClickableImage(attackSource, unit.x + 48, unit.y - 119, function() {
 		if (unit.canAttack) {
+            console.log(draggable.getNumChildren());
 			undoHighlights();
+            console.log(draggable.getNumChildren());
 			// isAttacking = true;
 			// drawRange(findReachableTiles(unit.column, unit.row, unit.attackRange, false), 1);
 			remainingAttackTimes = 1;
+            console.log(draggable.getNumChildren());
 			performAttack();
+            console.log(draggable.getNumChildren());
 		}
 	});
 
@@ -1125,6 +1153,7 @@ function cast(skillNo, unit) {
 	switch (skillNo) {
 		case 0: // King's skill
 			// display effect
+			console.log(unit.x + "," + unit.y);
 			$.each(units, function(i, value) {
 				if (value.team === selectedCharacter.team) {
 					//buff health
@@ -1162,10 +1191,10 @@ function cast(skillNo, unit) {
 		case 1: // Archer's skill
 			archerSkillDone = false;
 			var reachableTiles = findReachableTiles(selectedCharacter.column, selectedCharacter.row, selectedCharacter.attackRange, false);
-			isCasting = true;
+			isCasting = false;
 			undoHighlights();
+            remainingAttackTimes = 2;
 			performAttack();
-			remainingAttackTimes = 2;
 	    	unit.skillCoolDown = 3;
 			break;
 	    case 3: // Warrior's skill
@@ -1378,6 +1407,7 @@ function attack(attacker, target){
 			damageAnimation.y = target.y;
 			
 		}
+		console.log("in attacking");
 		if (isCasting && isAttacking) {
 			applyBuff(3, target);
 		}
@@ -1872,11 +1902,11 @@ function update() {
 		stage.canvas.width = window.innerWidth;
 		stage.canvas.height = window.innerHeight;
 		drawGame();
-		destroyMenuDisplay();
-		drawMenuDisplay();
 		drawStatsDisplay();
 		destroyGoldDisplay();
 		drawGoldDisplay();
+        destroyMenuDisplay();
+        drawMenuDisplay();
 
 		drag_box = new createjs.Shape();
 		drag_box.graphics.drawRect(-stage.canvas.width * 50,-stage.canvas.height ,stage.canvas.width * 100,stage.canvas.height * 100);
@@ -2048,8 +2078,4 @@ function highlightArea(tiles, imgSource, callBackEventNames, callBackFunctions) 
 	isInHighlight = true;
 	drawGame();
 }
-
-
-
-
 
