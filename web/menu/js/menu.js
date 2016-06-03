@@ -31,7 +31,7 @@ function fb_login() {
         window.location.href = '../interface/';
       });
     } else {
-      lightbox_alert("Error", "Failed to login.");
+      lightbox_alert("Error", "Failed to login with your Facebook account.");
     }
   });
 }

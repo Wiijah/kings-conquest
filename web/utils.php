@@ -61,4 +61,8 @@ function errorMessage($msg) {
 function successMessage($msg) {
   return "<div class='alert alert-success' role='alert'>{$msg}</div>";
 }
+
+function digitalTime($time) {
+  return date("g:i:sa", strtotime($time));
+}
 ?>

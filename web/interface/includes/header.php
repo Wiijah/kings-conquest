@@ -16,6 +16,7 @@ if (!isset($_SESSION['id'])) {
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/lightbox.css">
   <link rel="stylesheet" href="css/room.css">
+  <link rel="stylesheet" href="css/profile.css">
   <link rel="stylesheet" href="../fonts/fonts.css">
 
   <!-- JS -->
@@ -23,6 +24,7 @@ if (!isset($_SESSION['id'])) {
   <script src="js/common.js"></script>
   <script src="js/style.js"></script>
   <script src="js/lightbox.js"></script>
+  <script src="../utils/qtip.js"></script>
   <script>
   <!--
   var user_id = <?php echo $user->id; ?>;

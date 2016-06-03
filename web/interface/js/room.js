@@ -73,7 +73,9 @@ function room_refresh() {
 
     for (var i = 0; i < players.length; i++) {
       var row_number = i + 1;
-      players_html += "<tr><td>"+row_number+"</td><td style='position: relative'>"+players[i].player+state_html_array[players[i].state]+"</td><td>"+players[i].colour+"</td></tr>";
+      var user_link = "<a href='profile.php?username="+players[i].player+"' target='_blank'>"+players[i].player+"</a>";
+
+      players_html += "<tr><td>"+row_number+"</td><td style='position: relative'>"+user_link+state_html_array[players[i].state]+"</td><td>"+players[i].colour+"</td></tr>";
       if (players[i].user_id == user_id) {
         if (players[i].state == 'ready') {
           $("#btn_ready").html("Cancel Ready");
