@@ -10,7 +10,7 @@ var isDragging = false;
 var offX;
 var offY;
 
-
+var selectedCharacter;
 var path = [];
 var highlighted = [];
 var sub_highlighted = [];
@@ -840,7 +840,18 @@ function createNewUnit(unitType, row, column) {
 
 function addEventListenersToUnit(unit) {
     unit.addEventListener("click", function(event) {
-
+    	  if(selectedCharacter != null){
+	    	  var x1 = draggable.x + stage.canvas.width;
+			  var x2 = unit.x;
+			  var y1 = draggable.y + stage.canvas.height;
+			  var y2 = unit.y;
+			  var d = Math.sqrt( (x1-x2)*(x1-x2) + (y1-y2)*(y1-y2));
+			  if (d > 350){
+			  	draggable.x = 575 - x2;
+	    		draggable.y = 382.5 - y2;
+			  }
+			  console.log(d);
+		}
             if (isInHighlight && !isAttacking && !isCasting){
                 return;
             }
@@ -2037,4 +2048,8 @@ function highlightArea(tiles, imgSource, callBackEventNames, callBackFunctions) 
 	isInHighlight = true;
 	drawGame();
 }
+
+
+
+
 
