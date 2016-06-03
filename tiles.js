@@ -82,6 +82,7 @@ function showTurnInfo(){
 	}, 1000);
 }
 
+
 function destroyMenuDisplay(){
     stage.removeChild(muteIcon);
     stage.removeChild(playIcon);
@@ -122,6 +123,15 @@ function drawMenuDisplay(){
 
 }
 
+function getUnitOntile(row, column) {
+	for (var i = 0; i < units.length; i++) {
+		if (units[i].row === row && units[i].column === column) {
+			return units[i];
+		}
+	}
+	return null;
+}
+
 
 function turnStartPhase() {
 	undoMove = [];
@@ -130,6 +140,7 @@ function turnStartPhase() {
 	showTurnInfo();
     playableUnitCount = 0;
     var totems = [];
+    totems = [];
 
 
     $.each(units, function(i, value) {
@@ -141,7 +152,9 @@ function turnStartPhase() {
             value.outOfMoves = 0;
         }
 
-        // if (value.)
+        if (value.address === "graphics/spritesheet/special_unit/ss_totem_stand.png") {
+        	totems.push(value);
+        }
 
         // Reduce the skill cooldown of each unit (if it hasn't cooled down yet)
         if (value.skillCoolDown != 0) {
@@ -179,7 +192,58 @@ function turnStartPhase() {
 
     });
 
-       
+    var healedUnits = new Array(2);
+    healedUnits[0] = [];
+    healedUnits[1] = [];
+
+
+    for (var i = 0; i < totems.length; i++) {
+    	for (var dx = -1; dx <= 1; dx++) {
+    		for (var dy = -1; dy <= 1; dy++) {
+    			var char = getUnitOntile(totems[i].row + dx, totems[i].column + dy);
+    			if (char != null && char.team == totems[i].team) healedUnits[totems[i].team].push(char);
+    		}
+    	}
+    }   
+
+    $.each(totems,function(i,totem){
+    	var sprite = new createjs.Sprite(totem.spritesheet, "attack");
+		sprite.x = totem.x + 18;
+		sprite.y = totem.y - 5;
+		sprite.scaleX = 0.7;
+		sprite.scaleY = 0.7;
+		chars.addChild(sprite);
+		setTimeout(function() {
+			chars.removeChild(sprite);
+		}, 1000);
+    });
+
+
+    $.each(healedUnits[0], function(i, char) {
+		char.hp = Math.min(char.hp + 10, char.max_hp);
+		updateHP_bar(char);
+		var heal = new createjs.Sprite(char.healEffect, "heal");
+		heal.x = char.x;
+		heal.y = char.y;
+		chars.addChild(heal);
+		updateHP_bar(char);
+		setTimeout(function() {
+			chars.removeChild(heal);
+		}, 1000);
+    });
+
+    $.each(healedUnits[1], function(i, char) {
+		char.hp = Math.min(char.hp + 10, char.max_hp);
+		updateHP_bar(char);
+		var heal = new createjs.Sprite(char.healEffect, "heal");
+		heal.x = char.x;
+		heal.y = char.y;
+		chars.addChild(heal);
+		updateHP_bar(char);
+		setTimeout(function() {
+			chars.removeChild(heal);
+		}, 1000);
+    });
     var kingX;
     var kingY;
 
@@ -222,7 +286,7 @@ function resize() {
 
 function spawnUnit(data, isCreation, row, column){
 	//|| data.address == "graphics/spritesheet/stand/ss_scarecrow_stand.png"
-    if (data.address == "graphics/spritesheet/stand/ss_rogue_stand.png" || data.address == "graphics/spritesheet/stand/ss_scarecrow_stand.png") return;
+    if (data.address == "graphics/spritesheet/stand/ss_rogue_stand.png"|| data.address == "graphics/spritesheet/stand/ss_scarecrow_stand.png") return;
 		var spriteSheet = new createjs.SpriteSheet({
           	"images": [data.address],
           	"frames": {"regX": 0, "height": 142, "count": 2, "regY": -10, "width": 113 },
@@ -285,6 +349,7 @@ function spawnUnit(data, isCreation, row, column){
 			framerate: 4
 		});
 		unit.burnEffect = burnEffect;
+
 
 		var healEffect = new createjs.SpriteSheet({
 			"images": [that.buffEffects.heal],
@@ -417,8 +482,6 @@ function findFreeSpace(){
 }
 
 function initGame() {
-
-
 	createjs.Ticker.addEventListener("tick", keyEvent);
     this.document.onkeydown = keyEvent;
 	stage.enableMouseOver(20);
@@ -731,6 +794,7 @@ function createFloatingCards(listOfSources, correspondingUnit) {
 		switch(unitCards[i].unitName ){
 			case "knight": 
 				unitCards[i].addEventListener("click", function(event) {
+					if (isInHighlight) return;
                     var spawnTiles = findAvailableAndNonAvailableSpawnTiles(4);
                     highlightArea(spawnTiles[0], "graphics/tile/green_tile.png", ["click"], [function(event) {
                         var tile = event.target;
@@ -743,6 +807,7 @@ function createFloatingCards(listOfSources, correspondingUnit) {
 				break;
 			case "archer": 
 				unitCards[i].addEventListener("click", function(event) {
+					if (isInHighlight) return;
                     var spawnTiles = findAvailableAndNonAvailableSpawnTiles(4);
                     highlightArea(spawnTiles[0], "graphics/tile/green_tile.png", ["click"], [function(event) {
                         var tile = event.target;
@@ -755,6 +820,7 @@ function createFloatingCards(listOfSources, correspondingUnit) {
 				break;
 			case "wizard": 
 				unitCards[i].addEventListener("click", function(event) {
+					if (isInHighlight) return;
                     var spawnTiles = findAvailableAndNonAvailableSpawnTiles(4);
                     highlightArea(spawnTiles[0], "graphics/tile/green_tile.png", ["click"], [function(event) {
                         var tile = event.target;
@@ -767,6 +833,7 @@ function createFloatingCards(listOfSources, correspondingUnit) {
 				break;
             case "totem":
                 unitCards[i].addEventListener("click", function(event) {
+                	if (isInHighlight) return;
                     var spawnTiles = findAvailableAndNonAvailableSpawnTiles(15);
                     highlightArea(spawnTiles[0], "graphics/tile/green_tile.png", ["click"], [function(event) {
                         var tile = event.target;
@@ -874,6 +941,8 @@ function createNewUnit(unitType, row, column) {
 }
 
 function addEventListenersToUnit(unit) {
+
+	//var d = Math.sqrt( (x1-x2)*(x1-x2) + (y1-y2)*(y1-y2) );
     unit.addEventListener("click", function(event) {
             if (isInHighlight && !isAttacking && !isCasting){
                 return;
@@ -1808,7 +1877,7 @@ createjs.Ticker.on("tick", function() {
 function keyEvent(event) {
     switch(event.keyCode) {
         case 27:  //esc
-            if (isDisplayingMenu) {
+            if (isDisplayingMenu || isInHighlight) {
             	clearSelectionEffects();
             }
             break;
@@ -1850,7 +1919,7 @@ function keyEvent(event) {
 			}
 			break;
 		case 32: //space
-			if(undoMove.length != 0){
+			if(undoMove.length != 0 && !endGame){
 				if(!archerSkillDone){
 					selectedCharacter.skillCoolDown = 0;
 					selectedCharacter.outOfMoves = 0;
