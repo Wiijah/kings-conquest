@@ -6,16 +6,17 @@ $unit_id = secureStr($_POST['unit_id']);
 $moves_json = secureStr($_POST['moves']);
 $moves = json_decode($moves_json);
 
-$unit_id = 101;
-$moves_json = "[[1,3], [1,4]]";
-$moves = json_decode($moves_json);
-$initial = array(1, 2);
+// $unit_id = 101;
+// $moves_json = "[[1,3], [1,4]]";
+// $moves = json_decode($moves_json);
+// $initial = array(1, 2);
 
 $team = $TEAM_COLOURS[$player->colour];
 
 /* Get the unit object */
 $result = $db->query("SELECT * FROM units JOIN classes ON units.class_id = classes.class_id WHERE unit_id = '{$unit_id}' AND room_id = '{$room_id}'");
 $unit = $result->fetch_object();
+$initial = array($unit->x, $unit->y);
 
 if ( !$unit //unit not exist
   || $unit->team != $team // player not supposed to control other team units) {
