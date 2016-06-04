@@ -6,10 +6,10 @@ $unit_id = secureStr($_POST['unit_id']);
 $moves_json = secureStr($_POST['moves']);
 $moves = json_decode($moves_json);
 
-$unit_id = 101;
-$moves_json = "[[1,3], [1,4]]";
-$moves = json_decode($moves_json);
-$initial = array(1, 2);
+// $unit_id = 101;
+// $moves_json = "[[1,3], [1,4]]";
+// $moves = json_decode($moves_json);
+// $initial = array(1, 2);
 
 $team = $TEAM_COLOURS[$player->colour];
 
@@ -41,7 +41,7 @@ $out = "{";
 $out .= $SUCCESS.",";
 $out .= action("move_unit",
        jsonPair("unit_id", $unit_id)
-  .",".jsonPair("moves", $moves_json));
+  .",".jsonPair("path", $moves_json));
 $out .= "}";
 echo $out;
 
