@@ -46,8 +46,8 @@ $(document).ready(function() {
         url: url,
         data: data,
         success: callback,
-        error: handle_ajax_error,
-        timeout: 86400000
+        error: handleComError,
+        timeout: 3600000
       });
     }
   });
@@ -110,6 +110,9 @@ function handle_ajax_error(jqXHR, textStatus, errorThrown) {
    //lightbox_alert("Server Error", "There was an error connecting to the server. Please try again later.");
 }
 
+function handleComError(jqXHR, textStatus, errorThrown) {
+   //lightbox_alert("Server Error", "There was an error connecting to the server. Please try again later.");
+}
 /* Function that checks if a string's length is between two numbers. */
 function isStrLenCorrect(str, min, max) {
   return str.length >= min && str.length <= max;

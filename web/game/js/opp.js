@@ -7,13 +7,16 @@ $(document).ready(function() {
 });
 
 function getOpp() {
-  comPost("ajax/opp", {"opp_id" : opp_id}, function(data) {
-    console.log("Opponent data !" + data + opp_id + data.error_code);
+  console.log("getOpp Start !");
+  comPost("ajax/opp", {"opp_id" : String(opp_id)}, function(data) {
+    console.log("Opponent data !" + data.opp_id);
     if (data.error_code != 0) {
+      console.log("bad opp Return !");
       return;
     }
     opp_id = data.opp_id;
     // handleOpp(data.json);
+    console.log("getOpp Return !");
     getOpp();
   });
 }

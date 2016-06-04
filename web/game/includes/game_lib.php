@@ -55,4 +55,14 @@ function jsonUnit($unit) {
         jsonStr("damageEffect", $unit->damageEffect).'
     }';
 }
+
+function oppInsert($json) {
+  global $db;
+  global $room_id;
+  global $user;
+  global $player;
+  $json = secureStr($json);
+
+  $db->query("INSERT INTO opp (room_id, user_id, team, json) VALUES ('{$room_id}', '{$user->id}', '{$player->team}', '{$json}')");
+}
 ?>

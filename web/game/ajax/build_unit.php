@@ -43,5 +43,7 @@ $out .= action("create_unit",
        jsonPair("unit", "{".jsonUnit($unit)."}")
   .",".jsonPair("gold", $player->gold));
 $out .= "}";
+
+oppInsert($out);
 echo $out;
 ?>
