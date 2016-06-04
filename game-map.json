@@ -190,7 +190,7 @@
 			"spritesheet": "graphics/spritesheet/attack/ss_king_attack.png",
 			"info": "graphics/card/king_card.png",
 			"commandable": 1,
-			"hp" : 20,
+			"hp" : 400,
 			"max_hp" : 400,
 			"attack" : 25,
 			"skill": "Buffer",
