@@ -75,6 +75,10 @@ function fs_load() {
   $("#fs_load").show();
 }
 
+function fs_unload() {
+  $("#fs_load").hide();
+}
+
 function in_dev() {
   lightbox_alert("In Development", "This feature is in development. Please check back in a few days.");
 }

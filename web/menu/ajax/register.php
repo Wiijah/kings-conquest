@@ -18,7 +18,7 @@ if ($isSocialSignUp) {
   $result = $db->query($social_exists);
   if ($result->num_rows > 0) kc_error("A user has already signed up with that {$socialType} account.");
 } else {
-  if (!isStrLenCorrect($password, 3, 32)) kc_error("Your password must be between 3 to 32 characters.");
+  if (!isStrLenCorrect($password, 8, 32)) kc_error("Your password must be between 8 to 32 characters.");
 }
 //END social sign up
 

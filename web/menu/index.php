@@ -92,14 +92,21 @@ Best viewed with both eyes open and on Chrome.
   Re-enter Email
   <br /><input type="text" class="login_text" id="reg_email2" /><br /><br />
 
+<span id="reg_passwords">
   Password
   <br /><input type="password" class="login_text" id="reg_pass1" /><br /><br />
 
   Password
   <br /><input type="password" class="login_text" id="reg_pass2" /><br /><br />
+</span>
+<span id="register_social">
+The account you are registering will be authenticated by your Facebook account.<br /><br />
+</span>
 
   <input type="submit" value="Register" class="login_btn" id="btn_register" />
-  <br /><br />
+  
+  <input type="submit" value="Register using Facebook" style="width: 185px" class="login_btn fb_btn" id="btn_fb_reg" />
+<br /><br />
   <div class="white_line"></div>
   <br />Already have an account? Click <a class="goto_login">here</a> to login!
   </div>
