@@ -39,7 +39,7 @@ if (!isValidEmail($email)) kc_error("You have entered an invalid email address."
 $db->autocommit(FALSE);
 
 /* Insert and create account */
-$password = hashPass($password);
+if (!$isSocialSignUp) $password = hashPass($password);
 
 $query = "INSERT INTO users (username, email, password) VALUES
 ('{$username}', '{$email}', '{$password}')";
