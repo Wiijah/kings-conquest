@@ -6,10 +6,10 @@ $y = secureStr($_POST['y']);
 $name = secureStr($_POST['name']);
 $team = $TEAM_COLOURS[$player->colour];
 
-$x = 3;
-$y = 2;
-$name = "wizard";
-$team = 0;
+// $x = 3;
+// $y = 2;
+// $name = "wizard";
+// $team = 0;
 
 $result = $db->query("SELECT * FROM classes WHERE name = '{$name}'");
 $class = $result->fetch_object();
