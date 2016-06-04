@@ -958,6 +958,7 @@ function drawGame() {
 		$.each(units, function(i, value) {
 			chars.addChild(value);
 			chars.addChild(value.hp_bar);
+			sortIndices(value);
 		});
 
 		changed = true;
