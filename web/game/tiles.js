@@ -40,6 +40,7 @@ var movingPlayer = false;
 var isAttacking = false;
 var remainingAttackTimes;
 var isCasting = false;
+var currentGold;
 var p1currentGold;
 var p2currentGold;
 var currentGoldDisplay;
@@ -385,8 +386,9 @@ function initGame() {
 
 
 		that.buffEffects = data.buffEffects;
-		p1currentGold = data.P1currentGold;
-		p2currentGold = data.P2currentGold;
+		// p1currentGold = data.P1currentGold;
+		// p2currentGold = data.P2currentGold;
+		currentGold = data.gold;
 		drawGoldDisplay();
 		that.drawMap(that.mapData);
 
@@ -900,12 +902,13 @@ function drawGoldDisplay() {
 	coin_pic.y = 10;
 	coin_pic.scaleX = 1;
 	coin_pic.scaleY = 1
-	if (turn){
-		currentGoldDisplay = new createjs.Text("Gold: " + p2currentGold, "20px '04b_19'", "#ffffff");
-	} else {
-		currentGoldDisplay = new createjs.Text("Gold: " + p1currentGold, "20px '04b_19'", "#ffffff");
-	}
+	// if (turn){
+	// 	currentGoldDisplay = new createjs.Text("Gold: " + p2currentGold, "20px '04b_19'", "#ffffff");
+	// } else {
+	// 	currentGoldDisplay = new createjs.Text("Gold: " + p1currentGold, "20px '04b_19'", "#ffffff");
+	// }
 	
+	currentGoldDisplay = new createjs.Text("Gold: " + currentGold, "20px '04b_19'", "#ffffff");
 	currentGoldDisplay.x = coin_pic.x + 40;
 	currentGoldDisplay.y = coin_pic.y  +5;
 	currentGoldDisplay.textBasline = "alphabetic";
@@ -2000,9 +2003,11 @@ function handleAttack(action) {
 }
 
 function handleCreate(action) {
-  console.log("action: " + getFirstProp(action.unit));
+  	console.log("action: " + getFirstProp(action.unit));
 	spawnUnit(getFirstProp(action.unit), false);
-	currentGold = action.currentGold;
+	currentGold = action.gold;
+	destroyGoldDisplay();
+	drawGoldDisplay();
     playableUnitCount++;
 }
 
