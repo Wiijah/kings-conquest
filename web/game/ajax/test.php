@@ -12,4 +12,5 @@ $room_id = $player->room_id;
 $db->query("DELETE FROM units WHERE room_id = {$room_id}");
 $db->query("UPDATE room_participants SET gold = '1000'");
 init_units();
-?>Okay, game restarted!
+header ("Location: ../");
+?>
