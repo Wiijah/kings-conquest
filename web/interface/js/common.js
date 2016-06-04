@@ -40,6 +40,15 @@ $(document).ready(function() {
         error: handle_ajax_error,
         timeout: 10000
       });
+    }, comPost: function(url, data, callback) { //default timeout of 10s
+      return jQuery.ajax({
+        type: "POST",
+        url: url,
+        data: data,
+        success: callback,
+        error: handle_ajax_error,
+        timeout: 86400000
+      });
     }
   });
 });
@@ -83,6 +92,13 @@ function quickPost(url, data, callback) {
 /* Minimal features of an AJAX post request. */
 function rawPost(url, data, callback) {
    return $.quickPost(url, data, function(data, status){
+      callback(data, status);
+   });
+}
+
+/* AJAX with larger timeout. */
+function comPost(url, data, callback) {
+   return $.comPost(url, data, function(data, status){
       callback(data, status);
    });
 }

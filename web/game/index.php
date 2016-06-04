@@ -25,7 +25,6 @@ if ($room->state != 'ingame') { // game not started yet
 ?>
 <html>
   <head>
-    <script src="https://code.createjs.com/createjs-2015.11.26.min.js"></script>
     <style>
         body { 
           position: relative;
@@ -52,6 +51,7 @@ if ($room->state != 'ingame') { // game not started yet
   <script src="https://code.createjs.com/createjs-2015.11.26.min.js"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.3/jquery.min.js"></script>
   <script src="../interface/js/common.js"></script>
+  <script src="js/opp.js"></script>
   </head>
   <body>
       

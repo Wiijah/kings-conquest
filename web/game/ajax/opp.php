@@ -1,42 +1,23 @@
 <?php
 require_once 'ajax_common.php';
+/* Get basic data */
+$opp_id = secureStr($_POST['opp_id']);
 
-$x = secureStr($_POST['x']);
-$y = secureStr($_POST['y']);
-$name = secureStr($_POST['name']);
-$team = $TEAM_COLOURS[$player->colour];
-
-
-$result = $db->query("SELECT * FROM classes WHERE name = '{$name}'");
-$class = $result->fetch_object();
-if (!$class) {
-  exit_error($ERROR_BAD_INPUT); //class not exist
+for ($i = 0; $i < 360; $i++) {
+  $result = $db->query("SELECT * FROM opp WHERE opp_id > '{$opp_id}' AND room_id = '{$room_id}' AND user_id != '{$user->id}' ORDER BY opp_id ASC LIMIT 1");
+  if ($result->num_rows == 0) {
+    sleep(1);
+    continue;
+  }
+  $fetch = $result->fetch_object();
+  $out = "{" .
+         jsonPair("error_code", 0).",".
+         jsonPair("opp_id", $fetch->opp_id).",".
+         jsonPair("user_id", $fetch->user_id).",".
+         jsonPair("json", $fetch->json).
+        "}";
+  //$db->query("DELETE FROM opp WHERE opp_id = {$opp_id}");
+  die($out);
 }
-
-if ($player->gold < $class->gold) {
-  exit_error($ERROR_NOT_ENOUGH_GOLD); // player can't afford unit
-}
-
-
-/* Create the unit */
-$unit_id = create_unit($name, $x, $y, $team);
-$result = $db->query("SELECT * FROM units JOIN classes ON units.class_id = classes.class_id WHERE unit_id = '{$unit_id}'");
-$unit = $result->fetch_object();
-
-if (!$unit) {
-  exit_error($ERROR_SERVER_ERROR); //for some reason it was unable to create the unit
-}
-
-/* Remove the gold from the player */
-$player->gold -= $class->gold;
-$db->query("UPDATE room_participants SET gold = '{$player->gold}' WHERE user_id = '{$user->id}' AND room_id = '{$room_id}'");
-
-$out = "{";
-$out .= $SUCCESS.",";
-$out .= jsonPair("gold", $player->gold).",";
-$out .= action("create_unit",
-       jsonPair("unit", "{".jsonUnit($unit)."}")
-  .",".jsonPair("gold", $player->gold));
-$out .= "}";
-echo $out;
+exit_error($ERROR_TIMEOUT);
 ?>
