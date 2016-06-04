@@ -7,7 +7,7 @@ $moves_json = secureStr($_POST['moves']);
 $moves = json_decode($moves_json);
 
 $unit_id = 101;
-$moves_json = "[[1,2], [1,3]]";
+$moves_json = "[[1,3], [1,4]]";
 $moves = json_decode($moves_json);
 $initial = array(1, 2);
 

@@ -74,26 +74,7 @@ $out .= ', "characters": {';
 $result = $db->query("SELECT * FROM units JOIN classes ON units.class_id = classes.class_id WHERE room_id = {$room_id}");
 $comma = "";
 while ($unit = $result->fetch_object()) {
-  $out .= $comma.'"'.$unit->unit_id.'": {
-      '.jsonStr("address", $unit->address).','.
-        jsonStr("spritesheet", $unit->spritesheet).','.
-        jsonPair("hp", $unit->hp).','.
-        jsonPair("max_hp", $unit->max_hp).','.
-        jsonPair("attack", $unit->attack).','.
-        jsonStr("skill", $unit->skill).','.
-        jsonPair("luck", $unit->luck).','.
-        jsonPair("x", $unit->x).','.
-        jsonPair("y", $unit->y).','.
-        jsonPair("moveRange", $unit->moveRange).','.
-        jsonPair("team", $unit->team).','.
-        jsonPair("attackRange", $unit->attackRange).','.
-        jsonPair("canMove", $unit->canMove).','.
-        jsonPair("canAttack", $unit->canAttack).','.
-        jsonPair("skillCoolDown", $unit->skillCoolDown).','.
-        jsonPair("outOfMoves", $unit->outOfMoves).','.
-        jsonStr("damageEffect", $unit->damageEffect).'
-
-    }';
+  $out .= $comma.jsonUnit($unit);
   $comma = ",";
 }
 $out .= '}';
