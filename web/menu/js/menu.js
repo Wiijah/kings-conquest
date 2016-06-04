@@ -16,14 +16,36 @@ $(document).ready(function() {
   $('body').on('click', '#btn_fb', function() {
     fb_login();
   });
+
+  $('body').on('click', '#btn_fb_reg', function() {
+    fb_register();
+  });
 });
-var debug;
+
 function fb_login() {
   fs_load();
   FB.login(function(response) {
     if (response.status === 'connected') {
       console.log("Access token:" + response.authResponse.accessToken);
       rawPost('ajax/login_fb', {access_token : response.authResponse.accessToken}, function(data) {
+        if (data.kc_error !== undefined) {
+          lightbox_alert("Error", data.kc_error);
+          return;
+        }
+        window.location.href = '../interface/';
+      });
+    } else {
+      lightbox_alert("Error", "Failed to login with your Facebook account.");
+    }
+  });
+}
+
+function fb_register() {
+  fs_load();
+  FB.login(function(response) {
+    if (response.status === 'connected') {
+      console.log("Access token:" + response.authResponse.accessToken);
+      rawPost('ajax/register_fb', {access_token : response.authResponse.accessToken}, function(data) {
         if (data.kc_error !== undefined) {
           lightbox_alert("Error", data.kc_error);
           return;

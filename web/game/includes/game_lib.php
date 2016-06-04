@@ -37,6 +37,7 @@ function jsonUnit($unit) {
   return '"'.$unit->unit_id.'": {
       '.jsonStr("address", $unit->address).','.
         jsonStr("spritesheet", $unit->spritesheet).','.
+        jsonPair("unit_id", $unit->unit_id).','.
         jsonPair("hp", $unit->hp).','.
         jsonPair("max_hp", $unit->max_hp).','.
         jsonPair("attack", $unit->attack).','.

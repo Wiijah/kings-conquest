@@ -16,13 +16,14 @@ $height = count($map_object);
 /* Print map dimensions */
 $out .= jsonPair("map_dimensions", "{".jsonPair("width", $width) . ", " . jsonPair("height", $height)."}") . ", ";
 
-/* Print player information */
-$result = $db->query("SELECT * FROM room_participants WHERE room_id = '{$room_id}' AND event = '' ORDER BY part_id ASC");
-$i = 0;
-while ($part = $result->fetch_object()) {
-  $i++;
-  $out .= jsonPair("P{$i}currentGold", $part->gold).",";
-}
+/* Print player gold */
+$out .= jsonPair("gold", $player->gold).",";
+// $result = $db->query("SELECT * FROM room_participants WHERE room_id = '{$room_id}' AND event = '' ORDER BY part_id ASC");
+// $i = 0;
+// while ($part = $result->fetch_object()) {
+//   $i++;
+//   $out .= jsonPair("P{$i}currentGold", $part->gold).",";
+// }
 
 /* Player Info */
 $out .= jsonPair("team", $TEAM_COLOURS[$player->colour]).",";

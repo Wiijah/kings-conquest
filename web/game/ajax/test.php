@@ -7,5 +7,10 @@ if (!$player = $result->fetch_object()) {
  die(game_error($ERROR_NOT_IG)); //Error, not in game.
 }
 $room_id = $player->room_id;
+
+//Delete all units
+$db->query("DELETE FROM units WHERE room_id = {$room_id}");
+$db->query("UPDATE room_participants SET gold = '1000'");
 init_units();
-?>Okay!
+header ("Location: ../");
+?>
