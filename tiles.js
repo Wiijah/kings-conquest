@@ -23,6 +23,7 @@ var tile_info_text;
 var endGame = false;
 var playIcon;
 var muteIcon;
+var coin_pic;
 
 var moveButton;
 var attackButton;
@@ -455,31 +456,31 @@ function spawnUnit(data, isCreation, row, column){
 	// });		
 }
 
-function findFreeSpace(){
-	if (turn == 0){
-		//red castle postion[0,0]
-		var empty = findReachableTiles(1, 0, 10, false);
-		var x,y;
-		for (i = 1; i < empty.length; i++){
-			x = empty[i][0];
-			y = empty[i][1];
-			if (blockMaps[x][y] == 0) {
-				return [x,y];
-			}
-		}
-	} else {
-		//blue castle postion [12,13]
-		var empty = findReachableTiles(12, 13, 10, false);
-		var x,y;
-		for (i = 1; i < empty.length; i++){
-			x = empty[i][0];
-			y = empty[i][1];
-			if (blockMaps[x][y] == 0) {
-				return [x,y];
-			}
-		}
-	}
-}
+// function findFreeSpace(){
+// 	if (turn == 0){
+// 		//red castle postion[0,0]
+// 		var empty = findReachableTiles(1, 0, 10, false);
+// 		var x,y;
+// 		for (i = 1; i < empty.length; i++){
+// 			x = empty[i][0];
+// 			y = empty[i][1];
+// 			if (blockMaps[x][y] == 0) {
+// 				return [x,y];
+// 			}
+// 		}
+// 	} else {
+// 		//blue castle postion [12,13]
+// 		var empty = findReachableTiles(12, 13, 10, false);
+// 		var x,y;
+// 		for (i = 1; i < empty.length; i++){
+// 			x = empty[i][0];
+// 			y = empty[i][1];
+// 			if (blockMaps[x][y] == 0) {
+// 				return [x,y];
+// 			}
+// 		}
+// 	}
+// }
 
 function initGame() {
 	createjs.Ticker.addEventListener("tick", keyEvent);
@@ -745,8 +746,9 @@ function drawUnitCreationMenu() {
 	listOfSources.push("graphics/card/archer_card.png");
 	listOfSources.push("graphics/card/wizard_card.png");
 	listOfSources.push("graphics/card/totem_card.png");
+    listOfSources.push("graphics/card/dragon_card.png");
 
-	createFloatingCards(listOfSources, ["knight","archer","wizard","totem"]);
+	createFloatingCards(listOfSources, ["knight","archer","wizard","totem", "dragon"]);
 	unitCreationMenu.x = 50;
 	unitCreationMenu.y = window.innerHeight - 130;
 	bottomInterface.addChild(unitCreationMenu);
@@ -844,16 +846,19 @@ function createFloatingCards(listOfSources, correspondingUnit) {
                     // createNewUnit("knight");
                 });
                 break;
-			// case "rogue": 
-			// 	unitCards[i].addEventListener("click", function(event) {
-			// 		if (currentGold >= 100) {
-			// 			spawnUnit("rogue",false, 5,2,turn);
-			// 			currentGold -= 100;
-			// 			currentGoldDisplay.text = ("Gold: " + currentGold);
-			// 		}
-			// 		changed = true;
-			// 	});
-			// 	break;
+			case "dragon":
+                unitCards[i].addEventListener("click", function(event) {
+                    if (isInHighlight) return;
+                    var spawnTiles = findAvailableAndNonAvailableSpawnTiles(4);
+                    highlightArea(spawnTiles[0], "graphics/tile/green_tile.png", ["click"], [function(event) {
+                        var tile = event.target;
+                        createNewUnit("dragon", tile.row, tile.column);
+                        clearSelectionEffects();
+                    }]);
+                    highlightArea(spawnTiles[1], "graphics/tile/red_tile.png", [], []);
+                    // createNewUnit("knight");
+                });
+                break;
 		}
 		
 		unitCards[i].addEventListener("mouseover", function(event) {
@@ -904,6 +909,12 @@ function createNewUnit(unitType, row, column) {
                 p2currentGold -= 100;
             }
             break;
+        case "dragon":
+            if (p2currentGold >= 100) {
+                spawnUnit(that.classStats.dragonClass, true, row, column);
+                p2currentGold -= 100;
+            }
+            break;
         }
 	} else {
 		switch (unitType) {
@@ -932,6 +943,12 @@ function createNewUnit(unitType, row, column) {
             if (p1currentGold >= 100) {
                 spawnUnit(that.classStats.totemClass, true, row, column);
                 p1currentGold -= 100;
+            }
+            break;
+        case "dragon":
+            if (p2currentGold >= 100) {
+                spawnUnit(that.classStats.dragonClass, true, row, column);
+                p2currentGold -= 100;
             }
             break;
         }

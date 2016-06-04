@@ -22,7 +22,8 @@
 	"P2currentGold": 5000,
 	"buffEffects":{
 		"heal" : "graphics/spritesheet/spell/ss_heal.png",
-		"burning": "graphics/spritesheet/spell/ss_burning.png"
+		"burning": "graphics/spritesheet/spell/ss_burning.png",
+		"frozen": "graphics/spritesheet/spell/ss_frozen.png"
 	},
 	"classStats": {
 		"totemClass": {
@@ -112,6 +113,28 @@
 			"skillCoolDown" : 0,
 			"outOfMoves" : 0,
 			"damageEffect": "graphics/spritesheet/spell/ss_physical_attack.png"
+		},
+		"dragonClass": {
+			"address": "graphics/spritesheet/stand/ss_dragon_stand.png",
+			"spritesheet": "graphics/spritesheet/attack/ss_dragon_attack.png",
+			"info": "graphics/card/dragon_card.png",
+			"commandable": 1,
+			"hp" : 300,
+			"max_hp" : 300,
+			"attack" : 35,
+			"skill": "Freeze",
+			"skill_no": 6,
+			"luck":0.25,
+			"x" : 0,
+			"y" : 2,
+			"moveRange" : 4, 
+			"team": 0,
+			"attackRange" : 3,
+			"canMove" : 1,
+			"canAttack" : 1,
+			"skillCoolDown" : 0,
+			"outOfMoves" : 0,
+			"damageEffect": "graphics/spritesheet/spell/ss_icy_wind.png"
 		}
 	},
 	"characters": {
