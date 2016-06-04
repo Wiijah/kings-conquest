@@ -41,7 +41,7 @@ $out = "{";
 $out .= $SUCCESS.",";
 $out .= action("move_unit",
        jsonPair("unit_id", $unit_id)
-  .",".jsonPair("moves", $moves_json));
+  .",".jsonPair("path", $moves_json));
 $out .= "}";
 echo $out;
 
