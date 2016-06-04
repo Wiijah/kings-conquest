@@ -6,14 +6,9 @@ $y = secureStr($_POST['y']);
 $name = secureStr($_POST['name']);
 $team = $TEAM_COLOURS[$player->colour];
 
-$x = 3;
-$y = 2;
-$name = "wizard";
-$team = 0;
 
 $result = $db->query("SELECT * FROM classes WHERE name = '{$name}'");
 $class = $result->fetch_object();
-
 if (!$class) {
   exit_error($ERROR_BAD_INPUT); //class not exist
 }
@@ -38,7 +33,7 @@ $db->query("UPDATE room_participants SET gold = '{$player->gold}' WHERE user_id 
 
 $out = "{";
 $out .= $SUCCESS.",";
-//$out .= jsonPair("gold", $player->gold).",";
+$out .= jsonPair("gold", $player->gold).",";
 $out .= action("create_unit",
        jsonPair("unit", "{".jsonUnit($unit)."}")
   .",".jsonPair("gold", $player->gold));

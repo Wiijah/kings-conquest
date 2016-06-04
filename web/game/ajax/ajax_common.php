@@ -12,17 +12,27 @@ $ERROR_BAD_INPUT = 5; // user tried malicious input
 $ERROR_BLOCKED = 6; // user tried to build a unit in an obstacle
 
 require_once '../../common.php';
+
+if (!isset($_SESSION['id'])) {
+  exit_error($ERROR_NOT_LOGGED_IN);
+}
+
+/* Get room participant and room ID */
 $result = $db->query("SELECT * FROM room_participants WHERE user_id = '{$user->id}' AND event = ''");
 if (!$player = $result->fetch_object()) {
- die(game_error($ERROR_NOT_IG)); //Error, not in game.
+ exit_error($ERROR_NOT_IG); //Error, not in room
 }
 $room_id = $player->room_id;
 
-require_once '../includes/game_lib.php';
 
-if (!isset($_SESSION['id'])) {
-  die('{"error_code": '.$ERROR_NOT_LOGGED_IN.'}');
+/* Get room */
+$result = $db->query("SELECT * FROM rooms WHERE room_id = {$room_id}");
+$room = $result->fetch_object();
+if ($result->num_rows == 0 || $room->state != 'ingame') {
+  exit_error($ERROR_NOT_IG); //room state isn't "in game"
 }
+
+require_once '../includes/game_lib.php';
 
 function game_error($msg) {
   return '{"error_code":"'.$msg.'"}';
