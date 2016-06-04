@@ -17,10 +17,16 @@ $team = $TEAM_COLOURS[$player->colour];
 $result = $db->query("SELECT * FROM units JOIN classes ON units.class_id = classes.class_id WHERE unit_id = '{$unit_id}' AND room_id = '{$room_id}'");
 $unit = $result->fetch_object();
 
+//TODO: delete this
+if (!$unit) exit_error($unit_id);
+if ($unit->team != $team) exit_error(101);
+if ($moves[0][0] != $unit->x || $moves[0][1] != $unit->y) exit_error(102);
+if (count($moves) - 1 > $unit->moveRange) exit_error(103);
+
 if ( !$unit //unit not exist
   || $unit->team != $team // player not supposed to control other team units) {
   || $moves[0][0] != $unit->x || $moves[0][1] != $unit->y //initial move path isn't where the unit initially was
-  || count($moves) > $unit->moveRange //player trying to move more than the movement range
+  || count($moves) - 1 > $unit->moveRange //player trying to move more than the movement range
   ) {
   exit_error($ERROR_BAD_INPUT);
 }

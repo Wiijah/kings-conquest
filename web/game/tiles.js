@@ -166,9 +166,6 @@ function resize() {
 // initial: true / false
 function spawnUnit(data, isCreation, row, column){
 	chars.removeChild(spawnAnimation);
-
-	//|| data.address == "graphics/spritesheet/stand/ss_scarecrow_stand.png"
-  //  if (data.address == "graphics/spritesheet/stand/ss_rogue_stand.png") return;
 		var spriteSheet = new createjs.SpriteSheet({
           	"images": [data.address],
           	"frames": {"regX": 0, "height": 142, "count": 2, "regY": -10, "width": 113 },
@@ -184,6 +181,8 @@ function spawnUnit(data, isCreation, row, column){
 		createjs.Ticker.timingMode = createjs.Ticker.RAF;	
 		createjs.Ticker.addEventListener("tick", stage);
 		// Configure unit coordinates
+        unit.unit_id = data.unit_id;
+        // console.log("unit_id: " + unit.unit_id);
 		unit.hp = data.hp;
 		unit.max_hp = data.max_hp;
 		unit.attack = data.attack;
@@ -244,18 +243,10 @@ function spawnUnit(data, isCreation, row, column){
 		});
 		unit.healEffect = healEffect;
 
-	var unit = new createjs.Sprite(spriteSheet, "stand");
 
-		unit.team = data.team;
-        if (isCreation) {
-        	unit.team = turn;
-            unit.row = row;
-            unit.column = column;
-        } else {
-          unit.team = data.team;
-		  unit.column = data.y;
-		  unit.row = data.x;
-        }
+        unit.team = data.team;
+	    unit.column = data.y;
+	    unit.row = data.x;
 		unit.x = originX +  (unit.column - unit.row) * 65;
 		unit.y = unit.column * 32.5 + originY + unit.row * 32.5;
 		//lalala	
@@ -312,7 +303,6 @@ function spawnUnit(data, isCreation, row, column){
 
 	// Adding the unit to the list of units in the game
 	units.push(unit);
-  console.log(unit.row + " " + unit.column);
 
 	blockMaps[unit.row][unit.column] = 1;
 
@@ -1524,10 +1514,6 @@ function findPath(fromX, fromY, toX, toY) {
 		currY = path[0][1];
 	}
 
-	for (i = 0; i < path.length; i++) {
-		path[i] = rcToCoord(path[i][0], path[i][1]);
-	}
-
 }
 
 
@@ -1926,13 +1912,13 @@ function moveCharacter(unit) {
 
 function serverValidate(type, unit, additionalArgs) {
 	if (type == "move") {
-		rawPost("ajax/move_unit.php", {"id" : "0", "path" : JSON.stringify(path)}, function(data) {
+		rawPost("ajax/move_unit", {"unit_id" : String(unit.unit_id), "path" : JSON.stringify(path)}, function(data) {
 			console.log(data);
 			if (data.error_code != 0) {
 				console.log("ERROR");
 				return;
 			}
-			path = data.path;
+			// path = data.path;
 			handleMove(data.action);
 		});
 	}
@@ -1947,7 +1933,7 @@ function serverValidate(type, unit, additionalArgs) {
 		});
 	}
 	if (type === "attack") {
-		rawPost("ajax/attack_unit.php", "{attacker_id : 0, target_id : 1}", function(data) {
+		rawPost("ajax/attack_unit", "{attacker_id : 0, target_id : 1}", function(data) {
 			console.log(data);
 			if (data.error_code != 0) {
 				console.log("ERROR");
@@ -1974,11 +1960,23 @@ function performAttack() {
 }
 
 function handleMove(action) {
-	blockMaps[fromX][fromY] = 0;
+    path = action.path;
+
+    var fromRow = path[0][0];
+    var fromCol = path[0][1];
+    var toRow = path[path.length - 1][0];
+    var toCol = path[path.length - 1][1];
+
+    for (i = 0; i < path.length; i++) {
+        path[i] = rcToCoord(path[i][0], path[i][1]);
+    }
+
+	blockMaps[fromRow][fromCol] = 0;
 	move();
-	blockMaps[tile.row][tile.column] = 1;
-	selectedCharacter.row = tile.row;
-	selectedCharacter.column = tile.column;
+	blockMaps[toRow][toCol] = 1;
+    selectedCharacter.canMove = 0;
+	selectedCharacter.row = toRow;
+	selectedCharacter.column = toCol;
 	clearSelectionEffects();
 	undoMove.pop();
 	undoMove.push(selectedCharacter);
@@ -2004,8 +2002,9 @@ function handleAttack(action) {
 }
 
 function handleCreate(action) {
-  	console.log("action: " + getFirstProp(action.unit));
-	spawnUnit(getFirstProp(action.unit), false);
+  	// console.log("action: " + getFirstProp(action.unit));
+    var unit = getFirstProp(action.unit);
+	spawnUnit(unit, false);
 	currentGold = action.gold;
 	destroyGoldDisplay();
 	drawGoldDisplay();
