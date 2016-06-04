@@ -325,8 +325,8 @@ function spawnUnit(data, isCreation, row, column){
     blockMaps[unit.row][unit.column] = 1;
 
     // Add the unit and its hp bar to the stage
-    draggable.addChild(unit);
-    draggable.addChild(hp_bar);
+    chars.addChild(unit);
+    chars.addChild(hp_bar);
 
     sortIndices(unit);
 
@@ -938,10 +938,11 @@ function drawGame() {
     $.each(units, function(i, value) {
       chars.addChild(value);
       chars.addChild(value.hp_bar);
+      sortIndices(value);
     });
 
     changed = true;
-  }); 
+  });
 }
 
 initGame();

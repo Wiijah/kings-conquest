@@ -27,6 +27,7 @@ if ( !$unit //unit not exist
   || $unit->team != $team // player not supposed to control other team units) {
   || $moves[0][0] != $unit->x || $moves[0][1] != $unit->y //initial move path isn't where the unit initially was
   || count($moves) - 1 > $unit->moveRange //player trying to move more than the movement range
+  || $unit->canMove == 0 //unit already moved this turn
   ) {
   exit_error($ERROR_BAD_INPUT);
 }
@@ -41,7 +42,7 @@ for ($i = 0; $i < count($moves); $i++) {
 //update unit location
 $new_x = $moves[count($moves) - 1][0];
 $new_y = $moves[count($moves) - 1][1];
-$db->query("UPDATE units SET x = '{$new_x}', y = '{$new_y}' WHERE unit_id = '{$unit_id}'");
+$db->query("UPDATE units SET x = '{$new_x}', y = '{$new_y}', canMove = 0 WHERE unit_id = '{$unit_id}'");
 
 $out = "{";
 $out .= $SUCCESS.",";
