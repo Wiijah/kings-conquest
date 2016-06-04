@@ -16,7 +16,6 @@ $team = $TEAM_COLOURS[$player->colour];
 /* Get the unit object */
 $result = $db->query("SELECT * FROM units JOIN classes ON units.class_id = classes.class_id WHERE unit_id = '{$unit_id}' AND room_id = '{$room_id}'");
 $unit = $result->fetch_object();
-$initial = array($unit->x, $unit->y);
 
 if ( !$unit //unit not exist
   || $unit->team != $team // player not supposed to control other team units) {
