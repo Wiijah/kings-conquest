@@ -1932,7 +1932,7 @@ function serverValidate(type, unit, additionalArgs) {
 		});
 	}
 	if (type === "attack") {
-		rawPost("ajax/attack_unit", "{attacker_id : 0, target_id : 1}", function(data) {
+		rawPost("ajax/attack_unit", {"attacker_id" : Stirng(unit.unit_id), "target_id" : String(additionalArgs[0].unit_id)}, function(data) {
 			console.log(data);
 			if (data.error_code != 0) {
 				console.log("ERROR");
