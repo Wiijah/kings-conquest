@@ -1,4 +1,4 @@
-var opp_id = 0; //TODO: remove this line
+var opp_id = "0"; //TODO: remove this line
 
 $(document).ready(function() {
   getOpp();
