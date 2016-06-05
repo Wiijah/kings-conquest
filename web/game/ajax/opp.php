@@ -14,7 +14,7 @@ for ($i = 0; $i < 360; $i++) {
          jsonPair("error_code", 0).",".
          jsonPair("opp_id", $fetch->opp_id).",".
          jsonPair("user_id", $fetch->user_id).",".
-         jsonPair("json", $fetch->json).
+         jsonPair("json", stripslashes($fetch->json)).
         "}";
   $db->query("DELETE FROM opp WHERE opp_id = '{$fetch->opp_id}'");
   die($out);
