@@ -111,6 +111,7 @@ function handle_ajax_error(jqXHR, textStatus, errorThrown) {
 }
 
 function handleComError(jqXHR, textStatus, errorThrown) {
+  getOpp();
   console.log("comError!" + jqXHR +textStatus+errorThrown);
   console.debug(jqXHR);
   console.debug(textStatus);
