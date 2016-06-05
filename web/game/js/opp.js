@@ -1,11 +1,7 @@
 var opp_id = "0"; //TODO: remove this line
 
-$(document).ready(function() {
-  getOpp();
-});
-
 function getOpp() {
-  console.log("getOpp Start !");
+  console.log("getOpp Start with Opp_ID: " + opp_id);
   comPost("ajax/opp", {"opp_id" : String(opp_id)}, getOpp, function(data) {
     console.log("Opponent data !" + data.opp_id);
     if (data.error_code != 0) {
