@@ -16,7 +16,7 @@ for ($i = 0; $i < 360; $i++) {
          jsonPair("user_id", $fetch->user_id).",".
          jsonPair("json", $fetch->json).
         "}";
-  $db->query("DELETE FROM opp WHERE opp_id = '{$opp_id}'");
+  $db->query("DELETE FROM opp WHERE opp_id = '{$fetch->id}'");
   die($out);
 }
 exit_error($ERROR_TIMEOUT);
