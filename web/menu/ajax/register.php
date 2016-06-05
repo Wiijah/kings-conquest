@@ -34,6 +34,8 @@ if ($result->num_rows > 0) kc_error("A user has already signed up with that user
 
 if (!isStrLenCorrect($username, 3, 16)) kc_error("Your username must be between 3 to 16 characters.");
 
+if (!preg_match('~^[a-z0-9 ]+$~i', $username)) kc_error("Usernames are not allowed to contain special characters.");
+
 if (!isValidEmail($email)) kc_error("You have entered an invalid email address.");
 
 $db->autocommit(FALSE);
