@@ -15,7 +15,7 @@ function getOpp() {
       return;
     }
     opp_id = data.opp_id;
-    // handleOpp(data.json);
+    handleOpponent(data.json);
     console.log("getOpp Return !");
     getOpp();
   });
