@@ -6,7 +6,7 @@ $opp_id = secureStr($_POST['opp_id']);
 for ($i = 0; $i < 360; $i++) {
   $result = $db->query("SELECT * FROM opp WHERE opp_id > '{$opp_id}' AND room_id = '{$room_id}' AND user_id != '{$user->id}' ORDER BY opp_id ASC LIMIT 1");
   if ($result->num_rows == 0) {
-    sleep(1);
+    usleep(500000);
     continue;
   }
   $fetch = $result->fetch_object();
@@ -16,7 +16,7 @@ for ($i = 0; $i < 360; $i++) {
          jsonPair("user_id", $fetch->user_id).",".
          jsonPair("json", $fetch->json).
         "}";
-  $db->query("DELETE FROM opp WHERE opp_id = {$opp_id}");
+  $db->query("DELETE FROM opp WHERE opp_id = '{$opp_id}'");
   die($out);
 }
 exit_error($ERROR_TIMEOUT);
