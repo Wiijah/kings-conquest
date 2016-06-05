@@ -966,7 +966,10 @@ function drawGame() {
 	});	
 }
 
-initGame();
+
+$(document).ready(function() {
+    initGame()
+});
 
 function createClickableImage(imgSource, x, y, callBack) {
 	button = new createjs.Bitmap(imgSource);
