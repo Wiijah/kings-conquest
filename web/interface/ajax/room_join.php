@@ -3,6 +3,7 @@
 require_once 'ajax_common.php';
 
 $room_id = secureStr($_POST['room_id']);
+$room_pass = $_POST['room_pass'];
 
 $result = $db->query("SELECT * FROM rooms WHERE room_id = {$room_id} AND state = 'pregame'");
 $room = $result->fetch_object();
@@ -18,6 +19,10 @@ if ($result->num_rows > 0) {
 $result = $db->query("SELECT * FROM room_participants WHERE room_id = {$room_id} AND event = ''");
 if ($result->num_rows >= $room->max_players) {
   die('{"kc_error":"Sorry. You cannot join this room because the room has reached its maximum capacity."}');
+}
+
+if ($room->password != "" && !passVerify($room_pass, $room->password)) {
+  kc_error("You failed to join the room as you have entered an incorrect password.");
 }
 
 // join the room

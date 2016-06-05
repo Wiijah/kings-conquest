@@ -40,6 +40,15 @@ $(document).ready(function() {
         error: handle_ajax_error,
         timeout: 10000
       });
+    }, comPost: function(url, data, callback) { //default timeout of 10s
+      return jQuery.ajax({
+        type: "POST",
+        url: url,
+        data: data,
+        success: callback,
+        error: handleComError,
+        timeout: 3600000
+      });
     }
   });
 });
@@ -87,6 +96,13 @@ function rawPost(url, data, callback) {
    });
 }
 
+/* AJAX with larger timeout. */
+function comPost(url, data, callback) {
+   return $.comPost(url, data, function(data, status){
+      callback(data, status);
+   });
+}
+
 /* Function that does nothing, useful for passing callback functions that do nothing. */
 function nothing() {}
 
@@ -94,6 +110,9 @@ function handle_ajax_error(jqXHR, textStatus, errorThrown) {
    //lightbox_alert("Server Error", "There was an error connecting to the server. Please try again later.");
 }
 
+function handleComError(jqXHR, textStatus, errorThrown) {
+   //lightbox_alert("Server Error", "There was an error connecting to the server. Please try again later.");
+}
 /* Function that checks if a string's length is between two numbers. */
 function isStrLenCorrect(str, min, max) {
   return str.length >= min && str.length <= max;

@@ -16,7 +16,7 @@ if (!isStrLenCorrect($room_pass, 0, 20)) {
 
 /* secureStr only after checking the length due to htmlentities */
 $room_name = secureStr($room_name);
-$room_pass = secureStr($room_name);
+if ($room_pass != "") $room_pass = hashPass($room_name);
 
 $result = $db->query("SELECT * FROM room_participants WHERE user_id = {$user->id} AND event = ''");
 if ($result->num_rows > 0) {

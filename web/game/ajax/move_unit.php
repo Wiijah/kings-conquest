@@ -50,7 +50,17 @@ $out .= action("move_unit",
        jsonPair("unit_id", $unit_id)
   .",".jsonPair("path", $moves_json));
 $out .= "}";
+
+oppInsert($out);
 echo $out;
+
+
+
+
+
+
+
+
 
 /* Moving unit functions */
 function arePairsAdj($pair1, $pair2) {

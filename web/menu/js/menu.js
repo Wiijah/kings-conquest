@@ -1,4 +1,6 @@
 var MENU_ANIM_TIME = 0;
+var social_signup = "none";
+var social_signup_id = 0;
 
 /* Facebook Login */
 $(document).ready(function() {
@@ -50,7 +52,12 @@ function fb_register() {
           lightbox_alert("Error", data.kc_error);
           return;
         }
-        window.location.href = '../interface/';
+        social_signup = data.social_signup;
+        social_signup_id = data.social_signup_id;
+
+        $("#register_social").show();
+        $("#reg_passwords").hide();
+        fs_unload();
       });
     } else {
       lightbox_alert("Error", "Failed to login with your Facebook account.");
@@ -97,11 +104,11 @@ $(document).ready(function() {
       lightbox_alert("Error", "Username should be between 3 to 16 characters.");
       return;
     }
-    if (!isStrLenCorrect(password1, 3, 32)) {
-      lightbox_alert("Error", "Your password must be between 3 to 32 characters.");
+    if (social_signup == "none" && !isStrLenCorrect(password1, 8, 32)) {
+      lightbox_alert("Error", "Your password must be between 8 to 32 characters.");
       return;
     }
-    quickPost("ajax/register", {username: username, email: email1, password: password1}, function(data, status) {
+    quickPost("ajax/register", {username: username, email: email1, password: password1, social_signup: social_signup, social_signup_id: social_signup_id}, function(data, status) {
       if (data.kc_error !== undefined) {
         lightbox_alert("Error", data.kc_error);
         return;
