@@ -1,0 +1,65 @@
+body {
+	background-color: white;
+}
+
+div#someBox {
+	width: 35%;
+	height:25%;
+	z-index: 1000;
+	position: fixed;
+	top: 10px;
+	left: 10px;
+    color: #3a87ad;
+    font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+    font-size: 14px;
+}
+
+div#box_header {
+	background-color: #eeeeee;
+
+	-webkit-box-shadow: 0px 5px 15px rgba(0,0,0,0.5);
+    -moz-box-shadow: 0px 5px 15px rgba(0,0,0,0.5);
+    box-shadow: 0px 5px 15px rgba(0,0,0,0.5);
+	padding: 15px;
+}
+
+div#box_body {
+	border-top: 1px solid #e5e5e5;
+
+	-webkit-box-shadow: 0px 5px 15px rgba(0,0,0,0.5);
+    -moz-box-shadow: 0px 5px 15px rgba(0,0,0,0.5);
+    box-shadow: 0px 5px 15px rgba(0,0,0,0.5);
+	background-color: white;
+	padding: 15px;
+}
+
+div#box_foot {
+	border-top: 1px solid #e5e5e5;
+	background-color: white;
+	padding: 15px;
+	text-align: right;
+
+	-webkit-box-shadow: 0px 5px 15px rgba(0,0,0,0.5);
+    -moz-box-shadow: 0px 5px 15px rgba(0,0,0,0.5);
+    box-shadow: 0px 5px 15px rgba(0,0,0,0.5);
+
+	-webkit-border-bottom-right-radius: 10px;
+    -webkit-border-bottom-left-radius: 10px;
+    -moz-border-radius-bottomright: 10px;
+    -moz-border-radius-bottomleft: 10px;
+    border-bottom-right-radius: 10px;
+    border-bottom-left-radius: 10px;	
+}
+
+.btn {
+	background-color: #3a87ad;
+    border: none;
+    color: white;
+    padding: 7px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+}
