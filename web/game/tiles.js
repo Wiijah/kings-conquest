@@ -451,7 +451,7 @@ function initGame() {
 
 	drawMenuDisplay();
 	stage.update();
-    getOpp();
+  setTimeout(function() {getOpp(); }, 1000);
 
 }
 var muteIcon;

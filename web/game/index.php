@@ -48,6 +48,15 @@ if ($room->state != 'ingame') { // game not started yet
         }*/
         
       </style>
+      <script>
+<?php
+
+  $result = $db->query("SELECT * FROM opp WHERE room_id = '{$room_id}' AND user_id != '{$user->id}' ORDER BY opp_id DESC LIMIT 1");
+  $fetch = $result->fetch_object();
+  $lastOppID = $fetch ? $fetch->opp_id : "0";
+  echo "var lastOppID = {$lastOppID};";
+  ?>
+      </script>
   <script src="https://code.createjs.com/createjs-2015.11.26.min.js"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.3/jquery.min.js"></script>
   <script src="../interface/js/common.js"></script>

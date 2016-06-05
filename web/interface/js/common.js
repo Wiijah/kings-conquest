@@ -46,8 +46,8 @@ $(document).ready(function() {
         url: url,
         data: data,
         success: callback,
-        error: timeout_cb,
-        timeout: 3600000
+        error: handleComError,
+        timeout: 36000000
       });
     }
   });
@@ -111,6 +111,10 @@ function handle_ajax_error(jqXHR, textStatus, errorThrown) {
 }
 
 function handleComError(jqXHR, textStatus, errorThrown) {
+  console.log("comError!" + jqXHR +textStatus+errorThrown);
+  console.debug(jqXHR);
+  console.debug(textStatus);
+  console.debug(errorThrown);
    //lightbox_alert("Server Error", "There was an error connecting to the server. Please try again later.");
 }
 /* Function that checks if a string's length is between two numbers. */
