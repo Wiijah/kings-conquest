@@ -16,7 +16,7 @@ $out = "{";
 // output the array of players
 $out .= '"rooms":[';
 
-$result = $db->query("SELECT * FROM rooms INNER JOIN users ON rooms.user_id = users.id WHERE state = 'pregame' ORDER BY rooms.created DESC");
+$result = $db->query("SELECT * FROM users INNER JOIN rooms ON rooms.user_id = users.id WHERE state = 'pregame' ORDER BY rooms.created DESC");
 
 $comma = "";
 while ($room = $result->fetch_object()) {
