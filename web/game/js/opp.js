@@ -6,10 +6,10 @@ $(document).ready(function() {
 
 function getOpp() {
   console.log("getOpp Start !");
-  comPost("ajax/opp", {"opp_id" : String(opp_id)}, function(data) {
+  comPost("ajax/opp", {"opp_id" : String(opp_id)}, getOpp, function(data) {
     console.log("Opponent data !" + data.opp_id);
     if (data.error_code != 0) {
-      console.log("bad opp Return !");
+      console.log("BAD BAD BAD BAD BAD opp Return !");
       return;
     }
     opp_id = data.opp_id;

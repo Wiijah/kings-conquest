@@ -40,13 +40,13 @@ $(document).ready(function() {
         error: handle_ajax_error,
         timeout: 10000
       });
-    }, comPost: function(url, data, callback) { //default timeout of 10s
+    }, comPost: function(url, data, timeout_cb, callback) { //default timeout of 10s
       return jQuery.ajax({
         type: "POST",
         url: url,
         data: data,
         success: callback,
-        error: handleComError,
+        error: timeout_cb,
         timeout: 3600000
       });
     }
