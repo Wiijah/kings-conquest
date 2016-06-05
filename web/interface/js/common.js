@@ -98,7 +98,7 @@ function rawPost(url, data, callback) {
 
 /* AJAX with larger timeout. */
 function comPost(url, data, timeout_cb, callback) {
-   return $.comPost(url, data, function(data, status){
+   return $.comPost(url, data, timeout_cb, function(data, status){
       callback(data, status);
    });
 }
