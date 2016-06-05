@@ -451,7 +451,7 @@ function initGame() {
 
 	drawMenuDisplay();
 	stage.update();
-
+    getOpp();
 
 }
 var muteIcon;
@@ -1073,6 +1073,16 @@ function castKingSkill(king) {
     });
 }
 
+// function castKnightSkill(knight) {
+//     undoHighlights();
+//     applyBuff(4, knight);
+//     knight.outOfMoves = 1;
+//     knight.skillCoolDown = 3;
+//     isCasting = false;
+//     undoMove.pop();
+//     break;
+// }
+
 
 function cast(skillNo, unit) {
 	switch (skillNo) {
@@ -1198,8 +1208,8 @@ function clearWizardSpellCross(event) {
 
 // Start moving a given unit
 function move(unit) {
-	movingPlayer = true;
     movingUnit = unit;
+	movingPlayer = true;
 }
 
 // Convert row/column to actual coordinates	
@@ -1402,7 +1412,6 @@ function moveUnit() {
       destX = path[0][0],
       destY = path[0][1];
 
-
   var coefficientX = 0;
   var coefficientY = 0;
 
@@ -1453,7 +1462,7 @@ function moveUnit() {
         	movingUnit.canMove = 0;
         }
 
-		showActionMenuNextToPlayer(movingUnit);
+		if (movingUnit.team === team) showActionMenuNextToPlayer(movingUnit);
       }
   }
 
@@ -1938,6 +1947,8 @@ function moveCharacter(unit) {
 
 function serverValidate(type, unit, additionalArgs) {
 	if (type == "move") {
+        console.log(path);
+        console.log(unit.unit_id);
 		rawPost("ajax/move_unit", {"unit_id" : String(unit.unit_id), "path" : JSON.stringify(path)}, function(data) {
 			console.log(data);
 			if (data.error_code != 0) {
@@ -1996,15 +2007,20 @@ function findUnitById(id) {
 }
 
 function handleOpponent(data) {
-    switch (data.action) {
-        case "move":
-            move(findUnitById(data.action.unit_id));
+    console.log("in");
+    switch (data.action.action_type) {
+        case "move_unit":
+            handleMove(data.action);
             break;
-        case "create":
+        case "create_unit":
+            var unit = getFirstProp(data.action.unit);
+            console.log(unit.unit_id);
+            spawnUnit(unit);
             break;
         case "attack":
             break;
         case "skill":
+            break;
                 
     }
 }
@@ -2020,16 +2036,17 @@ function handleMove(action) {
     for (i = 0; i < path.length; i++) {
         path[i] = rcToCoord(path[i][0], path[i][1]);
     }
-
+    console.log("handleMove");
 	blockMaps[fromRow][fromCol] = 0;
-	move(selectedCharacter);
+    var unit = findUnitById(action.unit_id);
+	move(unit);
 	blockMaps[toRow][toCol] = 1;
-    selectedCharacter.canMove = 0;
-	selectedCharacter.row = toRow;
-	selectedCharacter.column = toCol;
+    unit.canMove = 0;
+	unit.row = toRow;
+	unit.column = toCol;
 	clearSelectionEffects();
 	undoMove.pop();
-	undoMove.push(selectedCharacter);
+	undoMove.push(unit);
 };
 
 function handleAttack(action) {
