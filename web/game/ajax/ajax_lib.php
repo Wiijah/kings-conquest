@@ -7,6 +7,7 @@ $ERROR_NOT_ENOUGH_GOLD = 4; // not enough gold to build unit
 $ERROR_BAD_INPUT = 5; // user tried malicious input
 $ERROR_BLOCKED = 6; // user tried to build a unit in an obstacle
 $ERROR_TIMEOUT = 7; // time out
+$ERROR_NOT_YOUR_TURN = 8; //action when not user's turn
 
 require_once '../../common.php';
 
