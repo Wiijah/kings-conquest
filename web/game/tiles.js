@@ -2042,7 +2042,7 @@ function handleOpponent(data) {
         case "remove_buff":
             removeBuff(data.action.buff_id, findUnitById(data.action.unit_id));
             break;
-        case "apply_buff"
+        // case "apply_buff"
     }
 
 }
