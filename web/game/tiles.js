@@ -260,6 +260,7 @@ function spawnUnit(data, isCreation, row, column){
 		unit.scaleY = 0.7;
 		unit.skill = data.skill;
 		unit.address = data.address;
+		console.log(data.info);
 		unit.info = data.info;
 
 		unit.spritesheet = new createjs.SpriteSheet({
@@ -462,6 +463,7 @@ function initGame() {
 var muteIcon;
 var playIcon;
 function destroyMenuDisplay(){
+	stage.removeChild(quitIcon);
 	stage.removeChild(muteIcon);
 	stage.removeChild(playIcon);
 }
@@ -481,6 +483,14 @@ function drawMenuDisplay(){
 	playIcon.y = 5;
 	playIcon.scaleX = 0.7;
 	playIcon.scaleY = 0.7;
+
+	quitIcon = new createjs.Bitmap("graphics/quit.png");
+	quitIcon.x = stage.canvas.width - 260;
+	quitIcon.y = 5;
+	quitIcon.scaleX = 0.13;
+	quitIcon.scaleY = 0.13;
+
+	stage.addChild(quitIcon);
 
 
 	stage.addChild(muteIcon);
