@@ -1056,7 +1056,7 @@ function showActionMenuNextToPlayer(unit) {
 }	
 
 
-function castKingSkill(king) {
+function useKingSkill(king) {
     $.each(units, function(i, unit){
         if (unit.team === king.team) {
             var add = Math.ceil(0.1 * unit.max_hp);
@@ -1079,7 +1079,7 @@ function castKingSkill(king) {
     });
 }
 
-function castKnightSkill(knight) {
+function handleKnightSkill(knight) {
     undoHighlights();
     applyBuff(4, knight);
     knight.outOfMoves = 1;
@@ -1088,6 +1088,17 @@ function castKnightSkill(knight) {
     undoMove.pop();
 }
 
+// function validateKingSkill(king) {
+//     serverValidate("skill", king, []);
+// }
+
+// function validateKnight(knight) {
+//     serverValidate("skill", knight, []);
+// }
+
+// function validateArcher(archer) {
+
+// }
 
 function cast(skillNo, unit) {
 	switch (skillNo) {
@@ -1973,14 +1984,14 @@ function serverValidate(type, unit, additionalArgs) {
 		});
 	}
 	if (type === "attack") {
-        console.log("validate attack");
 		rawPost("ajax/attack_unit", {"attacker_id" : String(unit.unit_id), "target_id" : String(additionalArgs[0].unit_id)}, function(data) {
 			console.log(data);
 			if (data.error_code != 0) {
 				console.log("ERROR");
 				return;
 			}
-			handleAttack(data.action);
+			if (data.action.type === "attack_unit") handleAttack(data.action);
+            else removeBuff(data.action.buff_id, findUnitById(data.action.unit_id));
             postAttack(findUnitById(data.action.attacker_id));
 		});
 	}
@@ -2011,6 +2022,7 @@ function findUnitById(id) {
     return null;
 }
 
+
 function handleOpponent(data) {
     console.log("handle opponent move");
     switch (data.action.action_type) {
@@ -2023,12 +2035,16 @@ function handleOpponent(data) {
             break;
         case "attack_unit":
             console.log("handle attack unit");
-            handleAttack(action);
+            handleAttack(action);  
             break;
         case "skill":
             break;
-                
+        case "remove_buff":
+            removeBuff(data.action.buff_id, findUnitById(data.action.unit_id));
+            break;
+        case "apply_buff"
     }
+
 }
 
 function handleMove(action) {
@@ -2072,7 +2088,11 @@ function handleAttack(action) {
 	var attacker = findUnitById(action.attacker_id);
 	var target = findUnitById(action.target_id);
 	attack(attacker, target, action.dmg, action.is_critical);
-	// attacker.attack = attacker.base_attack;
+
+    // Apply buffs to the target
+    for (var i = 0; i < action.buffs.length; i++) {
+        applyBuff(action.buffs[i], target);
+    }
 	clearSelectionEffects();
 }
 
