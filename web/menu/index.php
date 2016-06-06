@@ -52,6 +52,7 @@ if (isset($_SESSION['id'])) {
 <div class="home_btn_text">Register</div>
 </div>
 
+<div id="credits">
 <div class="home_box">
 We used the following resources on our game:
 <ol>
@@ -60,15 +61,20 @@ We used the following resources on our game:
   <li>jQuery<br />https://jquery.com/</li>
   <li>CreateJS and EaselJS<br />http://www.createjs.com/</li>
   <li>Loading Animation<br />http://loading.io/</li>
+  <li>Epic Fantasy Music<br />http://opengameart.org/content/epic- fantasy-music</li>
 </ol>
-
+</div>
+<div class="goto_home_btn goto_home">Home</div>
 </div>
 
+<div id="intro">
 <div class="home_box">
 Kings' Conquest is a <span class='home_highlight'>turned-based multiplayer
 game</span> aimed at fans of the <span class='home_highlight'>fantasy</span> or
 <span class='home_highlight'>strategy</span> genre.<br /><br />
 Best viewed with both eyes open and on Chrome.
+</div>
+<div class="goto_home_btn goto_credits">Credits</div>
 </div>
 
 </div>

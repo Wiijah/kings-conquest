@@ -129,7 +129,15 @@ $(document).ready(function() {
 
   /* Open up home */
   $('body').on('click', '.goto_home', function() {
+    $("#credits").hide();
     show_menu_container("#home_container");
+    $("#intro").show();
+  });
+
+
+  $('body').on('click', '.goto_credits', function() {
+    $("#credits").show();
+    $("#intro").hide();
   });
 });
 
