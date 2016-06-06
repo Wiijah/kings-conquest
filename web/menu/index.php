@@ -53,6 +53,18 @@ if (isset($_SESSION['id'])) {
 </div>
 
 <div class="home_box">
+We used the following resources on our game:
+<ol>
+  <li>Facebook SDK<br />https://github.com/facebook/facebook-php-sdk-v4/</li>
+  <li>Cloud image<br />http://pngimg.com/upload/cloud_PNG4.png</li>
+  <li>jQuery<br />https://jquery.com/</li>
+  <li>CreateJS and EaselJS<br />http://www.createjs.com/</li>
+  <li>Loading Animation<br />http://loading.io/</li>
+</ol>
+
+</div>
+
+<div class="home_box">
 Kings' Conquest is a <span class='home_highlight'>turned-based multiplayer
 game</span> aimed at fans of the <span class='home_highlight'>fantasy</span> or
 <span class='home_highlight'>strategy</span> genre.<br /><br />
