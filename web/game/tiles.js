@@ -2022,7 +2022,8 @@ function handleOpponent(data) {
             spawnUnit(unit);
             break;
         case "attack_unit":
-
+            console.log("handle attack unit");
+            handleAttack(action);
             break;
         case "skill":
             break;
