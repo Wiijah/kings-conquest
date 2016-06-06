@@ -2023,7 +2023,7 @@ function handleOpponent(data) {
             break;
         case "attack_unit":
             console.log("handle attack unit");
-            handleAttack(action);
+            handleAttack(data.action);
             break;
         case "skill":
             break;
