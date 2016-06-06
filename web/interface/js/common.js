@@ -40,14 +40,14 @@ $(document).ready(function() {
         error: handle_ajax_error,
         timeout: 10000
       });
-    }, comPost: function(url, data, callback) { //default timeout of 10s
+    }, comPost: function(url, data, timeout_cb, callback) { //default timeout of 10s
       return jQuery.ajax({
         type: "POST",
         url: url,
         data: data,
         success: callback,
         error: handleComError,
-        timeout: 3600000
+        timeout: 36000000
       });
     }
   });
@@ -97,8 +97,8 @@ function rawPost(url, data, callback) {
 }
 
 /* AJAX with larger timeout. */
-function comPost(url, data, callback) {
-   return $.comPost(url, data, function(data, status){
+function comPost(url, data, timeout_cb, callback) {
+   return $.comPost(url, data, timeout_cb, function(data, status){
       callback(data, status);
    });
 }
@@ -111,6 +111,7 @@ function handle_ajax_error(jqXHR, textStatus, errorThrown) {
 }
 
 function handleComError(jqXHR, textStatus, errorThrown) {
+  getOpp();
    //lightbox_alert("Server Error", "There was an error connecting to the server. Please try again later.");
 }
 /* Function that checks if a string's length is between two numbers. */

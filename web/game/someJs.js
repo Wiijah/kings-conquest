@@ -27,3 +27,17 @@ function addTitleToBox(text) {
 	box.innerHTML = text;	
 }
 
+function hideButton() {
+	var btn = document.getElementById("actionButton");
+	btn.style.display = "none";
+}
+
+function showButton() {
+	var btn = document.getElementById("actionButton");
+	btn.style.display = "inline-block";	
+}
+
+function changeTextToButton(text){
+	var btn = document.getElementById("actionButton");
+	btn.innerHTML = text;
+}

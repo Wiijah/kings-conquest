@@ -61,8 +61,9 @@ function oppInsert($json) {
   global $room_id;
   global $user;
   global $player;
+  $team = $player->colour == "red" ? 0 : 1;
   $json = secureStr($json);
 
-  $db->query("INSERT INTO opp (room_id, user_id, team, json) VALUES ('{$room_id}', '{$user->id}', '{$player->team}', '{$json}')");
+  $db->query("INSERT INTO opp (room_id, user_id, team, json) VALUES ('{$room_id}', '{$user->id}', '{$team}', '{$json}')");
 }
 ?>

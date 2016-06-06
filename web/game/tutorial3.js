@@ -60,7 +60,7 @@ var bgMusic = true;
 var currentUnit;
 var enemyUnit;
 
-
+var lock = true;
 
 function showTurnInfo(){
   stage.removeChild(playerLabel);
@@ -88,6 +88,16 @@ function showTurnInfo(){
 
 
 function turnStartPhase() {
+  turnCount ++;
+
+  console.log(turnCount);
+  // if (turnCount == 3 && currentUnit.skill_no == 0){
+  //   k_instruction4();
+  // }
+  if (turnCount == 2 && currentUnit.skill_no == 3){
+    kt_instruction4();
+  }
+
   undoMove = [];
  // destroyGoldDisplay();
  //   drawGoldDisplay();
@@ -114,8 +124,6 @@ function turnStartPhase() {
             value.buffs[j][2]--;
             if (value.buffs[j][2] === 0) buffsToBeRemoved.push(value.buffs[j][0]);
             if (value.buffs[j][0] === 5) {
-                
-
                 var damage = value.max_hp * 0.02;
                 chars.removeChild(fire);
                 var fire = new createjs.Sprite(value.burnEffect, "burn");
@@ -123,11 +131,21 @@ function turnStartPhase() {
                 fire.x = value.x;
                 fire.y = value.y;
                 chars.addChild(fire);
-
                 value.hp -= damage;
                 updateHP_bar(value);
                 setTimeout(function() {
-          chars.removeChild(fire);
+                  chars.removeChild(fire);
+                }, 1000);
+            }
+            if (value.buffs[j][0] === 6) {
+                chars.removeChild(ice);
+                value.outOfMoves = 1;
+                var ice = new createjs.Sprite(value.forzenEffect, "ice");
+                ice.x = value.x;
+                ice.y = value.y;
+                chars.addChild(ice);
+                setTimeout(function() {
+          chars.removeChild(ice);
         }, 1000);
             }
         }
@@ -144,13 +162,15 @@ function turnStartPhase() {
 
     $.each(units, function(i, value) {
       if (value.team == turn && value.address == "graphics/spritesheet/stand/ss_king_stand.png") {
-        console.log(value.x + "," + value.y);
+        //console.log(value.x + "," + value.y);
         kingX = value.x;
         kingY = value.y;
       }
     });
-    draggable.x = 975 - currentUnit.x;
-    draggable.y = 382.5 - currentUnit.y;
+    if (turn) {
+      draggable.x = 975 - currentUnit.x;
+      draggable.y = 382.5 - currentUnit.y;
+    }
 
 
  //    setTimeout(function() {
@@ -159,7 +179,16 @@ function turnStartPhase() {
  //     turnEndPhase();
  //     turnStartPhase();
   // }, 6000);
-  if (!turn){
+
+  if (!turn && !enemyUnit.outOfMoves){
+    if (currentUnit.address == "graphics/spritesheet/stand/ss_archer_stand.png" && turnCount == 2) {
+      a_instruction5();
+    }
+
+    if (currentUnit.address == "graphics/spritesheet/stand/ss_wizard_stand.png" && turnCount == 2) {
+      w_instruction5();
+    }
+
     setTimeout(function(){
       showActionMenuNextToPlayer(enemyUnit);
     },1000);
@@ -203,13 +232,13 @@ function turnStartPhase() {
         var reachableTiles = findReachableTiles(row, column, enemyUnit.attackRange, false);
        setTimeout(function() {
        clearSelectionEffects();
-       console.log(reachableTiles);
+       //console.log(reachableTiles);
        highlightArea(reachableTiles, "graphics/tile/red_tile.png", ["click"], []);
        }, 4000);
 
       setTimeout(function(){
         $.each(reachableTiles, function(i, tile) {
-          console.log(tile[0] + "," + tile[1]);
+          //console.log(tile[0] + "," + tile[1]);
           if (tile[0] == currentUnit.row && tile[1] == currentUnit.column){
             attack(enemyUnit, currentUnit);
             clearSelectionEffects();
@@ -228,7 +257,12 @@ function turnStartPhase() {
     },6000);
 
   }
-
+  if (!turn && enemyUnit.outOfMoves){
+    setTimeout(function() {
+       clearSelectionEffects();
+       endTurn();
+       }, 2000);
+  }
 
 
 }
@@ -331,6 +365,18 @@ function spawnUnit(data, isCreation, row, column, team){
     });
     unit.healEffect = healEffect;
 
+    var forzenEffect = new createjs.SpriteSheet({
+      "images": [that.buffEffects.frozen],
+      "frames": {"width": 142, "height": 142, "count": 4, "regY": 110, "regX": 95},
+      "animations": {
+        "ice":{
+          frames: [0,1,2,3],
+          next: false
+        }
+      },
+      framerate: 4
+    });
+    unit.forzenEffect = forzenEffect;
 
     if (isCreation) {
         unit.team = team;
@@ -421,7 +467,7 @@ function spawnUnit(data, isCreation, row, column, team){
     addEventListenersToUnit(unit);
 
     if (unit.team == 1) {
-      console.log("in currentUnit");
+    //  console.log("in currentUnit");
       currentUnit = unit;
     } else {
       enemyUnit = unit;
@@ -535,17 +581,17 @@ function initGame() {
   drawUnitCreationMenu();
   drawBottomInterface();
 
-    setInterval(function(){ 
-        if (!movingPlayer && !isAttacking && !isCasting && !isInHighlight) {
-            if (playableUnitCount === 0) {
-                clearSelectionEffects();
-                console.log("turn ended for current player");
-                turnEndPhase();
-                turn = 1 - turn;
-                turnStartPhase();
-            }
-        }
-    }, 5000);
+    // setInterval(function(){ 
+    //     if (!movingPlayer && !isAttacking && !isCasting && !isInHighlight) {
+    //         if (playableUnitCount === 0) {
+    //             clearSelectionEffects();
+    //             //console.log("turn ended for current player");
+    //             turnEndPhase();
+    //             turn = 1 - turn;
+    //             turnStartPhase();
+    //         }
+    //     }
+    // }, 5000);
 
 
   changed = true;
@@ -598,6 +644,7 @@ function drawMenuDisplay(){
 
 }
 function removeBuff(buffType, unit) {
+   // console.log("buff type: " + buffType);
     var success = false;
 
     for (var i = 0; i < unit.buffs.length; i++) {
@@ -642,9 +689,15 @@ function applyBuff(buffType, unit) {
       var buffIcon = new createjs.Bitmap("graphics/buff/buff_shield.png");
       unit.buffs.push([4, 0, -1, buffIcon]);
       break;
-        case 5: // burn Buff
-            var buffIcon = new createjs.Bitmap("graphics/buff/buff_burning.png");
-            unit.buffs.push([5, 0.02, 5, buffIcon]);
+    case 5: // burn Buff
+        var buffIcon = new createjs.Bitmap("graphics/buff/buff_burning.png");
+        unit.buffs.push([5, 0.02, 5, buffIcon]);
+        break;
+   case 6: // forzen Buff
+    var buffIcon = new createjs.Bitmap("graphics/buff/buff_frozen.png");
+    unit.buffs.push([6, 0, 4, buffIcon]);
+    console.log("frozen");
+    break;
   }
 
   buffIcon.x = unit.hp_bar.x + (unit.buffs.length - 1) * 25;
@@ -704,7 +757,10 @@ function updateHP_bar(unit){
     chars.removeChild(unit.hp_bar);
     blockMaps[unit.row][unit.column] = 0;
     units.splice(units.indexOf(unit), 1);
-    for (var i = 0; i <= unit.buffs.length; i++) {
+
+
+
+    for (var i = 0; i <= 5; i++) {
       removeBuff(i, unit);
     }
     if (unit.address == "graphics/spritesheet/stand/ss_king_stand.png" && unit.team == 0){
@@ -728,7 +784,7 @@ function updateHP_bar(unit){
   unit.hp_bar.updateCache();
 }
 function reSpawn(){
-  spawnUnit(that.classStats.kingClass, true, 2, 0, 0);
+  spawnUnit(that.classStats.kingClass, true, 2, 1, 0);
   console.log("respawn");
 }
 
@@ -748,9 +804,10 @@ function drawUnitCreationMenu() {
   listOfSources.push("graphics/card/knight_card.png");
   listOfSources.push("graphics/card/archer_card.png");
   listOfSources.push("graphics/card/wizard_card.png");
+  listOfSources.push("graphics/card/dragon_card.png");
   //listOfSources.push("graphics/card/rogue_card.png");
 
-  createFloatingCards(listOfSources, ["king","knight","archer","wizard","rogue"]);
+  createFloatingCards(listOfSources, ["king","knight","archer","wizard","dragon"]);
   unitCreationMenu.x = 50;
   unitCreationMenu.y = window.innerHeight - 130;
   bottomInterface.addChild(unitCreationMenu);
@@ -790,106 +847,29 @@ function createFloatingCards(listOfSources, correspondingUnit) {
     switch(unitCards[i].unitName ){
       case "king":
         unitCards[i].addEventListener("click", function(event) {
-                    removeBox();
-                    displayBox(function() {
-                      removeBox();
-                    });
-                    addTextToBox("国王， 你的核心单位，拥有400的HP的他相当耐艹但一但你的国王阵亡游戏结束，拥有全队buff的技能，所有单位提升20%攻击力");
-                    addTitleToBox("King");
-                    draggable.removeChild(enemyUnit.hp_bar);
-                    draggable.removeChild(enemyUnit);
-                    enemyUnit.hp -= 1000;
-                    updateHP_bar(enemyUnit);
-                    draggable.removeChild(currentUnit.hp_bar);
-                    draggable.removeChild(currentUnit);
-                    currentUnit.hp -= 1000;
-                    updateHP_bar(currentUnit);
-                    spawnUnit(that.classStats.kingClass, true, 2, 5, 1);
-                    clearSelectionEffects();
-                    draggable.x = 975 - currentUnit.x;
-                    draggable.y = 382.5 - currentUnit.y;
-                    //spawnUnit(that.classStats.kingClass, true, 2, 2, true);
+                    showKingTutorial();
         });
         break;
       case "knight": 
         unitCards[i].addEventListener("click", function(event) {
-                    removeBox();
-                    displayBox(function() {
-                      removeBox();
-                    });
-                    addTextToBox("骑士，拥有钢之盔甲和超高的攻击力虽然这使他稍显笨重，不过一但骑士近身你就要小心了。其技能为 神圣护盾，可以的当一次任意攻击并且该盾牌在此之前永久有效");
-                    addTitleToBox("Knight");
-                    draggable.removeChild(enemyUnit.hp_bar);
-                    draggable.removeChild(enemyUnit);
-                    enemyUnit.hp -= 1000;
-                    updateHP_bar(enemyUnit);
-                    draggable.removeChild(currentUnit.hp_bar);
-                    draggable.removeChild(currentUnit);
-                    currentUnit.hp -= 1000;
-                    updateHP_bar(currentUnit);
-                    spawnUnit(that.classStats.knightClass, true, 2, 5, 1);
-                    clearSelectionEffects();
-                    clearSelectionEffects();
-                    draggable.x = 975 - currentUnit.x;
-                    draggable.y = 382.5 - currentUnit.y;
+                    showKnightTutorial();
         });
         break;
       case "archer": 
         unitCards[i].addEventListener("click", function(event) {
-                    removeBox();
-                    displayBox(function() {
-                      removeBox();
-                    });
-                    addTextToBox("弓箭手，超大的移动和攻击范围和极高幸运(高概率暴击)，技能为二连击，可以选择两个不同的目标也可对同一目标攻击两次，每一发箭都会使敌方单位攻击力下降20%");
-                    addTitleToBox("Archer");
-                    draggable.removeChild(enemyUnit.hp_bar);
-                    draggable.removeChild(enemyUnit);
-                    enemyUnit.hp -= 1000;
-                    updateHP_bar(enemyUnit);
-                    draggable.removeChild(currentUnit.hp_bar);
-                    draggable.removeChild(currentUnit);
-                    currentUnit.hp -= 1000;
-                    updateHP_bar(currentUnit);
-                    spawnUnit(that.classStats.archerClass, true, 2, 5, 1);
-                    clearSelectionEffects();
-                    clearSelectionEffects();
-                    draggable.x = 975 - currentUnit.x;
-                    draggable.y = 382.5 - currentUnit.y;
-                });
+                    showArcherTutorial();
+        });
         break;
       case "wizard": 
         unitCards[i].addEventListener("click", function(event) {
-                    removeBox();
-                    displayBox(function() {
-                      removeBox();
-                    });
-                    addTextToBox("法师，拥有适中的攻击距离和范围伤害，技能为三昧真火，范围为十字形的5个目标，被烧中的目标则会进入燃烧状态，每回合掉血");
-                    addTitleToBox("Wizard");
-                    draggable.removeChild(enemyUnit.hp_bar);
-                    draggable.removeChild(enemyUnit);
-                    enemyUnit.hp -= 1000;
-                    updateHP_bar(enemyUnit);
-                    draggable.removeChild(currentUnit.hp_bar);
-                    draggable.removeChild(currentUnit);
-                    currentUnit.hp -= 1000;
-                    updateHP_bar(currentUnit);
-                    spawnUnit(that.classStats.wizardClass, true, 2, 5, 1);
-                    clearSelectionEffects();
-                    clearSelectionEffects();
-                    draggable.x = 975 - currentUnit.x;
-                    draggable.y = 382.5 - currentUnit.y;
-                });
+                    showWizardTutorial();
+        });
         break;
-      // case "rogue": 
-      //  unitCards[i].addEventListener("click", function(event) {
-      //    if (currentGold >= 100) {
-      //      spawnUnit("rogue",false, 5,2,turn);
-      //      currentGold -= 100;
-      //      currentGoldDisplay.text = ("Gold: " + currentGold);
-      //    }
-      //    changed = true;
-      //  });
-      //  break;
+      case "dragon":
+        unitCards[i].addEventListener("click", function(event) {
+                    showDragonTutorial();
+        });
+        break;
     }
 
     unitCards[i].addEventListener("mouseover", function(event) {
@@ -966,7 +946,41 @@ function createNewUnit(unitType, row, column) {
 
 function addEventListenersToUnit(unit) {
     unit.addEventListener("click", function(event) {
-       
+            if (unit.team == 1 && unit.address == "graphics/spritesheet/stand/ss_king_stand.png" && firstClickUnit) {
+              firstClickUnit = false;
+              chars.removeChild(pointerVertical);
+              hideButton();
+              k_instruction2();
+            }
+
+            if (unit.team == 1 && unit.address == "graphics/spritesheet/stand/ss_knight_stand.png" && firstClickUnit) {
+              firstClickUnit = false;
+              chars.removeChild(pointerVertical);
+              hideButton();
+              kt_instruction2();
+            }
+
+            if (unit.team == 1 && unit.address == "graphics/spritesheet/stand/ss_archer_stand.png" && firstClickUnit) {
+              firstClickUnit = false;
+              chars.removeChild(pointerVertical);
+              hideButton();
+              a_instruction2();
+            }
+
+            if (unit.team == 1 && unit.address == "graphics/spritesheet/stand/ss_wizard_stand.png" && firstClickUnit) {
+              firstClickUnit = false;
+              chars.removeChild(pointerVertical);
+              hideButton();
+              w_instruction2();
+            }
+            if (unit.team == 1 && unit.address == "graphics/spritesheet/stand/ss_dragon_stand.png" && firstClickUnit) {
+              firstClickUnit = false;
+              chars.removeChild(pointerVertical);
+              hideButton();
+              d_instruction2();
+            }
+
+
             if (isInHighlight && !isAttacking && !isCasting){
                 return;
             }
@@ -985,12 +999,16 @@ function addEventListenersToUnit(unit) {
                         attack(selectedCharacter, unit);
                         clearSelectionEffects();
                         if (remainingAttackTimes > 0) {
+                            archerSkillDone = true;
                             remainingAttackTimes - 1;
                             performAttack();
                         } else {
                             selectedCharacter.canAttack = 0;
                             selectedCharacter.outOfMoves = 1;
                             playableUnitCount--;
+
+                            if (archerSkillDone) showButton();
+                            removeAllPointer();
                             //console.log(playableUnitCount);
                         }
                     }
@@ -1029,9 +1047,46 @@ function addEventListenersToUnit(unit) {
 
                 });
             }
+
+             if (selectedCharacter != unit && isCasting && selectedCharacter.team != unit.team && selectedCharacter.skill_no == 6) {
+                for (var i = 0; i < highlighted.length; i++) {
+                    if (highlighted[i].row === unit.row && highlighted[i].column === unit.column) {
+                        break;
+                    }
+                    console.log(i);
+                    if (i == highlighted.length - 1) return;
+                }
+                $.each(units, function(i, otherUnit) {
+
+                    if (otherUnit.column == unit.column && otherUnit.row == unit.row && otherUnit.team != selectedCharacter.team) {
+                        attack(selectedCharacter, otherUnit);
+                        applyBuff(6, otherUnit);
+                    }
+                    if (otherUnit.column == unit.column
+                        && (otherUnit.row == unit.row-1 || otherUnit.row == unit.row+1) && otherUnit.team != selectedCharacter.team) {
+                        attack(selectedCharacter, otherUnit);
+                        applyBuff(6, otherUnit);
+                    }
+                    if (otherUnit.row == unit.row
+                        && (otherUnit.column == unit.column-1 || otherUnit.column == unit.column+1) && otherUnit.team != selectedCharacter.team) {
+                        attack(selectedCharacter, otherUnit);
+                        applyBuff(6, otherUnit);
+                    }
+                    clearSelectionEffects();
+                    selectedCharacter.outOfMoves = 1;
+                    selectedCharacter.skillCoolDown = 3;
+                    playableUnitCount--;
+                    isCasting = false;
+
+                });
+            }
+
+
+
+
             changed = true;
         });
-
+    
         unit.addEventListener("mouseover", function(event) {
             if (isCasting && selectedCharacter.skill_no == 4) {
                 var i;
@@ -1183,6 +1238,7 @@ function showActionMenuNextToPlayer(unit) {
   moveSource = unit.canMove === 1 && unit.outOfMoves === 0 ? "graphics/ingame_menu/new_move.png"
                     : "graphics/ingame_menu/new_move_gray.png";
   moveButton = createClickableImage(moveSource, unit.x + 48, unit.y - 147, function() {
+    if (firstClickSkill) return;
     if (unit.canMove) {
       undoHighlights();
       // drawRange(findReachableTiles(unit.column, unit.row, unit.moveRange, true), 0);
@@ -1193,6 +1249,7 @@ function showActionMenuNextToPlayer(unit) {
   attackSource = unit.canAttack === 1 && unit.outOfMoves === 0 ? "graphics/ingame_menu/new_attack.png"
                    : "graphics/ingame_menu/new_attack_gray.png";
   attackButton = createClickableImage(attackSource, unit.x + 48, unit.y - 119, function() {
+    if (firstClickSkill) return;
     if (unit.canAttack) {
       undoHighlights();
       // isAttacking = true;
@@ -1205,6 +1262,33 @@ function showActionMenuNextToPlayer(unit) {
   skillSource = unit.skillCoolDown === 0 && unit.outOfMoves === 0 ? "graphics/ingame_menu/new_skill.png"
                    : "graphics/ingame_menu/new_skill_gray.png";
   skillButton = createClickableImage(skillSource, unit.x + 48, unit.y - 91, function() {
+    if (unit.team == 1 && unit.address == "graphics/spritesheet/stand/ss_king_stand.png" && firstClickSkill) {
+      k_instruction3();
+      firstClickSkill = false;
+      chars.removeChild(pointerHorizontal);
+    }
+    if (unit.team == 1 && unit.address == "graphics/spritesheet/stand/ss_knight_stand.png" && firstClickSkill) {
+      kt_instruction3();
+      firstClickSkill = false;
+      chars.removeChild(pointerHorizontal);
+    }
+    if (unit.team == 1 && unit.address == "graphics/spritesheet/stand/ss_archer_stand.png" && firstClickSkill) {
+      a_instruction3();
+      firstClickSkill = false;
+      chars.removeChild(pointerHorizontal);
+    }
+    if (unit.team == 1 && unit.address == "graphics/spritesheet/stand/ss_wizard_stand.png" && firstClickSkill) {
+      w_instruction3();
+      firstClickSkill = false;
+      chars.removeChild(pointerHorizontal);
+    }
+    if (unit.team == 1 && unit.address == "graphics/spritesheet/stand/ss_dragon_stand.png" && firstClickSkill) {
+      d_instruction3();
+      firstClickSkill = false;
+      chars.removeChild(pointerHorizontal);
+    }
+
+
     if (unit.skillCoolDown === 0) {
       undoHighlights();
       isCasting = true;
@@ -1214,6 +1298,7 @@ function showActionMenuNextToPlayer(unit) {
 
   cancelSource = "graphics/ingame_menu/new_cancel.png";
   cancelButton = createClickableImage(cancelSource, unit.x + 48, unit.y - 63, function() {
+    if (firstClickSkill) return;
     clearSelectionEffects();
   });
 
@@ -1300,40 +1385,96 @@ function cast(skillNo, unit) {
         // drawRange(findReachableTiles(selectedCharacter.column, selectedCharacter.row, selectedCharacter.attackRange, false), 2);
         var reachableTiles = findReachableTiles(selectedCharacter.row, selectedCharacter.column, selectedCharacter.attackRange, false);
         highlightArea(reachableTiles, "graphics/tile/red_tile.png", ["click", "mouseover", "mouseout"], [castWizardSpellOnClick, highlightWizardSpellCross, clearWizardSpellCross]);
+        addPointerToTile(2,2);
       break;
     case 5:
       remainingAttackTimes = 1;
       break;
+    case 6: // dragon skill
+    console.log("dragon skill");
+    isCasting = true;
+      isAttacking = false;
+      // drawRange(findReachableTiles(selectedCharacter.column, selectedCharacter.row, selectedCharacter.attackRange, false), 2);
+      var reachableTiles = findReachableTiles(selectedCharacter.row, selectedCharacter.column, selectedCharacter.attackRange, false);
+      highlightArea(reachableTiles, "graphics/tile/red_tile.png", ["click", "mouseover", "mouseout"], [castDragonSpellOnClick, highlightWizardSpellCross, clearWizardSpellCross]);
+      addPointerToTile(2,2);
+    break;
   }
   destroyMenu();
   destroyStats();
 }
 
-function castWizardSpellOnClick(event) {
+function castDragonSpellOnClick(event){
+  console.log("casting dragon skill");
+  var kongda = true;
   $.each(units, function(i, unit) {
     if (unit.column == event.target.column && unit.row == event.target.row && unit.team != selectedCharacter.team) {
       attack(selectedCharacter, unit);
-            applyBuff(5, unit);
+            applyBuff(6, unit);
+            kongda = false;
     }
     if (unit.column == event.target.column
       && (unit.row == event.target.row-1 || unit.row == event.target.row + 1) && unit.team != selectedCharacter.team) {
       attack(selectedCharacter, unit);
-            applyBuff(5, unit);
+            applyBuff(6, unit);
+            kongda = false;
     }
     if (unit.row == event.target.row
       && (unit.column == event.target.column-1 || unit.column == event.target.column + 1) && unit.team != selectedCharacter.team) {
       attack(selectedCharacter, unit);
-            applyBuff(5, unit);
+            applyBuff(6, unit);
+            kongda = false;
     }
   });
-    clearSelectionEffects();
-    selectedCharacter.outOfMoves = 1;
-    playableUnitCount--;
-    selectedCharacter.skillCoolDown = 3;
-    undoMove.pop();
-    isCasting = false;
-    changed = true;
+  
+    if (!kongda) {
+      clearSelectionEffects();
+      selectedCharacter.outOfMoves = 1;
+      playableUnitCount--;
+      selectedCharacter.skillCoolDown = 3;
+      undoMove.pop();
+      isCasting = false;
+      changed = true;
+      removeAllPointer();
+      d_instruction4();
+    }
+}
+function castWizardSpellOnClick(event) {
+  var kongda = true;
+  $.each(units, function(i, unit) {
+    if (unit.column == event.target.column && unit.row == event.target.row && unit.team != selectedCharacter.team) {
+      attack(selectedCharacter, unit);
+      applyBuff(5, unit);
+      kongda = false;
+    }
+    if (unit.column == event.target.column
+      && (unit.row == event.target.row-1 || unit.row == event.target.row + 1) && unit.team != selectedCharacter.team) {
+      attack(selectedCharacter, unit);
+      applyBuff(5, unit);
+      kongda = false;
+    }
+    if (unit.row == event.target.row
+      && (unit.column == event.target.column-1 || unit.column == event.target.column + 1) && unit.team != selectedCharacter.team) {
+      attack(selectedCharacter, unit);
+      applyBuff(5, unit);
+      kongda = false;
+    }
+  });
+
+    if (!kongda) {
+      clearSelectionEffects();
+      selectedCharacter.outOfMoves = 1;
+      playableUnitCount--;
+      selectedCharacter.skillCoolDown = 3;
+      undoMove.pop();
+      isCasting = false;
+      changed = true;
+      removeAllPointer();
+      w_instruction4();
+    }
 } 
+
+
 
 
 function highlightWizardSpellCross(event) {
@@ -1467,6 +1608,7 @@ function showDamage(unit, critical, damage){
 
 function attack(attacker, target){
   // if (attacker.team != target.team) {
+
     var sprite = new createjs.Sprite(attacker.spritesheet, "attack");
     sprite.x = attacker.x;
     sprite.y = attacker.y;
@@ -1687,7 +1829,7 @@ function findPath(fromX, fromY, toX, toY) {
         if (nx < 0 || nx >= mapHeight || ny < 0 || ny >= mapWidth) continue;
 
         // Terrain check
-        if (blockMaps[nx][ny] != 0) continue;
+        if (selectedCharacter.skill_no != 6  && blockMaps[nx][ny] != 0) continue;
 
         // bounds and obstacle check here
         if (vis[nx * mapWidth + ny] === false) {
@@ -1750,7 +1892,7 @@ function findReachableTiles(x, y, range, isMoving) {
         if (nx < 0 || nx >= mapHeight || ny < 0 || ny >= mapWidth) continue;
 
         // Terrain check
-        if (blockMaps[nx][ny] != 0 && isMoving) continue;
+        if (selectedCharacter.skill_no != 6 && blockMaps[nx][ny] != 0 && isMoving) continue;
 
         // bounds and obstacle check here
         if ($.inArray(nx * mapWidth + ny, marked) === -1) {
@@ -1771,9 +1913,6 @@ function findReachableTiles(x, y, range, isMoving) {
   });
   return marked;
 }
-
-
-
 
 
 function drawMap(data) {
@@ -1910,6 +2049,7 @@ function keyEvent(event) {
           draggable.y = 0;
           break; 
         case 77: //m
+          if (firstClickSkill) return;
           if (isDisplayingMenu) {
             if (selectedCharacter.canMove) {
           undoHighlights();
@@ -1919,6 +2059,7 @@ function keyEvent(event) {
           }
           break;
         case 65: //a
+          if (firstClickSkill) return;
           if (isDisplayingMenu) {
             if (selectedCharacter.canAttack) {
           undoHighlights();
@@ -1935,6 +2076,32 @@ function keyEvent(event) {
       }
     case 83: //s
       if (isDisplayingMenu) {
+        removeAllPointer();
+        if (currentUnit.address == "graphics/spritesheet/stand/ss_king_stand.png" && firstClickSkill) {
+          k_instruction3();
+          firstClickSkill = false;
+          chars.removeChild(pointerHorizontal);
+        }
+        if (currentUnit.address == "graphics/spritesheet/stand/ss_knight_stand.png" && firstClickSkill) {
+          kt_instruction3();
+          firstClickSkill = false;
+          chars.removeChild(pointerHorizontal);
+        }
+        if (currentUnit.address == "graphics/spritesheet/stand/ss_archer_stand.png" && firstClickSkill) {
+          a_instruction3();
+          firstClickSkill = false;
+          chars.removeChild(pointerHorizontal);
+        }
+        if (currentUnit.address == "graphics/spritesheet/stand/ss_wizard_stand.png" && firstClickSkill) {
+          w_instruction3();
+          firstClickSkill = false;
+          chars.removeChild(pointerHorizontal);
+        }
+        if (currentUnit.address == "graphics/spritesheet/stand/ss_dragon_stand.png" && firstClickSkill) {
+          d_instruction3();
+          firstClickSkill = false;
+          chars.removeChild(pointerHorizontal);
+        }
         if (selectedCharacter.skillCoolDown === 0) {
           undoHighlights();
           isCasting = true;
@@ -1969,14 +2136,16 @@ function keyEvent(event) {
       break;
         case 13: //enter
           if (!endGame) {
-            clearSelectionEffects();
-            turn = 1 - turn;
-            turnEndPhase();
-            turnStartPhase();
+            endTurn();
           }
     }
 }
-
+function endTurn(){
+  clearSelectionEffects();
+  turn = 1 - turn;
+  turnEndPhase();
+  turnStartPhase();
+}
 function goFullScreen(){
     var canvas = document.getElementById("demoCanvas");
     if(canvas.requestFullScreen)
@@ -2122,6 +2291,13 @@ function moveCharacter(unit) {
 }
 
 function performAttack() {
+  if (archerSkillDone) {
+    console.log("Second perform attack!!");
+    a_instruction4();
+  } else {
+    console.log("First perform attack!!")
+  }
+
   isAttacking = true;
   var reachableTiles = findReachableTiles(selectedCharacter.row, selectedCharacter.column, selectedCharacter.attackRange, false);
   highlightArea(reachableTiles, "graphics/tile/red_tile.png", ["click"], [function(event) {
@@ -2137,11 +2313,13 @@ function performAttack() {
             performAttack();
           }, 1000);
         } else {
-                    selectedCharacter.canAttack = 0;
-                    selectedCharacter.outOfMoves = 1;
-                    playableUnitCount--;
-                    console.log(playableUnitCount);
-              }
+          if (archerSkillDone) showButton();
+          selectedCharacter.canAttack = 0;
+          selectedCharacter.outOfMoves = 1;
+          playableUnitCount--;
+          removeAllPointer();
+          //console.log(playableUnitCount);
+        }
 
       }
     }); 
@@ -2181,7 +2359,482 @@ function enemyMove(){
   showActionMenuNextToPlayer(enemyUnit);
 }
 
+function resetTheGame(){
+  draggable.removeChild(enemyUnit.hp_bar);
+  draggable.removeChild(enemyUnit);
+  enemyUnit.hp -= 1000;
+  updateHP_bar(enemyUnit);
+  draggable.removeChild(currentUnit.hp_bar);
+  draggable.removeChild(currentUnit);
+  currentUnit.hp -= 1000;
+  updateHP_bar(currentUnit);
+}
+
+function resetCarmera(){
+  draggable.x = 975 - currentUnit.x;
+  draggable.y = 382.5 - currentUnit.y;
+}
 
 
+//Tutorial Support Function ===========
+
+var firstClickUnit;
+var firstClickSkill;
+var pv_spritesheet;
+var ph_spritesheet;
+var pointerVertical;
+var pointerHorizontal;
+var turnCount = 0;
+var kingDone = 0;
+var knightDone = 0;
+var archerDone = 0;
+var wizardDone = 0;
+var dragonDone = 0;
+
+function addPointerToPlayerUnit(){
+  pv_spritesheet = new createjs.SpriteSheet({
+            "images": ["graphics/tutorial/pointerV.png"],
+            "frames": {"regX": 0, "height": 142, "count": 2, "regY": -10, "width": 142 },
+            "animations": {
+              "pointer":[0,1]
+            },
+            framerate: 2
+      });
+  pointerVertical = new createjs.Sprite(pv_spritesheet, "pointer");
+  pointerVertical.scaleX = 0.7;
+  pointerVertical.scaleY = 0.6;
+  pointerVertical.x = currentUnit.x - 50;
+  pointerVertical.y = currentUnit.y - 180;
+  chars.addChild(pointerVertical);
+}
+
+function addPointerToEnemyUnit(){
+  pv_spritesheet = new createjs.SpriteSheet({
+            "images": ["graphics/tutorial/pointerV.png"],
+            "frames": {"regX": 0, "height": 142, "count": 2, "regY": -10, "width": 142 },
+            "animations": {
+              "pointer":[0,1]
+            },
+            framerate: 2
+      });
+  pointerVertical = new createjs.Sprite(pv_spritesheet, "pointer");
+  pointerVertical.scaleX = 0.7;
+  pointerVertical.scaleY = 0.6;
+  pointerVertical.x = enemyUnit.x - 50;
+  pointerVertical.y = enemyUnit.y - 180;
+  chars.addChild(pointerVertical);
+}
+
+function addPointerToTile(column, row){
+  pv_spritesheet = new createjs.SpriteSheet({
+            "images": ["graphics/tutorial/pointerV.png"],
+            "frames": {"regX": 0, "height": 142, "count": 2, "regY": -10, "width": 142 },
+            "animations": {
+              "pointer":[0,1]
+            },
+            framerate: 2
+      });
+  pointerVertical = new createjs.Sprite(pv_spritesheet, "pointer");
+  pointerVertical.scaleX = 0.7;
+  pointerVertical.scaleY = 0.6;
+  pointerVertical.x = (column-row) * 65 + 490;
+  pointerVertical.y = (row+column) * 32.5 + 140;
+  chars.addChild(pointerVertical);
+}
+
+
+function addPointerNearPlayerSkill(){
+  ph_spritesheet = new createjs.SpriteSheet({
+            "images": ["graphics/tutorial/pointerH.png"],
+            "frames": {"regX": 0, "height": 142, "count": 2, "regY": -10, "width": 142 },
+            "animations": {
+              "pointer":[0,1]
+            },
+            framerate: 2
+      });
+  pointerHorizontal = new createjs.Sprite(ph_spritesheet, "pointer");
+  pointerHorizontal.scaleX = 0.7;
+  pointerHorizontal.scaleY = 0.6;
+  pointerHorizontal.x = currentUnit.x + 130;
+  pointerHorizontal.y = currentUnit.y - 125;
+  chars.addChild(pointerHorizontal);
+}
+
+function removeAllPointer(){
+  chars.removeChild(pointerVertical);
+  chars.removeChild(pointerHorizontal);
+}
+
+function resetInsturctions(){
+  showButton();
+  removeAllPointer();
+  firstClickUnit = true;
+  firstClickSkill = true;
+  removeBox();
+}
+
+// King Tutorial ==========================
+
+function showKingTutorial(){
+  turnCount = 0;
+  resetInsturctions();
+  displayBox(function() {
+    k_instruction();
+  });
+  addTitleToBox("King");
+  addTextToBox("<p>The king is the core of the army. He has really high HP and balanced damage and range.</p><p>Normal Attack: 25</p><p>Skill: Battle Cry</p><p>(Increase all team units' base attack by 20%.)</p>");
+  resetTheGame();
+  spawnUnit(that.classStats.kingClass, true, 2, 5, 1);
+  clearSelectionEffects();
+  resetCarmera();
+}
+
+
+function k_instruction(){
+  removeBox();
+  displayBox(function() {
+    removeBox();
+  });
+  addTitleToBox("King");
+  addTextToBox("<p>Click on your king and check the attack damage on the stats board.</p>");
+  hideButton();
+  addPointerToPlayerUnit();
+}
+
+
+function k_instruction2(){
+  removeBox();
+  displayBox(function() {
+    removeBox();
+  });
+  addTitleToBox("King");
+  addTextToBox("<p>King's default attack damage is 25. Now try to click on the skill button (Or press 'S' on your keyboard) to use king's skill. </p>");
+  addPointerNearPlayerSkill();
+}
+
+
+function k_instruction3(){
+  removeBox();
+  displayBox(function() {
+    removeBox();
+    k_instruction4();
+  });
+  showButton();
+  addTitleToBox("King");
+  addTextToBox("<p>Well Done. However any unit in King's Conquest can't move or attack anymore after using the skill. So remember to move to a good position before using skill. Now it's enemy's turn.</p>");
+}
+
+function k_instruction4(){
+  endTurn();
+  removeBox();
+  displayBox(function() {
+    removeBox();
+  });
+  changeTextToButton("OK");
+  addTitleToBox("King");
+  addTextToBox("<p>Excellent! Now you know how to use the king's skill.</p> <p>You can continue to play as the king or try another unit by clicking on the corresponding card in the bottom left corner of the window. </p>");
+  kingDone = 1;
+  checkCompleness();
+}
+
+
+// Knight tutorial ==================
+
+function showKnightTutorial(){
+  turnCount = 0;
+  resetInsturctions();
+  displayBox(function() {
+    kt_instruction();
+  });
+  addTextToBox("<p>A knight has really strong defensive abilities with his heavy armor. Because of this, knight has a short moving range compared to other classes. However knights are the best in melee combat. Be careful if they are in front of you.</p><p>Normal Attack: 40</p><p>Skill: Holy Shield</p><p>(Can block any damage from enemy once before getting destroyed.)</p>");
+  addTitleToBox("Knight");
+  resetTheGame();
+
+  changeTextToButton("Next");
+  spawnUnit(that.classStats.knightClass, true, 2, 5, 1);
+  clearSelectionEffects();
+  resetCarmera();
+}
+
+function kt_instruction(){
+  removeBox();
+  displayBox(function() {
+    removeBox();
+  });
+  addTitleToBox("Knight");
+  addTextToBox("<p>Click on your Knight and check the stats board.</p>");
+  hideButton();
+  addPointerToPlayerUnit();
+}
+
+function kt_instruction2(){
+  removeBox();
+  displayBox(function() {
+    removeBox();
+  });
+  addTitleToBox("Knight");
+  addTextToBox("<p>Now try to click on the skill button (Or press 'S' on your keyboard) to use Knight's skill. </p>");
+  addPointerNearPlayerSkill();
+}
+
+function kt_instruction3(){
+  removeBox();
+  displayBox(function() {
+    removeBox();
+    endTurn();
+  });
+  showButton();
+  changeTextToButton("Next");
+  addTitleToBox("Knight");
+  addTextToBox("<p>Well Done. If you can not reach any unit in this turn, setting up your shield will be the best choice. Now it's enemy's turn. Let's see your how powerful the shield is.</p>");
+}
+
+function kt_instruction4(){
+  removeBox();
+  displayBox(function() {
+    removeBox();
+  });
+  changeTextToButton("OK");
+  addTitleToBox("Knight");
+  addTextToBox("<p>Excellent! You take zero damage from the enemy king.</p> <p>You can continue to play as the king or try another unit by clicking on the corresponding card in the bottom left corner of the window. </p>");
+  knightDone = 1;
+  checkCompleness();
+}
+
+// Archer tutorial ==================
+
+
+function showArcherTutorial(){
+  turnCount = 0;
+  resetInsturctions();
+  displayBox(function() {
+    a_instruction();
+  });
+  addTextToBox("<p>An archer is the master of using the bow and arrows. Really large attack range and he knows the weakness of enermy have a really high critical chance. </p> <p>Normal Attack: 20</p><p> Skill: Double Shoot</p><p>(shoot two fatal arrows to targets the arrow will decrease the target's base attack damage by 20% for 3 turns.)</p>");
+  addTitleToBox("Archer");
+  changeTextToButton("Next");
+  resetTheGame();
+  spawnUnit(that.classStats.archerClass, true, 2, 5, 1);
+  clearSelectionEffects();
+  resetCarmera();
+}
+
+function a_instruction(){
+  removeBox();
+  displayBox(function() {
+    removeBox();
+  });
+  addTitleToBox("Archer");
+  addTextToBox("<p>Click on your Archer and check the stats board.</p>");
+  hideButton();
+  addPointerToPlayerUnit();
+}
+
+function a_instruction2(){
+  removeBox();
+  displayBox(function() {
+    removeBox();
+  });
+  addTitleToBox("Archer");
+  addTextToBox("<p>Now try to click on the skill button (Or press 'S' on your keyboard) to use Archer's skill. </p>");
+  addPointerNearPlayerSkill();
+}
+
+function a_instruction3(){
+  removeBox();
+  displayBox(function() {
+    removeBox();
+  });
+  addTitleToBox("Archer");
+  addTextToBox("<p>You can see the range of your skill, click on the enemy king to give him the first hit.</p>");
+  addPointerToEnemyUnit();
+}
+
+function a_instruction4(){
+  removeBox();
+  displayBox(function() {
+    removeBox();
+    endTurn();
+    a_instruction5();
+  });
+  addTitleToBox("Archer");
+  addTextToBox("<p>Nice one. You can now give the enemy king another shoot.</p> <p>In real game, you might use archer skill on two different units to decrease their demage</p>");
+}
+
+function a_instruction5(){
+  removeBox();
+  displayBox(function() {
+    removeBox();
+  });
+  changeTextToButton("OK");
+  addTitleToBox("Archer");
+  addTextToBox("<p>Excellent! Now you know the skill of archer.</p> <p>You can continue to play as the archer or try another unit by clicking on the corresponding card in the bottom left corner of the window. </p>");
+  archerDone = 1;
+  checkCompleness();
+}
+
+// Wizard tutorial ==================
+
+function showWizardTutorial(){
+  turnCount = 0;
+  resetInsturctions();
+  displayBox(function() {
+    w_instruction();
+  });
+  addTextToBox("<p>A wizard uses arcane magic. Can deal really high AOE (Area of effect) demage and burn the targets. However wizards are less effective in melee combat. </p> <p>Normal Attack: 15 </p><p>Skill: Burning</p><p>(maximum 5 target in a cross) and the targets get 2% of its maximum health burning demage each turn.)</p>");
+  addTitleToBox("Wizard");
+  resetTheGame();
+  changeTextToButton("Next");
+  spawnUnit(that.classStats.wizardClass, true, 2, 5, 1);
+  clearSelectionEffects();
+  resetCarmera();
+}
+
+function w_instruction(){
+  removeBox();
+  displayBox(function() {
+    removeBox();
+  });
+  addTitleToBox("Wizard");
+  addTextToBox("<p>Click on your Wizard and check the stats board.</p>");
+  hideButton();
+  addPointerToPlayerUnit();
+}
+
+function w_instruction2(){
+  removeBox();
+  displayBox(function() {
+    removeBox();
+  });
+  addTitleToBox("Wizard");
+  addTextToBox("<p>Now try to click on the skill button (Or press 'S' on your keyboard) to use Wizard's skill. </p>");
+  addPointerNearPlayerSkill();
+}
+
+function w_instruction3(){
+  removeBox();
+  displayBox(function() {
+    removeBox();
+  });
+  addTitleToBox("Wizard");
+  addTextToBox("<p>You can see the range of your skill, you can hit at maximum 5 units in the green cross, click on the tile in front of enemy king to cast the fire ball.</p>");
+}
+
+function w_instruction4(){
+  removeBox();
+  displayBox(function() {
+    removeBox();
+    endTurn();
+    w_instruction5();
+  });
+  showButton();
+  addTitleToBox("Wizard");
+  addTextToBox("<p>Good job! Now the enemy king is burned, and will lose health in each turn for the next five turns! </p>");
+}
+
+function w_instruction5(){
+  removeBox();
+  displayBox(function() {
+    removeBox();
+  });
+  changeTextToButton("OK");
+  addTitleToBox("Wizard");
+  addTextToBox("<p>Excellent! You can see the burning effect on the enemy king. Now you know the wizard skill. </p> <p>You can continue to play as the wizard or try another unit by clicking on the corresponding card in the bottom left corner of the window. </p>");
+  wizardDone = 1;
+  checkCompleness();
+}
+
+// dragon 
+
+function showDragonTutorial(){
+  turnCount = 0;
+  resetInsturctions();
+  displayBox(function() {
+    d_instruction();
+  });
+  addTextToBox("<p> dragon!!!niubi </p> <p>Normal Attack: 35 </p><p>Skill: Icy Wind </p><p>(Deal AOE damage to maximum 5 units in a cross, and freeze them for 4 turns)</p>");
+  addTitleToBox("Dragon");
+  resetTheGame();
+  changeTextToButton("Next");
+  spawnUnit(that.classStats.dragonClass, true, 2, 5, 1);
+  clearSelectionEffects();
+  resetCarmera();
+}
+
+function d_instruction(){
+  removeBox();
+  displayBox(function() {
+    removeBox();
+  });
+  addTitleToBox("Dragon");
+  addTextToBox("<p>Click on your Dragon and check the stats board.</p>");
+  hideButton();
+  addPointerToPlayerUnit();
+}
+
+
+function d_instruction2(){
+  removeBox();
+  displayBox(function() {
+    removeBox();
+  });
+  addTitleToBox("Dragon");
+  addTextToBox("<p>Now try to click on the skill button (Or press 'S' on your keyboard) to use Dragon's skill. </p>");
+  addPointerNearPlayerSkill();
+}
+
+function d_instruction3(){
+  removeBox();
+  displayBox(function() {
+    removeBox();
+  });
+  addTitleToBox("Dragon");
+  addTextToBox("<p>You can see the range of your skill, you can hit at maximum 5 units in the green cross, click on the tile in front of enemy king to cast the Icy wind.</p>");
+}
+
+function d_instruction4(){
+  removeBox();
+  displayBox(function() {
+    removeBox();
+    endTurn();
+    d_instruction5();
+  });
+  showButton();
+  addTitleToBox("Dragon");
+  addTextToBox("<p>Well done! Now the enemy king is frozen, and he can't make any action in the next five turns! </p>");
+}
+
+function d_instruction5(){
+    removeBox();
+    displayBox(function() {
+      removeBox();
+    });
+    changeTextToButton("OK");
+    addTitleToBox("Dragon");
+    addTextToBox("<p>Excellent! You can see the frozen effect on the enemy king. Now you know the dragon skill. </p> <p>You can continue to play as the dragon or try another unit by clicking on the corresponding card in the bottom left corner of the window. </p>");
+    dragonDone = 1;
+    checkCompleness();
+}
+// Tutorial check finish all
+
+
+
+function checkCompleness(){
+  if ((kingDone + archerDone + knightDone + wizardDone + dragonDone) == 5){
+    endTutorial3();
+  }
+}
+
+function endTutorial3(){
+  removeBox();
+  displayBox(function() {
+    removeBox();
+    //redirection to the real game
+  });
+  showButton();
+  changeTextToButton("OK");
+  addTitleToBox("Congratulation!");
+  addTextToBox("<p>Good job!</p><p>You finish all the tutorials! Descover more in the real game! </p>");
+}
 
 

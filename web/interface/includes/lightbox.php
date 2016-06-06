@@ -7,6 +7,15 @@ echo genLightbox("Create Game", "create_game", "<table class='form_table'>
     </table>
     <div class='btn lightbox_btn' id='lightbox_btn_create_game'>Submit</div>");
 
+
+echo genLightbox("Enter Room", "enter_room", "
+  This room requires a password to join, please enter the password below.<br /><table class='form_table'>
+
+    <tr><th>Room Password: <span class='required'>*</span></th><td><input type='password' class='text auto_off' id='join_pass' placeholder='Password' autocomplete='off' /></td></tr>
+    </table>
+    <div class='btn lightbox_btn' id='lightbox_btn_enter_room'>Join Room</div>
+    <div class='btn lightbox_btn lightbox_close' id='alert_btn'>Cancel</div>");
+
 $ach = array(
   '50_wins' => array("images/achievements/50_wins.png", "Won 50 games."),
   '100_wins' => array("images/achievements/100_wins.png", "Won 100 games."),

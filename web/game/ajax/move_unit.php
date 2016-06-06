@@ -6,8 +6,8 @@ $unit_id = secureStr($_POST['unit_id']);
 $moves_json = secureStr($_POST['path']);
 $moves = json_decode($moves_json);
 
-// $unit_id = 101;
-// $moves_json = "[[1,3], [1,4]]";
+// $unit_id = 151;
+// $moves_json = "[[3,2], [3,3]]";
 // $moves = json_decode($moves_json);
 // $initial = array(1, 2);
 

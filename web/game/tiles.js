@@ -5,6 +5,7 @@ var stage = new createjs.Stage("gameCanvas");
 
 var that = this;
 var team = 0;
+var movingUnit;
 
 var isDragging = false;
 var offX;
@@ -450,7 +451,7 @@ function initGame() {
 
 	drawMenuDisplay();
 	stage.update();
-
+  setTimeout(function() {getOpp(); }, 1000);
 
 }
 var muteIcon;
@@ -965,7 +966,10 @@ function drawGame() {
 	});	
 }
 
-initGame();
+
+$(document).ready(function() {
+    initGame()
+});
 
 function createClickableImage(imgSource, x, y, callBack) {
 	button = new createjs.Bitmap(imgSource);
@@ -1047,6 +1051,41 @@ function showActionMenuNextToPlayer(unit) {
     isDisplayingMenu = true;
     changed = true;
 }	
+
+
+function castKingSkill(king) {
+    $.each(units, function(i, unit){
+        if (unit.team === king.team) {
+            var add = Math.ceil(0.1 * unit.max_hp);
+            if (unit.hp + add < unit.max_hp){
+                unit.hp += add;
+            } else {
+                unit.hp = unit.max_hp;
+            }
+            var heal = new createjs.Sprite(units[i].healEffect, "heal");
+            heal.x = unit.x;
+            heal.y = unit.y;
+            chars.addChild(heal);
+            updateHP_bar(unit);
+            //buff dmg
+            applyBuff(2, unit);
+            setTimeout(function() {
+                chars.removeChild(heal);
+            }, 1000);
+        }
+    });
+}
+
+// function castKnightSkill(knight) {
+//     undoHighlights();
+//     applyBuff(4, knight);
+//     knight.outOfMoves = 1;
+//     knight.skillCoolDown = 3;
+//     isCasting = false;
+//     undoMove.pop();
+//     break;
+// }
+
 
 function cast(skillNo, unit) {
 	switch (skillNo) {
@@ -1170,8 +1209,9 @@ function clearWizardSpellCross(event) {
 	changed = true;
 }
 
-// Start moving the player
-function move() {
+// Start moving a given unit
+function move(unit) {
+    movingUnit = unit;
 	movingPlayer = true;
 }
 
@@ -1369,12 +1409,11 @@ function undoHighlights() {
 }
 
 // Move the player by a fixed amount
-function movePlayer() {
-  var playerX = selectedCharacter.x,
-      playerY = selectedCharacter.y,
+function moveUnit() {
+  var playerX = movingUnit.x,
+      playerY = movingUnit.y,
       destX = path[0][0],
       destY = path[0][1];
-
 
   var coefficientX = 0;
   var coefficientY = 0;
@@ -1400,16 +1439,16 @@ function movePlayer() {
   var stepY = coefficientY * MOVEMENT_STEP / 2;
 
 
-  selectedCharacter.x += stepX;
-  selectedCharacter.y += stepY;
-  selectedCharacter.hp_bar.x += stepX;
-  selectedCharacter.hp_bar.y += stepY;
+  movingUnit.x += stepX;
+  movingUnit.y += stepY;
+  movingUnit.hp_bar.x += stepX;
+  movingUnit.hp_bar.y += stepY;
 
   draggable.x = draggable.x - stepX;
   draggable.y = draggable.y - stepY;
-  for (var i = 0; i < selectedCharacter.buffs.length; i++) {
-    selectedCharacter.buffs[i][3].x += stepX;
-    selectedCharacter.buffs[i][3].y += stepY;
+  for (var i = 0; i < movingUnit.buffs.length; i++) {
+    movingUnit.buffs[i][3].x += stepX;
+    movingUnit.buffs[i][3].y += stepY;
   }
 
 
@@ -1417,21 +1456,20 @@ function movePlayer() {
       path.splice(0,1);
       if (path.length == 0) {
 
-      	sortIndices(selectedCharacter);
+      	sortIndices(movingUnit);
         movingPlayer = false;
         if (undo){
-        	selectedCharacter.canMove = 1;
+        	movingUnit.canMove = 1;
         	undo = false;
         } else {
-        	selectedCharacter.canMove = 0;
+        	movingUnit.canMove = 0;
         }
-       
 
-		showActionMenuNextToPlayer(selectedCharacter);
+		if (movingUnit.team === team) showActionMenuNextToPlayer(movingUnit);
       }
   }
 
-  sortIndices(selectedCharacter);
+  sortIndices(movingUnit);
   //stage.update();
   changed = true;
 }
@@ -1789,7 +1827,7 @@ function goFullScreen(){
 
 function update() {
 	if (movingPlayer === true) {
-		movePlayer();
+		moveUnit();
 	}
 	if (resized) {	
 		stage.canvas.width = window.innerWidth;
@@ -1912,6 +1950,8 @@ function moveCharacter(unit) {
 
 function serverValidate(type, unit, additionalArgs) {
 	if (type == "move") {
+        console.log(path);
+        console.log(unit.unit_id);
 		rawPost("ajax/move_unit", {"unit_id" : String(unit.unit_id), "path" : JSON.stringify(path)}, function(data) {
 			console.log(data);
 			if (data.error_code != 0) {
@@ -1933,7 +1973,7 @@ function serverValidate(type, unit, additionalArgs) {
 		});
 	}
 	if (type === "attack") {
-		rawPost("ajax/attack_unit", "{attacker_id : 0, target_id : 1}", function(data) {
+		rawPost("ajax/attack_unit", {"attacker_id" : Stirng(unit.unit_id), "target_id" : String(additionalArgs[0].unit_id)}, function(data) {
 			console.log(data);
 			if (data.error_code != 0) {
 				console.log("ERROR");
@@ -1959,6 +1999,35 @@ function performAttack() {
 	}]); 
 }
 
+function findUnitById(id) {
+    for (var i = 0; i < units.length; i++) {
+        if (units[i].unit_id == id) {
+            return units[i];
+        }
+    }
+    console.log("Cannot find unit with id: " + id);
+    return null;
+}
+
+function handleOpponent(data) {
+    console.log("in");
+    switch (data.action.action_type) {
+        case "move_unit":
+            handleMove(data.action);
+            break;
+        case "create_unit":
+            var unit = getFirstProp(data.action.unit);
+            console.log(unit.unit_id);
+            spawnUnit(unit);
+            break;
+        case "attack":
+            break;
+        case "skill":
+            break;
+                
+    }
+}
+
 function handleMove(action) {
     path = action.path;
 
@@ -1970,16 +2039,17 @@ function handleMove(action) {
     for (i = 0; i < path.length; i++) {
         path[i] = rcToCoord(path[i][0], path[i][1]);
     }
-
+    console.log("handleMove");
 	blockMaps[fromRow][fromCol] = 0;
-	move();
+    var unit = findUnitById(action.unit_id);
+	move(unit);
 	blockMaps[toRow][toCol] = 1;
-    selectedCharacter.canMove = 0;
-	selectedCharacter.row = toRow;
-	selectedCharacter.column = toCol;
+    unit.canMove = 0;
+	unit.row = toRow;
+	unit.column = toCol;
 	clearSelectionEffects();
 	undoMove.pop();
-	undoMove.push(selectedCharacter);
+	undoMove.push(unit);
 };
 
 function handleAttack(action) {

@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: Jun 03, 2016 at 01:01 PM
+-- Generation Time: Jun 05, 2016 at 01:07 PM
 -- Server version: 10.1.10-MariaDB
 -- PHP Version: 7.0.2
 
@@ -61,34 +61,20 @@ CREATE TABLE `chat` (
 --
 
 INSERT INTO `chat` (`chat_id`, `created`, `user`, `message`, `room_id`, `chat_type`, `colour`) VALUES
-(32, '2016-06-02 12:21:13', 9, 'Wumpus joined the room.', 27, 'event', ''),
-(33, '2016-06-02 12:27:12', 7, 'DragonSlayer52 joined the room.', 27, 'event', ''),
-(34, '2016-06-02 18:00:58', 9, 'dfg', 27, 'message', ''),
-(35, '2016-06-02 18:01:01', 9, 'Wumpus left the game.', 27, 'event', ''),
-(36, '2016-06-02 18:09:06', 7, 'DragonSlayer52 joined the room.', 28, 'event', ''),
-(37, '2016-06-02 18:09:18', 9, 'Wumpus joined the room.', 28, 'event', ''),
-(38, '2016-06-03 09:12:39', 9, 'Wumpus joined the room.', 29, 'event', ''),
-(39, '2016-06-03 09:15:22', 6, 'xXN1NJ4Xx joined the room.', 29, 'event', ''),
-(40, '2016-06-03 09:17:40', 6, '[02:33pm] yomomma: hey mom', 29, 'message', ''),
-(41, '2016-06-03 09:26:09', 6, 'xXN1NJ4Xx left the game.', 29, 'event', ''),
-(42, '2016-06-03 09:27:09', 9, 'Wumpus left the game.', 29, 'event', ''),
-(43, '2016-06-03 09:27:13', 9, 'hi everyone', 0, 'message', ''),
-(44, '2016-06-03 09:27:14', 9, 'how is it going', 0, 'message', ''),
-(45, '2016-06-03 09:27:21', 9, 'cool', 0, 'message', ''),
-(46, '2016-06-03 09:28:15', 6, 'dfs', 0, 'message', ''),
-(47, '2016-06-03 09:28:18', 6, 'yeaa', 0, 'message', ''),
-(48, '2016-06-03 09:28:22', 6, 'hh', 0, 'message', ''),
-(49, '2016-06-03 09:29:27', 6, 'yo', 0, 'message', ''),
-(50, '2016-06-03 10:02:23', 9, 'w', 0, 'message', ''),
-(51, '2016-06-03 10:02:27', 9, 'oh hiyaa', 0, 'message', ''),
-(52, '2016-06-03 10:02:59', 9, 'ew', 0, 'message', ''),
-(53, '2016-06-03 10:05:21', 9, 'w', 0, 'message', ''),
-(54, '2016-06-03 10:05:22', 9, 'am', 0, 'message', ''),
-(55, '2016-06-03 10:05:24', 9, 'yeaa', 0, 'message', ''),
-(56, '2016-06-03 10:05:25', 9, 'cool', 0, 'message', ''),
-(57, '2016-06-03 10:05:28', 9, 'lol', 0, 'message', ''),
-(58, '2016-06-03 10:07:11', 9, 'lol', 0, 'message', ''),
-(59, '2016-06-03 10:07:12', 9, 'ikr', 0, 'message', '');
+(62, '2016-06-04 11:28:03', 9, 'Wumpus joined the room.', 30, 'event', ''),
+(63, '2016-06-04 11:45:28', 13, 'veg joined the room.', 30, 'event', ''),
+(64, '2016-06-04 21:43:14', 14, 'harry potter joined the room.', 31, 'event', ''),
+(65, '2016-06-04 22:01:31', 9, 'Wumpus left the game.', 30, 'event', ''),
+(66, '2016-06-04 22:14:27', 14, 'harry potter left the game.', 31, 'event', ''),
+(67, '2016-06-04 22:14:29', 14, 'harry potter joined the room.', 32, 'event', ''),
+(68, '2016-06-04 22:16:49', 9, 'Wumpus joined the room.', 32, 'event', ''),
+(69, '2016-06-04 22:16:51', 9, 'Wumpus left the game.', 32, 'event', ''),
+(70, '2016-06-04 22:16:57', 9, 'Wumpus joined the room.', 33, 'event', ''),
+(71, '2016-06-04 22:17:00', 14, 'harry potter left the game.', 32, 'event', ''),
+(72, '2016-06-04 22:17:01', 14, 'harry potter joined the room.', 33, 'event', ''),
+(73, '2016-06-04 22:17:02', 14, 'harry potter left the game.', 33, 'event', ''),
+(74, '2016-06-04 22:17:04', 14, 'harry potter joined the room.', 33, 'event', ''),
+(75, '2016-06-04 22:17:06', 14, 'harry potter left the game.', 33, 'event', '');
 
 -- --------------------------------------------------------
 
@@ -142,7 +128,7 @@ CREATE TABLE `login` (
 --
 
 INSERT INTO `login` (`userid`, `socialid`, `type`) VALUES
-(6, '1071989516156754', 'Facebook');
+(14, '1071989516156754', 'Facebook');
 
 -- --------------------------------------------------------
 
@@ -166,6 +152,28 @@ INSERT INTO `maps` (`map_id`, `map_name`, `points`) VALUES
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `opp`
+--
+
+CREATE TABLE `opp` (
+  `opp_id` int(11) NOT NULL,
+  `room_id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `team` int(11) NOT NULL,
+  `json` text NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `opp`
+--
+
+INSERT INTO `opp` (`opp_id`, `room_id`, `user_id`, `team`, `json`) VALUES
+(1, 30, 13, 0, '{"error_code": 0, "test": "Hello World"}'),
+(5, 30, 13, 0, '{"error_code": 0,"action" : {"action_type": "create_unit", "unit": {"150": {\n      "address":"graphics/spritesheet/stand/ss_knight_stand.png","spritesheet":"graphics/spritesheet/attack/ss_knight_attack.png","unit_id": 150,"hp": 300,"max_hp": 300,"attack": 40,"skill":"Shield","luck": 0.15,"x": 1,"y": 2,"moveRange": 2,"team": 0,"attackRange": 1,"canMove": 1,"canAttack": 1,"skillCoolDown": 0,"outOfMoves": 0,"damageEffect":"graphics/spritesheet/spell/ss_physical_attack.png"\n    }},"gold": 300}}');
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `rooms`
 --
 
@@ -175,7 +183,7 @@ CREATE TABLE `rooms` (
   `joiner` int(11) NOT NULL,
   `created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `name` varchar(64) NOT NULL,
-  `password` varchar(64) NOT NULL,
+  `password` varchar(128) NOT NULL,
   `max_players` tinyint(4) NOT NULL DEFAULT '2',
   `state` set('pregame','ingame','ended','deleted') NOT NULL DEFAULT 'pregame',
   `turn` int(11) NOT NULL
@@ -186,7 +194,11 @@ CREATE TABLE `rooms` (
 --
 
 INSERT INTO `rooms` (`room_id`, `user_id`, `joiner`, `created`, `name`, `password`, `max_players`, `state`, `turn`) VALUES
-(29, 9, 0, '2016-06-03 09:27:09', 'hello world', 'hello world', 2, 'deleted', 0);
+(29, 9, 0, '2016-06-03 09:27:09', 'hello world', 'hello world', 2, 'deleted', 0),
+(30, 9, 0, '2016-06-04 11:28:03', 'asda', 'asda', 2, 'deleted', 0),
+(31, 14, 0, '2016-06-04 21:43:14', 'asda', '$2y$10$f5PQeaZL1PM8fM6LcN1MauSk7cf8/DgjDaZJH4596EJVMjNjlFoYO', 2, 'deleted', 0),
+(32, 14, 0, '2016-06-04 22:14:29', 'qwe', '$2y$10$wKiBIYBBHEZJbrntx29vE.BGS/ZfVeoSip1KHlpn7ml8UrTMX/LkS', 2, 'deleted', 0),
+(33, 9, 0, '2016-06-04 22:16:57', 'asda', '', 2, 'pregame', 0);
 
 -- --------------------------------------------------------
 
@@ -203,6 +215,15 @@ CREATE TABLE `room_participants` (
   `event` set('kicked','left') NOT NULL,
   `gold` int(11) NOT NULL DEFAULT '500'
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `room_participants`
+--
+
+INSERT INTO `room_participants` (`part_id`, `user_id`, `room_id`, `colour`, `state`, `event`, `gold`) VALUES
+(103, 9, 33, 'red', 'owner', '', 500),
+(104, 14, 33, 'blue', 'notready', 'left', 500),
+(105, 14, 33, 'blue', 'notready', 'left', 500);
 
 -- --------------------------------------------------------
 
@@ -231,7 +252,7 @@ CREATE TABLE `units` (
 --
 
 INSERT INTO `units` (`unit_id`, `class_id`, `hp`, `max_hp`, `attack`, `skillCoolDown`, `x`, `y`, `team`, `canMove`, `canAttack`, `outOfMoves`, `room_id`) VALUES
-(50, 4, 400, 400, 25, 0, 3, 2, 0, 1, 1, 0, 27),
+(50, 4, 400, 400, 25, 0, 1, 2, 0, 1, 1, 0, 27),
 (51, 5, 999, 999, 999, 0, 0, 0, 0, 1, 1, 0, 27),
 (52, 1, 200, 200, 15, 0, 3, 3, 0, 1, 1, 0, 27),
 (53, 3, 300, 300, 40, 0, 0, 2, 0, 1, 1, 0, 27),
@@ -263,7 +284,24 @@ INSERT INTO `units` (`unit_id`, `class_id`, `hp`, `max_hp`, `attack`, `skillCool
 (79, 1, 200, 200, 15, 0, 1, 2, 1, 1, 1, 0, 28),
 (80, 1, 200, 200, 15, 0, 2, 1, 1, 1, 1, 0, 28),
 (81, 1, 200, 200, 15, 0, 2, 0, 1, 1, 1, 0, 28),
-(82, 1, 200, 200, 15, 0, 3, 0, 1, 1, 1, 0, 28);
+(82, 1, 200, 200, 15, 0, 3, 0, 1, 1, 1, 0, 28),
+(134, 4, 400, 400, 25, 0, 3, 2, 0, 1, 1, 0, 30),
+(135, 5, 999, 999, 999, 0, 0, 0, 0, 1, 1, 0, 30),
+(136, 1, 200, 200, 15, 0, 3, 3, 0, 1, 1, 0, 30),
+(137, 3, 300, 300, 40, 0, 0, 2, 0, 1, 1, 0, 30),
+(138, 2, 200, 200, 20, 0, 0, 3, 0, 1, 1, 0, 30),
+(139, 4, 400, 400, 25, 0, 9, 11, 1, 1, 1, 0, 30),
+(140, 6, 999, 999, 999, 0, 12, 13, 1, 1, 1, 0, 30),
+(141, 1, 200, 200, 15, 0, 9, 10, 1, 1, 1, 0, 30),
+(142, 3, 300, 300, 40, 0, 12, 10, 1, 1, 1, 0, 30),
+(143, 2, 200, 200, 20, 0, 12, 11, 1, 1, 1, 0, 30),
+(144, 1, 200, 200, 15, 0, 3, 0, 0, 1, 1, 0, 30),
+(145, 2, 200, 200, 20, 0, 3, 0, 0, 1, 1, 0, 30),
+(146, 1, 200, 200, 15, 0, 2, 0, 0, 1, 1, 0, 30),
+(147, 1, 200, 200, 15, 0, 1, 0, 0, 1, 1, 0, 30),
+(148, 2, 200, 200, 20, 0, 1, 1, 0, 1, 1, 0, 30),
+(149, 3, 300, 300, 40, 0, 1, 2, 0, 1, 1, 0, 30),
+(150, 3, 300, 300, 40, 0, 1, 2, 0, 1, 1, 0, 30);
 
 -- --------------------------------------------------------
 
@@ -273,7 +311,7 @@ INSERT INTO `units` (`unit_id`, `class_id`, `hp`, `max_hp`, `attack`, `skillCool
 
 CREATE TABLE `users` (
   `id` int(11) NOT NULL,
-  `password` varchar(64) NOT NULL,
+  `password` varchar(128) NOT NULL,
   `email` varchar(64) NOT NULL,
   `username` varchar(64) NOT NULL,
   `wins` int(11) NOT NULL,
@@ -294,7 +332,9 @@ INSERT INTO `users` (`id`, `password`, `email`, `username`, `wins`, `losses`, `e
 (10, '$2y$10$h9fvGHQrrOHh35pNzhIsqOR.0jDi4ZmVtHiCvP1wCexLef072jYqy', 'tonyfield@rules.com', 'OhBaby', 214, 26, 1000, '2016-05-23 18:59:26'),
 (11, '$2y$10$jOeNVa.g.MTq8j7NoOY3k.RTVeYpcrxA7gq8zv8hp9yiVBsk0z3C.', 'debug@debug.com', 'debug', 212, 52, 1000, '2016-06-01 20:52:54'),
 (12, '$2y$10$7.dtDYkyCuARy8JOOvnEM..015QDAO7YDKsNEmue6deyEyJvIDwr2', 'goku@goku.com', 'goku', 211, 62, 1000, '2016-06-01 20:53:04'),
-(13, '$2y$10$EVxl9C85A3EGzS9/mbr4mO1eZwdAa7RoFtuXRU.4lwdohCezvuQTu', 'veg@veg.com', 'veg', 311, 73, 1000, '2016-06-01 20:53:57');
+(13, '$2y$10$EVxl9C85A3EGzS9/mbr4mO1eZwdAa7RoFtuXRU.4lwdohCezvuQTu', 'veg@veg.com', 'veg', 311, 73, 1000, '2016-06-01 20:53:57'),
+(14, '$2y$10$sxwp7k4OSuCdCiO7y.JsOucq/YbXFR4oF8aBcgeTJ.UixSPKh.xJm', 'hp@hp.com', 'harry potter', 0, 0, 1000, '2016-06-04 21:40:28'),
+(15, '$2y$10$Q3aMDDCP8w2o8bV.SaRs4.4Mgr49ZHzl372S4qExpvmadU0mAHETi', 'asda@asda.com', 'asdasd', 0, 0, 1000, '2016-06-04 21:40:51');
 
 --
 -- Indexes for dumped tables
@@ -329,6 +369,12 @@ ALTER TABLE `login`
 --
 ALTER TABLE `maps`
   ADD PRIMARY KEY (`map_id`);
+
+--
+-- Indexes for table `opp`
+--
+ALTER TABLE `opp`
+  ADD PRIMARY KEY (`opp_id`);
 
 --
 -- Indexes for table `rooms`
@@ -369,7 +415,7 @@ ALTER TABLE `buffs`
 -- AUTO_INCREMENT for table `chat`
 --
 ALTER TABLE `chat`
-  MODIFY `chat_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=60;
+  MODIFY `chat_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=76;
 --
 -- AUTO_INCREMENT for table `classes`
 --
@@ -381,25 +427,30 @@ ALTER TABLE `classes`
 ALTER TABLE `maps`
   MODIFY `map_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 --
+-- AUTO_INCREMENT for table `opp`
+--
+ALTER TABLE `opp`
+  MODIFY `opp_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+--
 -- AUTO_INCREMENT for table `rooms`
 --
 ALTER TABLE `rooms`
-  MODIFY `room_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=30;
+  MODIFY `room_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=34;
 --
 -- AUTO_INCREMENT for table `room_participants`
 --
 ALTER TABLE `room_participants`
-  MODIFY `part_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=98;
+  MODIFY `part_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=106;
 --
 -- AUTO_INCREMENT for table `units`
 --
 ALTER TABLE `units`
-  MODIFY `unit_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=83;
+  MODIFY `unit_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=151;
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
