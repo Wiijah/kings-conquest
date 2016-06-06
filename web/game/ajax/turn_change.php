@@ -1,8 +1,10 @@
 <?php
 require_once 'ajax_common.php';
 
+$team = $TEAM_COLOURS[$player->colour];
+
 $old_turn = $room->turn; //old player's turn
-if ($old_turn != $player->team) {
+if ($old_turn != $team) {
   exit_error($ERROR_NOT_YOUR_TURN);
 }
 

@@ -379,6 +379,7 @@ function initGame() {
 
         team = data.team;
         turn = data.turn;
+        console.log("turn: " + turn);
 
 
 		that.buffEffects = data.buffEffects;
@@ -394,7 +395,8 @@ function initGame() {
 			// console.log(data.characters[i].x);
 			spawnUnit(data.characters[i], false);
 		});
-        turnStartPhase();
+        // turnStartPhase();
+
 	});
 
 	stage.canvas.width = window.innerWidth;
@@ -438,17 +440,17 @@ function initGame() {
 	drawUnitCreationMenu();
 	drawBottomInterface();
 
-    setInterval(function(){ 
-        if (!movingPlayer && !isAttacking && !isCasting && !isInHighlight) {
-            if (playableUnitCount === 0) {
-                clearSelectionEffects();
-                console.log("turn ended for current player");
-                turnEndPhase();
-                turn = 1 - turn;
-                turnStartPhase();
-            }
-        }
-    }, 5000);
+    // setInterval(function(){ 
+    //     if (!movingPlayer && !isAttacking && !isCasting && !isInHighlight) {
+    //         if (playableUnitCount === 0) {
+    //             clearSelectionEffects();
+    //             console.log("turn ended for current player");
+    //             turnEndPhase();
+    //             turn = 1 - turn;
+    //             turnStartPhase();
+    //         }
+    //     }
+    // }, 5000);
 
 
 	changed = true;
@@ -1819,9 +1821,9 @@ function keyEvent(event) {
         	if (!endGame) {
                 serverValidate("turn_change", null, []);
 	        	clearSelectionEffects();
-	        	turn = 1 - turn;
-	        	turnEndPhase();
-	        	turnStartPhase();
+	        	// turn = 1 - turn;
+	        	// turnEndPhase();
+	        	// turnStartPhase();
 	        }
     }
 }
@@ -1998,6 +2000,7 @@ function serverValidate(type, unit, additionalArgs) {
 	}
 
     if (type === "turn_change") {
+        console.log("validate change");
         rawPost("ajax/turn_change", {}, function(data) {
             console.log("handle turn change");
             console.log(data);
@@ -2037,8 +2040,8 @@ function findUnitById(id) {
 
 function changeTurn(data) {
     clearSelectionEffects();
-    showTurnInfo();
     turn = data.action.new_turn;
+    showTurnInfo();
     var effectsToApply = data.action.effects_to_apply;
     var unitsNewCD = data.action.units_new_cd;
     var buffsToRemove = data.action.buffs_to_remove;
@@ -2052,6 +2055,12 @@ function changeTurn(data) {
     for (var i = 0; i < unitsNewCD.length; i++) {
         var unit = findUnitById(unitsNewCD[i][0]);
         unit.skillCoolDown = unitsNewCD[i][1];
+    }
+
+    for (var i = 0; i < units.length; i++) {
+        units[i].canMove = 1;
+        units[i].canAttack = 1;
+        units[i].outOfMoves = 0;
     }
 
     // Apply buff effects to units.
@@ -2100,7 +2109,8 @@ function handleOpponent(data) {
             removeBuff(data.action.buff_id, findUnitById(data.action.unit_id));
             break;
         case "turn_change":
-            changeTurn();
+            console.log("handle change turn opp");
+            changeTurn(data);
             break;
     }
 
