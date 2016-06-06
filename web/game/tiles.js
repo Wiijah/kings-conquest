@@ -10,6 +10,7 @@ var movingUnit;
 var isDragging = false;
 var offX;
 var offY;
+var isPlayerTurn;
 
 
 var path = [];
@@ -375,6 +376,9 @@ function initGame() {
 			}
 		}
 
+        team = data.team;
+        turn = data.turn;
+
 
 		that.buffEffects = data.buffEffects;
 		// p1currentGold = data.P1currentGold;
@@ -382,6 +386,7 @@ function initGame() {
 		currentGold = data.gold;
 		drawGoldDisplay();
 		that.drawMap(that.mapData);
+
 
 		//should only spawn 2 kings and castles
 		$.each(data.characters, function(i, value) {
@@ -776,14 +781,13 @@ function findCharById(id) {
 
 function addEventListenersToUnit(unit) {
     unit.addEventListener("click", function(event) {
-
             if (isInHighlight && !isAttacking && !isCasting){
                 return;
             }
             if (!movingPlayer && !isAttacking && !isCasting) {
                 clearSelectionEffects();
                 selectedCharacter = unit;
-                if (unit.team == turn) showActionMenuNextToPlayer(unit);
+                if (unit.team == turn && unit.team == team) showActionMenuNextToPlayer(unit);
                 displayStats(unit);
             }
 
@@ -792,18 +796,7 @@ function addEventListenersToUnit(unit) {
             if (selectedCharacter != unit && isAttacking && selectedCharacter.team != unit.team) {
                 $.each(highlighted, function(i, coord) {
                     if (unit.row === coord.row && unit.column === coord.column) {
-                    	serverValidate("attack", selectedCharacter, [unit], function(attacker, target, dmg) {
-                    		attack(attacker, target, unit);
-	                        clearSelectionEffects();
-	                        if (remainingAttackTimes > 0) {
-	                            remainingAttackTimes - 1;
-	                            performAttack();
-	                        } else {
-	                            attacker.canAttack = 0;
-	                            attacker.outOfMoves = 1;
-	                            playableUnitCount--;
-	                        }
-                    	});
+                    	serverValidate("attack", selectedCharacter, [unit]);
                     }
                 });
             }
@@ -933,7 +926,7 @@ function displayStats(unit) {
 	bmp.y = 10;
 	bmp.x = 20; // 226
 	//stage.update();
-	var text = unit.team == turn ? new createjs.Text("HP : " + getHealth(unit) + "/" + getMaxHealth(unit) + "\n" +
+	var text = unit.team == team ? new createjs.Text("HP : " + getHealth(unit) + "/" + getMaxHealth(unit) + "\n" +
 		"ATK : "  + getAttack(unit) + "\n" + "RNG : " + unit.attackRange + "\n" +
 		"SKILL : " + unit.skill +  "\n" + "CD: " + unit.skillCoolDown  + "\n" +
 		"MOV. RANGE : " + unit.moveRange + "\n" +
@@ -1013,7 +1006,7 @@ function showActionMenuNextToPlayer(unit) {
 			// isAttacking = true;
 			// drawRange(findReachableTiles(unit.column, unit.row, unit.attackRange, false), 1);
 			remainingAttackTimes = 1;
-			performAttack();
+			performAttack(unit);
 		}
 	});
 
@@ -1076,15 +1069,14 @@ function castKingSkill(king) {
     });
 }
 
-// function castKnightSkill(knight) {
-//     undoHighlights();
-//     applyBuff(4, knight);
-//     knight.outOfMoves = 1;
-//     knight.skillCoolDown = 3;
-//     isCasting = false;
-//     undoMove.pop();
-//     break;
-// }
+function castKnightSkill(knight) {
+    undoHighlights();
+    applyBuff(4, knight);
+    knight.outOfMoves = 1;
+    knight.skillCoolDown = 3;
+    isCasting = false;
+    undoMove.pop();
+}
 
 
 function cast(skillNo, unit) {
@@ -1131,7 +1123,7 @@ function cast(skillNo, unit) {
 			isCasting = false;
 			undoHighlights();
 			remainingAttackTimes = 2;
-			performAttack();
+			performAttack(unit);
 	    	unit.skillCoolDown = 3;
 			break;
 	    case 3: // Warrior's skill
@@ -1465,7 +1457,7 @@ function moveUnit() {
         	movingUnit.canMove = 0;
         }
 
-		if (movingUnit.team === team) showActionMenuNextToPlayer(movingUnit);
+		if (movingUnit.team === turn) showActionMenuNextToPlayer(movingUnit);
       }
   }
 
@@ -1735,6 +1727,7 @@ createjs.Ticker.on("tick", function() {
 		value.updateCache();
 	});
 }, this);	
+
 // createjs.Ticker.setFPS(30);
 function keyEvent(event) {
     switch(event.keyCode) {
@@ -1743,7 +1736,7 @@ function keyEvent(event) {
             	clearSelectionEffects();
             }
             break;
-        case 67:
+        case 67: 
         	draggable.x = 0;
         	draggable.y = 0;
         	break; 
@@ -1763,11 +1756,11 @@ function keyEvent(event) {
 					// isAttacking = true;
 					// drawRange(findReachableTiles(unit.column, unit.row, unit.attackRange, false), 1);
 					remainingAttackTimes = 1;
-					performAttack();
+					performAttack(selectedCharacter);
 				}
 			}
 			break;
-		case 82: //r
+		case 82: // keyboard r
 			if (endGame){
 				location.reload();
 			}
@@ -1980,18 +1973,19 @@ function serverValidate(type, unit, additionalArgs) {
 				return;
 			}
 			handleAttack(data.action);
+            postAttack(findUnitById(data.action.attacker_id));
 		});
 	}
 }
 
-function performAttack() {
+function performAttack(attacker) {
 	isAttacking = true;
-	var reachableTiles = findReachableTiles(selectedCharacter.row, selectedCharacter.column, selectedCharacter.attackRange, false);
+	var reachableTiles = findReachableTiles(attacker.row, attacker.column, attacker.attackRange, false);
 	highlightArea(reachableTiles, "graphics/tile/red_tile.png", ["click"], [function(event) {
 		var tile = event.target;
-		$.each(units, function(i, unit) {
-			if (unit.row == tile.row && unit.column == tile.column && selectedCharacter.team != unit.team){
-				serverValidate("attack", selectedCharacter, [unit])
+		$.each(units, function(i, target) {
+			if (target.row == tile.row && target.column == tile.column && attacker.team != target.team){
+				serverValidate("attack", attacker, [target]);
 			}
 		});	
 	archerSkillDone = true;
@@ -2010,17 +2004,17 @@ function findUnitById(id) {
 }
 
 function handleOpponent(data) {
-    console.log("in");
+    console.log("handle opponent move");
     switch (data.action.action_type) {
         case "move_unit":
             handleMove(data.action);
             break;
         case "create_unit":
             var unit = getFirstProp(data.action.unit);
-            console.log(unit.unit_id);
             spawnUnit(unit);
             break;
-        case "attack":
+        case "attack_unit":
+
             break;
         case "skill":
             break;
@@ -2052,23 +2046,25 @@ function handleMove(action) {
 	undoMove.push(unit);
 };
 
+
+// Check if there are remaining attack times, if yes, perform another one, otherwise
+function postAttack(attacker) {
+    if (remainingAttackTimes > 0) {
+        setTimeout(function() {
+            performAttack(attacker);
+        }, 1000);
+    } else {
+        attacker.canAttack = 0;
+        attacker.outOfMoves = 1;
+    }
+}
+
 function handleAttack(action) {
-	var unit = findCharById(action.attacker_id);
-	var target = findCharById(action.target_id);
-	attack(unit, target);
-	unit.attack = unit.base_attack;
+	var attacker = findUnitById(action.attacker_id);
+	var target = findUnitById(action.target_id);
+	attack(attacker, target, action.dmg, action.isCirtical);
+	// attacker.attack = attacker.base_attack;
 	clearSelectionEffects();
-	
-	if (remainingAttackTimes > 0) {
-		setTimeout(function() {
-			performAttack();
-		}, 1000);
-	} else {
-        unit.canAttack = 0;
-        unit.outOfMoves = 1;
-        playableUnitCount--;
-        console.log(playableUnitCount);
-	}
 }
 
 function handleCreate(action) {
