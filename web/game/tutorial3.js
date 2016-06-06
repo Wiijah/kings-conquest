@@ -96,7 +96,7 @@ function turnStartPhase() {
   //   k_instruction4();
   // }
   if (turnCount == 2 && currentUnit.skill_no == 3){
-    kt_instruction4();
+    if(!endCurrentUnitTutorial) kt_instruction4();
   }
 
   undoMove = [];
@@ -397,7 +397,7 @@ function spawnUnit(data, isCreation, row, column, team){
 
     unit.x = originX +  (unit.column - unit.row) * 65;
     unit.y = unit.column * 32.5 + originY + unit.row * 32.5;
-    //lalala  
+
 
     unit.regX = 56.5;
     unit.regY = 130;
@@ -456,8 +456,11 @@ function spawnUnit(data, isCreation, row, column, team){
     blockMaps[unit.row][unit.column] = 1;
 
     // Add the unit and its hp bar to the stage
-    draggable.addChild(unit);
-    draggable.addChild(hp_bar);
+    if(startTutorial || unit.team == 0){
+      draggable.addChild(unit);
+      draggable.addChild(hp_bar);
+      chars.addChild(spawnAnimation);
+    }
 
     sortIndices(unit);
 
@@ -465,7 +468,7 @@ function spawnUnit(data, isCreation, row, column, team){
     hp_bar.cache(0,0,100,120);
     spawnAnimation.x = unit.x;
     spawnAnimation.y = unit.y;
-    chars.addChild(spawnAnimation);
+    
     setTimeout(function() {
       chars.removeChild(spawnAnimation);
     }, 1000);
@@ -607,7 +610,7 @@ function initGame() {
 
   drawMenuDisplay();
   stage.update();
-
+  draggable.mouseChildren = false;
 
 }
 var muteIcon;
@@ -960,6 +963,9 @@ function createNewUnit(unitType, row, column) {
 
 function addEventListenersToUnit(unit) {
     unit.addEventListener("click", function(event) {
+            if (unit.team == 0 && isDisplayingMenu && !endCurrentUnitTutorial) {
+              return;
+            }
             if (unit.team == 1 && unit.address == "graphics/spritesheet/stand/ss_king_stand.png" && firstClickUnit) {
               firstClickUnit = false;
               chars.removeChild(pointerVertical);
@@ -1034,7 +1040,7 @@ function addEventListenersToUnit(unit) {
             }
 
             // In this case, we are selecting the unit to be attacked by the wizard spell
-            if (selectedCharacter != unit && isCasting && selectedCharacter.team != unit.team) {
+            if (selectedCharacter != unit && isCasting && selectedCharacter.team != unit.team && selectedCharacter.skill_no == 5) {
                 for (var i = 0; i < highlighted.length; i++) {
                     if (highlighted[i].row === unit.row && highlighted[i].column === unit.column) {
                         break;
@@ -1410,7 +1416,7 @@ function cast(skillNo, unit) {
         // drawRange(findReachableTiles(selectedCharacter.column, selectedCharacter.row, selectedCharacter.attackRange, false), 2);
         var reachableTiles = findReachableTiles(selectedCharacter.row, selectedCharacter.column, selectedCharacter.attackRange, false);
         highlightArea(reachableTiles, "graphics/tile/red_tile.png", ["click", "mouseover", "mouseout"], [castWizardSpellOnClick, highlightWizardSpellCross, clearWizardSpellCross]);
-        addPointerToTile(2,2);
+        if(!endCurrentUnitTutorial) addPointerToTile(2,2);
       break;
     case 5:
       remainingAttackTimes = 1;
@@ -1423,7 +1429,7 @@ function cast(skillNo, unit) {
       // drawRange(findReachableTiles(selectedCharacter.column, selectedCharacter.row, selectedCharacter.attackRange, false), 2);
       var reachableTiles = findReachableTiles(selectedCharacter.row, selectedCharacter.column, selectedCharacter.attackRange, false);
       highlightArea(reachableTiles, "graphics/tile/red_tile.png", ["click", "mouseover", "mouseout"], [castDragonSpellOnClick, highlightWizardSpellCross, clearWizardSpellCross]);
-      addPointerToTile(2,2);
+       if(!endCurrentUnitTutorial) addPointerToTile(2,2);
     break;
   }
   destroyMenu();
@@ -1463,7 +1469,7 @@ function castDragonSpellOnClick(event){
       isCasting = false;
       changed = true;
       removeAllPointer();
-      d_instruction4();
+      if(!endCurrentUnitTutorial) d_instruction4();
     }
 }
 function castWizardSpellOnClick(event) {
@@ -1497,7 +1503,7 @@ function castWizardSpellOnClick(event) {
       isCasting = false;
       changed = true;
       removeAllPointer();
-      w_instruction4();
+      if(!endCurrentUnitTutorial) w_instruction4();
     }
 } 
 
@@ -1704,6 +1710,7 @@ function destroyMenu() {
   chars.removeChild(attackButton);
   chars.removeChild(skillButton);
   chars.removeChild(cancelButton);
+  isDisplayingMenu = false;
   changed = true;
 }
 
@@ -1994,7 +2001,14 @@ function drawMap(data) {
         maps[i][j].addEventListener("mouseover",mouseOver);
         maps[i][j].addEventListener("mouseout", mouseOut);
         maps[i][j].addEventListener("click", function(event) {
-          clearSelectionEffects();
+          if (isCasting && !endCurrentUnitTutorial){
+              return;
+          } else if(isDisplayingMenu && !endCurrentUnitTutorial) {
+              return;
+          } else {
+             clearSelectionEffects();
+          }
+
         });
       //}
       draggable.addChild(maps[i][j]);
@@ -2317,9 +2331,9 @@ function moveCharacter(unit) {
 
 function performAttack() {
 
-  if (archerSkillDone) {
+  if (archerSkillDone && currentUnit.address == "graphics/spritesheet/stand/ss_archer_stand.png") {
     console.log("Second perform attack!!");
-    a_instruction4();
+    if(!endCurrentUnitTutorial) a_instruction4();
   } else {
     console.log("First perform attack!!")
   }
@@ -2351,7 +2365,9 @@ function performAttack() {
 
       }
     }); 
-  archerSkillDone = true;
+  if (currentUnit.address == "graphics/spritesheet/stand/ss_archer_stand.png"){
+    archerSkillDone = true;
+  }
   undoMove.pop()
   }]); 
 }
@@ -2405,7 +2421,8 @@ function resetCarmera(){
 
 
 //Tutorial Support Function ===========
-
+var startTutorial = false;
+var endCurrentUnitTutorial = false;
 var firstClickUnit;
 var firstClickSkill;
 var pv_spritesheet;
@@ -2494,10 +2511,15 @@ function removeAllPointer(){
 }
 
 function resetInsturctions(){
+  startTutorial = true;
+  draggable.mouseChildren = true;
   showButton();
   removeAllPointer();
   firstClickUnit = true;
   firstClickSkill = true;
+  iscasting = false;
+  isAttacking = false;
+  endCurrentUnitTutorial = false;
   removeBox();
 }
 
@@ -2562,6 +2584,7 @@ function k_instruction4(){
   addTitleToBox("King");
   addTextToBox("<p>Excellent! Now you know how to use the king's skill.</p> <p>You can continue to play as the king or try another unit by clicking on the corresponding card in the bottom left corner of the window. </p>");
   kingDone = 1;
+  endCurrentUnitTutorial = true;
   checkCompleness();
 }
 
@@ -2624,8 +2647,9 @@ function kt_instruction4(){
   });
   changeTextToButton("OK");
   addTitleToBox("Knight");
-  addTextToBox("<p>Excellent! You take zero damage from the enemy king.</p> <p>You can continue to play as the king or try another unit by clicking on the corresponding card in the bottom left corner of the window. </p>");
+  addTextToBox("<p>Excellent! You take zero damage from the enemy king.</p> <p>You can continue to play as the knight or try another unit by clicking on the corresponding card in the bottom left corner of the window. </p>");
   knightDone = 1;
+  endCurrentUnitTutorial = true;
   checkCompleness();
 }
 
@@ -2634,6 +2658,7 @@ function kt_instruction4(){
 
 function showArcherTutorial(){
   turnCount = 0;
+  archerSkillDone = false;
   resetInsturctions();
   displayBox(function() {
     a_instruction();
@@ -2698,6 +2723,7 @@ function a_instruction5(){
   addTitleToBox("Archer");
   addTextToBox("<p>Excellent! Now you know the skill of archer.</p> <p>You can continue to play as the archer or try another unit by clicking on the corresponding card in the bottom left corner of the window. </p>");
   archerDone = 1;
+  endCurrentUnitTutorial = true;
   checkCompleness();
 }
 
@@ -2769,6 +2795,7 @@ function w_instruction5(){
   addTitleToBox("Wizard");
   addTextToBox("<p>Excellent! You can see the burning effect on the enemy king. Now you know the wizard skill. </p> <p>You can continue to play as the wizard or try another unit by clicking on the corresponding card in the bottom left corner of the window. </p>");
   wizardDone = 1;
+  endCurrentUnitTutorial = true;
   checkCompleness();
 }
 
@@ -2780,7 +2807,7 @@ function showDragonTutorial(){
   displayBox(function() {
     d_instruction();
   });
-  addTextToBox("<p> dragon!!!niubi </p> <p>Normal Attack: 35 </p><p>Skill: Icy Wind </p><p>(Deal AOE damage to maximum 5 units in a cross, and freeze them for 4 turns)</p>");
+  addTextToBox("<p> Dragon the most mysterious creature. It can control the ice and wind. Flying unit, can move over any terrains. </p> <p>Normal Attack: 35 </p><p>Skill: Icy Wind </p><p>(Deal AOE damage to maximum 5 units in a cross, and freeze them for 4 turns)</p>");
   addTitleToBox("Dragon");
   resetTheGame();
   changeTextToButton("Next");
@@ -2841,6 +2868,7 @@ function d_instruction5(){
     addTitleToBox("Dragon");
     addTextToBox("<p>Excellent! You can see the frozen effect on the enemy king. Now you know the dragon skill. </p> <p>You can continue to play as the dragon or try another unit by clicking on the corresponding card in the bottom left corner of the window. </p>");
     dragonDone = 1;
+    endCurrentUnitTutorial = true;
     checkCompleness();
 }
 // Tutorial check finish all
@@ -2861,8 +2889,8 @@ function endTutorial3(){
   });
   showButton();
   changeTextToButton("OK");
-  addTitleToBox("Congratulation!");
-  addTextToBox("<p>Good job!</p><p>You finish all the tutorials! Descover more in the real game! </p>");
+  addTitleToBox("!!!Congratulation!!!");
+  addTextToBox("<p>!!!Good job!!!</p><p>You finish all the tutorials! Descover more in the real game! </p>");
 }
 
 
