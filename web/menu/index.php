@@ -39,10 +39,29 @@ if (isset($_SESSION['id'])) {
 <div class="home_btn_text">Login</div>
 </div>
 
+
+<div class="home_middle goto_guest home_hover">
+<img src="images/big_green_king.png" class="home_king" /><br />
+<img src="images/btn_brush.png" class="home_btn" />
+<div class="home_btn_text">Guest</div>
+</div>
+
 <div class="home_right goto_register home_hover">
 <img src="images/big_red_king.png" class="home_king" /><br />
 <img src="images/btn_brush.png" class="home_btn" />
 <div class="home_btn_text">Register</div>
+</div>
+
+<div class="home_box">
+We used the following resources on our game:
+<ol>
+  <li>Facebook SDK<br />https://github.com/facebook/facebook-php-sdk-v4/</li>
+  <li>Cloud image<br />http://pngimg.com/upload/cloud_PNG4.png</li>
+  <li>jQuery<br />https://jquery.com/</li>
+  <li>CreateJS and EaselJS<br />http://www.createjs.com/</li>
+  <li>Loading Animation<br />http://loading.io/</li>
+</ol>
+
 </div>
 
 <div class="home_box">

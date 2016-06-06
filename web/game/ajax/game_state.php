@@ -27,6 +27,7 @@ $out .= jsonPair("gold", $player->gold).",";
 
 /* Player Info */
 $out .= jsonPair("team", $TEAM_COLOURS[$player->colour]).",";
+$out .= jsonPair("turn", $room->turn).",";
 
 /* Buffs */
 $out .= '"buffEffects": {';

@@ -88,6 +88,7 @@ function showTurnInfo(){
 
 
 function turnStartPhase() {
+
   turnCount ++;
 
   console.log(turnCount);
@@ -124,6 +125,7 @@ function turnStartPhase() {
             value.buffs[j][2]--;
             if (value.buffs[j][2] === 0) buffsToBeRemoved.push(value.buffs[j][0]);
             if (value.buffs[j][0] === 5) {
+
                 var damage = value.max_hp * 0.02;
                 chars.removeChild(fire);
                 var fire = new createjs.Sprite(value.burnEffect, "burn");
@@ -131,6 +133,7 @@ function turnStartPhase() {
                 fire.x = value.x;
                 fire.y = value.y;
                 chars.addChild(fire);
+
                 value.hp -= damage;
                 updateHP_bar(value);
                 setTimeout(function() {
@@ -162,15 +165,17 @@ function turnStartPhase() {
 
     $.each(units, function(i, value) {
       if (value.team == turn && value.address == "graphics/spritesheet/stand/ss_king_stand.png") {
-        //console.log(value.x + "," + value.y);
+
         kingX = value.x;
         kingY = value.y;
       }
     });
+
     if (turn) {
       draggable.x = 975 - currentUnit.x;
       draggable.y = 382.5 - currentUnit.y;
     }
+
 
 
  //    setTimeout(function() {
@@ -232,13 +237,13 @@ function turnStartPhase() {
         var reachableTiles = findReachableTiles(row, column, enemyUnit.attackRange, false);
        setTimeout(function() {
        clearSelectionEffects();
-       //console.log(reachableTiles);
+
        highlightArea(reachableTiles, "graphics/tile/red_tile.png", ["click"], []);
        }, 4000);
 
       setTimeout(function(){
         $.each(reachableTiles, function(i, tile) {
-          //console.log(tile[0] + "," + tile[1]);
+
           if (tile[0] == currentUnit.row && tile[1] == currentUnit.column){
             attack(enemyUnit, currentUnit);
             clearSelectionEffects();
@@ -257,6 +262,7 @@ function turnStartPhase() {
     },6000);
 
   }
+
   if (!turn && enemyUnit.outOfMoves){
     setTimeout(function() {
        clearSelectionEffects();
@@ -365,6 +371,7 @@ function spawnUnit(data, isCreation, row, column, team){
     });
     unit.healEffect = healEffect;
 
+
     var forzenEffect = new createjs.SpriteSheet({
       "images": [that.buffEffects.frozen],
       "frames": {"width": 142, "height": 142, "count": 4, "regY": 110, "regX": 95},
@@ -467,7 +474,7 @@ function spawnUnit(data, isCreation, row, column, team){
     addEventListenersToUnit(unit);
 
     if (unit.team == 1) {
-    //  console.log("in currentUnit");
+
       currentUnit = unit;
     } else {
       enemyUnit = unit;
@@ -581,6 +588,7 @@ function initGame() {
   drawUnitCreationMenu();
   drawBottomInterface();
 
+
     // setInterval(function(){ 
     //     if (!movingPlayer && !isAttacking && !isCasting && !isInHighlight) {
     //         if (playableUnitCount === 0) {
@@ -592,7 +600,6 @@ function initGame() {
     //         }
     //     }
     // }, 5000);
-
 
   changed = true;
 
@@ -644,7 +651,7 @@ function drawMenuDisplay(){
 
 }
 function removeBuff(buffType, unit) {
-   // console.log("buff type: " + buffType);
+
     var success = false;
 
     for (var i = 0; i < unit.buffs.length; i++) {
@@ -757,10 +764,7 @@ function updateHP_bar(unit){
     chars.removeChild(unit.hp_bar);
     blockMaps[unit.row][unit.column] = 0;
     units.splice(units.indexOf(unit), 1);
-
-
-
-    for (var i = 0; i <= 5; i++) {
+    for (var i = 0; i <= 6; i++) {
       removeBuff(i, unit);
     }
     if (unit.address == "graphics/spritesheet/stand/ss_king_stand.png" && unit.team == 0){
@@ -785,6 +789,7 @@ function updateHP_bar(unit){
 }
 function reSpawn(){
   spawnUnit(that.classStats.kingClass, true, 2, 1, 0);
+
   console.log("respawn");
 }
 
@@ -806,7 +811,6 @@ function drawUnitCreationMenu() {
   listOfSources.push("graphics/card/wizard_card.png");
   listOfSources.push("graphics/card/dragon_card.png");
   //listOfSources.push("graphics/card/rogue_card.png");
-
   createFloatingCards(listOfSources, ["king","knight","archer","wizard","dragon"]);
   unitCreationMenu.x = 50;
   unitCreationMenu.y = window.innerHeight - 130;
@@ -870,6 +874,16 @@ function createFloatingCards(listOfSources, correspondingUnit) {
                     showDragonTutorial();
         });
         break;
+      // case "rogue": 
+      //  unitCards[i].addEventListener("click", function(event) {
+      //    if (currentGold >= 100) {
+      //      spawnUnit("rogue",false, 5,2,turn);
+      //      currentGold -= 100;
+      //      currentGoldDisplay.text = ("Gold: " + currentGold);
+      //    }
+      //    changed = true;
+      //  });
+      //  break;
     }
 
     unitCards[i].addEventListener("mouseover", function(event) {
@@ -999,7 +1013,9 @@ function addEventListenersToUnit(unit) {
                         attack(selectedCharacter, unit);
                         clearSelectionEffects();
                         if (remainingAttackTimes > 0) {
+
                             archerSkillDone = true;
+
                             remainingAttackTimes - 1;
                             performAttack();
                         } else {
@@ -1007,8 +1023,10 @@ function addEventListenersToUnit(unit) {
                             selectedCharacter.outOfMoves = 1;
                             playableUnitCount--;
 
+
                             if (archerSkillDone) showButton();
                             removeAllPointer();
+
                             //console.log(playableUnitCount);
                         }
                     }
@@ -1047,6 +1065,7 @@ function addEventListenersToUnit(unit) {
 
                 });
             }
+
 
              if (selectedCharacter != unit && isCasting && selectedCharacter.team != unit.team && selectedCharacter.skill_no == 6) {
                 for (var i = 0; i < highlighted.length; i++) {
@@ -1087,6 +1106,8 @@ function addEventListenersToUnit(unit) {
             changed = true;
         });
     
+
+
         unit.addEventListener("mouseover", function(event) {
             if (isCasting && selectedCharacter.skill_no == 4) {
                 var i;
@@ -1238,6 +1259,7 @@ function showActionMenuNextToPlayer(unit) {
   moveSource = unit.canMove === 1 && unit.outOfMoves === 0 ? "graphics/ingame_menu/new_move.png"
                     : "graphics/ingame_menu/new_move_gray.png";
   moveButton = createClickableImage(moveSource, unit.x + 48, unit.y - 147, function() {
+
     if (firstClickSkill) return;
     if (unit.canMove) {
       undoHighlights();
@@ -1249,6 +1271,7 @@ function showActionMenuNextToPlayer(unit) {
   attackSource = unit.canAttack === 1 && unit.outOfMoves === 0 ? "graphics/ingame_menu/new_attack.png"
                    : "graphics/ingame_menu/new_attack_gray.png";
   attackButton = createClickableImage(attackSource, unit.x + 48, unit.y - 119, function() {
+
     if (firstClickSkill) return;
     if (unit.canAttack) {
       undoHighlights();
@@ -1262,6 +1285,7 @@ function showActionMenuNextToPlayer(unit) {
   skillSource = unit.skillCoolDown === 0 && unit.outOfMoves === 0 ? "graphics/ingame_menu/new_skill.png"
                    : "graphics/ingame_menu/new_skill_gray.png";
   skillButton = createClickableImage(skillSource, unit.x + 48, unit.y - 91, function() {
+
     if (unit.team == 1 && unit.address == "graphics/spritesheet/stand/ss_king_stand.png" && firstClickSkill) {
       k_instruction3();
       firstClickSkill = false;
@@ -1298,6 +1322,7 @@ function showActionMenuNextToPlayer(unit) {
 
   cancelSource = "graphics/ingame_menu/new_cancel.png";
   cancelButton = createClickableImage(cancelSource, unit.x + 48, unit.y - 63, function() {
+
     if (firstClickSkill) return;
     clearSelectionEffects();
   });
@@ -1390,6 +1415,7 @@ function cast(skillNo, unit) {
     case 5:
       remainingAttackTimes = 1;
       break;
+
     case 6: // dragon skill
     console.log("dragon skill");
     isCasting = true;
@@ -1403,6 +1429,7 @@ function cast(skillNo, unit) {
   destroyMenu();
   destroyStats();
 }
+
 
 function castDragonSpellOnClick(event){
   console.log("casting dragon skill");
@@ -1473,9 +1500,6 @@ function castWizardSpellOnClick(event) {
       w_instruction4();
     }
 } 
-
-
-
 
 function highlightWizardSpellCross(event) {
   var tiles = getSurroundingTiles(event.target.row, event.target.column);
@@ -1607,8 +1631,6 @@ function showDamage(unit, critical, damage){
 
 
 function attack(attacker, target){
-  // if (attacker.team != target.team) {
-
     var sprite = new createjs.Sprite(attacker.spritesheet, "attack");
     sprite.x = attacker.x;
     sprite.y = attacker.y;
@@ -1831,6 +1853,7 @@ function findPath(fromX, fromY, toX, toY) {
         // Terrain check
         if (selectedCharacter.skill_no != 6  && blockMaps[nx][ny] != 0) continue;
 
+
         // bounds and obstacle check here
         if (vis[nx * mapWidth + ny] === false) {
           vis[nx * mapWidth + ny] = true;
@@ -2049,6 +2072,7 @@ function keyEvent(event) {
           draggable.y = 0;
           break; 
         case 77: //m
+
           if (firstClickSkill) return;
           if (isDisplayingMenu) {
             if (selectedCharacter.canMove) {
@@ -2146,6 +2170,7 @@ function endTurn(){
   turnEndPhase();
   turnStartPhase();
 }
+
 function goFullScreen(){
     var canvas = document.getElementById("demoCanvas");
     if(canvas.requestFullScreen)
@@ -2291,6 +2316,7 @@ function moveCharacter(unit) {
 }
 
 function performAttack() {
+
   if (archerSkillDone) {
     console.log("Second perform attack!!");
     a_instruction4();
@@ -2313,6 +2339,7 @@ function performAttack() {
             performAttack();
           }, 1000);
         } else {
+
           if (archerSkillDone) showButton();
           selectedCharacter.canAttack = 0;
           selectedCharacter.outOfMoves = 1;
@@ -2320,6 +2347,7 @@ function performAttack() {
           removeAllPointer();
           //console.log(playableUnitCount);
         }
+
 
       }
     }); 

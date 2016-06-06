@@ -42,6 +42,7 @@
   </head>
 
   <body onload="displayBox(showKingTutorial);">
+
   <?php include 'includes/lightbox.php'; ?>
       
   <canvas id="gameCanvas" width="5000px" height="5000px"></canvas>
@@ -56,6 +57,7 @@
     </div>
     <div id="box_foot">
       <button type="button" id="actionButton" class="btn" ng-click="">Next</button>
+
     </div>
   </div>
   </body>

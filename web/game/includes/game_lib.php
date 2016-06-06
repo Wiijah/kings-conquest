@@ -22,6 +22,8 @@ function init_units() {
   create_unit("king", 3, 2, $TEAM_COLOURS['red']);
   create_unit("red castle", 0, 0, $TEAM_COLOURS['red']);
   create_unit("wizard", 3, 3, $TEAM_COLOURS['red']);
+
+  create_unit("wizard", 3, 4, $TEAM_COLOURS['blue']);
   create_unit("knight", 0, 2, $TEAM_COLOURS['red']);
   create_unit("archer", 0, 3, $TEAM_COLOURS['red']);
 
@@ -33,11 +35,19 @@ function init_units() {
   create_unit("archer", 12, 11, $TEAM_COLOURS['blue']);
 }
 
+function select_unit($unit_id) {
+  global $db;
+  $result = $db->query("SELECT * FROM units JOIN classes ON units.class_id = classes.class_id WHERE unit_id = '{$unit_id}'");
+  if (!$result) return false;
+  return $result->fetch_object();
+}
+
 function jsonUnit($unit) {
   return '"'.$unit->unit_id.'": {
       '.jsonStr("address", $unit->address).','.
         jsonStr("spritesheet", $unit->spritesheet).','.
         jsonPair("unit_id", $unit->unit_id).','.
+        jsonStr("info", $unit->info).','.
         jsonPair("hp", $unit->hp).','.
         jsonPair("max_hp", $unit->max_hp).','.
         jsonPair("attack", $unit->attack).','.
