@@ -20,7 +20,7 @@ if ( !$target ) exit_error(101);
 if ( $attacker->team != $team ) exit_error(102);
 if ( $attacker->team == $target->team ) exit_error(103);
 if ( $attacker->canAttack == 0 ) exit_error(104);
-if ( outOfAttackRange($attacker, $target)) exir_error(105);
+if ( outOfAttackRange($attacker, $target)) exit_error(105);
 
 $result = $db->query("SELECT * FROM buff_instances WHERE unit_id = '{target_id}' AND buff_id = 4");
 $buff = $result->fetch_object();

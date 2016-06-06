@@ -35,6 +35,13 @@ function init_units() {
   create_unit("archer", 12, 11, $TEAM_COLOURS['blue']);
 }
 
+function select_unit($unit_id) {
+  global $db;
+  $result = $db->query("SELECT * FROM units JOIN classes ON units.class_id = classes.class_id WHERE unit_id = '{$unit_id}'");
+  if (!$result) return false;
+  return $result->fetch_object();
+}
+
 function jsonUnit($unit) {
   return '"'.$unit->unit_id.'": {
       '.jsonStr("address", $unit->address).','.
