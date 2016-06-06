@@ -1318,7 +1318,7 @@ function showDamage(unit, critical, damage){
 
 
 
-function attack(attacker, target){
+function attack(attacker, target, dmg, isCritical){
 	// if (attacker.team != target.team) {
 		var sprite = new createjs.Sprite(attacker.spritesheet, "attack");
 		sprite.x = attacker.x;
@@ -1332,24 +1332,20 @@ function attack(attacker, target){
 		chars.removeChild(attacker);	
 		chars.addChild(sprite);
 
+		// if (!removeBuff(4, target)) {
+			
+		showDamage(target, isCritical == 1 ? 2 : 1, dmg);
+		target.hp -= dmg;
+		updateHP_bar(target);
 		
-		var criticalHit = getRandom(getLuck(attacker));
-		var damage = getAttack(attacker) * criticalHit
-
-		if (!removeBuff(4, target)) {
+		var damageAnimation = new createjs.Sprite(attacker.damageEffect, "damage");
+		damageAnimation.x = target.x;
+		damageAnimation.y = target.y;
 			
-			showDamage(target, criticalHit, damage);
-			target.hp -= damage;
-			updateHP_bar(target);
-			
-			var damageAnimation = new createjs.Sprite(attacker.damageEffect, "damage");
-			damageAnimation.x = target.x;
-			damageAnimation.y = target.y;
-			
-		}
-		if (isCasting && isAttacking) {
-			applyBuff(3, target);
-		}
+		// }
+		// if (isCasting && isAttacking) {
+		// 	applyBuff(3, target);
+		// }
 		chars.addChild(damageAnimation);
 		
 		remainingAttackTimes--;
@@ -2072,7 +2068,7 @@ function postAttack(attacker) {
 function handleAttack(action) {
 	var attacker = findUnitById(action.attacker_id);
 	var target = findUnitById(action.target_id);
-	attack(attacker, target, action.dmg, action.isCirtical);
+	attack(attacker, target, action.dmg, action.is_critical);
 	// attacker.attack = attacker.base_attack;
 	clearSelectionEffects();
 }
