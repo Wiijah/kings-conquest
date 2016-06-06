@@ -58,14 +58,14 @@ function resize() {
 // typeName : king, red_castle, wizard, etc
 // initial: true / false
 
-$(document).ready(function() {
-    var bg_x = 0;
-    setInterval(function(){
-        bg_x += 5;
-        $('body').css('background-position', '-' + bg_x + 'px 0');
-        $('.clouds').css('background-position', bg_x + 'px 0');
-    }, 125);
-});
+// $(document).ready(function() {
+//     var bg_x = 0;
+//     setInterval(function(){
+//         bg_x += 5;
+//         $('body').css('background-position', '-' + bg_x + 'px 0');
+//         $('.clouds').css('background-position', bg_x + 'px 0');
+//     }, 125);
+// });
 
 function spawnUnit(data, isCreation){
 	//|| data.address == "graphics/spritesheet/stand/ss_scarecrow_stand.png"

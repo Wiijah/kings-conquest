@@ -41,26 +41,33 @@
   float: left;
   position: relative;
   text-align: center;
-  width: 49.5%;
+  width: 33%;
   margin-bottom: 20px;
+}
+.home_middle {
+  display: inline-block;
+  width: 33%;
+  float: left;
+  position: relative;
+  text-align: center;
 }
 .home_right {
   display: inline-block;
-  width: 49.5%;
-  float: right;
+  width: 33%;
+  float: left;
   position: relative;
   text-align: center;
 }
 .home_king {
-  width: 100px;
+  height: 140px;
 }
 .home_btn {
-  width: 210px;
+  width: 150px;
 }
 .home_btn_text {
-  font-size: 30px;
+  font-size: 28px;
   position: absolute;
-  bottom: 6px;
+  bottom: 2px;
   width: 100%;
   text-align: center;
   font-family: BebasNeueBook;

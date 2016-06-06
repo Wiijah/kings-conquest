@@ -39,6 +39,13 @@ if (isset($_SESSION['id'])) {
 <div class="home_btn_text">Login</div>
 </div>
 
+
+<div class="home_middle goto_guest home_hover">
+<img src="images/big_green_king.png" class="home_king" /><br />
+<img src="images/btn_brush.png" class="home_btn" />
+<div class="home_btn_text">Guest</div>
+</div>
+
 <div class="home_right goto_register home_hover">
 <img src="images/big_red_king.png" class="home_king" /><br />
 <img src="images/btn_brush.png" class="home_btn" />
