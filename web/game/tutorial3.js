@@ -63,6 +63,7 @@ var enemyUnit;
 var lock = true;
 
 function showTurnInfo(){
+  if (!startTutorial) return;
   stage.removeChild(playerLabel);
   stage.removeChild(playerLabelBg);
   if (turn) {
@@ -2580,7 +2581,7 @@ function k_instruction4(){
   displayBox(function() {
     removeBox();
   });
-  changeTextToButton("OK");
+  addTextToButton("OK");
   addTitleToBox("King");
   addTextToBox("<p>Excellent! Now you know how to use the king's skill.</p> <p>You can continue to play as the king or try another unit by clicking on the corresponding card in the bottom left corner of the window. </p>");
   kingDone = 1;
@@ -2601,7 +2602,7 @@ function showKnightTutorial(){
   addTitleToBox("Knight");
   resetTheGame();
 
-  changeTextToButton("Next");
+  addTextToButton("Next");
   spawnUnit(that.classStats.knightClass, true, 2, 5, 1);
   clearSelectionEffects();
   resetCarmera();
@@ -2635,7 +2636,7 @@ function kt_instruction3(){
     endTurn();
   });
   showButton();
-  changeTextToButton("Next");
+  addTextToButton("Next");
   addTitleToBox("Knight");
   addTextToBox("<p>Well Done. If you can not reach any unit in this turn, setting up your shield will be the best choice. Now it's enemy's turn. Let's see your how powerful the shield is.</p>");
 }
@@ -2645,7 +2646,7 @@ function kt_instruction4(){
   displayBox(function() {
     removeBox();
   });
-  changeTextToButton("OK");
+  addTextToButton("OK");
   addTitleToBox("Knight");
   addTextToBox("<p>Excellent! You take zero damage from the enemy king.</p> <p>You can continue to play as the knight or try another unit by clicking on the corresponding card in the bottom left corner of the window. </p>");
   knightDone = 1;
@@ -2665,7 +2666,7 @@ function showArcherTutorial(){
   });
   addTextToBox("<p>An archer is the master of using the bow and arrows. Really large attack range and he knows the weakness of enermy have a really high critical chance. </p> <p>Normal Attack: 20</p><p> Skill: Double Shoot</p><p>(shoot two fatal arrows to targets the arrow will decrease the target's base attack damage by 20% for 3 turns.)</p>");
   addTitleToBox("Archer");
-  changeTextToButton("Next");
+  addTextToButton("Next");
   resetTheGame();
   spawnUnit(that.classStats.archerClass, true, 2, 5, 1);
   clearSelectionEffects();
@@ -2719,7 +2720,7 @@ function a_instruction5(){
   displayBox(function() {
     removeBox();
   });
-  changeTextToButton("OK");
+  addTextToButton("OK");
   addTitleToBox("Archer");
   addTextToBox("<p>Excellent! Now you know the skill of archer.</p> <p>You can continue to play as the archer or try another unit by clicking on the corresponding card in the bottom left corner of the window. </p>");
   archerDone = 1;
@@ -2738,7 +2739,7 @@ function showWizardTutorial(){
   addTextToBox("<p>A wizard uses arcane magic. Can deal really high AOE (Area of effect) demage and burn the targets. However wizards are less effective in melee combat. </p> <p>Normal Attack: 15 </p><p>Skill: Burning</p><p>(maximum 5 target in a cross) and the targets get 2% of its maximum health burning demage each turn.)</p>");
   addTitleToBox("Wizard");
   resetTheGame();
-  changeTextToButton("Next");
+  addTextToButton("Next");
   spawnUnit(that.classStats.wizardClass, true, 2, 5, 1);
   clearSelectionEffects();
   resetCarmera();
@@ -2791,7 +2792,7 @@ function w_instruction5(){
   displayBox(function() {
     removeBox();
   });
-  changeTextToButton("OK");
+  addTextToButton("OK");
   addTitleToBox("Wizard");
   addTextToBox("<p>Excellent! You can see the burning effect on the enemy king. Now you know the wizard skill. </p> <p>You can continue to play as the wizard or try another unit by clicking on the corresponding card in the bottom left corner of the window. </p>");
   wizardDone = 1;
@@ -2810,7 +2811,7 @@ function showDragonTutorial(){
   addTextToBox("<p> Dragon the most mysterious creature. It can control the ice and wind. Flying unit, can move over any terrains. </p> <p>Normal Attack: 35 </p><p>Skill: Icy Wind </p><p>(Deal AOE damage to maximum 5 units in a cross, and freeze them for 4 turns)</p>");
   addTitleToBox("Dragon");
   resetTheGame();
-  changeTextToButton("Next");
+  addTextToButton("Next");
   spawnUnit(that.classStats.dragonClass, true, 2, 5, 1);
   clearSelectionEffects();
   resetCarmera();
@@ -2864,7 +2865,7 @@ function d_instruction5(){
     displayBox(function() {
       removeBox();
     });
-    changeTextToButton("OK");
+    addTextToButton("OK");
     addTitleToBox("Dragon");
     addTextToBox("<p>Excellent! You can see the frozen effect on the enemy king. Now you know the dragon skill. </p> <p>You can continue to play as the dragon or try another unit by clicking on the corresponding card in the bottom left corner of the window. </p>");
     dragonDone = 1;
@@ -2888,7 +2889,7 @@ function endTutorial3(){
     //redirection to the real game
   });
   showButton();
-  changeTextToButton("OK");
+  addTextToButton("OK");
   addTitleToBox("!!!Congratulation!!!");
   addTextToBox("<p>!!!Good job!!!</p><p>You finish all the tutorials! Descover more in the real game! </p>");
 }
