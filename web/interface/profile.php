@@ -1,7 +1,6 @@
 <?php
 $title = "Profile";
 require_once 'includes/header_checks.php';
-include 'includes/header.php';
 
 $other = secureStr($_GET['username']);
 $result = $db->query("SELECT * FROM users WHERE username = '{$other}'");
@@ -12,9 +11,9 @@ if (!$prof) {
   die();
 }
 
+include 'includes/header.php';
 include 'includes/logout_container.php';
 include 'includes/logo.php';
-
 require_once 'includes/back_container.php';
 ?>
 

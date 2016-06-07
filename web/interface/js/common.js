@@ -7,6 +7,12 @@ var session_expired = false; // boolean to indicate whether the session has expi
 var page_disabled = false;
 
 $(document).ready(function() {
+
+  $('body').on('click', '.open_profile', function() {
+    var username = $(this).attr("data-username");
+    window.open("profile?close=1&username="+username);
+  });
+
   /* Turn off autocomplete for input */
   $('input, :input').attr('autocomplete', 'off');
   $('.auto_off').val("");
