@@ -29,6 +29,7 @@ var attackButton;
 var skillButton;
 var cancelButton;
 var menuBackground;
+var turnInfoText; 
 
 var bottomInterface  = new createjs.Container();
 var statsDisplay = new createjs.Container();
@@ -59,6 +60,16 @@ var undo = false;
 
 var bgMusic = true;
 
+function showTurnText() {
+    stage.removeChild(turnInfoText);
+    var turnText = turn == team ? "Your turn" : "Enemy's turn";
+    turnInfoText = new createjs.Text(turnText, "20px Arial", "#ffffff");
+    turnInfoText.x = 800;
+    turnInfoText.textBaseline = "alphabetic";
+    turnInfoText.y = 0;
+    stage.addChild(turnInfoText);
+}
+
 function showTurnInfo(){
 	stage.removeChild(playerLabel);
 	stage.removeChild(playerLabelBg);
@@ -81,6 +92,7 @@ function showTurnInfo(){
 		stage.removeChild(playerLabel);
 		stage.removeChild(playerLabelBg);
 	}, 1000);
+    showTurnText();
 }
 
 
@@ -379,7 +391,8 @@ function initGame() {
 
         team = data.team;
         turn = data.turn;
-        console.log("turn: " + turn);
+
+        showTurnInfo();
 
 
 		that.buffEffects = data.buffEffects;
@@ -1484,6 +1497,7 @@ function moveUnit() {
   //stage.update();
   changed = true;
 }
+
 
 function sortIndices(unit) {
 	$.each(units, function(i, value) {
