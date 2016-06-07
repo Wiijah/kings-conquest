@@ -12,8 +12,26 @@ $(document).ready(function() {
   $('body').on('click', '#btn_start', function() {
     room_start();
   });
+
+   /* Attempt to join room (before entering pass - if any that is) */
+  $('body').on('click', '.kick_player', function() {
+    var target_id = $(this).attr("data-user-id");
+    room_kick(target_id);
+  });
 });
 
+
+function room_kick(target_id) {
+  console.log(target_id);
+  fs_load();
+  quickPost("ajax/room_kick", {room_id: room_id, target_id: target_id}, function(data, status) {
+    if (data.kc_error !== undefined) {
+      lightbox_alert("Error", data.kc_error);
+      return;
+    }
+    fs_unload();
+  });
+}
 function room_start() {
   fs_load();
   quickPost("ajax/room_ready", {room_id: room_id, ready: 'ready'}, function(data, status) {
@@ -47,7 +65,7 @@ function room_ready() {
 }
 function room_refresh_periodically() {
   room_refresh();
-  setTimeout("room_refresh_periodically()", 1000);
+  setTimeout("room_refresh_periodically()", 800);
 }
 
 var state_html_array = {"owner":"<span class='player_state owner'> Owner </span>",

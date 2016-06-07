@@ -2,7 +2,7 @@
 $title = "Room";
 require_once 'includes/header_checks.php';
 
-$result = $db->query("SELECT * FROM room_participants WHERE user_id = '{$user->id}' AND event = ''");
+$result = $db->query("SELECT * FROM room_participants WHERE user_id = '{$user->id}' AND event = '' ORDER BY room_id DESC LIMIT 1");
 if (!$part = $result->fetch_object()) {
   header ("Location: index");
   die();

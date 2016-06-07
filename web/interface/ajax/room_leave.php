@@ -18,10 +18,9 @@ if ($room->state != 'pregame') {
 }
 
 $result = $db->query("SELECT * FROM room_participants WHERE user_id = '{$user->id}' AND room_id = '{$room_id}' AND event = ''");
-if (!$participant = $result->fetch_object()) { //user already left
+if (!$part = $result->fetch_object()) { //user already left
   die('{"kc_success":""}');
 }
-
 
 /* Tell everyone you left */
 $message = $user->username." left the room.";
