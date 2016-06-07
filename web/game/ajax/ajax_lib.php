@@ -8,6 +8,9 @@ $ERROR_BAD_INPUT = 5; // user tried malicious input
 $ERROR_BLOCKED = 6; // user tried to build a unit in an obstacle
 $ERROR_TIMEOUT = 7; // time out
 $ERROR_NOT_YOUR_TURN = 8; //action when not user's turn
+$ERROR_PLAYER_LEFT_GAME = 9; //other player left the game
+$ERROR_UNKNOWN = 10; // something that shouldn't ever happen no matter what
+$ERROR_GAME_ENDED = 11;
 
 require_once '../../common.php';
 
@@ -27,9 +30,12 @@ $room_id = $player->room_id;
 /* Get room */
 $result = $db->query("SELECT * FROM rooms WHERE room_id = {$room_id}");
 $room = $result->fetch_object();
-if ($result->num_rows == 0 || $room->state != 'ingame') {
+if ($result->num_rows == 0) {
   exit_error($ERROR_NOT_IG); //room state isn't "in game"
 }
+
+if ($room->state == 'ended') exit_error($ERROR_GAME_ENDED);
+if ($room->state != 'ingame') exit_error($ERROR_NOT_IG);
 
 require_once '../includes/game_lib.php';
 

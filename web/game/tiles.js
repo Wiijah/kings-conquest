@@ -2112,8 +2112,14 @@ function handleOpponent(data) {
             console.log("handle change turn opp");
             changeTurn(data);
             break;
+        case "game_end":
+            gameEnd(data);
+            break;
     }
+}
 
+function gameEnd(data) {
+  window.location.href = '../interface/game_stats?room_id='+room_id;
 }
 
 function handleMove(action) {

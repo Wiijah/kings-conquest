@@ -55,6 +55,7 @@ if ($room->state != 'ingame') { // game not started yet
   $fetch = $result->fetch_object();
   $lastOppID = $fetch ? $fetch->opp_id : "0";
   echo "var lastOppID = {$lastOppID};";
+  echo "var room_id = {$room_id};";
   ?>
       </script>
   <script src="https://code.createjs.com/createjs-2015.11.26.min.js"></script>

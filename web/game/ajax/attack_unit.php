@@ -48,7 +48,7 @@ if (!$buff) {
 	$out .= "}";
 } else {
 	// remove buff
-	$db->query("DELETE FROM buff_instances WHERE unit_id = '{target_id}' AND buff_id = 4");
+	$db->query("DELETE FROM buff_instances WHERE unit_id = '{$target_id}' AND buff_id = 4");
 
 	$out = '{';
 	$out .= $SUCCESS.",";

@@ -14,7 +14,7 @@ echo genLightbox("Enter Room", "enter_room", "
     <tr><th>Room Password: <span class='required'>*</span></th><td><input type='password' class='text auto_off' id='join_pass' placeholder='Password' autocomplete='off' /></td></tr>
     </table>
     <div class='btn lightbox_btn' id='lightbox_btn_enter_room'>Join Room</div>
-    <div class='btn lightbox_btn lightbox_close' id='alert_btn'>Cancel</div>");
+    <div class='btn lightbox_btn lightbox_close'>Cancel</div>");
 
 $ach = array(
   '50_wins' => array("images/achievements/50_wins.png", "Won 50 games."),
