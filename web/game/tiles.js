@@ -1948,6 +1948,7 @@ function moveCharacter(unit) {
 }
 
 function serverValidate(type, unit, additionalArgs) {
+    console.log(type);
 	if (type == "move") {
         console.log(path);
         console.log(unit.unit_id);
@@ -1972,7 +1973,8 @@ function serverValidate(type, unit, additionalArgs) {
 		});
 	}
 	if (type === "attack") {
-		rawPost("ajax/attack_unit", {"attacker_id" : Stirng(unit.unit_id), "target_id" : String(additionalArgs[0].unit_id)}, function(data) {
+        console.log("validate attack");
+		rawPost("ajax/attack_unit", {"attacker_id" : String(unit.unit_id), "target_id" : String(additionalArgs[0].unit_id)}, function(data) {
 			console.log(data);
 			if (data.error_code != 0) {
 				console.log("ERROR");
@@ -2020,7 +2022,8 @@ function handleOpponent(data) {
             spawnUnit(unit);
             break;
         case "attack_unit":
-
+            console.log("handle attack unit");
+            handleAttack(data.action);
             break;
         case "skill":
             break;
