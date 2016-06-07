@@ -54,6 +54,16 @@ function jsonStr($key, $value, $braces = false) {
   return $out;
 }
 
+function jsonArray($array) {
+  $out = "";
+  $comma = "";
+  foreach ($array as $value) {
+    $out .= $comma.$value;
+    $comma = ",";
+  }
+  return "[{$out}]";
+}
+
 function jsonPair($key, $value, $braces = false) {
   $out = '"'.$key.'": '.$value;
   if ($braces) return "{".$out."}";

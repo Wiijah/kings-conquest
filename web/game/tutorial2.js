@@ -56,7 +56,7 @@ var undo = false;
 
 var bgMusic = true;
 
-//Tutorial 1
+//Tutorial 2
 var currentUnit;
 var enemyUnit;
 
@@ -187,7 +187,13 @@ function turnStartPhase() {
   // }, 6000);
 
   if (!turn && !enemyUnit.outOfMoves){
+    if (currentUnit.address == "graphics/spritesheet/stand/ss_archer_stand.png" && turnCount == 2) {
+      a_instruction5();
+    }
 
+    if (currentUnit.address == "graphics/spritesheet/stand/ss_wizard_stand.png" && turnCount == 2) {
+      w_instruction5();
+    }
 
     setTimeout(function(){
       showActionMenuNextToPlayer(enemyUnit);
@@ -197,20 +203,37 @@ function turnStartPhase() {
        var reachableTiles = findReachableTiles(enemyUnit.row, enemyUnit.column, enemyUnit.moveRange, true);
        highlightArea(reachableTiles, "graphics/tile/green_tile.png", ["click"], []);
     }, 2000);
-    
-    var row = currentUnit.row;
-    var column = currentUnit.column - 2;
+
+
+    // lalala
+    var reachableTiles = findReachableTiles(enemyUnit.row, enemyUnit.column, enemyUnit.moveRange, true);
+    var toX;
+    var toY;
+    var dist = 1000;
+    for (var i = 0; i < reachableTiles.length; i++) {
+      // console.log(reachableTiles[i]);
+      var newDist = Math.abs(reachableTiles[i][0] - currentUnit.row) + Math.abs(reachableTiles[i][1] - currentUnit.column);
+      // console.log(newDist);
+      if (newDist < dist) {
+        toX = reachableTiles[i][0];
+        toY = reachableTiles[i][1];
+        dist = newDist;
+      }
+    }
+
+    // console.log("closest: " + toX + " " + toY);
+
     var fromX = enemyUnit.row;
     var fromY = enemyUnit.column;
 
     setTimeout(function(){
-      findPath(fromX, fromY, row, column);
+      findPath(fromX, fromY, toX, toY);
       blockMaps[fromX][fromY] = 0;
       move();
       clearSelectionEffects();
-      enemyUnit.row = row;
-      enemyUnit.column = column;
-      blockMaps[row][column] = 1;
+      enemyUnit.row = toX;
+      enemyUnit.column = toY;
+      blockMaps[toX][toY] = 1;
     },3000);
     
 
@@ -229,7 +252,7 @@ function turnStartPhase() {
     //     }, 1000);
     //   },4000);
     // } else {
-        var reachableTiles = findReachableTiles(row, column, enemyUnit.attackRange, false);
+        var reachableTiles = findReachableTiles(toX, toY, enemyUnit.attackRange, false);
        setTimeout(function() {
        clearSelectionEffects();
 
@@ -451,10 +474,11 @@ function spawnUnit(data, isCreation, row, column, team){
     blockMaps[unit.row][unit.column] = 1;
 
     // Add the unit and its hp bar to the stage
+    if(startTutorial || unit.team == 0){
       draggable.addChild(unit);
       draggable.addChild(hp_bar);
       chars.addChild(spawnAnimation);
-    
+    }
 
     sortIndices(unit);
 
@@ -515,7 +539,7 @@ function initGame() {
   chars = new createjs.Container();
   stage.addChild(chars);
 
-  $.getJSON('tutorial1.json', function(data) {
+  $.getJSON('tutorial2.json', function(data) {
     that.mapData = data['main'];
         that.classStats = data.classStats;
     console.log("init game");
@@ -765,7 +789,7 @@ function updateHP_bar(unit){
       removeBuff(i, unit);
     }
     if (unit.address == "graphics/spritesheet/stand/ss_king_stand.png" && unit.team == 0){
-       if (!tutorialStart) reSpawn();
+      reSpawn();
     }
    
   } else {
@@ -808,10 +832,10 @@ function drawUnitCreationMenu() {
   listOfSources.push("graphics/card/wizard_card.png");
   listOfSources.push("graphics/card/dragon_card.png");
   //listOfSources.push("graphics/card/rogue_card.png");
-  //createFloatingCards(listOfSources, ["king","knight","archer","wizard","dragon"]);
-  //unitCreationMenu.x = 50;
-  //unitCreationMenu.y = window.innerHeight - 130;
-  //bottomInterface.addChild(unitCreationMenu);
+  createFloatingCards(listOfSources, ["king","knight","archer","wizard","dragon"]);
+  unitCreationMenu.x = 50;
+  unitCreationMenu.y = window.innerHeight - 130;
+  bottomInterface.addChild(unitCreationMenu);
 }
 
 function findAvailableAndNonAvailableSpawnTiles() {
@@ -848,26 +872,31 @@ function createFloatingCards(listOfSources, correspondingUnit) {
     switch(unitCards[i].unitName ){
       case "king":
         unitCards[i].addEventListener("click", function(event) {
+                    if (!turn) return;
                     showKingTutorial();
         });
         break;
       case "knight": 
         unitCards[i].addEventListener("click", function(event) {
+                    if (!turn) return;
                     showKnightTutorial();
         });
         break;
       case "archer": 
         unitCards[i].addEventListener("click", function(event) {
+                    if (!turn) return;
                     showArcherTutorial();
         });
         break;
       case "wizard": 
         unitCards[i].addEventListener("click", function(event) {
+                    if (!turn) return;
                     showWizardTutorial();
         });
         break;
       case "dragon":
         unitCards[i].addEventListener("click", function(event) {
+                    if (!turn) return;
                     showDragonTutorial();
         });
         break;
@@ -964,8 +993,36 @@ function addEventListenersToUnit(unit) {
               firstClickUnit = false;
               chars.removeChild(pointerVertical);
               hideButton();
-              stats_instruction();
+              k_instruction2();
             }
+
+            if (unit.team == 1 && unit.address == "graphics/spritesheet/stand/ss_knight_stand.png" && firstClickUnit) {
+              firstClickUnit = false;
+              chars.removeChild(pointerVertical);
+              hideButton();
+              kt_instruction2();
+            }
+
+            if (unit.team == 1 && unit.address == "graphics/spritesheet/stand/ss_archer_stand.png" && firstClickUnit) {
+              firstClickUnit = false;
+              chars.removeChild(pointerVertical);
+              hideButton();
+              a_instruction2();
+            }
+
+            if (unit.team == 1 && unit.address == "graphics/spritesheet/stand/ss_wizard_stand.png" && firstClickUnit) {
+              firstClickUnit = false;
+              chars.removeChild(pointerVertical);
+              hideButton();
+              w_instruction2();
+            }
+            if (unit.team == 1 && unit.address == "graphics/spritesheet/stand/ss_dragon_stand.png" && firstClickUnit) {
+              firstClickUnit = false;
+              chars.removeChild(pointerVertical);
+              hideButton();
+              d_instruction2();
+            }
+
 
             if (isInHighlight && !isAttacking && !isCasting){
                 return;
@@ -981,10 +1038,6 @@ function addEventListenersToUnit(unit) {
             // In this case, we are selecting the unit to be attacked
             if (selectedCharacter != unit && isAttacking && selectedCharacter.team != unit.team) {
                 $.each(highlighted, function(i, coord) {
-                  if (!attackTutorialDone){
-                      removeAllPointer();
-                      attack_instruction3();
-                    }
                     if (unit.row === coord.row && unit.column === coord.column) {
                         attack(selectedCharacter, unit);
                         clearSelectionEffects();
@@ -1193,7 +1246,7 @@ function displayStats(unit) {
 }
 
 function drawGame() {
-  $.getJSON('tutorial1.json', function(data) {
+  $.getJSON('tutorial2.json', function(data) {
     that.mapData = data['main'];
     that.drawMap(that.mapData);
 
@@ -1235,14 +1288,12 @@ function showActionMenuNextToPlayer(unit) {
   moveSource = unit.canMove === 1 && unit.outOfMoves === 0 ? "graphics/ingame_menu/new_move.png"
                     : "graphics/ingame_menu/new_move_gray.png";
   moveButton = createClickableImage(moveSource, unit.x + 48, unit.y - 147, function() {
-    if(!interfaceIntroDone) return;
+
+    if (firstClickSkill) return;
     if (unit.canMove) {
       undoHighlights();
-      removeAllPointer();
       // drawRange(findReachableTiles(unit.column, unit.row, unit.moveRange, true), 0);
       moveCharacter(unit);
-      move_instruction1();
-      firstClickMove = false;
     }
   });
 
@@ -1250,7 +1301,7 @@ function showActionMenuNextToPlayer(unit) {
                    : "graphics/ingame_menu/new_attack_gray.png";
   attackButton = createClickableImage(attackSource, unit.x + 48, unit.y - 119, function() {
 
-    if (!moveTutorialDone) return;
+    if (firstClickSkill) return;
     if (unit.canAttack) {
       undoHighlights();
       // isAttacking = true;
@@ -1263,7 +1314,33 @@ function showActionMenuNextToPlayer(unit) {
   skillSource = unit.skillCoolDown === 0 && unit.outOfMoves === 0 ? "graphics/ingame_menu/new_skill.png"
                    : "graphics/ingame_menu/new_skill_gray.png";
   skillButton = createClickableImage(skillSource, unit.x + 48, unit.y - 91, function() {
-    return;
+
+    if (unit.team == 1 && unit.address == "graphics/spritesheet/stand/ss_king_stand.png" && firstClickSkill) {
+      k_instruction3();
+      firstClickSkill = false;
+      chars.removeChild(pointerHorizontal);
+    }
+    if (unit.team == 1 && unit.address == "graphics/spritesheet/stand/ss_knight_stand.png" && firstClickSkill) {
+      kt_instruction3();
+      firstClickSkill = false;
+      chars.removeChild(pointerHorizontal);
+    }
+    if (unit.team == 1 && unit.address == "graphics/spritesheet/stand/ss_archer_stand.png" && firstClickSkill) {
+      a_instruction3();
+      firstClickSkill = false;
+      chars.removeChild(pointerHorizontal);
+    }
+    if (unit.team == 1 && unit.address == "graphics/spritesheet/stand/ss_wizard_stand.png" && firstClickSkill) {
+      w_instruction3();
+      firstClickSkill = false;
+      chars.removeChild(pointerHorizontal);
+    }
+    if (unit.team == 1 && unit.address == "graphics/spritesheet/stand/ss_dragon_stand.png" && firstClickSkill) {
+      d_instruction3();
+      firstClickSkill = false;
+      chars.removeChild(pointerHorizontal);
+    }
+
 
     if (unit.skillCoolDown === 0) {
       undoHighlights();
@@ -1275,7 +1352,7 @@ function showActionMenuNextToPlayer(unit) {
   cancelSource = "graphics/ingame_menu/new_cancel.png";
   cancelButton = createClickableImage(cancelSource, unit.x + 48, unit.y - 63, function() {
 
-    return;
+    if (firstClickSkill) return;
     clearSelectionEffects();
   });
 
@@ -1952,7 +2029,7 @@ function drawMap(data) {
           } else if(isDisplayingMenu && !endCurrentUnitTutorial) {
               return;
           } else {
-             if (endCurrentUnitTutorial) clearSelectionEffects();
+             clearSelectionEffects();
           }
 
         });
@@ -2027,20 +2104,23 @@ function keyEvent(event) {
               clearSelectionEffects();
             }
             break;
+        case 67:
+          draggable.x = 0;
+          draggable.y = 0;
+          break; 
         case 77: //m
 
+          if (firstClickSkill) return;
           if (isDisplayingMenu) {
-            if(!interfaceIntroDone) return;
             if (selectedCharacter.canMove) {
-              undoHighlights();
-              // drawRange(findReachableTiles(unit.column, unit.row, unit.moveRange, true), 0);
-              moveCharacter(selectedCharacter);
-              removeAllPointer();
-            }
+          undoHighlights();
+          // drawRange(findReachableTiles(unit.column, unit.row, unit.moveRange, true), 0);
+          moveCharacter(selectedCharacter);
+        }
           }
           break;
         case 65: //a
-          if (!moveTutorialDone) return;
+          if (firstClickSkill) return;
           if (isDisplayingMenu) {
             if (selectedCharacter.canAttack) {
           undoHighlights();
@@ -2051,8 +2131,11 @@ function keyEvent(event) {
         }
       }
       break;
+    case 82: //r
+      if (endGame){
+        location.reload();
+      }
     case 83: //s
-      return;
       if (isDisplayingMenu) {
         removeAllPointer();
         if (currentUnit.address == "graphics/spritesheet/stand/ss_king_stand.png" && firstClickSkill) {
@@ -2112,6 +2195,10 @@ function keyEvent(event) {
     case 70:
 //      goFullScreen();
       break;
+        case 13: //enter
+          if (!endGame) {
+            endTurn();
+          }
     }
 }
 function endTurn(){
@@ -2180,8 +2267,7 @@ function update() {
     drag_box.y = draggable.y; 
 
   stage.addChild(statsDisplay);
-  stage.setChildIndex( statsDisplay, 2);
-  //stage.addChild(unitCreationMenu);
+  stage.addChild(unitCreationMenu);
 }
 var tile_type;
 var tile_info_address;
@@ -2251,18 +2337,10 @@ function moveCharacter(unit) {
   unit.prevColumn = unit.column;
   var reachableTiles = findReachableTiles(unit.row, unit.column, unit.moveRange, true);
   highlightArea(reachableTiles, "graphics/tile/green_tile.png", ["click"], [function(event) {
-
     var fromX = selectedCharacter.row;
     var fromY = selectedCharacter.column;
     var tile = event.target;
     findPath(fromX, fromY, tile.row, tile.column);
-    if (moveTutorialDone || tile.row != 2 || tile.column != 2){
-      return;
-    }
-    if (!moveTutorialDone) {
-      removeAllPointer();
-      move_instruction2();
-    }
     blockMaps[fromX][fromY] = 0;
     move();
     blockMaps[tile.row][tile.column] = 1;
@@ -2276,10 +2354,13 @@ function moveCharacter(unit) {
 
 function performAttack() {
 
-  if (!attackTutorialDone){
-    removeAllPointer();
-    attack_instruction2();
+  if (archerSkillDone && currentUnit.address == "graphics/spritesheet/stand/ss_archer_stand.png") {
+    console.log("Second perform attack!!");
+    if(!endCurrentUnitTutorial) a_instruction4();
+  } else {
+    console.log("First perform attack!!")
   }
+
   isAttacking = true;
   var reachableTiles = findReachableTiles(selectedCharacter.row, selectedCharacter.column, selectedCharacter.attackRange, false);
   highlightArea(reachableTiles, "graphics/tile/red_tile.png", ["click"], [function(event) {
@@ -2289,10 +2370,7 @@ function performAttack() {
         attack(selectedCharacter, unit);
         selectedCharacter.attack = selectedCharacter.base_attack;
         clearSelectionEffects();
-        if (!attackTutorialDone){
-          removeAllPointer();
-          attack_instruction3();
-        }
+        
         if (remainingAttackTimes > 0) {
           setTimeout(function() {
             performAttack();
@@ -2328,7 +2406,7 @@ function highlightArea(tiles, imgSource, callBackEventNames, callBackFunctions) 
     bmp.row = tiles[i][0];
     bmp.column = tiles[i][1];
     for (var j = 0; j < callBackEventNames.length; j++) {
-        bmp.addEventListener(callBackEventNames[j], callBackFunctions[j]);
+      bmp.addEventListener(callBackEventNames[j], callBackFunctions[j]);
     }
     upper.addChild(bmp);
     highlighted.push(bmp);
@@ -2367,11 +2445,9 @@ function resetCarmera(){
 
 //Tutorial Support Function ===========
 var startTutorial = false;
-var interfaceIntroDone = false;
 var endCurrentUnitTutorial = false;
 var firstClickUnit;
 var firstClickSkill;
-var firstClickMove;
 var pv_spritesheet;
 var ph_spritesheet;
 var pointerVertical;
@@ -2435,7 +2511,7 @@ function addPointerToTile(column, row){
 }
 
 
-function addPointerNearPlayerMove(){
+function addPointerNearPlayerSkill(){
   ph_spritesheet = new createjs.SpriteSheet({
             "images": ["graphics/tutorial/pointerH.png"],
             "frames": {"regX": 0, "height": 142, "count": 2, "regY": -10, "width": 142 },
@@ -2448,24 +2524,7 @@ function addPointerNearPlayerMove(){
   pointerHorizontal.scaleX = 0.7;
   pointerHorizontal.scaleY = 0.6;
   pointerHorizontal.x = currentUnit.x + 130;
-  pointerHorizontal.y = currentUnit.y - 180;
-  chars.addChild(pointerHorizontal);
-}
-
-function addPointerNearPlayerAttack(){
-  ph_spritesheet = new createjs.SpriteSheet({
-            "images": ["graphics/tutorial/pointerH.png"],
-            "frames": {"regX": 0, "height": 142, "count": 2, "regY": -10, "width": 142 },
-            "animations": {
-              "pointer":[0,1]
-            },
-            framerate: 2
-      });
-  pointerHorizontal = new createjs.Sprite(ph_spritesheet, "pointer");
-  pointerHorizontal.scaleX = 0.7;
-  pointerHorizontal.scaleY = 0.6;
-  pointerHorizontal.x = currentUnit.x + 130;
-  pointerHorizontal.y = currentUnit.y - 160;
+  pointerHorizontal.y = currentUnit.y - 125;
   chars.addChild(pointerHorizontal);
 }
 
@@ -2480,7 +2539,6 @@ function resetInsturctions(){
   showButton();
   removeAllPointer();
   firstClickUnit = true;
-  firstClickMove = true;
   firstClickSkill = true;
   iscasting = false;
   isAttacking = false;
@@ -2488,221 +2546,395 @@ function resetInsturctions(){
   removeBox();
 }
 
+// King Tutorial ==========================
 
-function showMaskBox(){
-  var box1 = document.getElementById("maskBox1");
-  var box2 = document.getElementById("maskBox2");
-  box1.style.display = "inline-block";
-  box2.style.display = "inline-block";
-}
-function hideMaskBox(){
-  var box1 = document.getElementById("maskBox1");
-  var box2 = document.getElementById("maskBox2");
-  box1.style.display = "none";
-  box2.style.display = "none";
-}
-
-
-
-// Interface Intro ==========================
-var tutorialStart = false;
-function backgroundInfo(){
-  draggable.mouseChildren = true;
+function showKingTutorial(){
   turnCount = 0;
   resetInsturctions();
   displayBox(function() {
-    unit_instruction();
+    k_instruction();
   });
-  addTitleToBox("Introduction");
-  addTextToBox("<p>The colour of HP bar indicates the team of units. In this tutorial you will be the blue team.</p>");
+  addTitleToBox("King");
+  addTextToBox("<p>The king is the core of the army. He has really high HP and balanced damage and range.</p><p>Normal Attack: 25</p><p>Skill: Battle Cry</p><p>(Increase all team units' base attack by 20%.)</p>");
   resetTheGame();
   spawnUnit(that.classStats.kingClass, true, 2, 5, 1);
   clearSelectionEffects();
   resetCarmera();
-  tutorialStart = true;
 }
 
-function unit_instruction(){
+
+function k_instruction(){
   removeBox();
   displayBox(function() {
     removeBox();
   });
+  addTitleToBox("King");
+  addTextToBox("<p>Click on your king and check the attack damage on the stats board.</p>");
   hideButton();
   addPointerToPlayerUnit();
-  addTitleToBox("Unit");
-  addTextToBox("<p> Here is your king, Now let's try click the king to see more information.</p>");
 }
 
-function stats_instruction(){
+
+function k_instruction2(){
   removeBox();
   displayBox(function() {
-    hp_instruction();
+    removeBox();
+  });
+  addTitleToBox("King");
+  addTextToBox("<p>King's default attack damage is 25. Now try to click on the skill button (Or press 'S' on your keyboard) to use king's skill. </p>");
+  addPointerNearPlayerSkill();
+}
+
+
+function k_instruction3(){
+  removeBox();
+  displayBox(function() {
+    removeBox();
+    k_instruction4();
   });
   showButton();
+  addTitleToBox("King");
+  addTextToBox("<p>Well Done. However any unit in King's Conquest can't move or attack anymore after using the skill. So remember to move to a good position before using skill. Now it's enemy's turn.</p>");
+}
+
+function k_instruction4(){
+  endTurn();
+  removeBox();
+  displayBox2(function() {
+    removeBox();
+    checkCompleness();
+  },function(){
+    removeBox();
+    showKnightTutorial();
+    checkCompleness();
+  });
+  addTextToButton("OK");
+  addTextToButton2("Next");
+  addTitleToBox("King");
+  addTextToBox("<p>Excellent! Now you know how to use the king's skill.</p> <p>Click 'OK' to continue to play as the king or try another unit by clicking on the corresponding card in the bottom left corner of the window. </p><p>Click 'Next' to play the Knight Tutorial</p>");
+  kingDone = 1;
+  endCurrentUnitTutorial = true;
+}
+
+
+// Knight tutorial ==================
+
+function showKnightTutorial(){
+  turnCount = 0;
+  resetInsturctions();
+  displayBox(function() {
+    kt_instruction();
+  });
+  addTextToBox("<p>A knight has really strong defensive abilities with his heavy armor. Because of this, knight has a short moving range compared to other classes. However knights are the best in melee combat. Be careful if they are in front of you.</p><p>Normal Attack: 40</p><p>Skill: Holy Shield</p><p>(Can block any damage from enemy once before getting destroyed.)</p>");
+  addTitleToBox("Knight");
+  resetTheGame();
+
   addTextToButton("Next");
+  spawnUnit(that.classStats.knightClass, true, 2, 5, 1);
+  clearSelectionEffects();
+  resetCarmera();
+}
+
+function kt_instruction(){
+  removeBox();
+  displayBox(function() {
+    removeBox();
+  });
+  addTitleToBox("Knight");
+  addTextToBox("<p>Click on your Knight and check the stats board.</p>");
+  hideButton();
   addPointerToPlayerUnit();
-  addTitleToBox("Stats Board");
-  addTextToBox("<p> Well done. Now you can see the detail information of the current unit on the right buttom cornor. Once you click on your unit you can see all details information of this unit. However if you click the opponent's unit you can only see it's HP.</p>");
-  removeAllPointer();
-  showMaskBox();
-}
-function hp_instruction(){
-  ph_spritesheet = new createjs.SpriteSheet({
-            "images": ["graphics/tutorial/pointerH.png"],
-            "frames": {"regX": 0, "height": 142, "count": 2, "regY": -10, "width": 142 },
-            "animations": {
-              "pointer":[0,1]
-            },
-            framerate: 2
-      });
-  pointerHorizontal = new createjs.Sprite(ph_spritesheet, "pointer");
-  pointerHorizontal.scaleX = 0.7;
-  pointerHorizontal.scaleY = 0.6;
-  pointerHorizontal.x = statsDisplay.x + 35;
-  pointerHorizontal.y = statsDisplay.y + 50;
-  chars.addChild(pointerHorizontal);
-  stage.setChildIndex( pointerHorizontal, stage.getNumChildren()-1);
-  removeBox();
-  displayBox(function() {
-    attack_instruction();
-  });
-  addTextToButton("Next");
-  addTitleToBox("Hit Point (HP)");
-  addTextToBox("<p> HP indicates the hit points of the unit, the unit will die if its HP is less or equal to 0.</p><p>If you kill the enemy's king (attack him and let his HP reduce to 0, you win the game, and vise versa)</p>");
-}
-function attack_instruction(){
-  pointerHorizontal.y += 15;
-  removeBox();
-  displayBox(function() {
-    //luck_instruction();
-    range_instruction();
-  });
-  addTextToButton("Next");
-  addTitleToBox("Attack Damage (ATK)");
-  addTextToBox("<p> ATK is the damage you could give to the enemy target when attack.</p> <p>(Some skill might increase or decrease units' base attack damage. Will be explain in detail in Tutorial 2)</p>");
-}
-function range_instruction(){
-  pointerHorizontal.y  += 15;
-  removeBox();
-  displayBox(function() {
-    skill_instruction();
-  });
-  addTextToButton("Next");
-  addTitleToBox("Attack Range (RNG)");
-  addTextToBox("<p> RNG indicates the range of current unit can reach when the unit attacks. The range differs between units. </p> <p>(The attack range will be shown as red tiles after you click on attack button)</p>");
-}
-function skill_instruction(){
-  pointerHorizontal.y  += 15;
-  removeBox();
-  displayBox(function() {
-    cd_instruction();
-  });
-  addTextToButton("Next");
-  addTitleToBox("Skill");
-  addTextToBox("<p> Each unit has a unique skill. A unit can use its skill if the cool down for the skill is 0. </p><p> (Will be explain in detail in Tutorial 2)</p>");
-}
-function cd_instruction(){
-  pointerHorizontal.y  += 15;
-  removeBox();
-  displayBox(function() {
-    moveRange_instruction();
-  });
-  addTextToButton("Next");
-  addTitleToBox("Cool Down (CD)");
-  addTextToBox("<p> CD indicates how many turns left until the unit can use its skill again. CD will reduce by 1 each turn.</p> <p>The CD differs between units. Some skills have longer CD.</p>");
-}
-function moveRange_instruction(){
-  pointerHorizontal.y  += 15;
-  removeBox();
-  displayBox(function() {
-    luck_instruction();
-  });
-  addTextToButton("Next");
-  addTitleToBox("Move Range");
-  addTextToBox("<p> Move Range is similar to the Attack Range, it indicates the positions that the unit can move to in one turn. Move range differs between units.</p><p>(The move range will be shown as green tiles after you click on move button)</p>");
-}
-function luck_instruction(){
-  pointerHorizontal.y  += 15;
-  removeBox();
-  displayBox(function() {
-    ingameMenu_instruction();
-  });
-  addTextToButton("Next");
-  addTitleToBox("Luck");
-  addTextToBox("<p> Luck is a fixed for each unit, it indicates the chance to get a critical hit when dealing demage to enemy units. (E.g. Luck = 0.2 means 20% chance to critical Hit)</p><p>(Critical Hit deals twice the damage as the normal attack)</p>");
-}
-function ingameMenu_instruction(){
-  removeBox();
-  hideMaskBox();
-  removeAllPointer();
-  displayBox(function() {
-    ingameMenu_instruction();
-  });
-  hideButton();
-  addPointerNearPlayerMove();
-  addTitleToBox("In Game Menu");
-  addTextToBox("<p>This is the in game menu. It will be shown once you click on your units.</p><p>Now let's try to move our king first. Click on the Move in the menu, or press 'M' on your keyboard.</p>");
-  interfaceIntroDone = true;
 }
 
-// Move Tutorial
-var moveTutorialDone = false;
-function move_instruction1(){
-  removeBox();
-  displayBox(function() {
-    move_instruction2();
-  });
-  addTitleToBox("Move");
-  addTextToBox("<p>Good! Now you can see the gree tiles are the moving range of your king. Let's try to move your king closer to the enemy! Click on the tile to move.</p>");
-  addPointerToTile(2, 2);
-}
-
-function move_instruction2(){
-  removeBox();
-  displayBox(function() {
-    attack_instruction1();
-    moveTutorialDone = true;
-  });
-  showButton();
-  addTitleToBox("Move");
-  addTextToBox("<p> Well Done! And you can see the move button becomes gray now, each unit only can move once each turn. </p><p>(If you are now satified with the current position before you do any attack or using any skill, you can press 'space' on your keyboard to undo the previous move.)</p></p>The enemy king doesn't have much HP left, let's give him a fatal attack.</p>");
-}
-
-// Attack Tutorial
-var attackTutorialDone = false;
-function attack_instruction1(){
+function kt_instruction2(){
   removeBox();
   displayBox(function() {
     removeBox();
   });
-  hideButton();
-  addPointerNearPlayerAttack();
-  addTitleToBox("Attack");
-  addTextToBox("<p> Click on the Attack Button or press 'A' on your keyboard to attack.</p>");
+  addTitleToBox("Knight");
+  addTextToBox("<p>Now try to click on the skill button (Or press 'S' on your keyboard) to use Knight's skill. </p>");
+  addPointerNearPlayerSkill();
 }
 
-function attack_instruction2(){
+function kt_instruction3(){
+  removeBox();
+  displayBox(function() {
+    removeBox();
+    endTurn();
+  });
+  showButton();
+  addTextToButton("Next");
+  addTitleToBox("Knight");
+  addTextToBox("<p>Well Done. If you can not reach any unit in this turn, setting up your shield will be the best choice. Now it's enemy's turn. Let's see your how powerful the shield is.</p>");
+}
+
+function kt_instruction4(){
+  removeBox();
+  displayBox2(function() {
+    checkCompleness();
+    removeBox();
+  },function(){
+    removeBox();
+    showArcherTutorial();
+    checkCompleness();
+  });
+  addTextToButton("OK");
+  addTitleToBox("Knight");
+  addTextToBox("<p>Excellent! You take zero damage from the enemy king.</p> <p>Click 'OK' to continue to play as the knight or try another unit by clicking on the corresponding card in the bottom left corner of the window. </p><p>Click 'Next' to play the Archer Tutorial</p>");
+  knightDone = 1;
+  endCurrentUnitTutorial = true;
+}
+
+// Archer tutorial ==================
+
+
+function showArcherTutorial(){
+  turnCount = 0;
+  archerSkillDone = false;
+  resetInsturctions();
+  displayBox(function() {
+    a_instruction();
+  });
+  addTextToBox("<p>An archer is the master of using the bow and arrows. Really large attack range and he knows the weakness of enermy have a really high critical chance. </p> <p>Normal Attack: 20</p><p> Skill: Double Shoot</p><p>(shoot two fatal arrows to targets the arrow will decrease the target's base attack damage by 20% for 3 turns.)</p>");
+  addTitleToBox("Archer");
+  addTextToButton("Next");
+  resetTheGame();
+  spawnUnit(that.classStats.archerClass, true, 2, 5, 1);
+  clearSelectionEffects();
+  resetCarmera();
+}
+
+function a_instruction(){
   removeBox();
   displayBox(function() {
     removeBox();
   });
-  addPointerToEnemyUnit();
-  addTitleToBox("Attack");
-  addTextToBox("<p> Nice! You can see the enemy king is in our attack range, try to click on the king to perform attack.</p>");
+  addTitleToBox("Archer");
+  addTextToBox("<p>Click on your Archer and check the stats board.</p>");
+  hideButton();
+  addPointerToPlayerUnit();
 }
 
-function attack_instruction3(){
-  attackTutorialDone = true;
+function a_instruction2(){
   removeBox();
   displayBox(function() {
-    //To Tutorial 2
-    window.location.replace("http://localhost/WebAppGroup22/web/game/tutorial2.php");
+    removeBox();
   });
-  showButton();
-  addPointerToEnemyUnit();
-  addTitleToBox("!!!Congratulations!!!");
-  addTextToBox("<p> Well Done! Now you know how the move and attack works in King's Conquest. In the next Chapter, you will learn how to build your own army to fight against the enemy. </p><p>Click 'Next' to Tutorial2</p>");
-  stage.mouseChildren = false;
+  addTitleToBox("Archer");
+  addTextToBox("<p>Now try to click on the skill button (Or press 'S' on your keyboard) to use Archer's skill. </p>");
+  addPointerNearPlayerSkill();
 }
 
-// End Tutorial
+function a_instruction3(){
+  removeBox();
+  displayBox(function() {
+    removeBox();
+  });
+  addTitleToBox("Archer");
+  addTextToBox("<p>You can see the range of your skill, click on the enemy king to give him the first hit.</p>");
+  addPointerToEnemyUnit();
+}
+
+function a_instruction4(){
+  removeBox();
+  displayBox(function() {
+    removeBox();
+    endTurn();
+    a_instruction5();
+  });
+  addTitleToBox("Archer");
+  addTextToBox("<p>Nice one. You can now give the enemy king another shoot.</p> <p>In real game, you might use archer skill on two different units to decrease their demage</p>");
+}
+
+function a_instruction5(){
+  removeBox();
+  displayBox2(function() {
+    checkCompleness();
+    removeBox();
+  },function(){
+    removeBox();
+    showWizardTutorial();
+    checkCompleness();
+  });
+  addTextToButton("OK");
+  addTitleToBox("Archer");
+  addTextToBox("<p>Excellent! Now you know the skill of archer.</p> <p>Click 'OK' to continue to play as the archer or try another unit by clicking on the corresponding card in the bottom left corner of the window. </p><p>Click 'Next' to play the Wizard Tutorial</p>");
+  archerDone = 1;
+  endCurrentUnitTutorial = true;
+}
+
+// Wizard tutorial ==================
+
+function showWizardTutorial(){
+  turnCount = 0;
+  resetInsturctions();
+  displayBox(function() {
+    w_instruction();
+  });
+  addTextToBox("<p>A wizard uses arcane magic. Can deal really high AOE (Area of effect) demage and burn the targets. However wizards are less effective in melee combat. </p> <p>Normal Attack: 15 </p><p>Skill: Burning</p><p>(maximum 5 target in a cross) and the targets get 2% of its maximum health burning demage each turn.)</p>");
+  addTitleToBox("Wizard");
+  resetTheGame();
+  addTextToButton("Next");
+  spawnUnit(that.classStats.wizardClass, true, 2, 5, 1);
+  clearSelectionEffects();
+  resetCarmera();
+}
+
+function w_instruction(){
+  removeBox();
+  displayBox(function() {
+    removeBox();
+  });
+  addTitleToBox("Wizard");
+  addTextToBox("<p>Click on your Wizard and check the stats board.</p>");
+  hideButton();
+  addPointerToPlayerUnit();
+}
+
+function w_instruction2(){
+  removeBox();
+  displayBox(function() {
+    removeBox();
+  });
+  addTitleToBox("Wizard");
+  addTextToBox("<p>Now try to click on the skill button (Or press 'S' on your keyboard) to use Wizard's skill. </p>");
+  addPointerNearPlayerSkill();
+}
+
+function w_instruction3(){
+  removeBox();
+  displayBox(function() {
+    removeBox();
+  });
+  addTitleToBox("Wizard");
+  addTextToBox("<p>You can see the range of your skill, you can hit at maximum 5 units in the green cross, click on the tile in front of enemy king to cast the fire ball.</p>");
+}
+
+function w_instruction4(){
+  removeBox();
+  displayBox(function() {
+    removeBox();
+    endTurn();
+    w_instruction5();
+  });
+  showButton();
+  addTitleToBox("Wizard");
+  addTextToBox("<p>Good job! Now the enemy king is burned, and will lose health in each turn for the next five turns! </p>");
+}
+
+function w_instruction5(){
+  removeBox();
+  displayBox2(function() {
+    checkCompleness();
+    removeBox();
+  },function(){
+    removeBox();
+    showDragonTutorial();
+    checkCompleness();
+  });
+  addTextToButton("OK");
+  addTitleToBox("Wizard");
+  addTextToBox("<p>Excellent! You can see the burning effect on the enemy king. Now you know the wizard skill. </p> <p>Click 'OK' to continue to play as the wizard or try another unit by clicking on the corresponding card in the bottom left corner of the window. </p><p>Click 'Next' to play the Dragon Tutorial</p>");
+  wizardDone = 1;
+  endCurrentUnitTutorial = true;
+}
+
+// dragon 
+
+function showDragonTutorial(){
+  turnCount = 0;
+  resetInsturctions();
+  displayBox(function() {
+    d_instruction();
+  });
+  addTextToBox("<p> Dragon the most mysterious creature. It can control the ice and wind. Flying unit, can move over any terrains. </p> <p>Normal Attack: 35 </p><p>Skill: Icy Wind </p><p>(Deal AOE damage to maximum 5 units in a cross, and freeze them for 4 turns)</p>");
+  addTitleToBox("Dragon");
+  resetTheGame();
+  addTextToButton("Next");
+  spawnUnit(that.classStats.dragonClass, true, 2, 5, 1);
+  clearSelectionEffects();
+  resetCarmera();
+}
+
+function d_instruction(){
+  removeBox();
+  displayBox(function() {
+    removeBox();
+  });
+  addTitleToBox("Dragon");
+  addTextToBox("<p>Click on your Dragon and check the stats board.</p>");
+  hideButton();
+  addPointerToPlayerUnit();
+}
+
+
+function d_instruction2(){
+  removeBox();
+  displayBox(function() {
+    removeBox();
+  });
+  addTitleToBox("Dragon");
+  addTextToBox("<p>Now try to click on the skill button (Or press 'S' on your keyboard) to use Dragon's skill. </p>");
+  addPointerNearPlayerSkill();
+}
+
+function d_instruction3(){
+  removeBox();
+  displayBox(function() {
+    removeBox();
+  });
+  addTitleToBox("Dragon");
+  addTextToBox("<p>You can see the range of your skill, you can hit at maximum 5 units in the green cross, click on the tile in front of enemy king to cast the Icy wind.</p>");
+}
+
+function d_instruction4(){
+  removeBox();
+  displayBox(function() {
+    removeBox();
+    endTurn();
+    d_instruction5();
+  });
+  showButton();
+  addTitleToBox("Dragon");
+  addTextToBox("<p>Well done! Now the enemy king is frozen, and he can't make any action in the next five turns! </p>");
+}
+
+function d_instruction5(){
+    removeBox();
+    displayBox2(function() {
+      removeBox();
+      checkCompleness();
+    },function(){
+      removeBox();
+      showKingTutorial();
+      checkCompleness();
+    });
+    showButton2();
+    addTextToButton("OK");
+    addTitleToBox("Dragon");
+    addTextToBox("<p>Excellent! You can see the frozen effect on the enemy king. Now you know the dragon skill. </p> <p>Click 'OK' continue to play as the dragon or try another unit by clicking on the corresponding card in the bottom left corner of the window. </p><p>Click 'Next' to play the King Tutorial</p>");
+    dragonDone = 1;
+    endCurrentUnitTutorial = true;
+}
+// Tutorial check finish all
+
+
+function checkCompleness(){
+  if ((kingDone + archerDone + knightDone + wizardDone + dragonDone) == 5){
+    endTutorial2();
+  }
+}
+
+function endTutorial2(){
+  removeBox();
+  displayBox2(function() {
+      removeBox();
+    },function(){
+      //To Tutorial 3
+      window.location.replace("http://localhost/WebAppGroup22/web/game/tutorial3.php");
+    });
+  addTitleToBox("!!!Congratulation!!!");
+  addTextToBox("<p>!!!Good job!!!</p><p>You finish Tutorial 2. Click 'OK' to stay in Tutorial 2</p> <p>Click 'Next' to start Tutorial 3</p>");
+}
+
+

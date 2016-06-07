@@ -1,17 +1,17 @@
 {
 	"main": {
-    	"0": [5,5,5,5,5,0,0,0],
-   		"1": [0,0,5,5,5,5,5,5],
-   		"2": [0,0,0,3,3,3,3,3],
-   		"3": [0,0,5,5,5,5,5,5],
-   		"4": [5,5,5,5,5,0,0,0]
+    	"0": [0,0,0,5,5,0,0,0],
+   		"1": [0,0,0,5,5,0,0,0],
+   		"2": [0,0,0,3,3,0,0,0],
+   		"3": [0,0,0,5,5,0,0,0],
+   		"4": [0,0,0,5,5,0,0,0]
 	},
 	"map_dimensions": {
 		"width": 8,
 		"height": 5
 	},
-	"P1currentGold": 5000,
-	"P2currentGold": 5000,
+	"P1currentGold": 500,
+	"P2currentGold": 500,
 	"buffEffects":{
 		"heal" : "graphics/spritesheet/spell/ss_heal.png",
 		"burning": "graphics/spritesheet/spell/ss_burning.png",
@@ -126,6 +126,52 @@
 		}
 	},
 	"characters": {
+		"red_castle": {
+			"className": "castle",
+			"address": "graphics/spritesheet/special_unit/ss_castle_red.png",
+			"spritesheet": "graphics/spritesheet/attack/ss_archer_attack.png",
+			"info": "graphics/card/castle_card.png",
+			"commandable": 0,
+			"hp" : 999,
+			"max_hp" : 999,
+			"attack" : 999,
+			"skill": "RED",
+			"skill_no": -1,
+			"luck":0,
+			"x" : 2,
+			"y" : 0,
+			"moveRange" : 0, 
+			"team": 0,
+			"attackRange" : 10,
+			"canMove" : 0,
+			"canAttack" : 1,
+			"skillCoolDown" : 0,
+			"outOfMoves" : 0,
+			"damageEffect": "graphics/spritesheet/spell/ss_physical_attack.png"
+		},
+		"blue_castle": {
+			"className": "castle",
+			"address": "graphics/spritesheet/special_unit/ss_castle_blue.png",
+			"spritesheet": "graphics/spritesheet/attack/ss_archer_attack.png",
+			"info": "graphics/card/castle_card.png",
+			"commandable": 0,
+			"hp" : 999,
+			"max_hp" : 999,
+			"attack" : 999,
+			"skill": "BLUE",
+			"skill_no": -1,
+			"luck":0,
+			"x" : 2,
+			"y" : 7,
+			"moveRange" : 0, 
+			"team": 1,
+			"attackRange" : 10,
+			"canMove" : 0,
+			"canAttack" : 1,
+			"skillCoolDown" : 0,
+			"outOfMoves" : 0,
+			"damageEffect": "graphics/spritesheet/spell/ss_physical_attack.png"
+		},
 		"kingRed": {
 			"address": "graphics/spritesheet/stand/ss_king_stand.png",
 			"spritesheet": "graphics/spritesheet/attack/ss_king_attack.png",
@@ -158,7 +204,7 @@
 			"skill_no": 0,
 			"luck": 0.2,
 			"x" : 2,
-			"y" : 5,
+			"y" : 6,
 			"moveRange" : 3,
 			"team": 1,
 			"attackRange" : 2,

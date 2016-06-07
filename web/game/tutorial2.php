@@ -41,52 +41,26 @@
 
   </head>
 
-  <body onload="displayBox(backgroundInfo);">
+  <body onload="displayBox(showKingTutorial);">
 
   <?php include 'includes/lightbox.php'; ?>
       
   <canvas id="gameCanvas" width="5000px" height="5000px"></canvas>
-  <script src="tutorial1.js"></script>
+  <script src="tutorial2.js"></script>
 
   <div id="someBox">
     <div id="box_header">
-      <img src="./i_icon.png" style="line-height: 1px; vertical-align: bottom; margin-right: 5px" height="20" width="20" />Tutorial 1 : Basics
+      <img src="./i_icon.png" style="line-height: 1px; vertical-align: bottom; margin-right: 5px" height="20" width="20" />Tutorial 2 : Intermediate
     </div>
     <div id="box_body">
-      Welcome to King's Conquest. Your top priority is to kill the enemy's king to win the game. In this tutorial, you will learn how to move a unit and attack an enemy<br /><br />
+      Now you know the unit creation system. There are several units with different skills in King's Conquest. In this tutorial, you are going to learn the skill of each unit. Click the unit cards to try different units.<br /><br />
     </div>
     <div id="box_foot">
-      <button type="button" id="actionButton" class="btn" ng-click="">OK</button>
+      <button type="button" id="actionButton" class="btn" ng-click="">Next</button>
       <button type="button" id="actionButton2" class="btn" ng-click="" style="display: none">OK</button>
     </div>
   </div>
-
-    <div id = "maskBox1"> <style>
-      #maskBox1 {
-        position:fixed;
-        z-index:30;
-        right:400px;
-        top:0;
-        background: rgba(0,0,0,.5);
-        width:100%;
-        height:100%;
-        display: none;
-       }
-       </style></div>
-    <div id = "maskBox2"> <style>
-      #maskBox2 {
-        position:fixed;
-        z-index: 30;
-        margin-left: 100%;
-        left: -400px;
-        bottom: 200px;
-        background: rgba(0,0,0,.5);
-        width:100%;
-        height:100%;
-        display: none;
-       }
-       </style></div>
-</body>
+  </body>
 </html>
 
 

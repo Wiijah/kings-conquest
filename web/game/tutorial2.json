@@ -1,10 +1,10 @@
 {
 	"main": {
-    	"0": [5,5,5,5,5,5,0,0],
-   		"1": [5,5,5,5,5,5,5,5],
-   		"2": [5,1,1,0,0,1,1,5],
-   		"3": [5,5,5,5,5,5,5,5],
-   		"4": [5,5,5,5,5,5,0,0]
+    	"0": [5,5,5,5,5,0,0,0],
+   		"1": [0,0,5,5,5,5,5,5],
+   		"2": [0,0,0,3,3,3,3,3],
+   		"3": [0,0,5,5,5,5,5,5],
+   		"4": [5,5,5,5,5,0,0,0]
 	},
 	"map_dimensions": {
 		"width": 8,
@@ -22,8 +22,8 @@
 			"address": "graphics/spritesheet/stand/ss_king_stand.png",
 			"spritesheet": "graphics/spritesheet/attack/ss_king_attack.png",
 			"info": "graphics/card/king_card.png",
-			"hp" : 20,
-			"max_hp" : 20,
+			"hp" : 400,
+			"max_hp" : 400,
 			"attack" : 25,
 			"skill": "Buffer",
 			"skill_no": 0,
@@ -130,8 +130,8 @@
 			"address": "graphics/spritesheet/stand/ss_king_stand.png",
 			"spritesheet": "graphics/spritesheet/attack/ss_king_attack.png",
 			"info": "graphics/card/king_card.png",
-			"hp" : 20,
-			"max_hp" : 20,
+			"hp" : 400,
+			"max_hp" : 400,
 			"attack" : 25,
 			"skill": "Buffer",
 			"skill_no": 0,
@@ -151,8 +151,8 @@
 			"address": "graphics/spritesheet/stand/ss_king_stand.png",
 			"spritesheet": "graphics/spritesheet/attack/ss_king_attack.png",
 			"info": "graphics/card/king_card.png",
-			"hp" : 20,
-			"max_hp" : 20,
+			"hp" : 400,
+			"max_hp" : 400,
 			"attack" : 25,
 			"skill": "Buffer",
 			"skill_no": 0,
