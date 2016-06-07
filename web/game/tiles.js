@@ -2008,8 +2008,9 @@ function serverValidate(type, unit, additionalArgs) {
 				console.log("ERROR");
 				return;
 			}
-			if (data.action.type === "attack_unit") handleAttack(data.action);
-            else removeBuff(data.action.buff_id, findUnitById(data.action.unit_id));
+            console.log(data.action.type);
+			if (data.action.action_type === "attack_unit") handleAttack(data.action);
+            else removeBuff(data.action.buff_id, findUnitById(data.action.target_id));
             postAttack(findUnitById(data.action.attacker_id));
 		});
 	}
