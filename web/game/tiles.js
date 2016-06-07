@@ -1003,6 +1003,7 @@ function createClickableImage(imgSource, x, y, callBack) {
 }
 
 
+
 // Show the action menu next to a player (when selected)
 function showActionMenuNextToPlayer(unit) {
 
@@ -1975,59 +1976,120 @@ function moveCharacter(unit) {
 	}]);
 }
 
+function handleRemoveBuff(action) {
+    removeBuff(action.buff_id, findUnitById(action.unit_id));
+}
+
+function handleApplyBuff(action) {
+    applyBuff(action.buff_id, findUnitById(action.unit_id));
+}
+
+function handleServerReply(data) {
+    console.log(data);
+    if (data.error_code != 0) {
+        console.log("ERROR");
+        return;
+    }
+    for (var i = 0; i < data.actions.length; i++) {
+        var action = data.actions[i];
+        switch (action.action_type) {
+            case "move_unit":
+                console.log("handle move");
+                handleMove(action);
+                break;
+            case "create_unit":
+                handleCreate(action);
+                break;
+            case "attack_unit":
+                handleAttack(action);
+                postAttack(findUnitById(action.attacker_id));
+                break;
+            case "remove_buff":
+                handleRemoveBuff(action);
+                break;
+            case "apply_buff":
+                handleApplyBuff(action);
+                break;
+        }
+    }
+}
+
+
 function serverValidate(type, unit, additionalArgs) {
     console.log(type);
-	if (type == "move") {
+    if (type == "move") {
         console.log(path);
+
         console.log(unit.unit_id);
-		rawPost("ajax/move_unit", {"unit_id" : String(unit.unit_id), "path" : JSON.stringify(path)}, function(data) {
-			console.log(data);
-			if (data.error_code != 0) {
-				console.log("ERROR");
-				return;
-			}
-			// path = data.path;
-			handleMove(data.action);
-		});
-	}
-	if (type == "create") {
-		rawPost("ajax/build_unit", {"name" : additionalArgs[0], "x": additionalArgs[1], "y": additionalArgs[2]}, function(data) {
-			console.log(data);
-			if (data.error_code != 0) {
-				console.log("ERROR");
-				return;
-			}
-			handleCreate(data.action);
-		});
-	}
-	if (type === "attack") {
-	    console.log("ATTACKER"+unit.unit_id+", TARGET"+additionalArgs[0].unit_id);
-		rawPost("ajax/attack_unit", {"attacker_id" : String(unit.unit_id), "target_id" : String(additionalArgs[0].unit_id)}, function(data) {
-			console.log(data);
-			if (data.error_code != 0) {
-				console.log("ERROR");
-				return;
-			}
-            console.log(data.action.type);
-			if (data.action.action_type === "attack_unit") handleAttack(data.action);
-            else removeBuff(data.action.buff_id, findUnitById(data.action.target_id));
-            postAttack(findUnitById(data.action.attacker_id));
-		});
-	}
+        rawPost("ajax/move_unit", {"unit_id" : String(unit.unit_id), "path" : JSON.stringify(path)}, handleServerReply);
+    }
+    if (type == "create") {
+        rawPost("ajax/build_unit", {"name" : additionalArgs[0], "x": additionalArgs[1], "y": additionalArgs[2]}, handleServerReply);
+    }
+    if (type === "attack") {
+    console.log("ATTACKER"+unit.unit_id+", TARGET"+additionalArgs[0].unit_id);
+        rawPost("ajax/attack_unit", {"attacker_id" : String(unit.unit_id), "target_id" : String(additionalArgs[0].unit_id)}, handleServerReply);
+    }
 
     if (type === "turn_change") {
         console.log("validate change");
-        rawPost("ajax/turn_change", {}, function(data) {
-            console.log("handle turn change");
-            console.log(data);
-            if (data.error_code != 0) {
-                console.log("ERROR");
-                return;
-            }
-            changeTurn(data);
-        });
+        rawPost("ajax/turn_change", {}, handleServerReply);
     }
 }
+
+// function serverValidate(type, unit, additionalArgs) {
+//     console.log(type);
+// 	if (type == "move") {
+//         console.log(path);
+//         console.log(unit.unit_id);
+// 		rawPost("ajax/move_unit", {"unit_id" : String(unit.unit_id), "path" : JSON.stringify(path)}, function(data) {
+// 			console.log(data);
+// 			if (data.error_code != 0) {
+// 				console.log("ERROR");
+// 				return;
+// 			}
+// 			// path = data.path;
+// 			handleMove(data.action);
+// 		});
+// 	}
+// 	if (type == "create") {
+// 		rawPost("ajax/build_unit", {"name" : additionalArgs[0], "x": additionalArgs[1], "y": additionalArgs[2]}, function(data) {
+// 			console.log(data);
+// 			if (data.error_code != 0) {
+// 				console.log("ERROR");
+// 				return;
+// 			}
+// 			handleCreate(data.action);
+// 		});
+// 	}
+// 	if (type === "attack") {
+//     console.log("ATTACKER"+unit.unit_id+", TARGET"+additionalArgs[0].unit_id);
+// 		rawPost("ajax/attack_unit", {"attacker_id" : String(unit.unit_id), "target_id" : String(additionalArgs[0].unit_id)}, function(data) {
+// 			console.log(data);
+// 			if (data.error_code != 0) {
+// 				console.log("ERROR");
+// 				return;
+// 			}
+//             console.log(data.action.type);
+// 			if (data.action.action_type === "attack_unit") handleAttack(data.action);
+//             else removeBuff(data.action.buff_id, findUnitById(data.action.target_id));
+//             postAttack(findUnitById(data.action.attacker_id));
+// 		});
+// 	}
+
+//     if (type === "turn_change") {
+//         console.log("validate change");
+//         rawPost("ajax/turn_change", {}, function(data) {
+//             console.log("handle turn change");
+//             console.log(data);
+//             if (data.error_code != 0) {
+//                 console.log("ERROR");
+//                 return;
+//             }
+//             changeTurn(data);
+//         });
+//     }
+// }
 
 function performAttack(attacker) {
 	isAttacking = true;
@@ -2104,38 +2166,67 @@ function changeTurn(data) {
     }
 }
 
-
 function handleOpponent(data) {
-    console.log("handle opponent move");
-    switch (data.action.action_type) {
-        case "move_unit":
-            handleMove(data.action);
-            break;
-        case "create_unit":
-            var unit = getFirstProp(data.action.unit);
-            spawnUnit(unit);
-            break;
-        case "attack_unit":
-            console.log("handle attack unit");
-            handleAttack(data.action);
-            break;
-        case "skill":
-            break;
-        case "remove_buff":
-            removeBuff(data.action.buff_id, findUnitById(data.action.unit_id));
-            break;
-        case "turn_change":
-            console.log("handle change turn opp");
-            changeTurn(data);
-            break;
-        case "game_end":
-            gameEnd(data);
-            break;
+    console.log(data);
+    if (data.error_code != 0) {
+        console.log("ERROR");
+        return;
+    }
+    for (var i = 0; i < data.actions.length; i++) {
+        var action = data.actions[i];
+        switch (action.action_type) {
+            case "move_unit":
+                handleMove(action);
+                break;
+            case "create_unit":
+                handleCreate(action);
+                break;
+            case "attack_unit":
+                handleAttack(action);
+                break;
+            case "remove_buff":
+                handleRemoveBuff(action);
+                break;
+            case "apply_buff":
+                handleApplyBuff(action);
+                break;
+        }
     }
 }
 
+
+// function handleOpponent(data) {
+//     console.log("handle opponent move");
+//     switch (data.action.action_type) {
+//         case "move_unit":
+//             handleMove(data.action);
+//             break;
+//         case "create_unit":
+//             var unit = getFirstProp(data.action.unit);
+//             spawnUnit(unit);
+//             break;
+//         case "attack_unit":
+//             console.log("handle attack unit");
+//             handleAttack(data.action);
+//             break;
+//         case "skill":
+//             break;
+//         case "remove_buff":
+//             removeBuff(data.action.buff_id, findUnitById(data.action.unit_id));
+//             break;
+//         case "turn_change":
+//             console.log("handle change turn opp");
+//             changeTurn(data);
+//             break;
+//         case "game_end":
+//             gameEnd(data);
+//             break;
+//     }
+// }
+
 function gameEnd(data) {
   window.location.href = '../interface/game_stats?room_id='+room_id;
+
 }
 
 function handleMove(action) {

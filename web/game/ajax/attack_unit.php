@@ -36,6 +36,8 @@ if (!$buff) {
 
 	$db->query("UPDATE units SET canMove = 0, canAttack = 0, outOfMoves = 1 WHERE unit_id = '{$attacker_id}'"); 
 
+  $crit = rand(1,100) <= ($attacker->luck * 100) ? '1' : '0';
+
 	// notify
 	$out = '{';
 	$out .= $SUCCESS.",";
@@ -44,7 +46,7 @@ if (!$buff) {
 	  .",".jsonPair("buffs", "[]")
 	  .",".jsonPair("target_id", $target_id)
 	  .",".jsonPair("dmg", $damage)
-	  .",".jsonPair("is_critical", 0));
+	  .",".jsonPair("is_critical", $crit));
 	$out .= jsonPair("actions", "[{$action}]");
 	$out .= "}";
 } else {
