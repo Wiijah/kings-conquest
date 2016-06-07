@@ -22,7 +22,7 @@ if ( $attacker->team == $target->team ) exit_error(103);
 if ( $attacker->canAttack == 0 ) exit_error(104);
 if ( outOfAttackRange($attacker, $target)) exit_error(105);
 
-$result = $db->query("SELECT * FROM buff_instances WHERE unit_id = '{target_id}' AND buff_id = 4");
+$result = $db->query("SELECT * FROM buff_instances WHERE unit_id = '{$target_id}' AND buff_id = 4");
 $buff = $result->fetch_object();
 
 if (!$buff) {
@@ -36,25 +36,29 @@ if (!$buff) {
 
 	$db->query("UPDATE units SET canMove = 0, canAttack = 0, outOfMoves = 1 WHERE unit_id = '{$attacker_id}'"); 
 
+  $crit = rand(1,100) <= ($attacker->luck * 100) ? '1' : '0';
+
 	// notify
 	$out = '{';
 	$out .= $SUCCESS.",";
-	$out .= action("attack_unit",
+	$action = action("attack_unit",
 		   jsonPair("attacker_id", $attacker_id)
-	  .","."\"buffs\": []"
+	  .",".jsonPair("buffs", "[]")
 	  .",".jsonPair("target_id", $target_id)
 	  .",".jsonPair("dmg", $damage)
-	  .",".jsonPair("is_critical", 0));
+	  .",".jsonPair("is_critical", $crit));
+	$out .= jsonPair("actions", "[{$action}]");
 	$out .= "}";
 } else {
 	// remove buff
-	$db->query("DELETE FROM buff_instances WHERE unit_id = '{target_id}' AND buff_id = 4");
+	$db->query("DELETE FROM buff_instances WHERE unit_id = '{$target_id}' AND buff_id = 4");
 
 	$out = '{';
 	$out .= $SUCCESS.",";
-	$out .= action("remove_buff",
+	$action = action("remove_buff",
 		   jsonPair("unit_id", $target_id)
-	  .",".jsonPair("buff_if", $buff->buff_id));
+	  .",".jsonPair("buff_id", $buff->buff_id));
+	$out .= jsonPair("actions", "[{$action}]");
 	$out .= "}"; 
 }
 

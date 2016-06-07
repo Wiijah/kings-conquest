@@ -1,5 +1,6 @@
 <?php
 $title = "Profile";
+require_once 'includes/header_checks.php';
 include 'includes/header.php';
 
 $other = secureStr($_GET['username']);

@@ -40,7 +40,7 @@ if (isset($_SESSION['id'])) {
 </div>
 
 
-<div class="home_middle goto_guest home_hover">
+<div class="home_middle home_hover lightbox_open" data-lb="guest">
 <img src="images/big_green_king.png" class="home_king" /><br />
 <img src="images/btn_brush.png" class="home_btn" />
 <div class="home_btn_text">Guest</div>
@@ -54,6 +54,7 @@ if (isset($_SESSION['id'])) {
 
 <div id="credits">
 <div class="home_box">
+In no particular order, the game was developed by Alan Du, Pierre-Louis Rivierre, Hanou Chen and Rendy Li.<br /><br />
 We used the following resources on our game:
 <ol>
   <li>Facebook SDK<br />https://github.com/facebook/facebook-php-sdk-v4/</li>
@@ -139,7 +140,6 @@ The account you are registering will be authenticated by your Facebook account.<
 </div> 
 <!-- end register -->
 
-<br /><br />
   <div class="white_line"></div><br />
   <div class="footer">&copy; 2016 Kings' Conquest</div>
   </div>

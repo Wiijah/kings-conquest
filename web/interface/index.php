@@ -1,5 +1,23 @@
 <?php
 $title = "Lobby";
+require_once 'includes/header_checks.php';
+
+$result = $db->query("SELECT * FROM room_participants WHERE user_id = '{$user->id}' AND event = ''");
+if ($part = $result->fetch_object()) {
+  $result = $db->query("SELECT * FROM rooms INNER JOIN users ON rooms.user_id = users.id WHERE room_id = '{$part->room_id}'");
+  if ($room = $result->fetch_object()) {
+    if ($room->state == 'ingame') {
+      header ("Location: ../game/");
+    } else if ($room->state == 'pregame') {
+      header ("Location: room");
+    }
+    die();
+  }
+  /* Otherwise, invalid part id, so remove it. */
+  $db->query("DELETE FROM room_participants WHERE part_id = '{$part->part_id}'");
+}
+
+
 include 'includes/header.php';
 include 'includes/logout_container.php';
 include 'includes/logo.php';

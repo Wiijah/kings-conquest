@@ -28,7 +28,7 @@ $result = $db->query($email_exists);
 if ($result->num_rows > 0) kc_error("A user has already signed up with that email address. Please use another email.");
 
 /* Check if username exists */
-$username_exists = "SELECT * FROM users WHERE email = '{$email}'";
+$username_exists = "SELECT * FROM users WHERE username = '{$username}'";
 $result = $db->query($username_exists);
 if ($result->num_rows > 0) kc_error("A user has already signed up with that username. Please pick another username.");
 

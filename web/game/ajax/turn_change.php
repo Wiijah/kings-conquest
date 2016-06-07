@@ -19,11 +19,12 @@ $db->query("UPDATE units SET canMove = 1, canAttack = 1, outOfMoves = 0 WHERE ro
 $out = "{";
 $out .= $SUCCESS.",";
 //$out .= jsonPair("gold", $player->gold).",";
-$out .= action("turn_change",
+$action = action("turn_change",
        jsonPair("new_turn", $new_turn)
   .",".jsonPair("effects_to_apply", "[]")
   .",".jsonPair("units_new_cd", "[]")
   .",".jsonPair("buffs_to_remove", "[]"));
+  $out .= jsonPair("actions", "[{$action}]");
 $out .= "}";
 
 oppInsert($out);

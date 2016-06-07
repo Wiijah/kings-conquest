@@ -46,9 +46,11 @@ $db->query("UPDATE units SET x = '{$new_x}', y = '{$new_y}', canMove = 0 WHERE u
 
 $out = "{";
 $out .= $SUCCESS.",";
-$out .= action("move_unit",
+$action = action("move_unit",
        jsonPair("unit_id", $unit_id)
   .",".jsonPair("path", $moves_json));
+
+$out .= jsonPair("actions", "[{$action}]");
 $out .= "}";
 
 oppInsert($out);
