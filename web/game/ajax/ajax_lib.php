@@ -61,7 +61,7 @@ function jsonPair($key, $value, $braces = false) {
 }
 
 function action($type, $other_fields) {
-  return '{"action" : {"action_type": "'.$type.'", '.$other_fields.'}}';
+  return '{"action_type": "'.$type.'", '.$other_fields.'}';
 }
 
 $SUCCESS = '"error_code": 0';
