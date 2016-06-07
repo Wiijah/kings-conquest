@@ -37,7 +37,8 @@ function showButton() {
 	btn.style.display = "inline-block";	
 }
 
-function changeTextToButton(text){
+function addTextToButton(text){
 	var btn = document.getElementById("actionButton");
 	btn.innerHTML = text;
 }
+
