@@ -8,6 +8,15 @@
   -webkit-box-sizing: border-box;
   background-clip: padding-box;
 }
+.breadcrumbs {
+  font-family: BebasNeueLight;
+  font-size: 20px;
+}
+.standard_box {
+  font-family: BebasNeueBook;
+  font-size: 24px;
+  padding: 10px 10px 5px 10px;
+}
 .center {
   text-align: center;
 }

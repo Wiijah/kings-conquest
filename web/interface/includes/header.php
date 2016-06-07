@@ -9,6 +9,7 @@
   <link rel="stylesheet" href="css/lightbox.css">
   <link rel="stylesheet" href="css/room.css">
   <link rel="stylesheet" href="css/profile.css">
+  <link rel="stylesheet" href="css/friends.css">
   <link rel="stylesheet" href="../fonts/fonts.css">
 
   <!-- JS -->

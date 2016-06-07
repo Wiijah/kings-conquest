@@ -1,15 +1,15 @@
 <?php
-$title = "Profile";
 require_once 'includes/header_checks.php';
-
 $other = secureStr($_GET['username']);
 $result = $db->query("SELECT * FROM users WHERE username = '{$other}'");
 $prof = $result->fetch_object();
-
 if (!$prof) {
   header ("Location: ../{$LOGGEDIN_DIR}/");
   die();
 }
+$title = "{$prof->username} - Profile";
+
+
 
 include 'includes/header.php';
 include 'includes/logout_container.php';
@@ -25,7 +25,7 @@ if ($ach_html == "") $ach_html = "This player has no achievements.";
 <?php echo genTitle("Profile Of {$prof->username}"); ?>
 <div class="play_profile box">
 <table class="play_table">
-<tr><td class="prof_avatar" colspan="2"><img src="images/default_avatar.png" /></td></tr>
+<tr><td class="prof_avatar" colspan="2"><img src="<?php echo getAvatarURL($prof->id); ?>" /></td></tr>
 <tr><th>Username</th><td><?php echo $prof->username; ?> </td></tr>
 
 <tr><th>Email</th><td><?php echo $prof->email; ?> </td></tr>

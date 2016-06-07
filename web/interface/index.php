@@ -58,14 +58,14 @@ var room_id = 0;
 <?php echo genTitle("Actions"); ?>
 <div class="play_btn btn lightbox_open" data-lb="create_game">Create Game</div>
 <div class="play_btn btn dev">How To Play</div>
-<div class="play_btn btn dev">Friends</div>
+<div class="play_btn btn" id="goto_friends">Friends</div>
 <div class="play_btn btn lightbox_open" data-lb="achievements">Achievements</div>
 
 
 <?php echo genTitle("Your Profile"); ?>
 <div class="play_profile box">
 <table class="play_table">
-<tr><td class="play_avatar" colspan="2"><img src="images/default_avatar.png" /></td></tr>
+<tr><td class="play_avatar" colspan="2"><img src="<?php echo getAvatarURL($user->id); ?>" /></td></tr>
 <tr><th>Username</th><td><?php echo $user->username; ?> </td></tr>
 
 <tr><th>Email</th><td><?php echo $user->email; ?> </td></tr>

@@ -3,6 +3,11 @@ var room_pass_id = 0;
 
 $(document).ready(function() {
   /* Initiate creating room */
+
+  $("#goto_friends").click(function() {
+    window.location.href = 'friends';
+  });
+  
   $('body').on('click', '#lightbox_btn_create_game', function() {
       create_room();
   });
