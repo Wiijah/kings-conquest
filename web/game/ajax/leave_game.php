@@ -15,6 +15,8 @@ $out .= $SUCCESS.",";
 $out .= action("game_end",
         jsonPair("team", $team)
       );
+
+$out .= jsonPair("actions", "[{$action}]");
 $out .= "}";
 
 oppInsert($out);
