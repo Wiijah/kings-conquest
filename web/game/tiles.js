@@ -1476,7 +1476,7 @@ function moveUnit() {
         	movingUnit.canMove = 0;
         }
 
-		if (movingUnit.team === turn) showActionMenuNextToPlayer(movingUnit);
+		if (movingUnit.team === turn && turn === team) showActionMenuNextToPlayer(movingUnit);
       }
   }
 
