@@ -5,3 +5,8 @@
   margin: 0 auto;
   width: 700px;
 }
+.achievements {
+  font-family: BebasNeueBook;
+  font-size: 24px;
+  padding: 10px 10px 5px 10px;
+}

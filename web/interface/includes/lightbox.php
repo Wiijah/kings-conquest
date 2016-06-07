@@ -33,5 +33,6 @@ foreach ($user_ach as $value) {
   $ach_html .= "<label title='{$value[1]}'><img src='{$value[0]}' class='achievement' /></label>";
 }*/
 $ach_html = getAchievementsHTML($user->id);
+if ($ach_html == "") $ach_html = "You have not earned any achievements yet.";
 echo genLightBox("Achievements", "achievements", "<div style='text-align: center'>{$ach_html}</a></div>");
 ?>

@@ -8,6 +8,9 @@
   -webkit-box-sizing: border-box;
   background-clip: padding-box;
 }
+.center {
+  text-align: center;
+}
 div#qTip{
   z-index:2000;
   padding: 4px 10px 3px 10px;
