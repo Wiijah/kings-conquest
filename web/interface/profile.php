@@ -18,14 +18,37 @@ require_once 'includes/back_container.php';
 
 $ach_html = getAchievementsHTML($prof->id);
 if ($ach_html == "") $ach_html = "This player has no achievements.";
+
+
+$friend_result = $db->query("SELECT * FROM friends WHERE (user_id = '{$user->id}' AND other_id = '{$prof->id}') OR (other_id = '{$user->id}' AND user_id = '{$prof->id}')");
 ?>
 
 <div class="small_container prof_user">
 
-<?php echo genTitle("Profile Of {$prof->username}"); ?>
+<?php 
+
+if (isset($_GET['add'])) {
+  if (!$fetch = $friend_result->fetch_object()) {
+    $db->query("INSERT INTO friends (user_id, other_id) VALUES('{$user->id}', '{$prof->id}')");
+    echo Message("Friend Request Sent", "You have successfully sent your friend request to ".linkUsername($prof).".");
+  } else if ($fetch->accepted == 0 && $user->id == $fetch->user_id) {
+    echo Message("Request Already Sent", "You already have a friend request sent to ".linkUsername($prof).".");
+  } else if ($fetch->accepted == 0 && $user->id == $fetch->other_id) {
+    $db->query("UPDATE friends SET accepted = 1 WHERE user_id = '{$prof->id}' AND other_id = '{$user->id}'");
+    echo Message("Friend Request Accepted", "".linkUsername($prof)." had already sent you a friend request earlier. You accepted the friend request instead.");
+  } else {
+    echo Message("Already Friends", "You and ".linkUsername($prof)." already have each other added as friends.");
+  }
+}
+
+echo genTitle("Profile Of {$prof->username}"); ?>
 <div class="play_profile box">
 <table class="play_table">
-<tr><td class="prof_avatar" colspan="2"><img src="<?php echo getAvatarURL($prof->id); ?>" /></td></tr>
+<tr><td class="prof_avatar" colspan="2"><img src="<?php echo getAvatarURL($prof->id); ?>" />
+<br />
+<div class='btn lightbox_btn js_link' data-href='profile?username=<?php echo $prof->username; ?>&add=<?php echo $prof->id; ?>&close=<?php echo secureStr($close); ?>'>Add Friend</div>
+</td>
+</tr>
 <tr><th>Username</th><td><?php echo $prof->username; ?> </td></tr>
 
 <tr><th>Email</th><td><?php echo $prof->email; ?> </td></tr>

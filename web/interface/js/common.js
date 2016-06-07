@@ -8,6 +8,11 @@ var page_disabled = false;
 
 $(document).ready(function() {
 
+  $('body').on('click', '.js_link', function() {
+    var link = $(this).attr("data-href");
+    window.location.href = link;
+  });
+
   $('body').on('click', '.open_profile', function() {
     var username = $(this).attr("data-username");
     window.open("profile?close=1&username="+username);

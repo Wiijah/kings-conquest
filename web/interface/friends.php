@@ -43,7 +43,7 @@ while ($fetch = $result->fetch_object()) {
 }
 
 if ($friends_html == "") {
-  $friends_html = "<div class='box standard_box center'>You currently have not added any friends.</div>";
+  $friends_html = "<div class='box standard_box center'>Your friends list is currently empty.</div>";
 } else {
   $friends_html = "<div class='box center'><table class='play_table'><tr><th>Friend</th><th>Remove</th></tr>{$friends_html}</table></div>";
 }

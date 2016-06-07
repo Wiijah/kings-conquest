@@ -1,5 +1,5 @@
 <?php
-if (isset($_GET['close'])) {
+if (isset($_GET['close']) && $_GET['close'] == 1) {
   $text = "Close";
   $link = "javascript:window.close();";
 } else {
