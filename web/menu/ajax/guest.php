@@ -16,8 +16,8 @@ if (!preg_match('~^[a-z0-9 ]+$~i', $username)) kc_error("Display names are not a
 
 $db->autocommit(FALSE);
 
-$query = "INSERT INTO users (username, email, password) VALUES
-('{$username}', '{$email}', '{$password}')";
+$query = "INSERT INTO users (username, email, password, member_type) VALUES
+('{$username}', '{$email}', '{$password}', 'guest')";
 
 if (!$db->query($query)) {
   kc_error("An error occurred with logging you in as a guest. Please try again.");
