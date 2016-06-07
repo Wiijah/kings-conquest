@@ -41,7 +41,7 @@
 
   </head>
 
-  <body onload="displayBox(showKingTutorial);">
+  <body onload="displayBox(gold_instruction);">
 
   <?php include 'includes/lightbox.php'; ?>
       
@@ -53,13 +53,67 @@
       <img src="./i_icon.png" style="line-height: 1px; vertical-align: bottom; margin-right: 5px" height="20" width="20" />Tutorial 3 : Advanced
     </div>
     <div id="box_body">
-      Now you know the unit creation system. There are several units with different skills in King's Conquest. In this tutorial, you are going to learn the skill of each unit. Click the unit cards to try different units.<br /><br />
+      Now you are familiar with all units. However, in King's Conquest, the battle is not just between 2 units. In this tutorial, you will learn how to create your own army, any fight with the enemy units. <br /><br />
     </div>
     <div id="box_foot">
       <button type="button" id="actionButton" class="btn" ng-click="">Next</button>
-
+       <button type="button" id="actionButton2" class="btn" ng-click="" style="display: none">OK</button>
     </div>
   </div>
+
+<div id = "maskBox1"> <style>
+      #maskBox1 {
+        position:fixed;
+        z-index:30;
+        right:180px;
+        top:0;
+        background: rgba(0,0,0,.5);
+        width:100%;
+        height:100%;
+       display: none;
+       }
+       </style></div>
+    <div id = "maskBox2"> <style>
+      #maskBox2 {
+        position:fixed;
+        z-index: 30;
+        margin-left: 100%;
+        left: -180px;
+        top: 50px;
+        background: rgba(0,0,0,.5);
+        width:100%;
+        height:100%;
+        display: none;
+       }
+       </style></div>
+
+
+       <div id = "maskBox3"> <style>
+      #maskBox3 {
+        position:fixed;
+        z-index:30;
+        left:520px;
+        top:0;
+        background: rgba(0,0,0,.5);
+        width:100%;
+        height:100%;
+        display: none;
+       }
+       </style></div>
+    <div id = "maskBox4"> <style>
+      #maskBox4 {
+        position:fixed;
+        z-index: 30;
+        margin-right: 100%;
+        right: -520px;
+        bottom: 170px;
+        background: rgba(0,0,0,.5);
+        width:100%;
+        height:100%;
+        display: none;
+       }
+       </style></div>
+
   </body>
 </html>
 
