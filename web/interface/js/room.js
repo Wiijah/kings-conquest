@@ -69,13 +69,17 @@ function room_refresh() {
     }
     var players = data.players;
     console.log(data);
-    var players_html = '<tr><th>#</th><th>Player</th><th>Colour</th></tr>';
+    var extraCols = isOwner ? '<th style="width: 130px">Kick</th>': '';
+    var players_html = '<tr><th>#</th><th>Player</th><th>Colour</th>'+extraCols+'</tr>';
 
     for (var i = 0; i < players.length; i++) {
       var row_number = i + 1;
       var user_link = "<a href='profile.php?username="+players[i].player+"' target='_blank'>"+players[i].player+"</a>";
 
-      players_html += "<tr><td>"+row_number+"</td><td style='position: relative'>"+user_link+state_html_array[players[i].state]+"</td><td>"+players[i].colour+"</td></tr>";
+      var extraData = "";
+      if (isOwner) extraData += players[i].user_id != user_id ? "<td><a class='kick_player' data-user-id='"+players[i].user_id+"'>Kick</a></td>": '<td>-</td>';
+      
+      players_html += "<tr><td>"+row_number+"</td><td style='position: relative'>"+user_link+state_html_array[players[i].state]+"</td><td>"+players[i].colour+"</td>"+extraData+"</tr>";
       if (players[i].user_id == user_id) {
         if (players[i].state == 'ready') {
           $("#btn_ready").html("Cancel Ready");

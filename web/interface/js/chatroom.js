@@ -1,5 +1,4 @@
 var lastID = 0;
-var debug;
 var messageBox = $("#play_chatroom_messages");
 var chatScrollSpeed = 600;
 var chat_colour = '';

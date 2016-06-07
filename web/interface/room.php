@@ -31,6 +31,7 @@ $isOwner = $room->user_id == $user->id;
 <script>
 var room_id = <?php echo $room->room_id; ?>;
 var max_players = <?php echo $max_players; ?>;
+var isOwner = <?php var_export($isOwner); ?>;
 </script>
 <script src="js/chatroom.js"></script>
 <script src="js/room.js"></script>
