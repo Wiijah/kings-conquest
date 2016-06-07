@@ -25,14 +25,17 @@ if ( outOfAttackRange($attacker, $target)) exit_error(105);
 $result = $db->query("SELECT * FROM buff_instances WHERE unit_id = '{$target_id}' AND buff_id = 4");
 $buff = $result->fetch_object();
 
+$actions = array();
+
 if (!$buff) {
 	// get new health
 	$damage = $attacker->attack;
 	$new_health = $target->hp - $damage;
-	if ($new_health <= 0) 
+	if ($new_health <= 0) { /* Target died */
 		$db->query("DELETE FROM units WHERE unit_id = '{$target_id}'");
-	else 
+	} else { /* Target hurt but survived */
 		$db->query("UPDATE units SET hp = '{$new_health}' WHERE unit_id = '{$target_id}'");
+	}
 
 	$db->query("UPDATE units SET canMove = 0, canAttack = 0, outOfMoves = 1 WHERE unit_id = '{$attacker_id}'"); 
 
@@ -41,13 +44,18 @@ if (!$buff) {
 	// notify
 	$out = '{';
 	$out .= $SUCCESS.",";
-	$action = action("attack_unit",
+	$actions[] = action("attack_unit",
 		   jsonPair("attacker_id", $attacker_id)
 	  .",".jsonPair("buffs", "[]")
 	  .",".jsonPair("target_id", $target_id)
 	  .",".jsonPair("dmg", $damage)
 	  .",".jsonPair("is_critical", $crit));
-	$out .= jsonPair("actions", "[{$action}]");
+
+	if ($new_health <= 0 && $target->name == "king") {
+		$actions[] = action("game_end", jsonStr("reason", "king_death")
+			.",".jsonPair("winner", $team));
+	}
+	$out .= jsonPair("actions", jsonArray($actions));
 	$out .= "}";
 } else {
 	// remove buff
@@ -55,10 +63,10 @@ if (!$buff) {
 
 	$out = '{';
 	$out .= $SUCCESS.",";
-	$action = action("remove_buff",
+	$actions[] = action("remove_buff",
 		   jsonPair("unit_id", $target_id)
 	  .",".jsonPair("buff_id", $buff->buff_id));
-	$out .= jsonPair("actions", "[{$action}]");
+	$out .= jsonPair("actions", jsonArray($actions));
 	$out .= "}"; 
 }
 

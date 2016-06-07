@@ -203,20 +203,37 @@ function turnStartPhase() {
        var reachableTiles = findReachableTiles(enemyUnit.row, enemyUnit.column, enemyUnit.moveRange, true);
        highlightArea(reachableTiles, "graphics/tile/green_tile.png", ["click"], []);
     }, 2000);
-    
-    var row = currentUnit.row;
-    var column = currentUnit.column - 2;
+
+
+    // lalala
+    var reachableTiles = findReachableTiles(enemyUnit.row, enemyUnit.column, enemyUnit.moveRange, true);
+    var toX;
+    var toY;
+    var dist = 1000;
+    for (var i = 0; i < reachableTiles.length; i++) {
+      // console.log(reachableTiles[i]);
+      var newDist = Math.abs(reachableTiles[i][0] - currentUnit.row) + Math.abs(reachableTiles[i][1] - currentUnit.column);
+      // console.log(newDist);
+      if (newDist < dist) {
+        toX = reachableTiles[i][0];
+        toY = reachableTiles[i][1];
+        dist = newDist;
+      }
+    }
+
+    // console.log("closest: " + toX + " " + toY);
+
     var fromX = enemyUnit.row;
     var fromY = enemyUnit.column;
 
     setTimeout(function(){
-      findPath(fromX, fromY, row, column);
+      findPath(fromX, fromY, toX, toY);
       blockMaps[fromX][fromY] = 0;
       move();
       clearSelectionEffects();
-      enemyUnit.row = row;
-      enemyUnit.column = column;
-      blockMaps[row][column] = 1;
+      enemyUnit.row = toX;
+      enemyUnit.column = toY;
+      blockMaps[toX][toY] = 1;
     },3000);
     
 
@@ -235,7 +252,7 @@ function turnStartPhase() {
     //     }, 1000);
     //   },4000);
     // } else {
-        var reachableTiles = findReachableTiles(row, column, enemyUnit.attackRange, false);
+        var reachableTiles = findReachableTiles(toX, toY, enemyUnit.attackRange, false);
        setTimeout(function() {
        clearSelectionEffects();
 

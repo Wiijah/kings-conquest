@@ -634,29 +634,29 @@ function updateHP_bar(unit){
 		for (var i = 0; i <= unit.buffs.length; i++) {
 			removeBuff(i, unit);
 		}
-		if (unit.address == "graphics/spritesheet/stand/ss_king_stand.png") {
-		    var endLabelBg = new createjs.Shape();
-			endLabelBg.graphics.beginFill("#000000").drawRect(-stage.canvas.width ,stage.canvas.height - stage.canvas.height/2 ,stage.canvas.width * 2,80);
-			if (turn){
-				var endLabel = new createjs.Text("Player2 Win", "30px Arial", "#0000ff");
-			} else {
-				var endLabel = new createjs.Text("Player1 Win", "30px Arial", "#ff0000");
-			}
-			var restartLabel = new createjs.Text("Press \" r \" to restart", "15px Arial", "#ffffff");
+		// if (unit.address == "graphics/spritesheet/stand/ss_king_stand.png") {
+		//     var endLabelBg = new createjs.Shape();
+		// 	endLabelBg.graphics.beginFill("#000000").drawRect(-stage.canvas.width ,stage.canvas.height - stage.canvas.height/2 ,stage.canvas.width * 2,80);
+		// 	if (turn){
+		// 		var endLabel = new createjs.Text("Player2 Win", "30px Arial", "#0000ff");
+		// 	} else {
+		// 		var endLabel = new createjs.Text("Player1 Win", "30px Arial", "#ff0000");
+		// 	}
+		// 	var restartLabel = new createjs.Text("Press \" r \" to restart", "15px Arial", "#ffffff");
 			
-			endLabel.x = stage.canvas.width - stage.canvas.width / 2 - 100;
-			endLabel.y = stage.canvas.height -  stage.canvas.height / 2 + 20;
-			restartLabel.x = endLabel.x + 20;
-			restartLabel.y = endLabel.y + 35;
-			endLabelBg.alpha = 0.7;
+		// 	endLabel.x = stage.canvas.width - stage.canvas.width / 2 - 100;
+		// 	endLabel.y = stage.canvas.height -  stage.canvas.height / 2 + 20;
+		// 	restartLabel.x = endLabel.x + 20;
+		// 	restartLabel.y = endLabel.y + 35;
+		// 	endLabelBg.alpha = 0.7;
 
-			stage.addChild(endLabelBg);
-			stage.addChild(restartLabel);
-			stage.addChild(endLabel);
-			endGame = true;
-			stage.mouseChildren = false;
-		 }
-	} else {
+		// 	stage.addChild(endLabelBg);
+		// 	stage.addChild(restartLabel);
+		// 	stage.addChild(endLabel);
+		// 	endGame = true;
+		// 	stage.mouseChildren = false;
+		//  }
+	// } else {
 		// unit.hp_bar.graphics.clear();
 		// unit.hp_bar.graphics.beginFill("#000000").drawRect(0, 0, 80, 10);
 		// unit.hp_bar.graphics.beginFill("#ff0000").drawRect(0, 0, (getHealth(unit) / getMaxHealth(unit)) * 80, 10);
@@ -2013,6 +2013,9 @@ function handleServerReply(data) {
             case "turn_change":
                 changeTurn(action);
                 break;
+            case "game_end":
+                handleGameEnd(action);
+                break;
         }
     }
 }
@@ -2144,14 +2147,36 @@ function handleOpponent(data) {
             case "turn_change":
                 changeTurn(action);
                 break;
+            case "game_end":
+                handleGameEnd(action);
+                break;
         }
     }
 }
 
 
 
-function gameEnd(data) {
-  window.location.href = '../interface/game_stats?room_id='+room_id;
+function handleGameEnd(action) {
+    console.log("handle end game");
+    //window.location.href = '../interface/game_stats?room_id='+room_id;
+    var text = action.winner == 0 ? "Red player victory" : "Blue player victory";
+    var color = action.winner == 0 ? "#ff0000" : "#0000ff";
+    var endLabelBg = new createjs.Shape();
+    endLabelBg.graphics.beginFill("#000000").drawRect(-stage.canvas.width ,stage.canvas.height - stage.canvas.height/2 ,stage.canvas.width * 2,80);
+    var endLabel = new createjs.Text(text, "30px Arial", color);
+    var restartLabel = new createjs.Text("Press \" r \" to restart", "15px Arial", color);
+    
+    endLabel.x = stage.canvas.width - stage.canvas.width / 2 - 100;
+    endLabel.y = stage.canvas.height -  stage.canvas.height / 2 + 20;
+    restartLabel.x = endLabel.x + 20;
+    restartLabel.y = endLabel.y + 35;
+    endLabelBg.alpha = 0.7;
+
+    stage.addChild(endLabelBg);
+    stage.addChild(restartLabel);
+    stage.addChild(endLabel);
+    endGame = true;
+    stage.mouseChildren = false;
 
 }
 
@@ -2177,7 +2202,7 @@ function handleMove(action) {
 	clearSelectionEffects();
 	undoMove.pop();
 	undoMove.push(unit);
-};
+}
 
 
 // Check if there are remaining attack times, if yes, perform another one, otherwise
