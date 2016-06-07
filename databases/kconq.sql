@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: Jun 05, 2016 at 01:07 PM
+-- Generation Time: Jun 07, 2016 at 02:37 PM
 -- Server version: 10.1.10-MariaDB
 -- PHP Version: 7.0.2
 
@@ -29,16 +29,30 @@ SET time_zone = "+00:00";
 CREATE TABLE `buffs` (
   `buff_id` int(11) NOT NULL,
   `buff_name` varchar(64) NOT NULL,
-  `graphics` varchar(64) NOT NULL
+  `graphics` varchar(64) NOT NULL,
+  `icon` varchar(64) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `buffs`
 --
 
-INSERT INTO `buffs` (`buff_id`, `buff_name`, `graphics`) VALUES
-(1, 'heal', 'graphics/spritesheet/spell/ss_heal.png'),
-(2, 'burning', 'graphics/spritesheet/spell/ss_burning.png');
+INSERT INTO `buffs` (`buff_id`, `buff_name`, `graphics`, `icon`) VALUES
+(1, 'heal', 'graphics/spritesheet/spell/ss_heal.png', ''),
+(2, 'burning', 'graphics/spritesheet/spell/ss_burning.png', '');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `buff_instances`
+--
+
+CREATE TABLE `buff_instances` (
+  `bi_id` int(11) NOT NULL,
+  `buff_id` int(11) NOT NULL,
+  `unit_id` int(11) NOT NULL,
+  `turns_left` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
 
@@ -55,26 +69,6 @@ CREATE TABLE `chat` (
   `chat_type` set('message','event') NOT NULL DEFAULT 'message',
   `colour` set('red','blue') NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
---
--- Dumping data for table `chat`
---
-
-INSERT INTO `chat` (`chat_id`, `created`, `user`, `message`, `room_id`, `chat_type`, `colour`) VALUES
-(62, '2016-06-04 11:28:03', 9, 'Wumpus joined the room.', 30, 'event', ''),
-(63, '2016-06-04 11:45:28', 13, 'veg joined the room.', 30, 'event', ''),
-(64, '2016-06-04 21:43:14', 14, 'harry potter joined the room.', 31, 'event', ''),
-(65, '2016-06-04 22:01:31', 9, 'Wumpus left the game.', 30, 'event', ''),
-(66, '2016-06-04 22:14:27', 14, 'harry potter left the game.', 31, 'event', ''),
-(67, '2016-06-04 22:14:29', 14, 'harry potter joined the room.', 32, 'event', ''),
-(68, '2016-06-04 22:16:49', 9, 'Wumpus joined the room.', 32, 'event', ''),
-(69, '2016-06-04 22:16:51', 9, 'Wumpus left the game.', 32, 'event', ''),
-(70, '2016-06-04 22:16:57', 9, 'Wumpus joined the room.', 33, 'event', ''),
-(71, '2016-06-04 22:17:00', 14, 'harry potter left the game.', 32, 'event', ''),
-(72, '2016-06-04 22:17:01', 14, 'harry potter joined the room.', 33, 'event', ''),
-(73, '2016-06-04 22:17:02', 14, 'harry potter left the game.', 33, 'event', ''),
-(74, '2016-06-04 22:17:04', 14, 'harry potter joined the room.', 33, 'event', ''),
-(75, '2016-06-04 22:17:06', 14, 'harry potter left the game.', 33, 'event', '');
 
 -- --------------------------------------------------------
 
@@ -168,8 +162,47 @@ CREATE TABLE `opp` (
 --
 
 INSERT INTO `opp` (`opp_id`, `room_id`, `user_id`, `team`, `json`) VALUES
-(1, 30, 13, 0, '{"error_code": 0, "test": "Hello World"}'),
-(5, 30, 13, 0, '{"error_code": 0,"action" : {"action_type": "create_unit", "unit": {"150": {\n      "address":"graphics/spritesheet/stand/ss_knight_stand.png","spritesheet":"graphics/spritesheet/attack/ss_knight_attack.png","unit_id": 150,"hp": 300,"max_hp": 300,"attack": 40,"skill":"Shield","luck": 0.15,"x": 1,"y": 2,"moveRange": 2,"team": 0,"attackRange": 1,"canMove": 1,"canAttack": 1,"skillCoolDown": 0,"outOfMoves": 0,"damageEffect":"graphics/spritesheet/spell/ss_physical_attack.png"\n    }},"gold": 300}}');
+(230, 36, 14, 0, '{"error_code": 0,"action" : {"action_type": "create_unit", "unit": {"743": {\n      "address":"graphics/spritesheet/stand/ss_wizard_stand.png","spritesheet":"graphics/spritesheet/attack/ss_wizard_attack.png","unit_id": 743,"hp": 200,"max_hp": 200,"attack": 15,"skill":"Magic Damage","luck": 0.25,"x": 1,"y": 2,"moveRange": 3,"team": 0,"attackRange": 3,"canMove": 1,"canAttack": 1,"skillCoolDown": 0,"outOfMoves": 0,"damageEffect":"graphics/spritesheet/spell/ss_fireball.png"\n    }},"gold": 600}}'),
+(231, 36, 14, 0, '{"error_code": 0,"action" : {"action_type": "create_unit", "unit": {"744": {\n      "address":"graphics/spritesheet/stand/ss_wizard_stand.png","spritesheet":"graphics/spritesheet/attack/ss_wizard_attack.png","unit_id": 744,"hp": 200,"max_hp": 200,"attack": 15,"skill":"Magic Damage","luck": 0.25,"x": 2,"y": 1,"moveRange": 3,"team": 0,"attackRange": 3,"canMove": 1,"canAttack": 1,"skillCoolDown": 0,"outOfMoves": 0,"damageEffect":"graphics/spritesheet/spell/ss_fireball.png"\n    }},"gold": 500}}'),
+(232, 36, 14, 0, '{"error_code": 0,"action" : {"action_type": "create_unit", "unit": {"745": {\n      "address":"graphics/spritesheet/stand/ss_wizard_stand.png","spritesheet":"graphics/spritesheet/attack/ss_wizard_attack.png","unit_id": 745,"hp": 200,"max_hp": 200,"attack": 15,"skill":"Magic Damage","luck": 0.25,"x": 1,"y": 3,"moveRange": 3,"team": 0,"attackRange": 3,"canMove": 1,"canAttack": 1,"skillCoolDown": 0,"outOfMoves": 0,"damageEffect":"graphics/spritesheet/spell/ss_fireball.png"\n    }},"gold": 400}}'),
+(233, 36, 14, 0, '{"error_code": 0,"action" : {"action_type": "create_unit", "unit": {"746": {\n      "address":"graphics/spritesheet/stand/ss_wizard_stand.png","spritesheet":"graphics/spritesheet/attack/ss_wizard_attack.png","unit_id": 746,"hp": 200,"max_hp": 200,"attack": 15,"skill":"Magic Damage","luck": 0.25,"x": 2,"y": 3,"moveRange": 3,"team": 0,"attackRange": 3,"canMove": 1,"canAttack": 1,"skillCoolDown": 0,"outOfMoves": 0,"damageEffect":"graphics/spritesheet/spell/ss_fireball.png"\n    }},"gold": 300}}'),
+(234, 36, 14, 0, '{"error_code": 0,"action" : {"action_type": "create_unit", "unit": {"747": {\n      "address":"graphics/spritesheet/stand/ss_wizard_stand.png","spritesheet":"graphics/spritesheet/attack/ss_wizard_attack.png","unit_id": 747,"hp": 200,"max_hp": 200,"attack": 15,"skill":"Magic Damage","luck": 0.25,"x": 2,"y": 2,"moveRange": 3,"team": 0,"attackRange": 3,"canMove": 1,"canAttack": 1,"skillCoolDown": 0,"outOfMoves": 0,"damageEffect":"graphics/spritesheet/spell/ss_fireball.png"\n    }},"gold": 200}}'),
+(235, 36, 14, 0, '{"error_code": 0,"action" : {"action_type": "create_unit", "unit": {"748": {\n      "address":"graphics/spritesheet/stand/ss_wizard_stand.png","spritesheet":"graphics/spritesheet/attack/ss_wizard_attack.png","unit_id": 748,"hp": 200,"max_hp": 200,"attack": 15,"skill":"Magic Damage","luck": 0.25,"x": 2,"y": 0,"moveRange": 3,"team": 0,"attackRange": 3,"canMove": 1,"canAttack": 1,"skillCoolDown": 0,"outOfMoves": 0,"damageEffect":"graphics/spritesheet/spell/ss_fireball.png"\n    }},"gold": 100}}'),
+(236, 36, 14, 0, '{"error_code": 0,"action" : {"action_type": "create_unit", "unit": {"759": {\n      "address":"graphics/spritesheet/stand/ss_wizard_stand.png","spritesheet":"graphics/spritesheet/attack/ss_wizard_attack.png","unit_id": 759,"hp": 200,"max_hp": 200,"attack": 15,"skill":"Magic Damage","luck": 0.25,"x": 0,"y": 1,"moveRange": 3,"team": 0,"attackRange": 3,"canMove": 1,"canAttack": 1,"skillCoolDown": 0,"outOfMoves": 0,"damageEffect":"graphics/spritesheet/spell/ss_fireball.png"\n    }},"gold": 900}}'),
+(237, 36, 14, 0, '{"error_code": 0,"action" : {"action_type": "create_unit", "unit": {"760": {\n      "address":"graphics/spritesheet/stand/ss_archer_stand.png","spritesheet":"graphics/spritesheet/attack/ss_archer_attack.png","unit_id": 760,"hp": 200,"max_hp": 200,"attack": 20,"skill":"Double Shoot","luck": 0.4,"x": 1,"y": 0,"moveRange": 3,"team": 0,"attackRange": 4,"canMove": 1,"canAttack": 1,"skillCoolDown": 0,"outOfMoves": 0,"damageEffect":"graphics/spritesheet/spell/ss_arrow.png"\n    }},"gold": 800}}'),
+(238, 36, 14, 0, '{"error_code": 0,"action" : {"action_type": "create_unit", "unit": {"761": {\n      "address":"graphics/spritesheet/stand/ss_wizard_stand.png","spritesheet":"graphics/spritesheet/attack/ss_wizard_attack.png","unit_id": 761,"hp": 200,"max_hp": 200,"attack": 15,"skill":"Magic Damage","luck": 0.25,"x": 1,"y": 1,"moveRange": 3,"team": 0,"attackRange": 3,"canMove": 1,"canAttack": 1,"skillCoolDown": 0,"outOfMoves": 0,"damageEffect":"graphics/spritesheet/spell/ss_fireball.png"\n    }},"gold": 700}}'),
+(239, 36, 14, 0, '{"error_code": 0,"action" : {"action_type": "create_unit", "unit": {"762": {\n      "address":"graphics/spritesheet/stand/ss_wizard_stand.png","spritesheet":"graphics/spritesheet/attack/ss_wizard_attack.png","unit_id": 762,"hp": 200,"max_hp": 200,"attack": 15,"skill":"Magic Damage","luck": 0.25,"x": 1,"y": 2,"moveRange": 3,"team": 0,"attackRange": 3,"canMove": 1,"canAttack": 1,"skillCoolDown": 0,"outOfMoves": 0,"damageEffect":"graphics/spritesheet/spell/ss_fireball.png"\n    }},"gold": 600}}'),
+(240, 36, 14, 0, '{"error_code": 0,"action" : {"action_type": "create_unit", "unit": {"763": {\n      "address":"graphics/spritesheet/stand/ss_archer_stand.png","spritesheet":"graphics/spritesheet/attack/ss_archer_attack.png","unit_id": 763,"hp": 200,"max_hp": 200,"attack": 20,"skill":"Double Shoot","luck": 0.4,"x": 2,"y": 1,"moveRange": 3,"team": 0,"attackRange": 4,"canMove": 1,"canAttack": 1,"skillCoolDown": 0,"outOfMoves": 0,"damageEffect":"graphics/spritesheet/spell/ss_arrow.png"\n    }},"gold": 500}}'),
+(241, 36, 14, 0, '{"error_code": 0,"action" : {"action_type": "move_unit", "unit_id": 763,"path": [[2,1],[2,2],[2,3],[2,4]]}}'),
+(242, 36, 14, 0, '{"error_code": 0,"action" : {"action_type": "create_unit", "unit": {"764": {\n      "address":"graphics/spritesheet/stand/ss_wizard_stand.png","spritesheet":"graphics/spritesheet/attack/ss_wizard_attack.png","unit_id": 764,"hp": 200,"max_hp": 200,"attack": 15,"skill":"Magic Damage","luck": 0.25,"x": 2,"y": 0,"moveRange": 3,"team": 0,"attackRange": 3,"canMove": 1,"canAttack": 1,"skillCoolDown": 0,"outOfMoves": 0,"damageEffect":"graphics/spritesheet/spell/ss_fireball.png"\n    }},"gold": 400}}'),
+(243, 36, 14, 0, '{"error_code": 0,"action" : {"action_type": "create_unit", "unit": {"765": {\n      "address":"graphics/spritesheet/stand/ss_archer_stand.png","spritesheet":"graphics/spritesheet/attack/ss_archer_attack.png","unit_id": 765,"hp": 200,"max_hp": 200,"attack": 20,"skill":"Double Shoot","luck": 0.4,"x": 3,"y": 0,"moveRange": 3,"team": 0,"attackRange": 4,"canMove": 1,"canAttack": 1,"skillCoolDown": 0,"outOfMoves": 0,"damageEffect":"graphics/spritesheet/spell/ss_arrow.png"\n    }},"gold": 300}}'),
+(244, 36, 14, 0, '{"error_code": 0,"action" : {"action_type": "create_unit", "unit": {"766": {\n      "address":"graphics/spritesheet/stand/ss_knight_stand.png","spritesheet":"graphics/spritesheet/attack/ss_knight_attack.png","unit_id": 766,"hp": 300,"max_hp": 300,"attack": 40,"skill":"Shield","luck": 0.15,"x": 3,"y": 1,"moveRange": 2,"team": 0,"attackRange": 1,"canMove": 1,"canAttack": 1,"skillCoolDown": 0,"outOfMoves": 0,"damageEffect":"graphics/spritesheet/spell/ss_physical_attack.png"\n    }},"gold": 200}}'),
+(245, 36, 14, 0, '{"error_code": 0,"action" : {"action_type": "create_unit", "unit": {"767": {\n      "address":"graphics/spritesheet/stand/ss_wizard_stand.png","spritesheet":"graphics/spritesheet/attack/ss_wizard_attack.png","unit_id": 767,"hp": 200,"max_hp": 200,"attack": 15,"skill":"Magic Damage","luck": 0.25,"x": 2,"y": 1,"moveRange": 3,"team": 0,"attackRange": 3,"canMove": 1,"canAttack": 1,"skillCoolDown": 0,"outOfMoves": 0,"damageEffect":"graphics/spritesheet/spell/ss_fireball.png"\n    }},"gold": 100}}'),
+(246, 36, 14, 0, '{"error_code": 0,"action" : {"action_type": "create_unit", "unit": {"768": {\n      "address":"graphics/spritesheet/stand/ss_wizard_stand.png","spritesheet":"graphics/spritesheet/attack/ss_wizard_attack.png","unit_id": 768,"hp": 200,"max_hp": 200,"attack": 15,"skill":"Magic Damage","luck": 0.25,"x": 2,"y": 3,"moveRange": 3,"team": 0,"attackRange": 3,"canMove": 1,"canAttack": 1,"skillCoolDown": 0,"outOfMoves": 0,"damageEffect":"graphics/spritesheet/spell/ss_fireball.png"\n    }},"gold": 0}}'),
+(247, 36, 9, 1, '{"error_code": 0,"action" : {"action_type": "create_unit", "unit": {"769": {\n      "address":"graphics/spritesheet/stand/ss_wizard_stand.png","spritesheet":"graphics/spritesheet/attack/ss_wizard_attack.png","unit_id": 769,"hp": 200,"max_hp": 200,"attack": 15,"skill":"Magic Damage","luck": 0.25,"x": 2,"y": 2,"moveRange": 3,"team": 1,"attackRange": 3,"canMove": 1,"canAttack": 1,"skillCoolDown": 0,"outOfMoves": 0,"damageEffect":"graphics/spritesheet/spell/ss_fireball.png"\n    }},"gold": 900}}'),
+(248, 36, 9, 1, '{"error_code": 0,"action" : {"action_type": "create_unit", "unit": {"770": {\n      "address":"graphics/spritesheet/stand/ss_wizard_stand.png","spritesheet":"graphics/spritesheet/attack/ss_wizard_attack.png","unit_id": 770,"hp": 200,"max_hp": 200,"attack": 15,"skill":"Magic Damage","luck": 0.25,"x": 1,"y": 3,"moveRange": 3,"team": 1,"attackRange": 3,"canMove": 1,"canAttack": 1,"skillCoolDown": 0,"outOfMoves": 0,"damageEffect":"graphics/spritesheet/spell/ss_fireball.png"\n    }},"gold": 800}}'),
+(249, 36, 9, 1, '{"error_code": 0,"action" : {"action_type": "move_unit", "unit_id": 770,"path": [[1,3],[1,4],[1,5],[2,5]]}}'),
+(250, 36, 14, 0, '{"error_code": 0,"action" : {"action_type": "move_unit", "unit_id": 749,"path": [[3,2],[4,2],[4,3],[4,4]]}}'),
+(251, 36, 14, 0, '{"error_code": 0,"action" : {"action_type": "move_unit", "unit_id": 753,"path": [[0,3],[0,4],[0,5],[0,6]]}}'),
+(252, 36, 14, 0, '{"error_code": 0,"action" : {"action_type": "move_unit", "unit_id": 752,"path": [[0,2],[0,3],[0,4]]}}'),
+(253, 36, 14, 0, '{"error_code": 0,"action" : {"action_type": "move_unit", "unit_id": 751,"path": [[3,3],[3,4],[3,5]]}}'),
+(254, 36, 14, 0, '{"error_code": 0,"action" : {"action_type": "create_unit", "unit": {"781": {\n      "address":"graphics/spritesheet/stand/ss_wizard_stand.png","spritesheet":"graphics/spritesheet/attack/ss_wizard_attack.png","unit_id": 781,"hp": 200,"max_hp": 200,"attack": 15,"skill":"Magic Damage","luck": 0.25,"x": 3,"y": 1,"moveRange": 3,"team": 0,"attackRange": 3,"canMove": 1,"canAttack": 1,"skillCoolDown": 0,"outOfMoves": 0,"damageEffect":"graphics/spritesheet/spell/ss_fireball.png"\n    }},"gold": 900}}'),
+(255, 36, 14, 0, '{"error_code": 0,"action" : {"action_type": "create_unit", "unit": {"782": {\n      "address":"graphics/spritesheet/stand/ss_archer_stand.png","spritesheet":"graphics/spritesheet/attack/ss_archer_attack.png","unit_id": 782,"hp": 200,"max_hp": 200,"attack": 20,"skill":"Double Shoot","luck": 0.4,"x": 2,"y": 1,"moveRange": 3,"team": 0,"attackRange": 4,"canMove": 1,"canAttack": 1,"skillCoolDown": 0,"outOfMoves": 0,"damageEffect":"graphics/spritesheet/spell/ss_arrow.png"\n    }},"gold": 800}}'),
+(256, 36, 14, 0, '{"error_code": 0,"action" : {"action_type": "move_unit", "unit_id": 782,"path": [[2,1],[2,2],[2,3],[2,4]]}}'),
+(257, 36, 14, 0, '{"error_code": 0,"action" : {"action_type": "create_unit", "unit": {"783": {\n      "address":"graphics/spritesheet/stand/ss_archer_stand.png","spritesheet":"graphics/spritesheet/attack/ss_archer_attack.png","unit_id": 783,"hp": 200,"max_hp": 200,"attack": 20,"skill":"Double Shoot","luck": 0.4,"x": 3,"y": 0,"moveRange": 3,"team": 0,"attackRange": 4,"canMove": 1,"canAttack": 1,"skillCoolDown": 0,"outOfMoves": 0,"damageEffect":"graphics/spritesheet/spell/ss_arrow.png"\n    }},"gold": 700}}'),
+(258, 36, 14, 0, '{"error_code": 0,"action" : {"action_type": "create_unit", "unit": {"784": {\n      "address":"graphics/spritesheet/stand/ss_wizard_stand.png","spritesheet":"graphics/spritesheet/attack/ss_wizard_attack.png","unit_id": 784,"hp": 200,"max_hp": 200,"attack": 15,"skill":"Magic Damage","luck": 0.25,"x": 1,"y": 1,"moveRange": 3,"team": 0,"attackRange": 3,"canMove": 1,"canAttack": 1,"skillCoolDown": 0,"outOfMoves": 0,"damageEffect":"graphics/spritesheet/spell/ss_fireball.png"\n    }},"gold": 600}}'),
+(259, 36, 14, 0, '{"error_code": 0,"action" : {"action_type": "move_unit", "unit_id": 784,"path": [[1,1],[1,2]]}}'),
+(260, 36, 14, 0, '{"error_code": 0,"action" : {"action_type": "move_unit", "unit_id": 775,"path": [[0,3],[0,4],[0,5],[1,5]]}}'),
+(261, 38, 13, 0, '{"error_code": 0,"action" : {"action_type": "move_unit", "unit_id": 797,"path": [[3,3],[3,4],[3,5]]}}'),
+(262, 36, 14, 0, '{"error_code": 0,"action" : {"action_type": "move_unit", "unit_id": 809,"path": [[0,2],[1,2],[2,2]]}}'),
+(263, 36, 14, 0, '{"error_code": 0,"action" : {"action_type": "turn_change", "new_turn": 1,"effects_to_apply": [],"units_new_cd": [],"buffs_to_remove": []}}'),
+(264, 36, 9, 1, '{"error_code": 0,"action" : {"action_type": "move_unit", "unit_id": 808,"path": [[3,4],[4,4],[4,3],[4,2]]}}'),
+(265, 36, 9, 1, '{"error_code": 0,"action" : {"action_type": "move_unit", "unit_id": 813,"path": [[9,10],[8,10],[8,9],[8,8]]}}'),
+(266, 36, 14, 0, '{"error_code": 0,"action" : {"action_type": "move_unit", "unit_id": 816,"path": [[3,2],[2,2],[2,3],[2,4]]}}'),
+(267, 36, 14, 0, '{"error_code": 0,"action" : {"action_type": "move_unit", "unit_id": 818,"path": [[3,3],[4,3],[4,4],[4,5]]}}'),
+(268, 36, 14, 0, '{"error_code": 0,"action" : {"action_type": "attack_unit", "attacker_id": 816,"buffs": [],"target_id": 819,"dmg": 25,"is_critical": 0}}'),
+(269, 36, 14, 0, '{"error_code": 0,"action" : {"action_type": "attack_unit", "attacker_id": 851,"buffs": [],"target_id": 852,"dmg": 15,"is_critical": 0}}'),
+(270, 36, 14, 0, '{"error_code": 0,"action" : {"action_type": "attack_unit", "attacker_id": 862,"buffs": [],"target_id": 863,"dmg": 15,"is_critical": 0}}');
 
 -- --------------------------------------------------------
 
@@ -186,19 +219,9 @@ CREATE TABLE `rooms` (
   `password` varchar(128) NOT NULL,
   `max_players` tinyint(4) NOT NULL DEFAULT '2',
   `state` set('pregame','ingame','ended','deleted') NOT NULL DEFAULT 'pregame',
-  `turn` int(11) NOT NULL
+  `turn` int(11) NOT NULL,
+  `winner` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
---
--- Dumping data for table `rooms`
---
-
-INSERT INTO `rooms` (`room_id`, `user_id`, `joiner`, `created`, `name`, `password`, `max_players`, `state`, `turn`) VALUES
-(29, 9, 0, '2016-06-03 09:27:09', 'hello world', 'hello world', 2, 'deleted', 0),
-(30, 9, 0, '2016-06-04 11:28:03', 'asda', 'asda', 2, 'deleted', 0),
-(31, 14, 0, '2016-06-04 21:43:14', 'asda', '$2y$10$f5PQeaZL1PM8fM6LcN1MauSk7cf8/DgjDaZJH4596EJVMjNjlFoYO', 2, 'deleted', 0),
-(32, 14, 0, '2016-06-04 22:14:29', 'qwe', '$2y$10$wKiBIYBBHEZJbrntx29vE.BGS/ZfVeoSip1KHlpn7ml8UrTMX/LkS', 2, 'deleted', 0),
-(33, 9, 0, '2016-06-04 22:16:57', 'asda', '', 2, 'pregame', 0);
 
 -- --------------------------------------------------------
 
@@ -213,17 +236,9 @@ CREATE TABLE `room_participants` (
   `colour` set('red','blue') NOT NULL,
   `state` set('notready','ready','owner') NOT NULL DEFAULT 'notready',
   `event` set('kicked','left') NOT NULL,
-  `gold` int(11) NOT NULL DEFAULT '500'
+  `gold` int(11) NOT NULL DEFAULT '500',
+  `unit_kills` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
---
--- Dumping data for table `room_participants`
---
-
-INSERT INTO `room_participants` (`part_id`, `user_id`, `room_id`, `colour`, `state`, `event`, `gold`) VALUES
-(103, 9, 33, 'red', 'owner', '', 500),
-(104, 14, 33, 'blue', 'notready', 'left', 500),
-(105, 14, 33, 'blue', 'notready', 'left', 500);
 
 -- --------------------------------------------------------
 
@@ -301,7 +316,28 @@ INSERT INTO `units` (`unit_id`, `class_id`, `hp`, `max_hp`, `attack`, `skillCool
 (147, 1, 200, 200, 15, 0, 1, 0, 0, 1, 1, 0, 30),
 (148, 2, 200, 200, 20, 0, 1, 1, 0, 1, 1, 0, 30),
 (149, 3, 300, 300, 40, 0, 1, 2, 0, 1, 1, 0, 30),
-(150, 3, 300, 300, 40, 0, 1, 2, 0, 1, 1, 0, 30);
+(150, 3, 300, 300, 40, 0, 1, 2, 0, 1, 1, 0, 30),
+(795, 4, 400, 400, 25, 0, 3, 2, 0, 1, 1, 0, 38),
+(796, 5, 999, 999, 999, 0, 0, 0, 0, 1, 1, 0, 38),
+(797, 1, 200, 200, 15, 0, 3, 5, 0, 0, 1, 0, 38),
+(798, 3, 300, 300, 40, 0, 0, 2, 0, 1, 1, 0, 38),
+(799, 2, 200, 200, 20, 0, 0, 3, 0, 1, 1, 0, 38),
+(800, 4, 400, 400, 25, 0, 9, 11, 1, 1, 1, 0, 38),
+(801, 6, 999, 999, 999, 0, 12, 13, 1, 1, 1, 0, 38),
+(802, 1, 200, 200, 15, 0, 9, 10, 1, 1, 1, 0, 38),
+(803, 3, 300, 300, 40, 0, 12, 10, 1, 1, 1, 0, 38),
+(804, 2, 200, 200, 20, 0, 12, 11, 1, 1, 1, 0, 38),
+(860, 4, 400, 400, 25, 0, 3, 2, 0, 1, 1, 0, 36),
+(861, 5, 999, 999, 999, 0, 0, 0, 0, 1, 1, 0, 36),
+(862, 1, 200, 200, 15, 0, 3, 3, 0, 0, 0, 1, 36),
+(863, 1, 185, 200, 15, 0, 3, 4, 1, 1, 1, 0, 36),
+(864, 3, 300, 300, 40, 0, 0, 2, 0, 1, 1, 0, 36),
+(865, 2, 200, 200, 20, 0, 0, 3, 0, 1, 1, 0, 36),
+(866, 4, 400, 400, 25, 0, 9, 11, 1, 1, 1, 0, 36),
+(867, 6, 999, 999, 999, 0, 12, 13, 1, 1, 1, 0, 36),
+(868, 1, 200, 200, 15, 0, 9, 10, 1, 1, 1, 0, 36),
+(869, 3, 300, 300, 40, 0, 12, 10, 1, 1, 1, 0, 36),
+(870, 2, 200, 200, 20, 0, 12, 11, 1, 1, 1, 0, 36);
 
 -- --------------------------------------------------------
 
@@ -334,7 +370,8 @@ INSERT INTO `users` (`id`, `password`, `email`, `username`, `wins`, `losses`, `e
 (12, '$2y$10$7.dtDYkyCuARy8JOOvnEM..015QDAO7YDKsNEmue6deyEyJvIDwr2', 'goku@goku.com', 'goku', 211, 62, 1000, '2016-06-01 20:53:04'),
 (13, '$2y$10$EVxl9C85A3EGzS9/mbr4mO1eZwdAa7RoFtuXRU.4lwdohCezvuQTu', 'veg@veg.com', 'veg', 311, 73, 1000, '2016-06-01 20:53:57'),
 (14, '$2y$10$sxwp7k4OSuCdCiO7y.JsOucq/YbXFR4oF8aBcgeTJ.UixSPKh.xJm', 'hp@hp.com', 'harry potter', 0, 0, 1000, '2016-06-04 21:40:28'),
-(15, '$2y$10$Q3aMDDCP8w2o8bV.SaRs4.4Mgr49ZHzl372S4qExpvmadU0mAHETi', 'asda@asda.com', 'asdasd', 0, 0, 1000, '2016-06-04 21:40:51');
+(15, '$2y$10$Q3aMDDCP8w2o8bV.SaRs4.4Mgr49ZHzl372S4qExpvmadU0mAHETi', 'asda@asda.com', 'asdasd', 0, 0, 1000, '2016-06-04 21:40:51'),
+(16, '$2y$10$aZkr5proBXT1kbSu9WWoHOM/q4lHiyqVXj6/9FYTa9Tn6YaO31LPW', 'simon@simon.com', 'simon', 0, 0, 1000, '2016-06-06 09:29:26');
 
 --
 -- Indexes for dumped tables
@@ -345,6 +382,12 @@ INSERT INTO `users` (`id`, `password`, `email`, `username`, `wins`, `losses`, `e
 --
 ALTER TABLE `buffs`
   ADD PRIMARY KEY (`buff_id`);
+
+--
+-- Indexes for table `buff_instances`
+--
+ALTER TABLE `buff_instances`
+  ADD PRIMARY KEY (`bi_id`);
 
 --
 -- Indexes for table `chat`
@@ -412,10 +455,15 @@ ALTER TABLE `users`
 ALTER TABLE `buffs`
   MODIFY `buff_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 --
+-- AUTO_INCREMENT for table `buff_instances`
+--
+ALTER TABLE `buff_instances`
+  MODIFY `bi_id` int(11) NOT NULL AUTO_INCREMENT;
+--
 -- AUTO_INCREMENT for table `chat`
 --
 ALTER TABLE `chat`
-  MODIFY `chat_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=76;
+  MODIFY `chat_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=98;
 --
 -- AUTO_INCREMENT for table `classes`
 --
@@ -430,27 +478,27 @@ ALTER TABLE `maps`
 -- AUTO_INCREMENT for table `opp`
 --
 ALTER TABLE `opp`
-  MODIFY `opp_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `opp_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=271;
 --
 -- AUTO_INCREMENT for table `rooms`
 --
 ALTER TABLE `rooms`
-  MODIFY `room_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=34;
+  MODIFY `room_id` int(11) NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT for table `room_participants`
 --
 ALTER TABLE `room_participants`
-  MODIFY `part_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=106;
+  MODIFY `part_id` int(11) NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT for table `units`
 --
 ALTER TABLE `units`
-  MODIFY `unit_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=151;
+  MODIFY `unit_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=871;
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;

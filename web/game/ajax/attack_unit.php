@@ -22,7 +22,7 @@ if ( $attacker->team == $target->team ) exit_error(103);
 if ( $attacker->canAttack == 0 ) exit_error(104);
 if ( outOfAttackRange($attacker, $target)) exit_error(105);
 
-$result = $db->query("SELECT * FROM buff_instances WHERE unit_id = '{target_id}' AND buff_id = 4");
+$result = $db->query("SELECT * FROM buff_instances WHERE unit_id = '{$target_id}' AND buff_id = 4");
 $buff = $result->fetch_object();
 
 if (!$buff) {
@@ -41,7 +41,7 @@ if (!$buff) {
 	$out .= $SUCCESS.",";
 	$out .= action("attack_unit",
 		   jsonPair("attacker_id", $attacker_id)
-	  .","."\"buffs\": []"
+	  .",".jsonPair("buffs", "[]")
 	  .",".jsonPair("target_id", $target_id)
 	  .",".jsonPair("dmg", $damage)
 	  .",".jsonPair("is_critical", 0));
@@ -54,7 +54,7 @@ if (!$buff) {
 	$out .= $SUCCESS.",";
 	$out .= action("remove_buff",
 		   jsonPair("unit_id", $target_id)
-	  .",".jsonPair("buff_if", $buff->buff_id));
+	  .",".jsonPair("buff_id", $buff->buff_id));
 	$out .= "}"; 
 }
 

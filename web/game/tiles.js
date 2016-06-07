@@ -2001,6 +2001,7 @@ function serverValidate(type, unit, additionalArgs) {
 		});
 	}
 	if (type === "attack") {
+    console.log("ATTACKER"+unit.unit_id+", TARGET"+additionalArgs[0].unit_id);
 		rawPost("ajax/attack_unit", {"attacker_id" : String(unit.unit_id), "target_id" : String(additionalArgs[0].unit_id)}, function(data) {
 			console.log(data);
 			if (data.error_code != 0) {
