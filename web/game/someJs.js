@@ -14,11 +14,31 @@ function displayBox2(action, action2) {
 	var box = $("#someBox");
 	var button = $("#actionButton");
 	var button2 = $("#actionButton2");
-	button2.show();
     box.show();
 	button.click(action);
 	button2.click(action2);
 } 
+
+function displayWarningBox(action,action2) {
+	var box = $("#someBox2");
+	var button = $("#yesButton");
+	var button2 = $("#noButton");
+	box.show();
+	button.show();
+	button2.show();
+	button.click(action);
+	button2.click(action2);
+}
+
+function removeWarningBox(){
+	$("#someBox2").hide();
+	$("#yesButton").unbind();
+	$("#noButton").unbind();
+}
+
+
+
+
 function removeBox() {
     $("#someBox").hide();
 	$("#actionButton").unbind();
