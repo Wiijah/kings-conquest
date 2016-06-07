@@ -1,5 +1,4 @@
 var lastID = 0;
-var debug;
 var messageBox = $("#play_chatroom_messages");
 var chatScrollSpeed = 600;
 var chat_colour = '';
@@ -43,8 +42,10 @@ function chatroom_refresh_messages() {
 function concatToChatroom(line) {
   if (lastID >= line.id) return; //prevent old messages being resent
   lastID = line.id;
+
+  var user_link = "<a class='open_profile' data-username='"+line.username+"'>"+line.username+"</a>";
   if (line.chat_type == 'message') { //normal message
-    $("#play_chatroom_messages").append("<span class='play_chatroom_user'>"+line.username+":</span> <span class='play_chatroom_text'>"+line.message+"</span><br />");
+    $("#play_chatroom_messages").append("["+line.time+"] <span class='play_chatroom_user'>"+user_link+":</span><span class='play_chatroom_text'>"+line.message+"</span><br />");
   } else { // event
     $("#play_chatroom_messages").append("<span class='play_chatroom_user chat_event'>"+line.message+"</span><br />");
   }

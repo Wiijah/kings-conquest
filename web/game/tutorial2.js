@@ -5,6 +5,10 @@ var stage = new createjs.Stage("gameCanvas");
 
 var that = this;
 var team = 0;
+var turnTimer;
+var remainingTurnTime;
+var timerIntervalId;
+var enableCountDown = false;
 
 var isDragging = false;
 var offX;
@@ -62,6 +66,29 @@ var enemyUnit;
 
 var lock = true;
 
+
+function startTimer() {
+  if (typeof(timerIntervalId) != "undefined") window.clearInterval(timerIntervalId);
+  timerIntervalId = setInterval(function() {
+    refreshTimer(remainingTurnTime - 1);
+  }, 1000);
+}
+
+function refreshTimer(remainingTime) {
+  stage.removeChild(turnTimer);
+  remainingTurnTime = remainingTime;
+  if (remainingTurnTime === -1) {
+    endTurn();
+  } else {
+    turnTimer = new createjs.Text("" + remainingTurnTime, "30px Arial", "#0000ff");
+    turnTimer.x = 800;
+    turnTimer.y = 50;
+    stage.addChild(turnTimer);
+  }
+}
+
+
+
 function showTurnInfo(){
   if (!startTutorial) return;
   stage.removeChild(playerLabel);
@@ -104,6 +131,10 @@ function turnStartPhase() {
  // destroyGoldDisplay();
  //   drawGoldDisplay();
   showTurnInfo();
+  if (enableCountDown) {
+    refreshTimer(60);
+    startTimer();
+  }
     playableUnitCount = 0;
     console.log("Starting turn");
     $.each(units, function(i, value) {
@@ -210,6 +241,7 @@ function turnStartPhase() {
     var toX;
     var toY;
     var dist = 1000;
+    console.log(blockMaps);
     for (var i = 0; i < reachableTiles.length; i++) {
       // console.log(reachableTiles[i]);
       var newDist = Math.abs(reachableTiles[i][0] - currentUnit.row) + Math.abs(reachableTiles[i][1] - currentUnit.column);
@@ -625,7 +657,11 @@ function initGame() {
   changed = true;
 
   window.addEventListener('resize', resize, false);
-
+  
+  if (enableCountDown) {
+    refreshTimer(60);
+    startTimer();
+  }
   drawMenuDisplay();
   stage.update();
   draggable.mouseChildren = false;

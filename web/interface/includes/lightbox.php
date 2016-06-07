@@ -1,4 +1,5 @@
 <?php
+require_once 'lib.php';
 require_once '../includes/lightbox.php';
 
 echo genLightbox("Create Game", "create_game", "<table class='form_table'>
@@ -15,7 +16,7 @@ echo genLightbox("Enter Room", "enter_room", "
     </table>
     <div class='btn lightbox_btn' id='lightbox_btn_enter_room'>Join Room</div>
     <div class='btn lightbox_btn lightbox_close'>Cancel</div>");
-
+/*
 $ach = array(
   '50_wins' => array("images/achievements/50_wins.png", "Won 50 games."),
   '100_wins' => array("images/achievements/100_wins.png", "Won 100 games."),
@@ -30,6 +31,8 @@ $user_ach[] = $ach['perfect_win'];
 $ach_html = "";
 foreach ($user_ach as $value) {
   $ach_html .= "<label title='{$value[1]}'><img src='{$value[0]}' class='achievement' /></label>";
-}
+}*/
+$ach_html = getAchievementsHTML($user->id);
+if ($ach_html == "") $ach_html = "You have not earned any achievements yet.";
 echo genLightBox("Achievements", "achievements", "<div style='text-align: center'>{$ach_html}</a></div>");
 ?>

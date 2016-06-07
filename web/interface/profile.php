@@ -1,7 +1,6 @@
 <?php
 $title = "Profile";
 require_once 'includes/header_checks.php';
-include 'includes/header.php';
 
 $other = secureStr($_GET['username']);
 $result = $db->query("SELECT * FROM users WHERE username = '{$other}'");
@@ -12,10 +11,13 @@ if (!$prof) {
   die();
 }
 
+include 'includes/header.php';
 include 'includes/logout_container.php';
 include 'includes/logo.php';
-
 require_once 'includes/back_container.php';
+
+$ach_html = getAchievementsHTML($prof->id);
+if ($ach_html == "") $ach_html = "This player has no achievements.";
 ?>
 
 <div class="small_container prof_user">
@@ -33,7 +35,12 @@ require_once 'includes/back_container.php';
 <tr><th>Sign Up Date</th><td><?php echo formatSQLDate($prof->created); ?> </td></tr>
 </table>
 </div> <!-- play_profile box -->
+<br />
+<?php echo genTitle("Achievements Of {$prof->username}"); ?>
+<div class="play_profile box center achievements">
 
+<?php echo $ach_html; ?>
+</div> <!-- play_profile box for achievements-->
 
 </div> <!-- small_container -->
 

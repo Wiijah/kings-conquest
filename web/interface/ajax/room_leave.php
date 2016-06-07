@@ -18,22 +18,22 @@ if ($room->state != 'pregame') {
 }
 
 $result = $db->query("SELECT * FROM room_participants WHERE user_id = '{$user->id}' AND room_id = '{$room_id}' AND event = ''");
-if (!$participant = $result->fetch_object()) { //user already left
+if (!$part = $result->fetch_object()) { //user already left
   die('{"kc_success":""}');
 }
 
-
 /* Tell everyone you left */
-$message = $user->username." left the game.";
+$message = $user->username." left the room.";
 $db->query("INSERT INTO chat (user, message, room_id, chat_type) VALUES
     ('{$user->id}', '{$message}', '{$room_id}', 'event')");
 
 /* Delete room and room participant records if owner */
 if ($participant->state == 'owner') {
-  $db->query("UPDATE rooms SET state = 'deleted' WHERE room_id = '{$room_id}'");
+  $db->query("DELETE FROM rooms WHERE room_id = '{$room_id}'");
   $db->query("DELETE FROM room_participants WHERE room_id = '{$room_id}'");
 } else { /* Otherwise, leave the game without deleting the room */
-  $db->query("UPDATE room_participants SET event = 'left' WHERE user_id = '{$user->id}'");
+  $db->query("DELETE FROM room_participants WHERE room_id = '{$room_id}' AND user_id = '{$user->id}'");
+  //$db->query("UPDATE room_participants SET event = 'left' WHERE user_id = '{$user->id}'");
 }
 
 /* Success */
