@@ -7,19 +7,14 @@
   -webkit-box-sizing: border-box;
   background-clip: padding-box;
 }
-#register_social {
+#register_social, #credits, #login_container, #register_container {
   display: none;
 }
-.goto_login, .goto_register, .goto_home {
+
+.goto_login, .goto_register, .goto_home, .goto_guest {
   cursor: pointer;
 }
 
-#login_container {
-  display: none;
-}
-#register_container {
-  display: none;
-}
 #browsers {
   width: 150px;
   margin-bottom: 5px;
@@ -67,7 +62,7 @@
 .home_btn_text {
   font-size: 28px;
   position: absolute;
-  bottom: 2px;
+  bottom: 1px;
   width: 100%;
   text-align: center;
   font-family: BebasNeueBook;

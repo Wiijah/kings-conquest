@@ -1,9 +1,6 @@
 <html>
   <head>
     <script src="https://code.createjs.com/createjs-2015.11.26.min.js"></script>
-    <script>
-    lightbox_alert("Hi", "Hello world!");
-    </script>
     <style>
         body { 
           position: relative;
@@ -39,13 +36,52 @@
     }
   </style>
   
+  <link rel="stylesheet" type="text/css" href="someCss.css">
+  <script src = "./someJs.js" type="text/javascript"> </script>
+
   </head>
-  <body>
+
+  <body onload="displayBox(backgroundInfo);">
+
   <?php include 'includes/lightbox.php'; ?>
       
   <canvas id="gameCanvas" width="5000px" height="5000px"></canvas>
   <script src="tutorial1.js"></script>
-  </body>
+
+  <div id="someBox">
+    <div id="box_header">
+      <img src="./i_icon.png" style="line-height: 1px; vertical-align: bottom; margin-right: 5px" height="20" width="20" />Tutorial 1 : Basics
+    </div>
+    <div id="box_body">
+      Welcome to King's Conquest. Your top priority is to kill the enemy's king to win the game. In this tutorial, you will learn how to move a unit and attack an enemy<br /><br />
+    </div>
+    <div id="box_foot">
+      <button type="button" id="actionButton" class="btn" ng-click="">OK</button>
+    </div>
+  </div>
+    <div id = "maskBox1"> <style>
+      #maskBox1 {
+        position:relative;
+        left:0;
+        top:-900;
+        background: rgba(0,0,0,.5);
+        width:100%;
+        height:710px;
+        display: inline;
+       }
+       </style></div>
+    <div id = "maskBox2"> <style>
+      #maskBox2 {
+        position:relative;
+        left:0;
+        top:-900;
+        background: rgba(0,0,0,.5);
+        width:75%;
+        height:300px;
+        display: inline;
+       }
+       </style></div>
+</body>
 </html>
 
 

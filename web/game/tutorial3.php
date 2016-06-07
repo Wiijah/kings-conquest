@@ -41,7 +41,8 @@
 
   </head>
 
-  <body onload="displayBox(removeBox);">
+  <body onload="displayBox(showKingTutorial);">
+
   <?php include 'includes/lightbox.php'; ?>
       
   <canvas id="gameCanvas" width="5000px" height="5000px"></canvas>
@@ -55,7 +56,8 @@
       Now you know the unit creation system. There are several units with different skills in King's Conquest. In this tutorial, you are going to learn the skill of each unit. Click the unit cards to try different units.<br /><br />
     </div>
     <div id="box_foot">
-      <button type="button" id="actionButton" class="btn" ng-click="">OK</button>
+      <button type="button" id="actionButton" class="btn" ng-click="">Next</button>
+
     </div>
   </div>
   </body>

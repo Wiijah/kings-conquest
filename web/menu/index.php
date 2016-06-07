@@ -40,7 +40,7 @@ if (isset($_SESSION['id'])) {
 </div>
 
 
-<div class="home_middle goto_guest home_hover">
+<div class="home_middle home_hover lightbox_open" data-lb="guest">
 <img src="images/big_green_king.png" class="home_king" /><br />
 <img src="images/btn_brush.png" class="home_btn" />
 <div class="home_btn_text">Guest</div>
@@ -52,11 +52,30 @@ if (isset($_SESSION['id'])) {
 <div class="home_btn_text">Register</div>
 </div>
 
+<div id="credits">
+<div class="home_box">
+In no particular order, the game was developed by Alan Du, Pierre-Louis Rivierre, Hanou Chen and Rendy Li.<br /><br />
+We used the following resources on our game:
+<ol>
+  <li>Facebook SDK<br />https://github.com/facebook/facebook-php-sdk-v4/</li>
+  <li>Cloud image<br />http://pngimg.com/upload/cloud_PNG4.png</li>
+  <li>jQuery<br />https://jquery.com/</li>
+  <li>CreateJS and EaselJS<br />http://www.createjs.com/</li>
+  <li>Loading Animation<br />http://loading.io/</li>
+  <li>Epic Fantasy Music<br />http://opengameart.org/content/epic- fantasy-music</li>
+</ol>
+</div>
+<div class="goto_home_btn goto_home">Home</div>
+</div>
+
+<div id="intro">
 <div class="home_box">
 Kings' Conquest is a <span class='home_highlight'>turned-based multiplayer
 game</span> aimed at fans of the <span class='home_highlight'>fantasy</span> or
 <span class='home_highlight'>strategy</span> genre.<br /><br />
 Best viewed with both eyes open and on Chrome.
+</div>
+<div class="goto_home_btn goto_credits">Credits</div>
 </div>
 
 </div>
@@ -121,7 +140,6 @@ The account you are registering will be authenticated by your Facebook account.<
 </div> 
 <!-- end register -->
 
-<br /><br />
   <div class="white_line"></div><br />
   <div class="footer">&copy; 2016 Kings' Conquest</div>
   </div>

@@ -39,9 +39,12 @@ $db->query("UPDATE room_participants SET gold = '{$player->gold}' WHERE user_id 
 $out = "{";
 $out .= $SUCCESS.",";
 //$out .= jsonPair("gold", $player->gold).",";
-$out .= action("create_unit",
+$action = action("create_unit",
        jsonPair("unit", "{".jsonUnit($unit)."}")
   .",".jsonPair("gold", $player->gold));
+
+
+$out .= jsonPair("actions", "[{$action}]"); 
 $out .= "}";
 
 oppInsert($out);

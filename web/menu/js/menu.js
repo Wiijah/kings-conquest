@@ -67,6 +67,27 @@ function fb_register() {
 
 $(document).ready(function() {
 
+
+  /* Guest AJAX */
+  $('body').on('click', '#lightbox_btn_guest', function() {
+    fs_load();
+    var display_name = $('#display_name').val();
+
+    quickPost("ajax/guest", {username: display_name}, function(data, status) {
+      if (data.kc_error !== undefined) {
+
+        fs_unload();
+        lightbox_error(data.kc_error);
+        return;
+      }
+      window.location.href = '../interface/';
+    });
+  });
+
+
+
+
+
   /* Login AJAX */
   $('body').on('click', '#btn_login', function() {
     fs_load();
@@ -129,7 +150,15 @@ $(document).ready(function() {
 
   /* Open up home */
   $('body').on('click', '.goto_home', function() {
+    $("#credits").hide();
     show_menu_container("#home_container");
+    $("#intro").show();
+  });
+
+
+  $('body').on('click', '.goto_credits', function() {
+    $("#credits").show();
+    $("#intro").hide();
   });
 });
 
