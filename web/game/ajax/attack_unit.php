@@ -39,12 +39,13 @@ if (!$buff) {
 	// notify
 	$out = '{';
 	$out .= $SUCCESS.",";
-	$out .= action("attack_unit",
+	$action = action("attack_unit",
 		   jsonPair("attacker_id", $attacker_id)
 	  .",".jsonPair("buffs", "[]")
 	  .",".jsonPair("target_id", $target_id)
 	  .",".jsonPair("dmg", $damage)
 	  .",".jsonPair("is_critical", 0));
+	$out .= jsonPair("actions", "[{$action}]");
 	$out .= "}";
 } else {
 	// remove buff
@@ -52,9 +53,10 @@ if (!$buff) {
 
 	$out = '{';
 	$out .= $SUCCESS.",";
-	$out .= action("remove_buff",
+	$action = action("remove_buff",
 		   jsonPair("unit_id", $target_id)
 	  .",".jsonPair("buff_id", $buff->buff_id));
+	$out .= jsonPair("actions", "[{$action}]");
 	$out .= "}"; 
 }
 
