@@ -1,8 +1,6 @@
 <?php
 $title = "Room";
-include 'includes/header.php';
-include 'includes/logout_container.php';
-include 'includes/logo.php';
+require_once 'includes/header_checks.php';
 
 $result = $db->query("SELECT * FROM room_participants WHERE user_id = '{$user->id}' AND event = ''");
 if (!$part = $result->fetch_object()) {
@@ -15,6 +13,16 @@ if (!$room = $result->fetch_object()) {
   header ("Location: index");
   die();
 }
+
+if ($room->state == 'ingame') {
+  header ("Location: ../game/");
+  die();
+}
+
+
+include 'includes/header.php';
+include 'includes/logout_container.php';
+include 'includes/logo.php';
 
 $max_players = 2;
 

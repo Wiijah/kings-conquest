@@ -1,5 +1,6 @@
 <?php
 $title = "Game Ended";
+require_once 'includes/header_checks.php';
 include 'includes/header.php';
 
 $room_id = secureStr($_GET['room_id']);
