@@ -3,7 +3,8 @@
 }
 .player_state {
   position: absolute;
-  top: 7px;
+  vertical-align: middle;
+  top: 8px;
   right: 7px;
   font-family: BebasNeueBook;
   font-size: 15px;

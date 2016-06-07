@@ -2,7 +2,7 @@
 $title = "Room";
 require_once 'includes/header_checks.php';
 
-$result = $db->query("SELECT * FROM room_participants WHERE user_id = '{$user->id}' AND event = ''");
+$result = $db->query("SELECT * FROM room_participants WHERE user_id = '{$user->id}' AND event = '' ORDER BY room_id DESC LIMIT 1");
 if (!$part = $result->fetch_object()) {
   header ("Location: index");
   die();
@@ -31,6 +31,7 @@ $isOwner = $room->user_id == $user->id;
 <script>
 var room_id = <?php echo $room->room_id; ?>;
 var max_players = <?php echo $max_players; ?>;
+var isOwner = <?php var_export($isOwner); ?>;
 </script>
 <script src="js/chatroom.js"></script>
 <script src="js/room.js"></script>
