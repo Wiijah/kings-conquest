@@ -2010,6 +2010,9 @@ function handleServerReply(data) {
             case "apply_buff":
                 handleApplyBuff(action);
                 break;
+            case "turn_change":
+                changeTurn(action);
+                break;
         }
     }
 }
@@ -2037,59 +2040,7 @@ function serverValidate(type, unit, additionalArgs) {
     }
 }
 
-// function serverValidate(type, unit, additionalArgs) {
-//     console.log(type);
-// 	if (type == "move") {
-//         console.log(path);
-//         console.log(unit.unit_id);
-// 		rawPost("ajax/move_unit", {"unit_id" : String(unit.unit_id), "path" : JSON.stringify(path)}, function(data) {
-// 			console.log(data);
-// 			if (data.error_code != 0) {
-// 				console.log("ERROR");
-// 				return;
-// 			}
-// 			// path = data.path;
-// 			handleMove(data.action);
-// 		});
-// 	}
-// 	if (type == "create") {
-// 		rawPost("ajax/build_unit", {"name" : additionalArgs[0], "x": additionalArgs[1], "y": additionalArgs[2]}, function(data) {
-// 			console.log(data);
-// 			if (data.error_code != 0) {
-// 				console.log("ERROR");
-// 				return;
-// 			}
-// 			handleCreate(data.action);
-// 		});
-// 	}
-// 	if (type === "attack") {
-//     console.log("ATTACKER"+unit.unit_id+", TARGET"+additionalArgs[0].unit_id);
-// 		rawPost("ajax/attack_unit", {"attacker_id" : String(unit.unit_id), "target_id" : String(additionalArgs[0].unit_id)}, function(data) {
-// 			console.log(data);
-// 			if (data.error_code != 0) {
-// 				console.log("ERROR");
-// 				return;
-// 			}
-//             console.log(data.action.type);
-// 			if (data.action.action_type === "attack_unit") handleAttack(data.action);
-//             else removeBuff(data.action.buff_id, findUnitById(data.action.target_id));
-//             postAttack(findUnitById(data.action.attacker_id));
-// 		});
-// 	}
 
-//     if (type === "turn_change") {
-//         console.log("validate change");
-//         rawPost("ajax/turn_change", {}, function(data) {
-//             console.log("handle turn change");
-//             console.log(data);
-//             if (data.error_code != 0) {
-//                 console.log("ERROR");
-//                 return;
-//             }
-//             changeTurn(data);
-//         });
-//     }
-// }
 
 function performAttack(attacker) {
 	isAttacking = true;
@@ -2116,13 +2067,13 @@ function findUnitById(id) {
     return null;
 }
 
-function changeTurn(data) {
+function changeTurn(action) {
     clearSelectionEffects();
-    turn = data.action.new_turn;
+    turn = action.new_turn;
     showTurnInfo();
-    var effectsToApply = data.action.effects_to_apply;
-    var unitsNewCD = data.action.units_new_cd;
-    var buffsToRemove = data.action.buffs_to_remove;
+    var effectsToApply = action.effects_to_apply;
+    var unitsNewCD = action.units_new_cd;
+    var buffsToRemove = action.buffs_to_remove;
 
     // Remove the buffs with zero duration.
     for (var i = 0; i < buffsToRemove.length; i++) {
@@ -2190,39 +2141,14 @@ function handleOpponent(data) {
             case "apply_buff":
                 handleApplyBuff(action);
                 break;
+            case "turn_change":
+                changeTurn(action);
+                break;
         }
     }
 }
 
 
-// function handleOpponent(data) {
-//     console.log("handle opponent move");
-//     switch (data.action.action_type) {
-//         case "move_unit":
-//             handleMove(data.action);
-//             break;
-//         case "create_unit":
-//             var unit = getFirstProp(data.action.unit);
-//             spawnUnit(unit);
-//             break;
-//         case "attack_unit":
-//             console.log("handle attack unit");
-//             handleAttack(data.action);
-//             break;
-//         case "skill":
-//             break;
-//         case "remove_buff":
-//             removeBuff(data.action.buff_id, findUnitById(data.action.unit_id));
-//             break;
-//         case "turn_change":
-//             console.log("handle change turn opp");
-//             changeTurn(data);
-//             break;
-//         case "game_end":
-//             gameEnd(data);
-//             break;
-//     }
-// }
 
 function gameEnd(data) {
   window.location.href = '../interface/game_stats?room_id='+room_id;
