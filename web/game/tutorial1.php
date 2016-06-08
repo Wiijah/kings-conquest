@@ -81,7 +81,7 @@
         z-index:30;
         right:400px;
         top:0;
-        background: rgba(0,0,0,.5);
+        background: rgba(0,0,0,.7);
         width:100%;
         height:100%;
         display: none;
@@ -94,7 +94,7 @@
         margin-left: 100%;
         left: -400px;
         bottom: 200px;
-        background: rgba(0,0,0,.5);
+        background: rgba(0,0,0,.7);
         width:100%;
         height:100%;
         display: none;

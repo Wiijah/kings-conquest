@@ -2250,6 +2250,8 @@ function keyEvent(event) {
 //      goFullScreen();
       break;
         case 13: //enter
+          if (!startTutorial) return;
+          if (turnCount == 0) return;
           if (!turn) return;
           if (!endGame) {
             endTurn();
@@ -2602,7 +2604,7 @@ function resetInsturctions(){
 }
 
 // King Tutorial ==========================
-
+var start = false;
 function showKingTutorial(){
   turnCount = 0;
   resetInsturctions();
@@ -2619,6 +2621,7 @@ function showKingTutorial(){
 
 
 function k_instruction(){
+
   removeBox();
   displayBox(function() {
     removeBox();
@@ -2663,8 +2666,9 @@ function k_instruction4(){
     showKnightTutorial();
     checkCompleness();
   });
-  addTextToButton("OK");
-  addTextToButton2("Next");
+  showButton2();
+    addTextToButton("OK");
+    addTextToButton2("Next");
   addTitleToBox("King");
   addTextToBox("<p>Excellent! Now you know how to use the king's skill.</p> <p>Click 'OK' to continue to play as the king or try another unit by clicking on the corresponding card in the bottom left corner of the window. </p><p>Click 'Next' to play the Knight Tutorial</p>");
   kingDone = 1;
@@ -2733,8 +2737,9 @@ function kt_instruction4(){
     showArcherTutorial();
     checkCompleness();
   });
-  addTextToButton("OK");
-  addTextToButton2("Next");
+  showButton2();
+    addTextToButton("OK");
+    addTextToButton2("Next");
   addTitleToBox("Knight");
   addTextToBox("<p>Excellent! You take zero damage from the enemy king.</p> <p>Click 'OK' to continue to play as the knight or try another unit by clicking on the corresponding card in the bottom left corner of the window. </p><p>Click 'Next' to play the Archer Tutorial</p>");
   knightDone = 1;
@@ -2812,8 +2817,9 @@ function a_instruction5(){
     showWizardTutorial();
     checkCompleness();
   });
-  addTextToButton("OK");
-  addTextToButton2("Next");
+  showButton2();
+    addTextToButton("OK");
+    addTextToButton2("Next");
   addTitleToBox("Archer");
   addTextToBox("<p>Excellent! Now you know the skill of archer.</p> <p>Click 'OK' to continue to play as the archer or try another unit by clicking on the corresponding card in the bottom left corner of the window. </p><p>Click 'Next' to play the Wizard Tutorial</p>");
   archerDone = 1;
@@ -2889,8 +2895,9 @@ function w_instruction5(){
     showDragonTutorial();
     checkCompleness();
   });
-  addTextToButton("OK");
-  addTextToButton2("Next");
+  showButton2();
+    addTextToButton("OK");
+    addTextToButton2("Next");
   addTitleToBox("Wizard");
   addTextToBox("<p>Excellent! You can see the burning effect on the enemy king. Now you know the wizard skill. </p> <p>Click 'OK' to continue to play as the wizard or try another unit by clicking on the corresponding card in the bottom left corner of the window. </p><p>Click 'Next' to play the Dragon Tutorial</p>");
   wizardDone = 1;
@@ -2992,6 +2999,9 @@ function endTutorial2(){
       //To Tutorial 3
       window.location.replace("http://localhost/WebAppGroup22/web/game/tutorial3.php");
     });
+  showButton2();
+    addTextToButton("OK");
+    addTextToButton2("Next");
   addTitleToBox("!!!Congratulation!!!");
   addTextToBox("<p>!!!Good job!!!</p><p>You finish Tutorial 2. Click 'OK' to stay in Tutorial 2</p> <p>Click 'Next' to start Tutorial 3</p>");
 }

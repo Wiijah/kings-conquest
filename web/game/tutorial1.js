@@ -971,12 +971,13 @@ function createNewUnit(unitType, row, column) {
    // destroyGoldDisplay();
   //  drawGoldDisplay();
 }
-
+var num = 0;
 function addEventListenersToUnit(unit) {
     unit.addEventListener("click", function(event) {
             if (unit.team == 0 && isDisplayingMenu && !endCurrentUnitTutorial) {
               return;
             }
+            if (num == 0 && unit.team == 0) return;
             if (unit.team == 1 && unit.address == "graphics/spritesheet/stand/ss_king_stand.png" && firstClickUnit) {
               firstClickUnit = false;
               chars.removeChild(pointerVertical);
@@ -2050,9 +2051,11 @@ function keyEvent(event) {
             if(!interfaceIntroDone) return;
             if (selectedCharacter.canMove) {
               undoHighlights();
+              removeAllPointer();
               // drawRange(findReachableTiles(unit.column, unit.row, unit.moveRange, true), 0);
               moveCharacter(selectedCharacter);
-              removeAllPointer();
+              move_instruction1();
+              firstClickMove = false;
             }
           }
           break;
@@ -2292,7 +2295,7 @@ function moveCharacter(unit) {
 }
 
 function performAttack() {
-
+  num = 1;
   if (!attackTutorialDone){
     removeAllPointer();
     attack_instruction2();
@@ -2524,6 +2527,7 @@ function hideMaskBox(){
 // Interface Intro ==========================
 var tutorialStart = false;
 function backgroundInfo(){
+  stage.mouseChildren = false;
   draggable.mouseChildren = true;
   turnCount = 0;
   resetInsturctions();
@@ -2546,6 +2550,7 @@ function unit_instruction(){
   });
   hideButton();
   addPointerToPlayerUnit();
+  stage.mouseChildren = true;
   addTitleToBox("Unit");
   addTextToBox("<p> Here is your king, Now let's try click the king to see more information.</p>");
 }
