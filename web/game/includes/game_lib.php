@@ -80,7 +80,12 @@ function jsonUnit($unit) {
 function give_buff($unit, $buff_id, $turns_left) {
   global $db;
   $actions = array();
-  $db->query("INSERT INTO buff_instances (buff_id, unit_id, turns_left) VALUES ('{$buff_id}', '{$unit->unit_id}', '{$turns_left}')");
+  $result = $db->query("SELECT * FROM buff_instances WHERE buff_id = {$buff_id} AND unit_id = {$unit->unit_id}");
+  if ($result->num_rows == 0) {
+    $db->query("INSERT INTO buff_instances (buff_id, unit_id, turns_left) VALUES ('{$buff_id}', '{$unit->unit_id}', '{$turns_left}')");
+  } else {
+    $db->query("UPDATE buff_instances SET turns_left = {$turns_left} WHERE unit_id = {$unit_id} AND buff_id = {$buff_id}");
+  }
   $actions[] = action("apply_buff",
        jsonPair("buff_id", $buff_id)
     .",".jsonPair("unit_id", $unit->unit_id));
