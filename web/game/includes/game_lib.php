@@ -77,6 +77,16 @@ function jsonUnit($unit) {
     }';
 }
 
+function give_buff($unit, $buff_id, $turns_left) {
+  global $db;
+  $actions = array();
+  $db->query("INSERT INTO buff_instances (buff_id, unit_id, turns_left) VALUES ('{$buff_id}', '{$unit->unit_id}', '{$turns_left}')");
+  $actions[] = action("apply_buff",
+       jsonPair("buff_id", $buff_id)
+    .",".jsonPair("unit_id", $unit->unit_id));
+  return $actions;
+}
+
 function attack_unit($attacker, $target) {
   global $db;
   global $user;
