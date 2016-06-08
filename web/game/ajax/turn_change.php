@@ -29,10 +29,8 @@ $db->query("UPDATE buff_instances SET turns_left = turns_left - 1 WHERE room_id 
 /* Find all the buffs that should be removed */
 $buffsToRemoveJSON = "";
 $result = $db->query("SELECT * FROM buff_instances  WHERE room_id = '{$room_id}' AND turns_left = 0");
-$comma = "";
 while ($fetch = $result->fetch_object()) {
-  $buffsToRemoveJSON .= $comma.$fetch->buff_id;
-  $comma = ",";
+  $actions[] = removeBuffJson($fetch->buff_id, $fetch->unit_id);
 }
 
 /* Remove buffs that are out of turns */
@@ -62,6 +60,13 @@ function triggerBufferJson($buff_effect, $unit_id, $health_change) {
     "buff_effect" : "'.$buff_effect.'",
     "unit_id" : '.$unit_id.',
     "health_change" : '.$health_change.'
+  }';
+}
+
+function removeBuffJson($buff_id, $unit_id) {
+  return '{"action_type" : "remove_buff",
+    "buff_id" : "'.$buff_id.'",
+    "unit_id" : '.$unit_id.'
   }';
 }
 ?>
