@@ -57,6 +57,8 @@ if (!$buff) {
 	if ($new_health <= 0 && $target->name == "king") {
 		$actions[] = action("game_end", jsonStr("reason", "king_death")
 			.",".jsonPair("winner", $team));
+		$db->query("UPDATE room_participants SET state = 'ended' WHERE room_id = '{$room_id}' AND event = ''");
+		$db->query("UPDATE rooms SET state = 'ended', winner = '$user->id' WHERE room_id = '{$room_id}'");
 	}
 	$out .= jsonPair("actions", jsonArray($actions));
 	$out .= "}";
