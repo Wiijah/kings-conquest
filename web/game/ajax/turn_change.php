@@ -49,6 +49,7 @@ $actions[] = action("turn_change",
   .",".jsonPair("buffs_to_remove", "[{$buffsToRemoveJSON}]"));
 $actions = array_merge($actions, $buff_list);
 $actions[] = give_gold($player, 10);
+$actions[] = give_gold($opp_player, 10);
 $out .= jsonPair("actions", jsonArray($actions));
 
 $out .= "}";

@@ -93,6 +93,7 @@ function jsonUnit($unit) {
 function select_unit($unit_id) {
   global $db;
   global $room_id;
+  global $TEAM_COLOURS;
   $result = $db->query("SELECT * FROM units JOIN classes ON units.class_id = classes.class_id WHERE unit_id = '{$unit_id}' AND room_id = '{$room_id}'");
   return $result->fetch_object();
 }
@@ -101,7 +102,7 @@ function give_gold($part, $gold) {
   global $db;
   $part->gold += $gold;
   $db->query("UPDATE room_participants SET gold = {$part->gold} WHERE part_id = {$part->part_id}");
-  return '{"action_type" : "update_gold", "gold" : '.$part->gold.'}';
+  return '{"action_type" : "update_gold", "gold" : '.$part->gold.', "team" : '.$TEAM_COLOURS[$part->colour].'}';
 }
 
 function give_buff($unit, $buff_id, $turns_left) {
