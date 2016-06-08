@@ -77,11 +77,11 @@ function showTurnInfo(){
 	if (turn) {
 		var playerLabelBg = new createjs.Shape();
 		playerLabelBg.graphics.beginFill("#000000").drawRect(-stage.canvas.width ,stage.canvas.height - stage.canvas.height/2 ,stage.canvas.width * 2,80);
-		var playerLabel = new createjs.Text("Player2 Turn", "30px Arial", "#0000ff");
+		var playerLabel = new createjs.Text("Player2 Turn", "30px Arial", "#00cdff");
 	} else {
 		var playerLabelBg = new createjs.Shape();
 		playerLabelBg.graphics.beginFill("#000000").drawRect(-stage.canvas.width ,stage.canvas.height - stage.canvas.height/2 ,stage.canvas.width * 2,80);
-		var playerLabel = new createjs.Text("Player1 Turn", "30px Arial", "#ff0000");
+		var playerLabel = new createjs.Text("Player1 Turn", "30px Arial", "#ff5555");
 	}
 	playerLabel.x = stage.canvas.width - stage.canvas.width / 2 - 100;
 	playerLabel.y = stage.canvas.height -  stage.canvas.height / 2 + 20;
@@ -2300,21 +2300,31 @@ function handleGameEnd(action) {
     console.log("handle end game");
     //window.location.href = '../interface/game_stats?room_id='+room_id;
     gameEnd = true;
+    var reason = "";
+    if (action.reason == "king_death") reason = "By death of king.";
+    if (action.reason == "quit_game" && team == action.winner) reason = "Your opponent rage quitted.";
+    if (action.reason == "quit_game" && team != action.winner) reason = "You left the game.";
+
     var text = action.winner == 0 ? "Red player victory" : "Blue player victory";
-    var color = action.winner == 0 ? "#ff0000" : "#0000ff";
+    var color = action.winner == 0 ? "#ff5555" : "#00cdff";
     var endLabelBg = new createjs.Shape();
-    endLabelBg.graphics.beginFill("#000000").drawRect(-stage.canvas.width ,stage.canvas.height - stage.canvas.height/2 ,stage.canvas.width * 2,80);
+    endLabelBg.graphics.beginFill("#000000").drawRect(-stage.canvas.width ,stage.canvas.height - stage.canvas.height/2, stage.canvas.width * 2, 130);
     var endLabel = new createjs.Text(text, "30px Arial", color);
+    var reasonLabel = new createjs.Text(reason, "15px Arial", color);
+
     var restartLabel = new createjs.Text("Press \" c \" to continue", "15px Arial", color);
     
     endLabel.x = stage.canvas.width - stage.canvas.width / 2 - 100;
     endLabel.y = stage.canvas.height -  stage.canvas.height / 2 + 20;
+    reasonLabel.x = endLabel.x + 20;
+    reasonLabel.y = endLabel.y + 45;
     restartLabel.x = endLabel.x + 20;
-    restartLabel.y = endLabel.y + 35;
+    restartLabel.y = endLabel.y + 65;
     endLabelBg.alpha = 0.7;
 
     stage.addChild(endLabelBg);
     stage.addChild(restartLabel);
+    stage.addChild(reasonLabel);
     stage.addChild(endLabel);
     stage.mouseChildren = false;
 
