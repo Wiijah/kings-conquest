@@ -537,7 +537,14 @@ function drawMenuDisplay(){
 	quitIcon.scaleY = 0.68;
 
 	stage.addChild(quitIcon);
+	  quitIcon.addEventListener("click", function(event){
 
+    displayWarningBox(function(){
+      quit_game();
+    },function(){
+      removeWarningBox();
+    });
+  });
 
 	stage.addChild(muteIcon);
 	muteIcon.addEventListener("click", function(event) {
@@ -2409,3 +2416,9 @@ function getFirstProp(obj) {
   }
   return 0;
 }
+
+
+
+
+
+

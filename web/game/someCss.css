@@ -26,6 +26,64 @@ div#someBox2 {
     font-size: 14px;
     display: none;
 }
+
+div#someBox3 {
+    width: 35%;
+    height:25%;
+    z-index: 1000;
+    position: fixed;
+    top: 30%;
+    left: 35%;
+    text-shadow: 2px 2px #000000
+    color: #000000;
+    font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+    font-size: 14px;
+}
+div#box3_header {
+    background-color: #ffff00;
+    -webkit-box-shadow: 0px 5px 15px rgba(0,0,0,0.5);
+    -moz-box-shadow: 0px 5px 15px rgba(0,0,0,0.5);
+    box-shadow: 0px 5px 15px rgba(0,0,0,0.5);
+    padding: 15px;
+    border-top-right-radius: 10px;
+    border-top-left-radius: 10px;    
+}
+
+div#box3_body {
+    border-top: 1px solid #ffff00;
+    color: #000000;
+    -webkit-box-shadow: 0px 5px 15px rgba(0,0,0,0.5);
+    -moz-box-shadow: 0px 5px 15px rgba(0,0,0,0.5);
+    box-shadow: 0px 5px 15px rgba(0,0,0,0.5);
+    background-color: white;
+    padding: 15px;
+}
+
+
+div#box_foot {
+    border-top: 1px solid #e5e5e5;
+    background-color: white;
+    padding: 15px;
+    text-align: right;
+
+    -webkit-box-shadow: 0px 5px 15px rgba(0,0,0,0.5);
+    -moz-box-shadow: 0px 5px 15px rgba(0,0,0,0.5);
+    box-shadow: 0px 5px 15px rgba(0,0,0,0.5);
+
+    -webkit-border-bottom-right-radius: 10px;
+    -webkit-border-bottom-left-radius: 10px;
+    -moz-border-radius-bottomright: 10px;
+    -moz-border-radius-bottomleft: 10px;
+    border-bottom-right-radius: 10px;
+    border-bottom-left-radius: 10px;    
+}
+
+
+
+
+
+
+
 div#box_header {
 	background-color: #eeeeee;
 

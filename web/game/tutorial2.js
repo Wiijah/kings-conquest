@@ -3067,7 +3067,7 @@ function endTutorial2(){
       window.location.replace("http://localhost/WebAppGroup22/web/game/tutorial3.php");
     });
     addTextToButton("OK");
-  addTitleToBox("!!!Congratulation!!!");
+  addTitleToBox("<img src=\"./finishTutorial.png\" style=\"line-height: 1px; vertical-align: bottom; margin-right: 5px\" height=\"20\" width=\"20\" />Congratulations");
   addTextToBox("<p>!!!Good job!!!</p><p>You finish Tutorial 2. Click 'OK' to stay in Tutorial 2</p> <p>Click 'Next' to start Tutorial 3</p>");
 }
 
