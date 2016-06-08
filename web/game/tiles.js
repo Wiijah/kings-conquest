@@ -837,35 +837,13 @@ function addEventListenersToUnit(unit) {
                     }
                     if (i == highlighted.length - 1) return;
                 }
-                $.each(units, function(i, otherUnit) {
-
-                    if (otherUnit.column == unit.column && otherUnit.row == unit.row && otherUnit.team != selectedCharacter.team) {
-                        attack(selectedCharacter, otherUnit);
-                        applyBuff(5, otherUnit);
-                    }
-                    if (otherUnit.column == unit.column
-                        && (otherUnit.row == unit.row-1 || otherUnit.row == unit.row+1) && otherUnit.team != selectedCharacter.team) {
-                        attack(selectedCharacter, otherUnit);
-                        applyBuff(5, otherUnit);
-                    }
-                    if (otherUnit.row == unit.row
-                        && (otherUnit.column == unit.column-1 || otherUnit.column == unit.column+1) && otherUnit.team != selectedCharacter.team) {
-                        attack(selectedCharacter, otherUnit);
-                        applyBuff(5, otherUnit);
-                    }
-                    clearSelectionEffects();
-                    selectedCharacter.outOfMoves = 1;
-                    selectedCharacter.skillCoolDown = 3;
-                    playableUnitCount--;
-                    isCasting = false;
-
-                });
+                serverValidate("skill", selectedCharacter, [unit.row, unit.column]);
             }
             changed = true;
         });
 
         unit.addEventListener("mouseover", function(event) {
-            if (isCasting && selectedCharacter.skill_no == 4) {
+            if (isCasting && selectedCharacter.skill == "Magic Damage") {
                 var i;
                 for (i = 0; i < highlighted.length; i++) {
                     if (unit.row == highlighted[i].row && unit.column == highlighted[i].column) {
@@ -2245,7 +2223,8 @@ function handleAttack(action) {
 	var attacker = findUnitById(action.attacker_id);
 	var target = findUnitById(action.target_id);
 	attack(attacker, target, action.dmg, action.is_critical);
-
+    attacker.canAttack = 0;
+    attacker.outOfMoves = 1;
     // Apply buffs to the target
     for (var i = 0; i < action.buffs.length; i++) {
         applyBuff(action.buffs[i], target);
