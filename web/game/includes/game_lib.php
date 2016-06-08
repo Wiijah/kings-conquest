@@ -7,6 +7,13 @@ $TEAM_BLUE = 1;
 
 $SELECT_UNIT = "SELECT * FROM units JOIN classes ON units.class_id = classes.class_id WHERE";
 
+
+$AOE = "((x = '{$x}' AND y = '{$y}')
+           OR (x = '".($x - 1)."' AND y = '{$y}')
+           OR (x = '".($x + 1)."' AND y = '{$y}')
+           OR (x = '{$x}' AND y = '".($y + 1)."')
+           OR (x = '{$x}' AND y = '".($y - 1)."'))";
+           
 function update_unit($unit, $canMove = -1, $canAttack = -1, $outOfMoves = -1, $skillCoolDown = -1) {
   global $db;
 
