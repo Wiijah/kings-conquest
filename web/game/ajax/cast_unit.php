@@ -3,8 +3,8 @@ require_once 'ajax_common.php';
 
 $caster_id = secureStr($_POST['caster_id']);
 $target_id = secureStr($_POST['target_id']);
-$x = secureStr($_POST['x']);
-$y = secureStr($_POST['y']);
+$x = secureStr($_POST['x']) * 1;
+$y = secureStr($_POST['y']) * 1;
 
 // get player team
 $team = $TEAM_COLOURS[$player->colour];
