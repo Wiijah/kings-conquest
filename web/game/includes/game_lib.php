@@ -96,6 +96,14 @@ function select_unit($unit_id) {
   $result = $db->query("SELECT * FROM units JOIN classes ON units.class_id = classes.class_id WHERE unit_id = '{$unit_id}' AND room_id = '{$room_id}'");
   return $result->fetch_object();
 }
+
+function give_gold($part, $gold) {
+  global $db;
+  $part->gold += $gold;
+  $db->query("UPDATE room_participants SET gold = {$part->gold} WHERE part_id = {$part->part_id}");
+  return '{"action_type" : "update_gold", "gold" : '.$part->gold.'}';
+}
+
 function give_buff($unit, $buff_id, $turns_left) {
   global $db;
   global $room_id;
