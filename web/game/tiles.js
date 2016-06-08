@@ -97,6 +97,36 @@ function showTurnInfo(){
 }
 
 
+function handleBuffEffect(action) {
+    var effectName = action.buff_effect;
+    var unit = findUnitById(action.unit_id);
+    var healthChange = action.health_change;
+    console.log(healthChange);
+    unit.hp += healthChange;
+    updateHP_bar(unit);
+
+    switch (effectName) {
+        case "Burn":
+            setTimeout(function() {
+                var fire = new createjs.Sprite(unit.burnEffect, "burn");
+                if (healthChange < 0) showDamage(unit, 1, healthChange);
+                fire.x = unit.x;
+                fire.y = unit.y;
+                chars.addChild(fire);
+
+                setTimeout(function() {
+                    chars.removeChild(fire);
+                }, 1000);
+            }, 1000);
+            
+            break;
+        case "Heal":
+            break;
+        case "Freeze":
+            break;
+    }
+}
+
 function turnStartPhase() {
 	undoMove = [];
 	destroyGoldDisplay();
@@ -518,6 +548,7 @@ function drawMenuDisplay(){
 }
 function removeBuff(buffType, unit) {
     var success = false;
+    console.log(unit);
 
     for (var i = 0; i < unit.buffs.length; i++) {
         if (unit.buffs[i][0] === buffType) {
@@ -538,6 +569,7 @@ function removeBuff(buffType, unit) {
 
 function applyBuff(buffType, unit) {
 
+    if (unit == null) return; /* Don't apply buff to a dead unit */
     var buffAlreadyExists = false;
     for (var i = 0; i < unit.buffs.length; i++) {
         if (unit.buffs[i][0] === buffType) {
@@ -1452,8 +1484,8 @@ function moveUnit() {
   draggable.x = draggable.x - stepX;
   draggable.y = draggable.y - stepY;
   for (var i = 0; i < movingUnit.buffs.length; i++) {
-    movingUnit.buffs[i][3].x += stepX;
-    movingUnit.buffs[i][3].y += stepY;
+    movingUnit.buffs[i][2].x += stepX;
+    movingUnit.buffs[i][2].y += stepY;
   }
 
 
@@ -1989,13 +2021,12 @@ function handleServerReply(data) {
             }
         }
     }
-    if (fuckingAttackCounter == 2) handleAttack2(fuckingAttackActionList);
+
     for (var i = 0; i < data.actions.length; i++) {
         console.log("i: " + i);
         var action = data.actions[i];
         switch (action.action_type) {
             case "move_unit":
-                console.log("handle move");
                 handleMove(action);
                 break;
             case "create_unit":
@@ -2010,6 +2041,9 @@ function handleServerReply(data) {
                 break;
             case "apply_buff":
                 handleApplyBuff(action);
+                break;
+            case "trigger_buff":
+                handleBuffEffect(action);
                 break;
             case "turn_change":
                 changeTurn(action);
@@ -2104,12 +2138,12 @@ function changeTurn(action) {
     showTurnInfo();
     var effectsToApply = action.effects_to_apply;
     var unitsNewCD = action.units_new_cd;
-    var buffsToRemove = action.buffs_to_remove;
+    // var buffsToRemove = action.buffs_to_remove;
 
     // Remove the buffs with zero duration.
-    for (var i = 0; i < buffsToRemove.length; i++) {
-        removeBuff(buffsToRemove[i][0], buffsToRemove[i][1]);
-    }
+    // for (var i = 0; i < buffsToRemove.length; i++) {
+    //     removeBuff(buffsToRemove[i][0], findUnitById(buffsToRemove[i][1]));
+    // }
 
     // Refresh the cd of the skills.
     for (var i = 0; i < unitsNewCD.length; i++) {
@@ -2184,6 +2218,9 @@ function handleOpponent(data) {
                 break;
             case "apply_buff":
                 handleApplyBuff(action);
+                break;
+            case "trigger_buff":
+                handleBuffEffect(action);
                 break;
             case "turn_change":
                 changeTurn(action);
@@ -2267,6 +2304,7 @@ function handleAttack(action) {
 
 function handleAttack2(attacks) {
     handleAttack(attacks[0]);
+    if (findUnitById(attacks[1].target_id) == null) return;
     setTimeout(function() {
         handleAttack(attacks[1]);
     }, 1300);

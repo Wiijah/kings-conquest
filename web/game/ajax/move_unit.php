@@ -42,15 +42,17 @@ for ($i = 0; $i < count($moves); $i++) {
 //update unit location
 $new_x = $moves[count($moves) - 1][0];
 $new_y = $moves[count($moves) - 1][1];
-$db->query("UPDATE units SET x = '{$new_x}', y = '{$new_y}', canMove = 0 WHERE unit_id = '{$unit_id}'");
+$db->query("UPDATE units SET x = '{$new_x}', y = '{$new_y}' WHERE unit_id = '{$unit_id}'");
+
 
 $out = "{";
 $out .= $SUCCESS.",";
-$action = action("move_unit",
+$actions[] = action("move_unit",
        jsonPair("unit_id", $unit_id)
   .",".jsonPair("path", $moves_json));
+$actions[] = update_unit($unit, 0);
 
-$out .= jsonPair("actions", "[{$action}]");
+$out .= jsonPair("actions", jsonArray($actions));
 $out .= "}";
 
 oppInsert($out);

@@ -27,6 +27,13 @@ if (!$player = $result->fetch_object()) {
 $room_id = $player->room_id;
 
 
+
+/* Get room participant and room ID */
+$result = $db->query("SELECT * FROM room_participants WHERE user_id != '{$user->id}' AND event = '' AND room_id = '{$room_id}'");
+if (!$opp_player = $result->fetch_object()) {
+ exit_error($ERROR_NOT_IG); //Error, not in room
+}
+
 /* Get room */
 $result = $db->query("SELECT * FROM rooms WHERE room_id = {$room_id}");
 $room = $result->fetch_object();
