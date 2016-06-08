@@ -15,7 +15,7 @@ $actions = array();
 $opp_id = get_opponent_id();
 $result = $db->query("SELECT * FROM users WHERE id = '{$opp_id}'");
 $opp = $result->fetch_object();
-$actions = array_merge($actions, gameEnd($user, $opp, "quit_game"));
+$actions = array_merge($actions, gameEnd($opp, $user, "quit_game"));
 
 $out = "{";
 $out .= $SUCCESS.",";
