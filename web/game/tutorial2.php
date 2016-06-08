@@ -53,7 +53,7 @@
       <img src="./i_icon.png" style="line-height: 1px; vertical-align: bottom; margin-right: 5px" height="20" width="20" />Tutorial 2 : Intermediate
     </div>
     <div id="box_body">
-      Now you know the unit creation system. There are several units with different skills in King's Conquest. In this tutorial, you are going to learn the skill of each unit. Click the unit cards to try different units.<br /><br />
+      Now you know the unit creation system. There are several units with different skills in King's Conquest. In this tutorial, you are going to learn the skill of each unit. Let's start with the king.<br /><br />
     </div>
     <div id="box_foot">
       <button type="button" id="actionButton" class="btn" ng-click="">Next</button>
