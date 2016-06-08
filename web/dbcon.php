@@ -35,6 +35,10 @@ function secureStr(&$str) {
   return $str;
 }
 
+function refreshUser() {
+  global $db, $user;
+  return $db->query("SELECT * FROM users WHERE id = {$user->id}")->fetch_object();
+}
 function secureInt(&$input) {
   return preg_replace("/[^0-9]/", "", $input);
 }
