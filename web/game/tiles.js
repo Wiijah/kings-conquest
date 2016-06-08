@@ -41,7 +41,8 @@ var isInHighlight = false;
 var changed = false;
 var movingPlayer = false;
 var isAttacking = false;
-var remainingAttackTimes;
+var remainingTargets;
+var archerTargets = [];
 var isCasting = false;
 var currentGold;
 var p1currentGold;
@@ -829,6 +830,27 @@ function addEventListenersToUnit(unit) {
                 });
             }
 
+            // In this case, we are marking archer skill targets
+            if (selectedCharacter != unit && isCasting && remainingTargets != 0 && selectedCharacter.team != unit.team) {
+                for (var i = 0; i < highlighted.length; i++) {
+                    if (highlighted[i].row === unit.row && highlighted[i].column === unit.column) {
+                        break;
+                    }
+                    if (i == highlighted.length - 1) return;
+                }
+                archerTargets.push(unit.unit_id);
+                console.log("adding units with coordinates: (" + unit.row + " " + unit.column + ") to archer targets");
+                remainingTargets--;
+                if (remainingTargets === 0) {
+                    undoHighlights();
+                    serverValidate("skill", unit, archerTargets);
+                }
+            
+            }
+
+
+
+
             // In this case, we are selecting the unit to be attacked by the wizard spell
             if (selectedCharacter != unit && isCasting && selectedCharacter.team != unit.team) {
                 for (var i = 0; i < highlighted.length; i++) {
@@ -879,6 +901,17 @@ function addEventListenersToUnit(unit) {
             sub_highlighted = [];
             change = true;
         });
+}
+
+function markArcherTargets(event) {
+    var unit = findUnitByCoordinates(event.target.row, event.target.column);
+    archerTargets.push(unit.unit_id);
+    console.log("adding units with coordinates: (" + unit.row + " " + unit.column + ") to archer targets");
+    remainingTargets--;
+    if (remainingTargets === 0) {
+        undoHighlights();
+        serverValidate("skill", unit, archerTargets);
+    }
 }
 
 function destroyGoldDisplay() {
@@ -1137,12 +1170,14 @@ function cast(skillName, unit) {
 			break;
 		case "Double Shoot": // Archer's skill
 			archerSkillDone = false;
-			var reachableTiles = findReachableTiles(selectedCharacter.column, selectedCharacter.row, selectedCharacter.attackRange, false);
-			isCasting = false;
+			var reachableTiles = findReachableTiles(selectedCharacter.row, selectedCharacter.column, selectedCharacter.attackRange, false);
+			isCasting = true;
 			undoHighlights();
-			remainingAttackTimes = 2;
-			performAttack(unit);
-	    	unit.skillCoolDown = 3;
+			remainingTargets = 2;
+            archerTargets = [];
+            highlightArea(reachableTiles, "graphics/tile/red_tile.png", ["click"], [markArcherTargets]);
+			// performAttack(unit);
+	    	// unit.skillCoolDown = 3;
 			break;
 	    case "Shield": // Warrior's skill
 	    	undoHighlights();
@@ -1993,7 +2028,7 @@ function handleServerReply(data) {
                 break;
             case "attack_unit":
                 handleAttack(action);
-                postAttack(findUnitById(action.attacker_id));
+                // postAttack(findUnitById(action.attacker_id));
                 break;
             case "remove_buff":
                 handleRemoveBuff(action);
@@ -2042,6 +2077,11 @@ function serverValidate(type, unit, additionalArgs) {
             rawPost("ajax/cast_unit", {"caster_id": unit.unit_id, "x": additionalArgs[0], "y": additionalArgs[1]}, handleServerReply);
         }
 
+        if (unit.skill === "Double Shoot") { // Arher spell
+            console.log("posting to server");
+            rawPost("ajax/cast_unit", {"caster_id": unit.unit_id, "target_id": archerTargets[0], "target_id2":archerTargets[1]}, handleServerReply);
+        }
+
     }
 }
 
@@ -2069,6 +2109,16 @@ function findUnitById(id) {
         }
     }
     console.log("Cannot find unit with id: " + id);
+    return null;
+}
+
+function findUnitByCoordinates(row, column) {
+    for (var i = 0; i < units.length; i++) {
+        if (units[i].row === row && units[i].column === column) {
+            return units[i].unit_id;
+        }
+    }
+    console.log("Cannot find unit with coordinates: " + row + " " + column);
     return null;
 }
 
@@ -2155,6 +2205,7 @@ function handleOpponent(data) {
         }
     }
 }
+
 
 
 
