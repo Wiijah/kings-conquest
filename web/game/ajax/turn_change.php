@@ -48,6 +48,7 @@ $actions[] = action("turn_change",
   .",".jsonPair("units_new_cd", "[]")
   .",".jsonPair("buffs_to_remove", "[{$buffsToRemoveJSON}]"));
 $actions = array_merge($actions, $buff_list);
+$actions[] = give_gold($player, 10);
 $out .= jsonPair("actions", jsonArray($actions));
 
 $out .= "}";
@@ -62,6 +63,8 @@ function triggerBufferJson($buff_effect, $unit_id, $health_change) {
     "health_change" : '.$health_change.'
   }';
 }
+
+
 
 function removeBuffJson($buff_id, $unit_id) {
   return '{"action_type" : "remove_buff",
