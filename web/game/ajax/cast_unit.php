@@ -9,11 +9,11 @@ $y = secureStr($_POST['y']);
 // get player team
 $team = $TEAM_COLOURS[$player->colour];
 
-$AOE = "(x = '{$x}' AND y = '{$y}')
+$AOE = "((x = '{$x}' AND y = '{$y}')
            OR (x = '".($x - 1)."' AND y = '{$y}')
            OR (x = '".($x + 1)."' AND y = '{$y}')
            OR (x = '{$x}' AND y = '".($y + 1)."')
-           OR (x = '{$x}' AND y = '".($y - 1)."')";
+           OR (x = '{$x}' AND y = '".($y - 1)."'))";
 
 //get both units
 $result = $db->query("SELECT * FROM units JOIN classes ON units.class_id = classes.class_id WHERE unit_id = '{$caster_id}' AND room_id = '{$room_id}'");
