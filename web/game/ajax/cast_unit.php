@@ -29,7 +29,7 @@ if ($caster->skill == "Shield") {
 } else if ($caster->skill == "Battle Cry") {
   $result = $db->query("SELECT * FROM units WHERE room_id = '{$room_id}' AND team = '{$team}'");
   while ($fetch = $result->fetch_object()) {
-    $db->query("INSERT INTO buff_instances (buff_id, unit_id, turns_left) VALUES ('2', '{$caster->unit_id}', '6')");
+    $db->query("INSERT INTO buff_instances (buff_id, unit_id, turns_left) VALUES ('2', '{$fetch->unit_id}', '6')");
     $actions[] = action("apply_buff",
          jsonPair("buff_id", 2) 
     .",".jsonPair("unit_id", $fetch->unit_id));
