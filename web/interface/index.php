@@ -65,7 +65,11 @@ var room_id = 0;
 <?php echo genTitle("Your Profile"); ?>
 <div class="play_profile box">
 <table class="play_table">
-<tr><td class="play_avatar" colspan="2"><img src="<?php echo getAvatarURL($user->id); ?>" /></td></tr>
+<tr><td class="play_avatar" colspan="2"><img src="<?php echo getAvatarURL($user->id); ?>" />
+<br />
+
+<div class='btn lightbox_btn js_link' data-href='avatar'>Customise Avatar</div>
+</td></tr>
 <tr><th>Username</th><td><?php echo $user->username; ?> </td></tr>
 
 <tr><th>Email</th><td><?php echo $user->email; ?> </td></tr>

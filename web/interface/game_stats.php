@@ -1,7 +1,6 @@
 <?php
 $title = "Game Ended";
 require_once 'includes/header_checks.php';
-include 'includes/header.php';
 
 $room_id = secureStr($_GET['room_id']);
 $result = $db->query("SELECT * FROM rooms WHERE room_id = '{$room_id}' AND state = 'ended'");
@@ -11,6 +10,9 @@ if (!$room) {
   header ("Location: ../{$LOGGEDIN_DIR}/");
   die();
 }
+
+include 'includes/header.php';
+
 
 $result = $db->query("SELECT * FROM users WHERE user_id = '{$room->winner}' AND state = 'ended'");
 $opp = $result->fetch_object();
