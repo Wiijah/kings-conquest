@@ -538,6 +538,7 @@ function removeBuff(buffType, unit) {
 
 function applyBuff(buffType, unit) {
 
+    if (unit == null) return; /* Don't apply buff to a dead unit */
     var buffAlreadyExists = false;
     for (var i = 0; i < unit.buffs.length; i++) {
         if (unit.buffs[i][0] === buffType) {
@@ -1452,8 +1453,8 @@ function moveUnit() {
   draggable.x = draggable.x - stepX;
   draggable.y = draggable.y - stepY;
   for (var i = 0; i < movingUnit.buffs.length; i++) {
-    movingUnit.buffs[i][3].x += stepX;
-    movingUnit.buffs[i][3].y += stepY;
+    movingUnit.buffs[i][2].x += stepX;
+    movingUnit.buffs[i][2].y += stepY;
   }
 
 
@@ -1989,6 +1990,7 @@ function handleServerReply(data) {
             }
         }
     }
+
     if (fuckingAttackCounter == 2) handleAttack2(fuckingAttackActionList);
     for (var i = 0; i < data.actions.length; i++) {
         console.log("i: " + i);
@@ -2267,6 +2269,7 @@ function handleAttack(action) {
 
 function handleAttack2(attacks) {
     handleAttack(attacks[0]);
+    if (findUnitById(attacks[1].target_id) == null) return;
     setTimeout(function() {
         handleAttack(attacks[1]);
     }, 1300);
