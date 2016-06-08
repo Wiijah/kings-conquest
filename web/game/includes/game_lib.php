@@ -99,7 +99,7 @@ function select_unit($unit_id) {
 }
 
 function give_gold($part, $gold) {
-  global $db;
+  global $db, $TEAM_COLOURS;
   $part->gold += $gold;
   $db->query("UPDATE room_participants SET gold = {$part->gold} WHERE part_id = {$part->part_id}");
   return '{"action_type" : "update_gold", "gold" : '.$part->gold.', "team" : '.$TEAM_COLOURS[$part->colour].'}';
