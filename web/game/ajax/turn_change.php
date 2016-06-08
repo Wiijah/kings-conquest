@@ -21,7 +21,7 @@ while ($buff = $result->fetch_object()) {
   $unit = select_unit($buff->unit_id);
   $damage = $unit->max_hp * -0.02;
   $unit->hp -= $damage;
-  $buff_list[] = triggerBufferJson($buff->name, $unit->unit_id, 0 - $damage);
+  $buff_list[] = triggerBufferJson($buff->buff_name, $unit->unit_id, 0 - $damage);
 }
 
 /* Decrement buff turns left */

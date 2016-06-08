@@ -97,6 +97,36 @@ function showTurnInfo(){
 }
 
 
+function handleBuffEffect(action) {
+    var effectName = action.buff_effect;
+    var unit = findUnitById(action.unit_id);
+    var healthChange = action.health_change;
+    console.log(healthChange);
+    unit.hp += healthChange;
+    updateHP_bar(unit);
+
+    switch (effectName) {
+        case "Burn":
+            setTimeout(function() {
+                var fire = new createjs.Sprite(unit.burnEffect, "burn");
+                if (healthChange < 0) showDamage(unit, 1, healthChange);
+                fire.x = unit.x;
+                fire.y = unit.y;
+                chars.addChild(fire);
+
+                setTimeout(function() {
+                    chars.removeChild(fire);
+                }, 1000);
+            }, 1000);
+            
+            break;
+        case "Heal":
+            break;
+        case "Freeze":
+            break;
+    }
+}
+
 function turnStartPhase() {
 	undoMove = [];
 	destroyGoldDisplay();
@@ -1991,13 +2021,11 @@ function handleServerReply(data) {
         }
     }
 
-    if (fuckingAttackCounter == 2) handleAttack2(fuckingAttackActionList);
     for (var i = 0; i < data.actions.length; i++) {
         console.log("i: " + i);
         var action = data.actions[i];
         switch (action.action_type) {
             case "move_unit":
-                console.log("handle move");
                 handleMove(action);
                 break;
             case "create_unit":
@@ -2012,6 +2040,9 @@ function handleServerReply(data) {
                 break;
             case "apply_buff":
                 handleApplyBuff(action);
+                break;
+            case "trigger_buff":
+                handleBuffEffect(action);
                 break;
             case "turn_change":
                 changeTurn(action);
@@ -2186,6 +2217,9 @@ function handleOpponent(data) {
                 break;
             case "apply_buff":
                 handleApplyBuff(action);
+                break;
+            case "trigger_buff":
+                handleBuffEffect(action);
                 break;
             case "turn_change":
                 changeTurn(action);
