@@ -1,6 +1,8 @@
 <?php
+$close = "";
 function linkUsername($prof) {
-  return "<a href='profile?username='{$prof->username}'>{$prof->username}</a>";
+  global $close;
+  return "<a href='profile?username={$prof->username}&close={$close}'>{$prof->username}</a>";
 }
 function Message($title, $text) {
   return genTitle($title)."<div class='box center standard_box'>{$text}</div><br />";

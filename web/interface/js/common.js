@@ -15,6 +15,10 @@ $(document).ready(function() {
 
   $('body').on('click', '.open_profile', function() {
     var username = $(this).attr("data-username");
+    if (room_id == 0) {
+      window.location.href = "profile?username="+username;
+      return;
+    }
     window.open("profile?close=1&username="+username);
   });
 

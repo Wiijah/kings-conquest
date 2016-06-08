@@ -6,6 +6,8 @@ include 'includes/logout_container.php';
 include 'includes/logo.php';
 require_once 'includes/back_container.php';
 
+$close = 2;
+
 /* Delete/Cancel Friend Request */
 if (isset($_GET['delete'])) {
   $other_id = secureStr($_GET['delete']);
@@ -44,7 +46,7 @@ while ($fetch = $result->fetch_object()) {
   $other_id = $fetch->user_id == $user->id ? $fetch->other_id : $fetch->user_id;
   $other = $db->query("SELECT * FROM users WHERE id = '{$other_id}'")->fetch_object();
 
-  $friends_html .= "<tr><td><a href='profile.php?username={$other->username}'>{$other->username}</a></td><td><a href='friends?delete={$other->id}'>Remove</a></td></tr>";
+  $friends_html .= "<tr><td>".linkUsername($other)."</td><td><a href='friends?delete={$other->id}'>Remove</a></td></tr>";
 }
 
 if ($friends_html == "") {
@@ -61,7 +63,7 @@ $result = $db->query("SELECT * FROM friends WHERE accepted = '0' AND user_id = '
 while ($fetch = $result->fetch_object()) {
   $other = $db->query("SELECT * FROM users WHERE id = '{$fetch->other_id}'")->fetch_object();
 
-  $pending_from_html .= "<tr><td><a href='profile.php?username={$other->username}'>{$other->username}</a></td><td><a href='friends?delete={$other->id}'>Cancel</a></td></tr>";
+  $pending_from_html .= "<tr><td>".linkUsername($other)."</td><td><a href='friends?delete={$other->id}'>Cancel</a></td></tr>";
 }
 
 if ($pending_from_html != "") {
@@ -75,7 +77,7 @@ $result = $db->query("SELECT * FROM friends WHERE accepted = '0' AND other_id = 
 while ($fetch = $result->fetch_object()) {
   $other = $db->query("SELECT * FROM users WHERE id = '{$fetch->user_id}'")->fetch_object();
 
-  $pending_to_html .= "<tr><td><a href='profile.php?username={$other->username}'>{$other->username}</a></td><td><a href='friends?accept={$other->id}'>Accept</a></td></tr>";
+  $pending_to_html .= "<tr><td>".linkUsername($other)."</td><td><a href='friends?accept={$other->id}'>Accept</a></td></tr>";
 }
 
 if ($pending_to_html != "") {

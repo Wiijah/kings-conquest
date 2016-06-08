@@ -14,6 +14,18 @@ $title = "{$prof->username} - Profile";
 include 'includes/header.php';
 include 'includes/logout_container.php';
 include 'includes/logo.php';
+
+$close = secureStr($_GET['close']);
+if ($close == 1) {
+  $breadcrumbs = "";
+} else if ($close == 2) { 
+  $text = "Back To Friends";
+  $link = "friends";
+  $breadcrumbs = genBreadcrumbs(array("Lobby|index", "Friends|friends", "Profile Of {$prof->username}"))."<br />";
+} else {
+  $breadcrumbs = genBreadcrumbs(array("Lobby|index", "Profile Of {$prof->username}"))."<br />";
+}
+
 require_once 'includes/back_container.php';
 
 $ach_html = getAchievementsHTML($prof->id);
@@ -30,6 +42,8 @@ $friend = $friend_result->fetch_object();
 <div class="small_container prof_user">
 
 <?php 
+
+echo $breadcrumbs;
 
 if (isset($_GET['add'])) {
   if (!$friend) {
