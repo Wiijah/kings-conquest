@@ -3,6 +3,8 @@ require_once 'ajax_common.php';
 
 $caster_id = secureStr($_POST['caster_id']);
 $target_id = secureStr($_POST['target_id']);
+$target_id2 = secureStr($_POST['target_id2']);
+
 $x = secureStr($_POST['x']) * 1;
 $y = secureStr($_POST['y']) * 1;
 
@@ -44,7 +46,14 @@ if ($caster->skill == "Shield") {
     $actions = array_merge($actions, give_buff($fetch, 5, 6));
     $actions = array_merge($actions, attack_unit($caster, $fetch));
   }
+} else if ($caster->skill == "Double Shoot") {
+  $result = $db->query("{$SELECT_UNIT} room_id = '{$room_id}' AND team != '{$team}' AND (unit_id = '{$target_id}' OR unit_id = '{$target_id2}')");
+  while ($fetch = $result->fetch_object()) {
+    $actions = array_merge($actions, give_buff($fetch, 3, 6));
+    $actions = array_merge($actions, attack_unit($caster, $fetch));
+  }
 }
+
 
 $out .= jsonPair("actions", jsonArray($actions));
 

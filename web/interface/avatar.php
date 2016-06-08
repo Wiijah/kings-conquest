@@ -29,12 +29,29 @@ if ($user->head != 0) {
   $equipped_list[] = $fetch;
 }
 
+$equipped_html = "";
 
+foreach ($equipped_list as $value) {
+  $equipped_html .= "<tr><td>".ucfirst($value->type)."</td><td>{$value->name}</td><td><a href='avatar?unequip={$fetch->item_id}'>Unequip</a></td></tr>";
+}
+
+if ($equipped_html == "") {
+  $equipped_html = "<div class='box standard_box center'>You do not have any items equipped.</div>";
+} else {
+  $equipped_html = "<div class='box center'><table class='play_table'><tr><th>Equipped To</th><th>Item</th><th>Unequip</th></tr>{$equipped_html}</table></div>";
+}
 
 ?>
 
 <div class="small_container friends_container">
+<?php
+/* Equip Item */
+if (isset($_GET['equip'])) {
+  $equip = secureStr($_GET['equip']);
+  
+}
 
+?>
 <?php echo genBreadcrumbs(array("Lobby|index", "Avatar")); ?>
 
 <?php echo genTitle("Customise Avatar"); ?>
@@ -45,11 +62,7 @@ Here you can customise your avatar with items you have earned.
 </div> 
 <br />
 
-<?php echo genTitle("Equipped Items"); ?>
-<div class="box center">
-<div class='box center'>
-<table class='play_table'><tr><th>Item</th><th>Quantity</th><th>Equip</th></tr>{$items_html}</table></div>
-</div> 
+<?php echo genTitle("Equipped Items").$equipped_html; ?>
 <br />
 
 <?php echo genTitle("Equippable Items Not Equipped").$items_html; ?>
