@@ -71,6 +71,20 @@ if ($room->state != 'ingame') { // game not started yet
 		  src:url(./fonts/04B_19__.TTF);
 	  }
   </style>
+  <link rel="stylesheet" type="text/css" href="someCss.css">
+  <script src = "./someJs.js" type="text/javascript"> </script>
+    <div id="someBox2">
+    <div id="box2_header">
+      <img src="./warning.png" style="line-height: 1px; vertical-align: bottom; margin-right: 5px" height="20" width="20" /> System Message
+    </div>
+    <div id="box2_body">
+      Are you sure to quite the game? <br /><br />
+    </div>
+    <div id="box_foot">
+      <button type="button" id="yesButton" class="btn" ng-click="">Yes</button>
+       <button type="button" id="noButton" class="btn" ng-click="">No</button>
+    </div>
+  </div>
   <canvas id="gameCanvas" width="5000px" height="5000px"></canvas>
   <script src="tiles.js"></script>
   </body>
