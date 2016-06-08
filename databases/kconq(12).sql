@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: Jun 08, 2016 at 05:40 PM
+-- Generation Time: Jun 08, 2016 at 06:18 PM
 -- Server version: 10.1.10-MariaDB
 -- PHP Version: 7.0.2
 
@@ -79,7 +79,8 @@ CREATE TABLE `buffs` (
 INSERT INTO `buffs` (`buff_id`, `buff_name`, `graphics`, `icon`) VALUES
 (1, 'heal', 'graphics/spritesheet/spell/ss_heal.png', ''),
 (2, 'burning', 'graphics/spritesheet/spell/ss_burning.png', ''),
-(4, 'shield', '', 'graphics/buff/buff_shield.png');
+(4, 'shield', '', 'graphics/buff/buff_shield.png'),
+(5, 'Burn', '', '');
 
 -- --------------------------------------------------------
 
@@ -91,37 +92,38 @@ CREATE TABLE `buff_instances` (
   `bi_id` int(11) NOT NULL,
   `buff_id` int(11) NOT NULL,
   `unit_id` int(11) NOT NULL,
-  `turns_left` int(11) NOT NULL
+  `turns_left` int(11) NOT NULL,
+  `room_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `buff_instances`
 --
 
-INSERT INTO `buff_instances` (`bi_id`, `buff_id`, `unit_id`, `turns_left`) VALUES
-(1, 5, 1015, 6),
-(2, 5, 1035, 6),
-(3, 5, 1045, 6),
-(4, 5, 1055, 6),
-(5, 5, 1085, 6),
-(6, 5, 965, 6),
-(7, 5, 1095, 6),
-(8, 5, 1115, 6),
-(9, 3, 1125, 6),
-(10, 2, 1124, 6),
-(11, 2, 1127, 6),
-(12, 2, 1126, 6),
-(13, 2, 1122, 6),
-(14, 2, 1123, 6),
-(15, 5, 1135, 6),
-(16, 5, 1165, 6),
-(17, 5, 1185, 6),
-(18, 5, 1195, 6),
-(19, 5, 1205, 6),
-(20, 5, 1215, 6),
-(21, 5, 1225, 6),
-(22, 5, 1235, 6),
-(23, 5, 1245, 6);
+INSERT INTO `buff_instances` (`bi_id`, `buff_id`, `unit_id`, `turns_left`, `room_id`) VALUES
+(1, 5, 1015, 6, 0),
+(2, 5, 1035, 6, 0),
+(3, 5, 1045, 6, 0),
+(4, 5, 1055, 6, 0),
+(5, 5, 1085, 6, 0),
+(6, 5, 965, 6, 0),
+(7, 5, 1095, 6, 0),
+(8, 5, 1115, 6, 0),
+(9, 3, 1125, 6, 0),
+(10, 2, 1124, 6, 0),
+(11, 2, 1127, 6, 0),
+(12, 2, 1126, 6, 0),
+(13, 2, 1122, 6, 0),
+(14, 2, 1123, 6, 0),
+(15, 5, 1135, 6, 0),
+(16, 5, 1165, 6, 0),
+(17, 5, 1185, 6, 0),
+(18, 5, 1195, 6, 0),
+(19, 5, 1205, 6, 0),
+(20, 5, 1215, 6, 0),
+(21, 5, 1225, 6, 0),
+(22, 5, 1235, 6, 0),
+(23, 5, 1245, 6, 0);
 
 -- --------------------------------------------------------
 
@@ -247,7 +249,11 @@ INSERT INTO `chat` (`chat_id`, `created`, `user`, `message`, `room_id`, `chat_ty
 (201, '2016-06-08 15:27:55', 14, 'harry potter joined the room.', 22, 'event', ''),
 (202, '2016-06-08 15:27:59', 9, 'Wumpus joined the room.', 22, 'event', ''),
 (203, '2016-06-08 15:30:10', 14, 'harry potter joined the room.', 23, 'event', ''),
-(204, '2016-06-08 15:30:11', 9, 'Wumpus joined the room.', 23, 'event', '');
+(204, '2016-06-08 15:30:11', 9, 'Wumpus joined the room.', 23, 'event', ''),
+(205, '2016-06-08 15:47:23', 9, 'yup ^_^', 0, 'message', ''),
+(206, '2016-06-08 15:47:29', 14, 'xD', 0, 'message', ''),
+(207, '2016-06-08 16:13:31', 14, 'harry potter joined the room.', 24, 'event', ''),
+(208, '2016-06-08 16:13:35', 9, 'Wumpus joined the room.', 24, 'event', '');
 
 -- --------------------------------------------------------
 
@@ -578,7 +584,13 @@ INSERT INTO `opp` (`opp_id`, `room_id`, `user_id`, `team`, `json`) VALUES
 (388, 22, 14, 0, '{"error_code": 0,"actions": [{"action_type": "move_unit", "unit_id": 1232,"path": [[3,2],[4,2],[4,3],[4,4]]}]}'),
 (389, 22, 14, 0, '{"error_code": 0,"actions": [{"action_type": "attack_unit", "attacker_id": 1232,"buffs": [],"target_id": 1235,"dmg": 25,"is_critical": 0},{"action_type": "game_end", "reason":"king_death","winner": 0}]}'),
 (390, 23, 14, 0, '{"error_code": 0,"actions": [{"action_type": "apply_buff", "buff_id": 5,"unit_id": 1245},{"action_type": "attack_unit", "attacker_id": 1244,"buffs": [],"target_id": 1245,"dmg": 15,"is_critical": 0}], "debug": "Magic Damage"}'),
-(391, 23, 14, 0, '{"error_code": 0,"actions": [{"action_type": "attack_unit", "attacker_id": 1242,"buffs": [],"target_id": 1245,"dmg": 25,"is_critical": 0},{"action_type": "game_end", "reason":"king_death","winner": 0}]}');
+(391, 23, 14, 0, '{"error_code": 0,"actions": [{"action_type": "attack_unit", "attacker_id": 1242,"buffs": [],"target_id": 1245,"dmg": 25,"is_critical": 0},{"action_type": "game_end", "reason":"king_death","winner": 0}]}'),
+(392, 24, 14, 0, '{"error_code": 0,"actions": [{"action_type": "turn_change", "new_turn": 1,"effects_to_apply": [],"units_new_cd": [],"buffs_to_remove": []}]}'),
+(393, 24, 9, 1, '{"error_code": 0,"actions": [{"action_type": "turn_change", "new_turn": 0,"effects_to_apply": [],"units_new_cd": [],"buffs_to_remove": []}]}'),
+(394, 24, 14, 0, '{"error_code": 0,"actions": [{"action_type": "turn_change", "new_turn": 1,"effects_to_apply": [],"units_new_cd": [],"buffs_to_remove": []}]}'),
+(395, 24, 9, 1, '{"error_code": 0,"actions": [{"action_type": "turn_change", "new_turn": 0,"effects_to_apply": [],"units_new_cd": [],"buffs_to_remove": []}]}'),
+(396, 24, 14, 0, '{"error_code": 0,"actions": [{"action_type": "turn_change", "new_turn": 1,"effects_to_apply": [],"units_new_cd": [],"buffs_to_remove": []}]}'),
+(397, 24, 9, 1, '{"error_code": 0,"actions": [{"action_type": "turn_change", "new_turn": 0,"effects_to_apply": [],"units_new_cd": [],"buffs_to_remove": []}]}');
 
 -- --------------------------------------------------------
 
@@ -624,7 +636,8 @@ INSERT INTO `rooms` (`room_id`, `user_id`, `joiner`, `created`, `name`, `passwor
 (19, 9, 0, '2016-06-08 15:23:27', 'test', '', 2, 'ended', 0, 9, 1, 1),
 (20, 14, 0, '2016-06-08 15:27:08', 'sfs', '', 2, 'ended', 0, 14, 15, 15),
 (22, 14, 0, '2016-06-08 15:27:55', 'asda', '', 2, 'ended', 0, 14, 15, 15),
-(23, 14, 0, '2016-06-08 15:30:10', 'asdf', '', 2, 'ended', 0, 14, 22, 10);
+(23, 14, 0, '2016-06-08 15:30:10', 'asdf', '', 2, 'ended', 0, 14, 22, 10),
+(24, 14, 0, '2016-06-08 16:13:31', 'test', '', 2, 'ingame', 0, 0, 0, 0);
 
 -- --------------------------------------------------------
 
@@ -649,7 +662,8 @@ CREATE TABLE `room_participants` (
 --
 
 INSERT INTO `room_participants` (`part_id`, `user_id`, `room_id`, `colour`, `state`, `event`, `gold`, `unit_kills`, `unit_spawns`) VALUES
-(41, 14, 23, 'red', '', '', 500, 0, 0);
+(43, 14, 24, 'red', 'owner', '', 1000, 0, 0),
+(44, 9, 24, 'blue', 'ready', '', 1000, 0, 0);
 
 -- --------------------------------------------------------
 
@@ -921,15 +935,26 @@ INSERT INTO `units` (`unit_id`, `class_id`, `hp`, `max_hp`, `attack`, `skillCool
 (1239, 1, 200, 200, 15, 0, 9, 10, 1, 1, 1, 0, 22),
 (1240, 3, 300, 300, 40, 0, 12, 10, 1, 1, 1, 0, 22),
 (1241, 2, 200, 200, 20, 0, 12, 11, 1, 1, 1, 0, 22),
-(1242, 4, 30, 30, 25, 0, 3, 2, 0, 0, 0, 1, 23),
-(1243, 5, 999, 999, 999, 0, 0, 0, 0, 1, 1, 0, 23),
-(1244, 1, 200, 200, 15, 0, 3, 3, 0, 0, 0, 1, 23),
-(1246, 3, 300, 300, 40, 0, 0, 2, 0, 1, 1, 0, 23),
-(1247, 2, 200, 200, 20, 0, 0, 3, 0, 1, 1, 0, 23),
-(1248, 6, 999, 999, 999, 0, 12, 13, 1, 1, 1, 0, 23),
-(1249, 1, 200, 200, 15, 0, 9, 10, 1, 1, 1, 0, 23),
-(1250, 3, 300, 300, 40, 0, 12, 10, 1, 1, 1, 0, 23),
-(1251, 2, 200, 200, 20, 0, 12, 11, 1, 1, 1, 0, 23);
+(1252, 4, 30, 30, 25, 0, 3, 2, 0, 1, 1, 0, 23),
+(1253, 5, 999, 999, 999, 0, 0, 0, 0, 1, 1, 0, 23),
+(1254, 1, 200, 200, 15, 0, 3, 3, 0, 1, 1, 0, 23),
+(1255, 4, 30, 30, 25, 0, 3, 4, 1, 1, 1, 0, 23),
+(1256, 3, 300, 300, 40, 0, 0, 2, 0, 1, 1, 0, 23),
+(1257, 2, 200, 200, 20, 0, 0, 3, 0, 1, 1, 0, 23),
+(1258, 6, 999, 999, 999, 0, 12, 13, 1, 1, 1, 0, 23),
+(1259, 1, 200, 200, 15, 0, 9, 10, 1, 1, 1, 0, 23),
+(1260, 3, 300, 300, 40, 0, 12, 10, 1, 1, 1, 0, 23),
+(1261, 2, 200, 200, 20, 0, 12, 11, 1, 1, 1, 0, 23),
+(1282, 4, 30, 30, 25, 0, 3, 2, 0, 1, 1, 0, 24),
+(1283, 5, 999, 999, 999, 0, 0, 0, 0, 1, 1, 0, 24),
+(1284, 1, 200, 200, 15, 0, 3, 3, 0, 1, 1, 0, 24),
+(1285, 4, 30, 30, 25, 0, 3, 4, 1, 1, 1, 0, 24),
+(1286, 3, 300, 300, 40, 0, 0, 2, 0, 1, 1, 0, 24),
+(1287, 2, 200, 200, 20, 0, 0, 3, 0, 1, 1, 0, 24),
+(1288, 6, 999, 999, 999, 0, 12, 13, 1, 1, 1, 0, 24),
+(1289, 1, 200, 200, 15, 0, 9, 10, 1, 1, 1, 0, 24),
+(1290, 3, 300, 300, 40, 0, 12, 10, 1, 1, 1, 0, 24),
+(1291, 2, 200, 200, 20, 0, 12, 11, 1, 1, 1, 0, 24);
 
 -- --------------------------------------------------------
 
@@ -961,12 +986,12 @@ INSERT INTO `users` (`id`, `password`, `email`, `username`, `wins`, `losses`, `e
 (6, '$2y$10$zmsIcYDqp8ScNRuDcj9jD.kbsW9vC7k655flzcYK66kC0jkWa0toK', 'alanduu50@gmail.com', 'xXN1NJ4Xx', 343, 148, 1000, '2016-05-23 21:22:33', 'normal', 1465372058, 1, 0, 1000),
 (7, '$2y$10$xGKFvkCEjUMSm1y6cr8v/.IsJCZfLhNtigg0eyETXQYbslu5X1IBK', 'kld14@ic.ac.uk', 'DragonSlayer52', 358, 145, 1000, '2016-05-23 21:22:01', 'normal', 1465372058, 1, 0, 1000),
 (8, '$2y$10$s7PfGa0iZcg2XDFrmEAnhegSMZzKi4Po4GyUEl1E9cA69tUJj5qSa', 'test@test.com', 'HaskellPrize', 147, 23, 1000, '2016-05-23 21:20:45', 'normal', 1465372058, 1, 0, 1000),
-(9, '$2y$10$y8geeo6e4vVMUkhJWycFruGOuplLwujzm8q4RZlZQPpkn6RKbkfpS', 'demo@demo.com', 'Wumpus', 197, 77, 945, '2016-05-23 21:20:18', 'normal', 1465400357, 1, 0, 8900),
+(9, '$2y$10$y8geeo6e4vVMUkhJWycFruGOuplLwujzm8q4RZlZQPpkn6RKbkfpS', 'demo@demo.com', 'Wumpus', 197, 77, 945, '2016-05-23 21:20:18', 'normal', 1465402545, 1, 0, 8900),
 (10, '$2y$10$h9fvGHQrrOHh35pNzhIsqOR.0jDi4ZmVtHiCvP1wCexLef072jYqy', 'tonyfield@rules.com', 'OhBaby', 214, 26, 1000, '2016-05-23 18:59:26', 'normal', 1465372058, 1, 0, 1000),
 (11, '$2y$10$jOeNVa.g.MTq8j7NoOY3k.RTVeYpcrxA7gq8zv8hp9yiVBsk0z3C.', 'debug@debug.com', 'debug', 212, 52, 1000, '2016-06-01 20:52:54', 'normal', 1465372058, 1, 0, 1000),
 (12, '$2y$10$7.dtDYkyCuARy8JOOvnEM..015QDAO7YDKsNEmue6deyEyJvIDwr2', 'goku@goku.com', 'goku', 211, 62, 1000, '2016-06-01 20:53:04', 'normal', 1465372058, 1, 0, 1000),
 (13, '$2y$10$EVxl9C85A3EGzS9/mbr4mO1eZwdAa7RoFtuXRU.4lwdohCezvuQTu', 'veg@veg.com', 'veg', 311, 73, 1000, '2016-06-01 20:53:57', 'normal', 1465372058, 1, 0, 1000),
-(14, '$2y$10$sxwp7k4OSuCdCiO7y.JsOucq/YbXFR4oF8aBcgeTJ.UixSPKh.xJm', 'hp@hp.com', 'harry potter', 14, 4, 1115, '2016-06-04 21:40:28', 'normal', 1465399821, 1, 0, 16200),
+(14, '$2y$10$sxwp7k4OSuCdCiO7y.JsOucq/YbXFR4oF8aBcgeTJ.UixSPKh.xJm', 'hp@hp.com', 'harry potter', 14, 4, 1115, '2016-06-04 21:40:28', 'normal', 1465402543, 1, 0, 16200),
 (15, '$2y$10$Q3aMDDCP8w2o8bV.SaRs4.4Mgr49ZHzl372S4qExpvmadU0mAHETi', 'asda@asda.com', 'asdasd', 0, 0, 1000, '2016-06-04 21:40:51', 'normal', 1465372058, 1, 0, 1000),
 (16, '$2y$10$aZkr5proBXT1kbSu9WWoHOM/q4lHiyqVXj6/9FYTa9Tn6YaO31LPW', 'simon@simon.com', 'simon', 0, 0, 1000, '2016-06-06 09:29:26', 'normal', 1465372058, 1, 0, 1000),
 (17, '', '', 'guesto', 0, 0, 1000, '2016-06-07 13:22:51', 'guest', 1465372058, 1, 0, 1000);
@@ -1087,7 +1112,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `buffs`
 --
 ALTER TABLE `buffs`
-  MODIFY `buff_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `buff_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 --
 -- AUTO_INCREMENT for table `buff_instances`
 --
@@ -1097,7 +1122,7 @@ ALTER TABLE `buff_instances`
 -- AUTO_INCREMENT for table `chat`
 --
 ALTER TABLE `chat`
-  MODIFY `chat_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=205;
+  MODIFY `chat_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=209;
 --
 -- AUTO_INCREMENT for table `classes`
 --
@@ -1132,22 +1157,22 @@ ALTER TABLE `maps`
 -- AUTO_INCREMENT for table `opp`
 --
 ALTER TABLE `opp`
-  MODIFY `opp_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=392;
+  MODIFY `opp_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=398;
 --
 -- AUTO_INCREMENT for table `rooms`
 --
 ALTER TABLE `rooms`
-  MODIFY `room_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
+  MODIFY `room_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
 --
 -- AUTO_INCREMENT for table `room_participants`
 --
 ALTER TABLE `room_participants`
-  MODIFY `part_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=43;
+  MODIFY `part_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=45;
 --
 -- AUTO_INCREMENT for table `units`
 --
 ALTER TABLE `units`
-  MODIFY `unit_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1252;
+  MODIFY `unit_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1292;
 --
 -- AUTO_INCREMENT for table `users`
 --
