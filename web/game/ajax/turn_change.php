@@ -32,6 +32,8 @@ while ($totem = $result->fetch_object()) {
     $heal = ceil($unit->max_hp * 0.03);
     if ($heal + $unit->hp > $unit->max_hp) $heal = $unit->max_hp - $unit->hp;
     $buff_list[] = triggerBufferJson("Heal", $unit->unit_id, $heal);
+    $unit->hp += $heal;
+    $db->query("UPDATE units SET hp = {$heal} WHERE unit_id = '{$unit->unit_id}'");
   }
 }
 
