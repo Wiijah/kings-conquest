@@ -16,7 +16,10 @@ include 'includes/header.php';
 $result = $db->query("SELECT * FROM users WHERE id = '{$room->winner}'");
 $winner = $result->fetch_object();
 
-$result = $db->query("SELECT * FROM room_participants WHERE user_id != {$winner->id} AND room_id = {$room_id} AND event = ''");
+$result = $db->query("SELECT * FROM room_participants WHERE user_id = {$winner->id} AND room_id = {$room_id} AND event = 'ended'");
+$winner_part = $result->fetch_object();
+
+$result = $db->query("SELECT * FROM room_participants WHERE user_id != {$winner->id} AND room_id = {$room_id} AND event = 'ended'");
 $loser_part = $result->fetch_object();
 
 $result = $db->query("SELECT * FROM users WHERE id = '{$loser_part->user_id}'");
@@ -26,33 +29,41 @@ include 'includes/logout_container.php';
 include 'includes/logo.php';
 
 require_once 'includes/back_container.php';
+
 ?>
 
-<div class="small_container prof_user">
+<div class="small_container friends_container">
 
-<?php echo genTitle("Game Ended"); ?>
-<div class="play_profile box">
+<?php
+echo genBreadcrumbs(array("Lobby|index", "End Game Stats"));
+echo genTitle("End Game Stats");
+?>
+<div class="box">
 <table class="play_table">
-<tr><td class="prof_avatar" colspan="2"><img src="images/default_avatar.png" /></td></tr>
-<tr><th>Room Name</th><td><?php echo $room->name; ?></td></tr>
+<tr><td class="prof_avatar" colspan="2"><img src="images/the_bridge.png" /></td></tr>
+<tr><th style='width: 50%'>Room Name</th><td><?php echo $room->name; ?></td></tr>
+<tr><th>Map</th><td>The Bridge</td></tr>
+<tr><th>Number of Players</th><td>2</td></tr>
 </table>
 </div><br />
 
 <?php echo genTitle("Winner"); ?>
-<div class="play_profile box">
+<div class="box">
 <table class="play_table">
-<tr><th>Username</th><td><?php echo $winner->username; ?></td></tr>
+<tr><th style='width: 50%'>Username</th><td><?php echo linkUsername($winner); ?></td></tr>
 <tr><th>ELO Gained</th><td><?php echo $room->elo_won; ?></td></tr>
 <tr><th>King Points Gained</th><td>1,000</td></tr>
+<tr><th>Units Killed</th><td><?php echo $winner_part->unit_kills; ?></td></tr>
 </table>
 </div> <br />
 
 <?php echo genTitle("Loser"); ?>
-<div class="play_profile box">
+<div class="box">
 <table class="play_table">
-<tr><th>Username</th><td><?php linkUsername($loser); ?></td></tr>
+<tr><th style='width: 50%'>Username</th><td><?php echo linkUsername($loser); ?></td></tr>
 <tr><th>ELO Lost</th><td><?php echo $room->elo_lost; ?></td></tr>
 <tr><th>King Points Gained</th><td>300</td></tr>
+<tr><th>Units Killed</th><td><?php echo $loser_part->unit_kills; ?></td></tr>
 </table>
 </div> <!-- play_profile box -->
 
