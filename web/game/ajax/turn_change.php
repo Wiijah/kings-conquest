@@ -63,6 +63,8 @@ function triggerBufferJson($buff_effect, $unit_id, $health_change) {
   }';
 }
 
+
+
 function removeBuffJson($buff_id, $unit_id) {
   return '{"action_type" : "remove_buff",
     "buff_id" : "'.$buff_id.'",

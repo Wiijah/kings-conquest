@@ -57,10 +57,10 @@ if ($caster->skill == "Shield") {
   }
 }
 
+$actions[] = update_unit($attacker, 0, 0, 1);
+
 
 $out .= jsonPair("actions", jsonArray($actions));
-
-$db->query("UPDATE units SET canMove = 0, canAttack = 0, outOfMoves = 1 WHERE unit_id = '{$caster_id}'"); 
 
 $out = "{".$out.", \"debug\": \"{$caster->skill}\"}";
 oppInsert($out);
