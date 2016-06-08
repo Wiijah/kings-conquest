@@ -12,7 +12,7 @@ $team = $TEAM_COLOURS[$player->colour];
 $AOE = "(x = '{$x}' AND y = '{$y}')
            OR (x = '".($x - 1)."' AND y = '{$y}')
            OR (x = '".($x + 1)."' AND y = '{$y}')
-           OR (x = '{$x}' AND y = '{$y + 1}')
+           OR (x = '{$x}' AND y = '".($y + 1)."')
            OR (x = '{$x}' AND y = '".($y - 1)."')";
 
 //get both units
