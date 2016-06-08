@@ -48,9 +48,12 @@ if ($caster->skill == "Shield") {
   }
 } else if ($caster->skill == "Double Shoot") {
   $result = $db->query("{$SELECT_UNIT} room_id = '{$room_id}' AND team != '{$team}' AND (unit_id = '{$target_id}' OR unit_id = '{$target_id2}')");
+  $howMany = $target_id == $target_id2 ? 2 : 1;
   while ($fetch = $result->fetch_object()) {
-    $actions = array_merge($actions, give_buff($fetch, 3, 6));
-    $actions = array_merge($actions, attack_unit($caster, $fetch));
+    for ($i = 0; $i < $howMany; $i++) {
+      $actions = array_merge($actions, give_buff($fetch, 3, 6));
+      $actions = array_merge($actions, attack_unit($caster, $fetch));
+    }
   }
 }
 
