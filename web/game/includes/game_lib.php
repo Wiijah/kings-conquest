@@ -152,7 +152,7 @@ function attack_unit($attacker, $target) {
     $new_health = $target->hp - $damage;
     if ($new_health <= 0) { /* Target died */
       $db->query("DELETE FROM units WHERE unit_id = '{$target->unit_id}'");
-      $db->query("UPDATE room_participants SET hp = '{$new_health}' WHERE unit_id = '{$player->part_id}'");
+      $db->query("UPDATE room_participants SET unit_kills = unit_kills + 1 WHERE part_id = '{$player->part_id}'");
     } else { /* Target hurt but survived */
       $db->query("UPDATE units SET hp = '{$new_health}' WHERE unit_id = '{$target->unit_id}'");
     }
@@ -176,7 +176,7 @@ function attack_unit($attacker, $target) {
 }
 
 function damageByBuff($buff, $target, $damage) {
-  global $db, $room_id;
+  global $db, $room_id, $part_id;
   $result = $db->query("SELECT * FROM buff_instances WHERE unit_id = '{$target->unit_id}' AND buff_id = 4");
   $shield = $result->fetch_object();
 
@@ -195,6 +195,7 @@ function damageByBuff($buff, $target, $damage) {
 
     if ($new_health <= 0) { /* Target died */
       $db->query("DELETE FROM units WHERE unit_id = '{$target->unit_id}'");
+      $db->query("UPDATE room_participants SET unit_kills = unit_kills + 1 WHERE part_id = '{$player->part_id}'");
     } else { /* Target hurt but survived */
       $db->query("UPDATE units SET hp = '{$new_health}' WHERE unit_id = '{$target->unit_id}'");
     }
