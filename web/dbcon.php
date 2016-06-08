@@ -49,8 +49,7 @@ function secureOutput(&$str) {
 }
 
 function updateLastActive() {
-  global $db;
-  global $user;
+  global $db, $user;
   $db->query("UPDATE users SET lastactive = '".time()."' WHERE id = '{$user->id}'");
 }
 ?>

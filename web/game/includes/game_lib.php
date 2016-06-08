@@ -136,23 +136,22 @@ function attack_unit($attacker, $target) {
 
     if ($new_health <= 0 && $target->name == "king") {
       $opp_id = get_opponent_id();
-      $actions = array_merge($actions, gameEnd($user->id, $opp_id, "king_death"));
+      $result = $db->query("SELECT * FROM users WHERE id = '{$opp_id}'");
+      $opp = $result->fetch_object();
+      $actions = array_merge($actions, gameEnd($user, $opp, "king_death"));
     }
   } 
   return $actions;
 }
 
 function get_opponent_id() {
-  global $db;
-  global $user;
-  global $room_id;
-
+  global $db, $user, $room_id;
   $result = $db->query("SELECT * FROM room_participants WHERE user_id != '{$user->id}' AND room_id = '{$room_id}'");
   $opp = $result->fetch_object();
   return $opp->user_id;
 }
 
-function gameEnd($winner_id, $loser_id, $reason) {
+function gameEnd($winner, $loser, $reason) {
   global $db;
   global $room_id;
   global $TEAM_COLOURS;
@@ -160,20 +159,28 @@ function gameEnd($winner_id, $loser_id, $reason) {
   $actions = array();
 
   /* Get winner info */
-  $result = $db->query("SELECT * FROM room_participants WHERE user_id = '{$winner_id}' AND room_id = '{$room_id}'");
+  $result = $db->query("SELECT * FROM room_participants WHERE user_id = '{$winner->id}' AND room_id = '{$room_id}'");
   $winner_part = $result->fetch_object();
   $winner_team = $TEAM_COLOURS[$winner_part->colour];
 
   $actions[] = action("game_end", jsonStr("reason", $reason)
         .",".jsonPair("winner", $winner_team));
 
+  /* ELO */
+  $chance_win = abs((1 / (1 + pow(10, (($loser->elo - $winner->elo) / 400)))) * 100);
+  $chance_lose = abs(100 - $chance_win);
+
+  $elo_won = round(32 * ($chance_win / 100));
+  $elo_lost = round(32 * ($chance_lose / 100));
+  
+
   /* Update room and room participants */
   $db->query("UPDATE room_participants SET state = 'ended' WHERE room_id = '{$room_id}' AND event = ''");
-  $db->query("UPDATE rooms SET state = 'ended', winner = '$winner_id' WHERE room_id = '{$room_id}'");
+  $db->query("UPDATE rooms SET state = 'ended', winner = '$winner->id', elo_won = {$elo_won}, elo_lost = {$elo_lost} WHERE room_id = '{$room_id}'");
 
   /* Update user profiles */
-  $db->query("UPDATE users SET wins = wins + 1, kp = kp + 1000 WHERE id = '{$winner_id}'");
-  $db->query("UPDATE users SET losses = losses + 1, kp = kp + 300 WHERE id = '{$loser_id}'");
+  $db->query("UPDATE users SET wins = wins + 1, kp = kp + 1000, elo = elo + {$elo_won} WHERE id = '{$winner->id}'");
+  $db->query("UPDATE users SET losses = losses + 1, kp = kp + 300, elo = elo - {$elo_lost} WHERE id = '{$loser->id}'");
   return $actions;
 }
 
