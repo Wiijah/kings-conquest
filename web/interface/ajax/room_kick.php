@@ -3,8 +3,8 @@
 require_once 'ajax_common.php';
 
 /* Get Room ID from POST data */
-$room_id = secureStr($_POST['room_id']);
-$target_id = secureStr($_POST['target_id']);
+$room_id = secureInt($_POST['room_id']);
+$target_id = secureInt($_POST['target_id']);
 
 /* Check if the client already left the room or cannot leave the room */
 

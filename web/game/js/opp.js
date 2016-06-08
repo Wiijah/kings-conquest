@@ -18,4 +18,5 @@ function getOpp() {
 function quit_game() {
   rawPost("ajax/leave_game", {}, function(data) {
     window.location.href = '../interface/game_stats?room_id='+room_id;
+  });
 }

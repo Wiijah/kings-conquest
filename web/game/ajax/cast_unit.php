@@ -1,12 +1,12 @@
 <?php
 require_once 'ajax_common.php';
 
-$caster_id = secureStr($_POST['caster_id']);
-$target_id = secureStr($_POST['target_id']);
-$target_id2 = secureStr($_POST['target_id2']);
+$caster_id = secureInt($_POST['caster_id']);
+$target_id = secureInt($_POST['target_id']);
+$target_id2 = secureInt($_POST['target_id2']);
 
-$x = secureStr($_POST['x']) * 1;
-$y = secureStr($_POST['y']) * 1;
+$x = secureInt($_POST['x']) * 1;
+$y = secureInt($_POST['y']) * 1;
 
 // get player team
 $team = $TEAM_COLOURS[$player->colour];

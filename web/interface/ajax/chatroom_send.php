@@ -3,7 +3,7 @@
 require_once 'ajax_common.php';
 
 $message = secureStr($_POST['message']);
-$room_id = secureStr($_POST['room']);
+$room_id = secureInt($_POST['room']);
 $colour = secureStr($_POST['colour']);
 
 $query = "INSERT INTO chat (user, message, room_id, colour) VALUES

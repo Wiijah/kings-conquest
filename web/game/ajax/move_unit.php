@@ -2,7 +2,7 @@
 require_once 'ajax_common.php';
 
 /* Get basic data */
-$unit_id = secureStr($_POST['unit_id']);
+$unit_id = secureInt($_POST['unit_id']);
 $moves_json = secureStr($_POST['path']);
 $moves = json_decode($moves_json);
 

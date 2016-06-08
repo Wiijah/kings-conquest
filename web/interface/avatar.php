@@ -9,7 +9,7 @@ require_once 'includes/back_container.php';
 $message = "";
 /* Equip Item */
 if (isset($_GET['equip'])) {
-  $equip = secureStr($_GET['equip']);
+  $equip = secureInt($_GET['equip']);
   $result = $db->query("SELECT * FROM inventory JOIN items USING (item_id) WHERE user_id = '{$user->id}' AND item_id = '{$equip}'");
   $error = false;
   if (!$item = $result->fetch_object()) {
@@ -25,7 +25,7 @@ if (isset($_GET['equip'])) {
 }
 /* Unequip Item */
 if (isset($_GET['unequip'])) {
-  $type = secureStr($_GET['unequip']);
+  $type = secureInt($_GET['unequip']);
   if ($user->{$type} != 0) {
      give_item($user->{$type}, $user->id);
     $result = $db->query("SELECT * FROM inventory JOIN items USING (item_id) WHERE item_id = '{$user->{$type}}' AND user_id = '{$user->id}'");

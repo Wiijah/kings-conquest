@@ -1,7 +1,7 @@
 <?php
 require_once 'ajax_common.php';
 /* Get basic data */
-$opp_id = secureStr($_POST['opp_id']) * 1;
+$opp_id = secureInt($_POST['opp_id']) * 1;
 
 for ($i = 0; $i < 360; $i++) {
   $result = $db->query("SELECT * FROM opp WHERE opp_id > '{$opp_id}' AND room_id = '{$room_id}' AND user_id != '{$user->id}' ORDER BY opp_id ASC LIMIT 1");

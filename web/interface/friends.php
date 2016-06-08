@@ -10,7 +10,7 @@ $close = 2;
 
 /* Delete/Cancel Friend Request */
 if (isset($_GET['delete'])) {
-  $other_id = secureStr($_GET['delete']);
+  $other_id = secureInt($_GET['delete']);
   $other = $db->query("SELECT * FROM users WHERE id = '{$other_id}'")->fetch_object();
   if ($other) {
     $result = $db->query("SELECT * FROM friends WHERE (user_id = '{$user->id}' AND other_id = '{$other_id}') OR (other_id = '{$user->id}' AND user_id = '{$other_id}')");
@@ -26,7 +26,7 @@ if (isset($_GET['delete'])) {
 
 /* Accept Friend Request */
 if (isset($_GET['accept'])) {
-  $other_id = secureStr($_GET['accept']);
+  $other_id = secureInt($_GET['accept']);
   $other = $db->query("SELECT * FROM users WHERE id = '{$other_id}'")->fetch_object();
   if ($other) {
     $result = $db->query("SELECT * FROM friends WHERE user_id = '{$other_id}' AND other_id = '{$user->id}'");
@@ -41,7 +41,7 @@ if (isset($_GET['accept'])) {
 
 /* Add New Friend */
 if (isset($_GET['add'])) {
-  $other_id = secureStr($_GET['add']);
+  $other_id = secureInt($_GET['add']);
   $other = $db->query("SELECT * FROM users WHERE id = '{$other_id}'")->fetch_object();
   if ($other) {
     $friend_query = "SELECT * FROM friends WHERE (user_id = '{$user->id}' AND other_id = '{$other_id}') OR (other_id = '{$user->id}' AND user_id = '{$other_id}')";
@@ -115,7 +115,7 @@ if ($pending_to_html != "") {
 /* Search Feature */
 $search_html = "";
 if (isset($_GET['search'])) {
-  $search = secureStr($_GET['search']);
+  $search = secureInt($_GET['search']);
   $result = $db->query("SELECT * FROM users WHERE username LIKE '%{$search}%'");
   while ($fetch = $result->fetch_object()) {
     $search_html .= "<tr><td>".linkUsername($fetch)."</td><td><a href='friends?add={$fetch->id}&search={$search}'>Add Friend</a></td></tr>";

@@ -1,8 +1,8 @@
 <?php
 require_once 'ajax_common.php';
 
-$x = secureStr($_POST['x']);
-$y = secureStr($_POST['y']);
+$x = secureInt($_POST['x']);
+$y = secureInt($_POST['y']);
 $name = secureStr($_POST['name']);
 $team = $TEAM_COLOURS[$player->colour];
 
