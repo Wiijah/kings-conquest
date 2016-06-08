@@ -11,6 +11,11 @@ $y = secureStr($_POST['y']) * 1;
 // get player team
 $team = $TEAM_COLOURS[$player->colour];
 
+$AOE = "((x = '{$x}' AND y = '{$y}')
+           OR (x = '".($x - 1)."' AND y = '{$y}')
+           OR (x = '".($x + 1)."' AND y = '{$y}')
+           OR (x = '{$x}' AND y = '".($y + 1)."')
+           OR (x = '{$x}' AND y = '".($y - 1)."'))";
 
 //get both units
 $result = $db->query("{$SELECT_UNIT} unit_id = '{$caster_id}' AND room_id = '{$room_id}'");
