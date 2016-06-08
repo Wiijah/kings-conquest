@@ -115,7 +115,7 @@ if ($pending_to_html != "") {
 /* Search Feature */
 $search_html = "";
 if (isset($_GET['search'])) {
-  $search = secureInt($_GET['search']);
+  $search = secureStr($_GET['search']);
   $result = $db->query("SELECT * FROM users WHERE username LIKE '%{$search}%'");
   while ($fetch = $result->fetch_object()) {
     $search_html .= "<tr><td>".linkUsername($fetch)."</td><td><a href='friends?add={$fetch->id}&search={$search}'>Add Friend</a></td></tr>";

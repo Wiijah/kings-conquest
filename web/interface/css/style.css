@@ -1,6 +1,9 @@
 /* Default styling */
 .highlight {
-  color: #FFA600;
+  color: #8DFF8B;
+}
+ol {
+  list-style-position:inside;
 }
 * {
   margin: 0;

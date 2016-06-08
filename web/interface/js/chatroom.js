@@ -43,7 +43,7 @@ function concatToChatroom(line) {
   if (lastID >= line.id) return; //prevent old messages being resent
   lastID = line.id;
 
-  var user_link = "<a class='open_profile' data-username='"+line.username+"'>"+line.username+"</a>";
+  var user_link = line.userlink;//"<a class='open_profile' data-username='"+line.username+"'>"+line.username+"</a>";
   if (line.chat_type == 'message') { //normal message
     $("#play_chatroom_messages").append("["+line.time+"] <span class='play_chatroom_user'>"+user_link+":</span><span class='play_chatroom_text'>"+line.message+"</span><br />");
   } else { // event

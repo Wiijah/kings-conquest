@@ -10,6 +10,7 @@
   <link rel="stylesheet" href="css/room.css">
   <link rel="stylesheet" href="css/profile.css">
   <link rel="stylesheet" href="css/friends.css">
+  <link rel="stylesheet" href="css/tutorial.css">
   <link rel="stylesheet" href="css/avatar.css">
   <link rel="stylesheet" href="../fonts/fonts.css">
 

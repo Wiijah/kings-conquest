@@ -2,6 +2,7 @@
 /* Output to the user all messages newer than the ID given */
 
 require_once 'ajax_common.php';
+require_once '../includes/lib.php';
 
 // Delete old messages
 $db->query("DELETE FROM chat WHERE created < (NOW() - INTERVAL 1 DAY)");
@@ -20,6 +21,7 @@ while ($fetch = $result->fetch_object()) {
   $out .= '{
    "id": '.$fetch->chat_id.',
    "username":"'.$fetch->username.'",
+   "userlink":"'.linkUsername($fetch).'",
    "time":"'.digitalTime($fetch->created).'",
    "message":"'.secureOutput($message).'",
    "chat_type":"'.$fetch->chat_type.'",
