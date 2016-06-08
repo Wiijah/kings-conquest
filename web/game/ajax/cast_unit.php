@@ -16,11 +16,11 @@ $AOE = "((x = '{$x}' AND y = '{$y}')
            OR (x = '{$x}' AND y = '".($y - 1)."'))";
 
 //get both units
-$result = $db->query("SELECT * FROM units JOIN classes ON units.class_id = classes.class_id WHERE unit_id = '{$caster_id}' AND room_id = '{$room_id}'");
+$result = $db->query("{$SELECT_UNIT} unit_id = '{$caster_id}' AND room_id = '{$room_id}'");
 $caster = $result->fetch_object();
 
 if ($target_id > 0) {
-  $result = $db->query("SELECT * FROM units JOIN classes ON units.class_id = classes.class_id WHERE unit_id = '{$target_id}' AND room_id = '{$room_id}'");
+  $result = $db->query("{$SELECT_UNIT} unit_id = '{$target_id}' AND room_id = '{$room_id}'");
   $target = $result->fetch_object();
   if (!$target) exit_error(101);
 }
@@ -31,7 +31,7 @@ $out = $SUCCESS.",";
 if ($caster->skill == "Shield") {
   $actions = array_merge($actions, give_buff($caster, 4, 6));
 } else if ($caster->skill == "Battle Cry") {
-  $result = $db->query("SELECT * FROM units WHERE room_id = '{$room_id}' AND team = '{$team}'");
+  $result = $db->query("{$SELECT_UNIT} room_id = '{$room_id}' AND team = '{$team}'");
   while ($fetch = $result->fetch_object()) {
     $db->query("INSERT INTO buff_instances (buff_id, unit_id, turns_left) VALUES ('2', '{$fetch->unit_id}', '6')");
     $actions[] = action("apply_buff",
@@ -39,7 +39,7 @@ if ($caster->skill == "Shield") {
     .",".jsonPair("unit_id", $fetch->unit_id));
   }
 } else if ($caster->skill == "Magic Damage") {
-  $result = $db->query("SELECT * FROM units WHERE room_id = '{$room_id}' AND team != '{$team}' AND {$AOE}");
+  $result = $db->query("{$SELECT_UNIT} room_id = '{$room_id}' AND team != '{$team}' AND {$AOE}");
   while ($fetch = $result->fetch_object()) {
     $actions = array_merge($actions, attack_unit($caster, $fetch));
     $actions = array_merge($actions, give_buff($fetch, 5, 6));

@@ -5,6 +5,8 @@ $TEAM_COLOURS = array("red" => 0, "blue" => 1);
 $TEAM_RED = 0;
 $TEAM_BLUE = 1;
 
+$SELECT_UNIT = "SELECT * FROM units JOIN classes ON units.class_id = classes.class_id WHERE";
+
 function create_unit($name, $x, $y, $team) {
   global $db;
   global $room_id;
@@ -77,6 +79,12 @@ function jsonUnit($unit) {
     }';
 }
 
+function select_unit($unit_id) {
+  global $db;
+  global $room_id;
+  $result = $db->query("SELECT * FROM units JOIN classes ON units.class_id = classes.class_id WHERE unit_id = '{$unit_id}' AND room_id = '{$room_id}'");
+  return $result->fetch_object();
+}
 function give_buff($unit, $buff_id, $turns_left) {
   global $db;
   $actions = array();
