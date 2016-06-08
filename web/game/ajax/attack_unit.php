@@ -30,6 +30,10 @@ $actions = array();
 if (!$buff) {
 	// get new health
 	$damage = $attacker->attack;
+
+  $crit = rand(1,100) <= ($attacker->luck * 100) ? '1' : '0';
+  if ($crit == '1') $damage *= 2;
+  
 	$new_health = $target->hp - $damage;
 	if ($new_health <= 0) { /* Target died */
 		$db->query("DELETE FROM units WHERE unit_id = '{$target_id}'");
@@ -39,7 +43,6 @@ if (!$buff) {
 
 	$db->query("UPDATE units SET canMove = 0, canAttack = 0, outOfMoves = 1 WHERE unit_id = '{$attacker_id}'"); 
 
-  $crit = rand(1,100) <= ($attacker->luck * 100) ? '1' : '0';
 
 	// notify
 	$out = '{';

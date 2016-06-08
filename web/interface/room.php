@@ -18,6 +18,10 @@ if ($room->state == 'ingame') {
   header ("Location: ../game/");
   die();
 }
+if ($room->state != 'pregame') {
+  header ("Location: index");
+  die();
+}
 
 
 include 'includes/header.php';

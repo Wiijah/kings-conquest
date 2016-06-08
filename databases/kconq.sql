@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: Jun 07, 2016 at 02:37 PM
+-- Generation Time: Jun 08, 2016 at 01:29 AM
 -- Server version: 10.1.10-MariaDB
 -- PHP Version: 7.0.2
 
@@ -19,6 +19,45 @@ SET time_zone = "+00:00";
 --
 -- Database: `kconq`
 --
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `achievements`
+--
+
+CREATE TABLE `achievements` (
+  `ach_name` varchar(64) NOT NULL,
+  `image` varchar(128) NOT NULL,
+  `label` text NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `achievements`
+--
+
+INSERT INTO `achievements` (`ach_name`, `image`, `label`) VALUES
+('100_wins', 'images/achievements/100_wins.png', 'Won 100 games.'),
+('50_wins', 'images/achievements/50_wins.png', 'Won 50 games.'),
+('perfect_win', 'images/achievements/perfect_win.png', 'Won a game without losing any units.');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `ach_instances`
+--
+
+CREATE TABLE `ach_instances` (
+  `ach_name` varchar(64) NOT NULL,
+  `user_id` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `ach_instances`
+--
+
+INSERT INTO `ach_instances` (`ach_name`, `user_id`) VALUES
+('perfect_win', 9);
 
 -- --------------------------------------------------------
 
@@ -39,7 +78,8 @@ CREATE TABLE `buffs` (
 
 INSERT INTO `buffs` (`buff_id`, `buff_name`, `graphics`, `icon`) VALUES
 (1, 'heal', 'graphics/spritesheet/spell/ss_heal.png', ''),
-(2, 'burning', 'graphics/spritesheet/spell/ss_burning.png', '');
+(2, 'burning', 'graphics/spritesheet/spell/ss_burning.png', ''),
+(4, 'shield', '', '');
 
 -- --------------------------------------------------------
 
@@ -69,6 +109,55 @@ CREATE TABLE `chat` (
   `chat_type` set('message','event') NOT NULL DEFAULT 'message',
   `colour` set('red','blue') NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `chat`
+--
+
+INSERT INTO `chat` (`chat_id`, `created`, `user`, `message`, `room_id`, `chat_type`, `colour`) VALUES
+(98, '2016-06-07 12:43:13', 9, 'Wumpus joined the room.', 1, 'event', ''),
+(99, '2016-06-07 12:43:45', 13, 'veg joined the room.', 1, 'event', ''),
+(100, '2016-06-07 15:35:34', 14, 'harry potter joined the room.', 2, 'event', ''),
+(101, '2016-06-07 16:30:15', 13, 'veg joined the room.', 1, 'event', ''),
+(102, '2016-06-07 16:30:18', 14, 'harry potter joined the room.', 1, 'event', ''),
+(103, '2016-06-07 16:43:50', 14, 'harry potter left the game.', 1, 'event', ''),
+(104, '2016-06-07 16:43:57', 14, 'harry potter joined the room.', 1, 'event', ''),
+(105, '2016-06-07 16:44:09', 14, 'harry potter left the game.', 1, 'event', ''),
+(106, '2016-06-07 16:44:11', 14, 'harry potter joined the room.', 1, 'event', ''),
+(107, '2016-06-07 16:44:17', 13, 'hi', 1, 'message', ''),
+(108, '2016-06-07 16:44:20', 13, 'yo', 1, 'message', ''),
+(109, '2016-06-07 16:44:22', 14, 'yo', 1, 'message', ''),
+(110, '2016-06-07 16:44:30', 14, 'harry potter left the game.', 1, 'event', ''),
+(111, '2016-06-07 16:44:32', 14, 'wtf', 0, 'message', ''),
+(112, '2016-06-07 16:44:33', 14, 'harry potter joined the room.', 1, 'event', ''),
+(113, '2016-06-07 16:44:35', 14, 'wtf', 1, 'message', ''),
+(114, '2016-06-07 16:46:04', 14, 'HELLO', 1, 'message', ''),
+(115, '2016-06-07 16:48:52', 13, 'asda', 1, 'message', ''),
+(116, '2016-06-07 16:49:19', 14, 'harry potter left the game.', 1, 'event', ''),
+(117, '2016-06-07 16:49:21', 14, 'why', 0, 'message', ''),
+(118, '2016-06-07 16:49:23', 14, 'does it work ehre', 0, 'message', ''),
+(119, '2016-06-07 16:49:24', 14, 'but not in the rooms', 0, 'message', ''),
+(120, '2016-06-07 16:49:26', 14, 'harry potter joined the room.', 1, 'event', ''),
+(121, '2016-06-07 16:49:29', 13, 'wg', 1, 'message', ''),
+(122, '2016-06-07 16:54:20', 13, 'umm', 1, 'message', ''),
+(123, '2016-06-07 16:54:22', 14, 'hi there!', 1, 'message', ''),
+(124, '2016-06-07 16:54:24', 14, 'harry potter left the game.', 1, 'event', ''),
+(125, '2016-06-07 16:54:27', 14, 'harry potter joined the room.', 1, 'event', ''),
+(126, '2016-06-07 16:54:44', 14, 'harry potter left the room.', 1, 'event', ''),
+(127, '2016-06-07 16:54:49', 14, 'harry potter joined the room.', 1, 'event', ''),
+(128, '2016-06-07 16:54:52', 13, 'veg left the room.', 1, 'event', ''),
+(129, '2016-06-07 16:54:58', 14, 'harry potter joined the room.', 2, 'event', ''),
+(130, '2016-06-07 16:55:05', 14, 'harry potter left the room.', 2, 'event', ''),
+(131, '2016-06-07 16:55:08', 14, 'harry potter joined the room.', 3, 'event', ''),
+(132, '2016-06-07 16:55:12', 13, 'veg joined the room.', 3, 'event', ''),
+(133, '2016-06-07 17:17:11', 14, 'harry potter kicked veg.', 3, 'event', ''),
+(134, '2016-06-07 17:17:16', 13, 'veg joined the room.', 3, 'event', ''),
+(135, '2016-06-07 17:17:45', 14, 'harry potter kicked veg.', 3, 'event', ''),
+(136, '2016-06-07 17:17:51', 13, 'veg joined the room.', 3, 'event', ''),
+(137, '2016-06-07 17:17:52', 14, 'harry potter kicked veg.', 3, 'event', ''),
+(138, '2016-06-07 18:18:46', 13, 'veg joined the room.', 3, 'event', ''),
+(139, '2016-06-07 19:22:42', 9, 'hi', 0, 'message', ''),
+(140, '2016-06-07 19:22:43', 9, 'everyone', 0, 'message', '');
 
 -- --------------------------------------------------------
 
@@ -104,6 +193,26 @@ INSERT INTO `classes` (`class_id`, `name`, `address`, `spritesheet`, `info`, `ma
 (4, 'king', 'graphics/spritesheet/stand/ss_king_stand.png', 'graphics/spritesheet/attack/ss_king_attack.png', 'graphics/card/king_card.png', 400, 25, 'Buffer', 3, 3, 2, 'graphics/spritesheet/spell/ss_physical_attack.png', 0, 0.2),
 (5, 'red castle', 'graphics/spritesheet/special_unit/ss_castle_red.png', 'graphics/spritesheet/attack/ss_archer_attack.png', 'graphics/card/castle_card.png', 999, 999, 'RED', 0, 0, 10, 'graphics/spritesheet/spell/ss_physical_attack.png', 100, 0),
 (6, 'blue castle', 'graphics/spritesheet/special_unit/ss_castle_blue.png', 'graphics/spritesheet/attack/ss_archer_attack.png', 'graphics/card/castle_card.png', 999, 999, 'BLUE', 0, 0, 10, 'graphics/spritesheet/spell/ss_physical_attack.png', 100, 0);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `friends`
+--
+
+CREATE TABLE `friends` (
+  `friend_id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `other_id` int(11) NOT NULL,
+  `accepted` tinyint(4) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `friends`
+--
+
+INSERT INTO `friends` (`friend_id`, `user_id`, `other_id`, `accepted`) VALUES
+(9, 9, 14, 0);
 
 -- --------------------------------------------------------
 
@@ -202,7 +311,48 @@ INSERT INTO `opp` (`opp_id`, `room_id`, `user_id`, `team`, `json`) VALUES
 (267, 36, 14, 0, '{"error_code": 0,"action" : {"action_type": "move_unit", "unit_id": 818,"path": [[3,3],[4,3],[4,4],[4,5]]}}'),
 (268, 36, 14, 0, '{"error_code": 0,"action" : {"action_type": "attack_unit", "attacker_id": 816,"buffs": [],"target_id": 819,"dmg": 25,"is_critical": 0}}'),
 (269, 36, 14, 0, '{"error_code": 0,"action" : {"action_type": "attack_unit", "attacker_id": 851,"buffs": [],"target_id": 852,"dmg": 15,"is_critical": 0}}'),
-(270, 36, 14, 0, '{"error_code": 0,"action" : {"action_type": "attack_unit", "attacker_id": 862,"buffs": [],"target_id": 863,"dmg": 15,"is_critical": 0}}');
+(270, 36, 14, 0, '{"error_code": 0,"action" : {"action_type": "attack_unit", "attacker_id": 862,"buffs": [],"target_id": 863,"dmg": 15,"is_critical": 0}}'),
+(271, 1, 9, 0, '{"error_code": 0,"action" : {"action_type": "attack_unit", "attacker_id": 873,"buffs": [],"target_id": 874,"dmg": 15,"is_critical": 0}}'),
+(272, 1, 9, 0, '{"error_code": 0,"action" : {"action_type": "move_unit", "unit_id": 871,"path": [[3,2],[4,2],[4,3],[4,4]]}}'),
+(273, 1, 9, 0, '{"error_code": 0,"action" : {"action_type": "attack_unit", "attacker_id": 871,"buffs": [],"target_id": 874,"dmg": 25,"is_critical": 0}}'),
+(274, 1, 9, 0, '{"error_code": 0,"action" : {"action_type": "attack_unit", "attacker_id": 884,"buffs": [],"target_id": 885,"dmg": 15,"is_critical": 0}}'),
+(275, 1, 9, 0, '{"error_code": 0,"action" : {"action_type": "move_unit", "unit_id": 882,"path": [[3,2],[4,2],[4,3],[4,4]]}}'),
+(276, 1, 9, 0, '{"error_code": 0,"action" : {"action_type": "attack_unit", "attacker_id": 882,"buffs": [],"target_id": 885,"dmg": 25,"is_critical": 0}}'),
+(277, 1, 9, 0, '{"error_code": 0,"actions": ["action" : {"action_type": "move_unit", "unit_id": 887,"path": [[0,3],[0,4],[1,4],[2,4]]}]}'),
+(278, 1, 9, 0, '{"error_code": 0,"actions": [{"action" : {"action_type": "move_unit", "unit_id": 886,"path": [[0,2],[0,3],[0,4]]}}]}'),
+(279, 1, 9, 0, '{"error_code": 0,"actions": [{"action_type": "attack_unit", "attacker_id": 906,"buffs": [],"target_id": 907,"dmg": 15,"is_critical": 0}]}'),
+(280, 1, 9, 0, '{"error_code": 0,"actions": [{"action_type": "move_unit", "unit_id": 904,"path": [[3,2],[4,2],[4,3],[4,4]]}]}'),
+(281, 1, 9, 0, '{"error_code": 0,"actions": [{"action_type": "attack_unit", "attacker_id": 904,"buffs": [],"target_id": 907,"dmg": 25,"is_critical": 1}]}'),
+(282, 1, 9, 0, '{"error_code": 0,"actions": [{"action_type": "move_unit", "unit_id": 908,"path": [[0,2],[0,1],[1,1]]}]}'),
+(283, 1, 9, 0, '{"error_code": 0,"actions": [{"action_type": "create_unit", "unit": {"915": {\n      "address":"graphics/spritesheet/stand/ss_wizard_stand.png","spritesheet":"graphics/spritesheet/attack/ss_wizard_attack.png","unit_id": 915,"info":"graphics/card/wizard_card.png","hp": 200,"max_hp": 200,"attack": 15,"skill":"Magic Damage","luck": 0.25,"x": 2,"y": 0,"moveRange": 3,"team": 0,"attackRange": 3,"canMove": 1,"canAttack": 1,"skillCoolDown": 0,"outOfMoves": 0,"damageEffect":"graphics/spritesheet/spell/ss_fireball.png"\n    }},"gold": 900}]}'),
+(284, 1, 9, 0, '{"error_code": 0,"actions": [{"action_type": "create_unit", "unit": {"916": {\n      "address":"graphics/spritesheet/stand/ss_wizard_stand.png","spritesheet":"graphics/spritesheet/attack/ss_wizard_attack.png","unit_id": 916,"info":"graphics/card/wizard_card.png","hp": 200,"max_hp": 200,"attack": 15,"skill":"Magic Damage","luck": 0.25,"x": 2,"y": 1,"moveRange": 3,"team": 0,"attackRange": 3,"canMove": 1,"canAttack": 1,"skillCoolDown": 0,"outOfMoves": 0,"damageEffect":"graphics/spritesheet/spell/ss_fireball.png"\n    }},"gold": 800}]}'),
+(285, 1, 9, 0, '{"error_code": 0,"actions": [{"action_type": "create_unit", "unit": {"917": {\n      "address":"graphics/spritesheet/stand/ss_archer_stand.png","spritesheet":"graphics/spritesheet/attack/ss_archer_attack.png","unit_id": 917,"info":"graphics/card/archer_card.png","hp": 200,"max_hp": 200,"attack": 20,"skill":"Double Shoot","luck": 0.4,"x": 0,"y": 2,"moveRange": 3,"team": 0,"attackRange": 4,"canMove": 1,"canAttack": 1,"skillCoolDown": 0,"outOfMoves": 0,"damageEffect":"graphics/spritesheet/spell/ss_arrow.png"\n    }},"gold": 700}]}'),
+(286, 1, 9, 0, '{"error_code": 0,"actions": [{"action_type": "create_unit", "unit": {"940": {\n      "address":"graphics/spritesheet/stand/ss_wizard_stand.png","spritesheet":"graphics/spritesheet/attack/ss_wizard_attack.png","unit_id": 940,"info":"graphics/card/wizard_card.png","hp": 200,"max_hp": 200,"attack": 15,"skill":"Magic Damage","luck": 0.25,"x": 1,"y": 2,"moveRange": 3,"team": 0,"attackRange": 3,"canMove": 1,"canAttack": 1,"skillCoolDown": 0,"outOfMoves": 0,"damageEffect":"graphics/spritesheet/spell/ss_fireball.png"\n    }},"gold": 900}]}'),
+(287, 1, 9, 0, '{"error_code": 0,{"action_type": "turn_change", "new_turn": 1,"effects_to_apply": [],"units_new_cd": [],"buffs_to_remove": []}}'),
+(288, 1, 9, 0, '{"error_code": 0,"actions": [{"action_type": "move_unit", "unit_id": 929,"path": [[3,2],[4,2],[4,3],[5,3]]}]}'),
+(289, 1, 13, 1, '{"error_code": 0,"actions": [{"action_type": "move_unit", "unit_id": 932,"path": [[3,4],[2,4],[1,4],[1,3]]}]}'),
+(290, 1, 13, 1, '{"error_code": 0,"actions": [{"action_type": "attack_unit", "attacker_id": 932,"buffs": [],"target_id": 940,"dmg": 15,"is_critical": 0}]}'),
+(291, 1, 9, 0, '{"error_code": 0,"actions": [{"action_type": "attack_unit", "attacker_id": 943,"buffs": [],"target_id": 944,"dmg": 15,"is_critical": 0}]}'),
+(292, 3, 14, 0, '{"error_code": 0,"actions": [{"action_type": "move_unit", "unit_id": 954,"path": [[3,3],[4,3],[4,4]]}]}'),
+(293, 3, 14, 0, '{"error_code": 0,"actions": [{"action_type": "attack_unit", "attacker_id": 954,"buffs": [],"target_id": 955,"dmg": 15,"is_critical": 0}]}'),
+(294, 3, 14, 0, '{"error_code": 0,"actions": [{"action_type": "move_unit", "unit_id": 952,"path": [[3,2],[2,2],[2,3],[2,4]]}]}'),
+(295, 3, 14, 0, '{"error_code": 0,"actions": [{"action_type": "attack_unit", "attacker_id": 952,"buffs": [],"target_id": 955,"dmg": 25,"is_critical": 0}]}'),
+(296, 3, 14, 0, '{"error_code": 0,"actions": [{"action_type": "move_unit", "unit_id": 957,"path": [[0,3],[1,3],[2,3]]}]}'),
+(297, 3, 14, 0, '{"error_code": 0,"actions": [{"action_type": "attack_unit", "attacker_id": 957,"buffs": [],"target_id": 955,"dmg": 20,"is_critical": 0}]}'),
+(298, 3, 14, 0, '{"error_code": 0,"actions": [{"action_type": "turn_change", "new_turn": 1,"effects_to_apply": [],"units_new_cd": [],"buffs_to_remove": []}]}'),
+(299, 3, 13, 1, '{"error_code": 0,"actions": [{"action_type": "move_unit", "unit_id": 955,"path": [[3,4],[3,3],[3,2],[2,2]]}]}'),
+(300, 3, 13, 1, '{"error_code": 0,"actions": [{"action_type": "attack_unit", "attacker_id": 955,"buffs": [],"target_id": 957,"dmg": 25,"is_critical": 0}]}'),
+(301, 3, 13, 1, '{"error_code": 0,"actions": [{"action_type": "turn_change", "new_turn": 0,"effects_to_apply": [],"units_new_cd": [],"buffs_to_remove": []}]}'),
+(302, 3, 14, 0, '{"error_code": 0,"actions": [{"action_type": "attack_unit", "attacker_id": 957,"buffs": [],"target_id": 955,"dmg": 20,"is_critical": 0}]}'),
+(303, 3, 14, 0, '{"error_code": 0,"actions": [{"action_type": "move_unit", "unit_id": 954,"path": [[4,4],[3,4],[3,3],[3,2]]}]}'),
+(304, 3, 14, 0, '{"error_code": 0,"actions": [{"action_type": "turn_change", "new_turn": 1,"effects_to_apply": [],"units_new_cd": [],"buffs_to_remove": []}]}'),
+(305, 3, 13, 1, '{"error_code": 0,"actions": [{"action_type": "attack_unit", "attacker_id": 955,"buffs": [],"target_id": 954,"dmg": 25,"is_critical": 0}]}'),
+(306, 3, 13, 1, '{"error_code": 0,"actions": [{"action_type": "turn_change", "new_turn": 0,"effects_to_apply": [],"units_new_cd": [],"buffs_to_remove": []}]}'),
+(307, 3, 14, 0, '{"error_code": 0,"actions": [{"action_type": "attack_unit", "attacker_id": 954,"buffs": [],"target_id": 955,"dmg": 15,"is_critical": 0}]}'),
+(308, 3, 14, 0, '{"error_code": 0,"actions": [{"action_type": "turn_change", "new_turn": 1,"effects_to_apply": [],"units_new_cd": [],"buffs_to_remove": []}]}'),
+(309, 3, 13, 1, '{"error_code": 0,"actions": [{"action_type": "move_unit", "unit_id": 955,"path": [[2,2],[2,1],[3,1],[4,1]]}]}'),
+(310, 3, 13, 1, '{"error_code": 0,"actions": [{"action_type": "turn_change", "new_turn": 0,"effects_to_apply": [],"units_new_cd": [],"buffs_to_remove": []}]}'),
+(311, 3, 14, 0, '{"error_code": 0,"actions": [{"action_type": "attack_unit", "attacker_id": 954,"buffs": [],"target_id": 955,"dmg": 15,"is_critical": 0}]}');
 
 -- --------------------------------------------------------
 
@@ -223,6 +373,13 @@ CREATE TABLE `rooms` (
   `winner` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
+--
+-- Dumping data for table `rooms`
+--
+
+INSERT INTO `rooms` (`room_id`, `user_id`, `joiner`, `created`, `name`, `password`, `max_players`, `state`, `turn`, `winner`) VALUES
+(3, 14, 0, '2016-06-07 16:55:08', 'asda', '', 2, 'ingame', 0, 0);
+
 -- --------------------------------------------------------
 
 --
@@ -235,10 +392,21 @@ CREATE TABLE `room_participants` (
   `room_id` int(11) NOT NULL,
   `colour` set('red','blue') NOT NULL,
   `state` set('notready','ready','owner') NOT NULL DEFAULT 'notready',
-  `event` set('kicked','left') NOT NULL,
+  `event` set('kicked','left','ended') NOT NULL,
   `gold` int(11) NOT NULL DEFAULT '500',
   `unit_kills` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `room_participants`
+--
+
+INSERT INTO `room_participants` (`part_id`, `user_id`, `room_id`, `colour`, `state`, `event`, `gold`, `unit_kills`) VALUES
+(10, 14, 3, 'red', 'owner', '', 500, 0),
+(11, 13, 3, 'blue', 'ready', 'kicked', 500, 0),
+(12, 13, 3, 'blue', 'ready', 'kicked', 500, 0),
+(13, 13, 3, 'blue', 'ready', 'kicked', 500, 0),
+(14, 13, 3, 'blue', 'ready', '', 500, 0);
 
 -- --------------------------------------------------------
 
@@ -337,7 +505,28 @@ INSERT INTO `units` (`unit_id`, `class_id`, `hp`, `max_hp`, `attack`, `skillCool
 (867, 6, 999, 999, 999, 0, 12, 13, 1, 1, 1, 0, 36),
 (868, 1, 200, 200, 15, 0, 9, 10, 1, 1, 1, 0, 36),
 (869, 3, 300, 300, 40, 0, 12, 10, 1, 1, 1, 0, 36),
-(870, 2, 200, 200, 20, 0, 12, 11, 1, 1, 1, 0, 36);
+(870, 2, 200, 200, 20, 0, 12, 11, 1, 1, 1, 0, 36),
+(941, 4, 400, 400, 25, 0, 3, 2, 0, 1, 1, 0, 1),
+(942, 5, 999, 999, 999, 0, 0, 0, 0, 1, 1, 0, 1),
+(943, 1, 200, 200, 15, 0, 3, 3, 0, 0, 0, 1, 1),
+(944, 1, 185, 200, 15, 0, 3, 4, 1, 1, 1, 0, 1),
+(945, 3, 300, 300, 40, 0, 0, 2, 0, 1, 1, 0, 1),
+(946, 2, 200, 200, 20, 0, 0, 3, 0, 1, 1, 0, 1),
+(947, 4, 400, 400, 25, 0, 9, 11, 1, 1, 1, 0, 1),
+(948, 6, 999, 999, 999, 0, 12, 13, 1, 1, 1, 0, 1),
+(949, 1, 200, 200, 15, 0, 9, 10, 1, 1, 1, 0, 1),
+(950, 3, 300, 300, 40, 0, 12, 10, 1, 1, 1, 0, 1),
+(951, 2, 200, 200, 20, 0, 12, 11, 1, 1, 1, 0, 1),
+(952, 4, 400, 400, 25, 0, 2, 4, 0, 1, 1, 0, 3),
+(953, 5, 999, 999, 999, 0, 0, 0, 0, 1, 1, 0, 3),
+(954, 1, 175, 200, 15, 0, 3, 2, 0, 0, 0, 1, 3),
+(955, 4, 290, 400, 25, 0, 4, 1, 1, 0, 1, 0, 3),
+(956, 3, 300, 300, 40, 0, 0, 2, 0, 1, 1, 0, 3),
+(957, 2, 175, 200, 20, 0, 2, 3, 0, 1, 1, 0, 3),
+(958, 6, 999, 999, 999, 0, 12, 13, 1, 1, 1, 0, 3),
+(959, 1, 200, 200, 15, 0, 9, 10, 1, 1, 1, 0, 3),
+(960, 3, 300, 300, 40, 0, 12, 10, 1, 1, 1, 0, 3),
+(961, 2, 200, 200, 20, 0, 12, 11, 1, 1, 1, 0, 3);
 
 -- --------------------------------------------------------
 
@@ -353,29 +542,43 @@ CREATE TABLE `users` (
   `wins` int(11) NOT NULL,
   `losses` int(11) NOT NULL,
   `elo` smallint(6) NOT NULL DEFAULT '1000',
-  `created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+  `created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `member_type` set('normal','guest') NOT NULL DEFAULT 'normal'
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`id`, `password`, `email`, `username`, `wins`, `losses`, `elo`, `created`) VALUES
-(6, '$2y$10$zmsIcYDqp8ScNRuDcj9jD.kbsW9vC7k655flzcYK66kC0jkWa0toK', 'alanduu50@gmail.com', 'xXN1NJ4Xx', 343, 148, 1000, '2016-05-23 21:22:33'),
-(7, '$2y$10$xGKFvkCEjUMSm1y6cr8v/.IsJCZfLhNtigg0eyETXQYbslu5X1IBK', 'kld14@ic.ac.uk', 'DragonSlayer52', 358, 145, 1000, '2016-05-23 21:22:01'),
-(8, '$2y$10$s7PfGa0iZcg2XDFrmEAnhegSMZzKi4Po4GyUEl1E9cA69tUJj5qSa', 'test@test.com', 'HaskellPrize', 147, 23, 1000, '2016-05-23 21:20:45'),
-(9, '$2y$10$y8geeo6e4vVMUkhJWycFruGOuplLwujzm8q4RZlZQPpkn6RKbkfpS', 'demo@demo.com', 'Wumpus', 193, 64, 1000, '2016-05-23 21:20:18'),
-(10, '$2y$10$h9fvGHQrrOHh35pNzhIsqOR.0jDi4ZmVtHiCvP1wCexLef072jYqy', 'tonyfield@rules.com', 'OhBaby', 214, 26, 1000, '2016-05-23 18:59:26'),
-(11, '$2y$10$jOeNVa.g.MTq8j7NoOY3k.RTVeYpcrxA7gq8zv8hp9yiVBsk0z3C.', 'debug@debug.com', 'debug', 212, 52, 1000, '2016-06-01 20:52:54'),
-(12, '$2y$10$7.dtDYkyCuARy8JOOvnEM..015QDAO7YDKsNEmue6deyEyJvIDwr2', 'goku@goku.com', 'goku', 211, 62, 1000, '2016-06-01 20:53:04'),
-(13, '$2y$10$EVxl9C85A3EGzS9/mbr4mO1eZwdAa7RoFtuXRU.4lwdohCezvuQTu', 'veg@veg.com', 'veg', 311, 73, 1000, '2016-06-01 20:53:57'),
-(14, '$2y$10$sxwp7k4OSuCdCiO7y.JsOucq/YbXFR4oF8aBcgeTJ.UixSPKh.xJm', 'hp@hp.com', 'harry potter', 0, 0, 1000, '2016-06-04 21:40:28'),
-(15, '$2y$10$Q3aMDDCP8w2o8bV.SaRs4.4Mgr49ZHzl372S4qExpvmadU0mAHETi', 'asda@asda.com', 'asdasd', 0, 0, 1000, '2016-06-04 21:40:51'),
-(16, '$2y$10$aZkr5proBXT1kbSu9WWoHOM/q4lHiyqVXj6/9FYTa9Tn6YaO31LPW', 'simon@simon.com', 'simon', 0, 0, 1000, '2016-06-06 09:29:26');
+INSERT INTO `users` (`id`, `password`, `email`, `username`, `wins`, `losses`, `elo`, `created`, `member_type`) VALUES
+(6, '$2y$10$zmsIcYDqp8ScNRuDcj9jD.kbsW9vC7k655flzcYK66kC0jkWa0toK', 'alanduu50@gmail.com', 'xXN1NJ4Xx', 343, 148, 1000, '2016-05-23 21:22:33', 'normal'),
+(7, '$2y$10$xGKFvkCEjUMSm1y6cr8v/.IsJCZfLhNtigg0eyETXQYbslu5X1IBK', 'kld14@ic.ac.uk', 'DragonSlayer52', 358, 145, 1000, '2016-05-23 21:22:01', 'normal'),
+(8, '$2y$10$s7PfGa0iZcg2XDFrmEAnhegSMZzKi4Po4GyUEl1E9cA69tUJj5qSa', 'test@test.com', 'HaskellPrize', 147, 23, 1000, '2016-05-23 21:20:45', 'normal'),
+(9, '$2y$10$y8geeo6e4vVMUkhJWycFruGOuplLwujzm8q4RZlZQPpkn6RKbkfpS', 'demo@demo.com', 'Wumpus', 193, 64, 1000, '2016-05-23 21:20:18', 'normal'),
+(10, '$2y$10$h9fvGHQrrOHh35pNzhIsqOR.0jDi4ZmVtHiCvP1wCexLef072jYqy', 'tonyfield@rules.com', 'OhBaby', 214, 26, 1000, '2016-05-23 18:59:26', 'normal'),
+(11, '$2y$10$jOeNVa.g.MTq8j7NoOY3k.RTVeYpcrxA7gq8zv8hp9yiVBsk0z3C.', 'debug@debug.com', 'debug', 212, 52, 1000, '2016-06-01 20:52:54', 'normal'),
+(12, '$2y$10$7.dtDYkyCuARy8JOOvnEM..015QDAO7YDKsNEmue6deyEyJvIDwr2', 'goku@goku.com', 'goku', 211, 62, 1000, '2016-06-01 20:53:04', 'normal'),
+(13, '$2y$10$EVxl9C85A3EGzS9/mbr4mO1eZwdAa7RoFtuXRU.4lwdohCezvuQTu', 'veg@veg.com', 'veg', 311, 73, 1000, '2016-06-01 20:53:57', 'normal'),
+(14, '$2y$10$sxwp7k4OSuCdCiO7y.JsOucq/YbXFR4oF8aBcgeTJ.UixSPKh.xJm', 'hp@hp.com', 'harry potter', 0, 0, 1000, '2016-06-04 21:40:28', 'normal'),
+(15, '$2y$10$Q3aMDDCP8w2o8bV.SaRs4.4Mgr49ZHzl372S4qExpvmadU0mAHETi', 'asda@asda.com', 'asdasd', 0, 0, 1000, '2016-06-04 21:40:51', 'normal'),
+(16, '$2y$10$aZkr5proBXT1kbSu9WWoHOM/q4lHiyqVXj6/9FYTa9Tn6YaO31LPW', 'simon@simon.com', 'simon', 0, 0, 1000, '2016-06-06 09:29:26', 'normal'),
+(17, '', '', 'guesto', 0, 0, 1000, '2016-06-07 13:22:51', 'guest');
 
 --
 -- Indexes for dumped tables
 --
+
+--
+-- Indexes for table `achievements`
+--
+ALTER TABLE `achievements`
+  ADD PRIMARY KEY (`ach_name`);
+
+--
+-- Indexes for table `ach_instances`
+--
+ALTER TABLE `ach_instances`
+  ADD PRIMARY KEY (`ach_name`,`user_id`);
 
 --
 -- Indexes for table `buffs`
@@ -400,6 +603,12 @@ ALTER TABLE `chat`
 --
 ALTER TABLE `classes`
   ADD PRIMARY KEY (`class_id`);
+
+--
+-- Indexes for table `friends`
+--
+ALTER TABLE `friends`
+  ADD PRIMARY KEY (`friend_id`);
 
 --
 -- Indexes for table `login`
@@ -453,7 +662,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `buffs`
 --
 ALTER TABLE `buffs`
-  MODIFY `buff_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `buff_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 --
 -- AUTO_INCREMENT for table `buff_instances`
 --
@@ -463,12 +672,17 @@ ALTER TABLE `buff_instances`
 -- AUTO_INCREMENT for table `chat`
 --
 ALTER TABLE `chat`
-  MODIFY `chat_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=98;
+  MODIFY `chat_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=141;
 --
 -- AUTO_INCREMENT for table `classes`
 --
 ALTER TABLE `classes`
   MODIFY `class_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+--
+-- AUTO_INCREMENT for table `friends`
+--
+ALTER TABLE `friends`
+  MODIFY `friend_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 --
 -- AUTO_INCREMENT for table `maps`
 --
@@ -478,27 +692,27 @@ ALTER TABLE `maps`
 -- AUTO_INCREMENT for table `opp`
 --
 ALTER TABLE `opp`
-  MODIFY `opp_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=271;
+  MODIFY `opp_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=312;
 --
 -- AUTO_INCREMENT for table `rooms`
 --
 ALTER TABLE `rooms`
-  MODIFY `room_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `room_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 --
 -- AUTO_INCREMENT for table `room_participants`
 --
 ALTER TABLE `room_participants`
-  MODIFY `part_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `part_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 --
 -- AUTO_INCREMENT for table `units`
 --
 ALTER TABLE `units`
-  MODIFY `unit_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=871;
+  MODIFY `unit_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=962;
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;

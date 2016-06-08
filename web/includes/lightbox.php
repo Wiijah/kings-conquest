@@ -19,6 +19,10 @@ function genLightbox($title, $id, $html) {
   return $out;
 }
 
+function lightbox_alert($title, $text) {
+    $text = secureStr($text);
+    return "<script>lightbox_alert('{$title}', '{$text}')</script>";
+}
 echo genLightbox("Alert", "alert", "<div id='lb_alert_txt'></div><br /><div class='btn form_btn alert_btn lightbox_close' id='alert_btn'>Okay</div>");
 ?>
 <div id="lightbox_behind" class="lightbox_close"></div>

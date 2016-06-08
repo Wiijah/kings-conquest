@@ -92,7 +92,7 @@ function room_refresh() {
 
     for (var i = 0; i < players.length; i++) {
       var row_number = i + 1;
-      var user_link = "<a href='profile.php?username="+players[i].player+"' target='_blank'>"+players[i].player+"</a>";
+      var user_link = "<a href='profile.php?username="+players[i].player+"&close=1' target='_blank'>"+players[i].player+"</a>";
 
       var extraData = "";
       if (isOwner) extraData += players[i].user_id != user_id ? "<td><a class='kick_player' data-user-id='"+players[i].user_id+"'>Kick</a></td>": '<td>-</td>';

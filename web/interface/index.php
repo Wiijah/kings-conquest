@@ -2,16 +2,17 @@
 $title = "Lobby";
 require_once 'includes/header_checks.php';
 
-$result = $db->query("SELECT * FROM room_participants WHERE user_id = '{$user->id}' AND event = ''");
+$result = $db->query("SELECT * FROM room_participants WHERE user_id = '{$user->id}' AND event = '' ORDER BY part_id DESC LIMIT 1");
 if ($part = $result->fetch_object()) {
   $result = $db->query("SELECT * FROM rooms INNER JOIN users ON rooms.user_id = users.id WHERE room_id = '{$part->room_id}'");
   if ($room = $result->fetch_object()) {
     if ($room->state == 'ingame') {
       header ("Location: ../game/");
+      die();
     } else if ($room->state == 'pregame') {
       header ("Location: room");
+      die();
     }
-    die();
   }
   /* Otherwise, invalid part id, so remove it. */
   $db->query("DELETE FROM room_participants WHERE part_id = '{$part->part_id}'");
@@ -56,15 +57,15 @@ var room_id = 0;
 
 <?php echo genTitle("Actions"); ?>
 <div class="play_btn btn lightbox_open" data-lb="create_game">Create Game</div>
-<div class="play_btn btn dev">How To Play</div>
-<div class="play_btn btn dev">Options</div>
+<div class="play_btn btn lightbox_open" data-lb="tutorial">How To Play</div>
+<div class="play_btn btn" id="goto_friends">Friends</div>
 <div class="play_btn btn lightbox_open" data-lb="achievements">Achievements</div>
 
 
 <?php echo genTitle("Your Profile"); ?>
 <div class="play_profile box">
 <table class="play_table">
-<tr><td class="play_avatar" colspan="2"><img src="images/default_avatar.png" /></td></tr>
+<tr><td class="play_avatar" colspan="2"><img src="<?php echo getAvatarURL($user->id); ?>" /></td></tr>
 <tr><th>Username</th><td><?php echo $user->username; ?> </td></tr>
 
 <tr><th>Email</th><td><?php echo $user->email; ?> </td></tr>

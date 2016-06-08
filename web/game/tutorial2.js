@@ -669,9 +669,11 @@ function initGame() {
 }
 var muteIcon;
 var playIcon;
+var quitIcon;
 function destroyMenuDisplay(){
   stage.removeChild(muteIcon);
   stage.removeChild(playIcon);
+  stage.removeChild(quitIcon);
 }
 function drawMenuDisplay(){
   var audio = new Audio('Test.mp3');
@@ -691,6 +693,22 @@ function drawMenuDisplay(){
   playIcon.scaleY = 0.7;
 
 
+  quitIcon = new createjs.Bitmap("graphics/quit.png");
+  quitIcon.x = stage.canvas.width - 270;
+  quitIcon.y = 5;
+  quitIcon.scaleX = 0.68;
+  quitIcon.scaleY = 0.68;
+
+  stage.addChild(quitIcon);
+  quitIcon.addEventListener("click", function(event){
+
+    displayWarningBox(function(){
+      alert("quit the tutorial, location to game lobby");
+    },function(){
+      removeWarningBox();
+    });
+  });
+  
   stage.addChild(muteIcon);
   muteIcon.addEventListener("click", function(event) {
     audio.pause();
@@ -2232,6 +2250,7 @@ function keyEvent(event) {
 //      goFullScreen();
       break;
         case 13: //enter
+          if (!turn) return;
           if (!endGame) {
             endTurn();
           }
@@ -2715,6 +2734,7 @@ function kt_instruction4(){
     checkCompleness();
   });
   addTextToButton("OK");
+  addTextToButton2("Next");
   addTitleToBox("Knight");
   addTextToBox("<p>Excellent! You take zero damage from the enemy king.</p> <p>Click 'OK' to continue to play as the knight or try another unit by clicking on the corresponding card in the bottom left corner of the window. </p><p>Click 'Next' to play the Archer Tutorial</p>");
   knightDone = 1;
@@ -2793,6 +2813,7 @@ function a_instruction5(){
     checkCompleness();
   });
   addTextToButton("OK");
+  addTextToButton2("Next");
   addTitleToBox("Archer");
   addTextToBox("<p>Excellent! Now you know the skill of archer.</p> <p>Click 'OK' to continue to play as the archer or try another unit by clicking on the corresponding card in the bottom left corner of the window. </p><p>Click 'Next' to play the Wizard Tutorial</p>");
   archerDone = 1;
@@ -2869,6 +2890,7 @@ function w_instruction5(){
     checkCompleness();
   });
   addTextToButton("OK");
+  addTextToButton2("Next");
   addTitleToBox("Wizard");
   addTextToBox("<p>Excellent! You can see the burning effect on the enemy king. Now you know the wizard skill. </p> <p>Click 'OK' to continue to play as the wizard or try another unit by clicking on the corresponding card in the bottom left corner of the window. </p><p>Click 'Next' to play the Dragon Tutorial</p>");
   wizardDone = 1;
@@ -2947,6 +2969,7 @@ function d_instruction5(){
     });
     showButton2();
     addTextToButton("OK");
+    addTextToButton2("Next");
     addTitleToBox("Dragon");
     addTextToBox("<p>Excellent! You can see the frozen effect on the enemy king. Now you know the dragon skill. </p> <p>Click 'OK' continue to play as the dragon or try another unit by clicking on the corresponding card in the bottom left corner of the window. </p><p>Click 'Next' to play the King Tutorial</p>");
     dragonDone = 1;

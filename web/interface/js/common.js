@@ -5,8 +5,34 @@ var LOADING_ANIM = '<img src="images/loading_white.png" class="loading_middle" /
 /* Globally defined variables */
 var session_expired = false; // boolean to indicate whether the session has expired
 var page_disabled = false;
+var logged_out = false;
 
 $(document).ready(function() {
+
+  $('body').on('click', '.js_link', function() {
+    var link = $(this).attr("data-href");
+    window.location.href = link;
+  });
+
+  $('body').on('click', '.logout', function() {
+    logged_out = true;
+    window.location.href = "logout";
+  });
+
+
+  $('body').on('click', '.form_submit', function() {
+    $(this).closest("form").submit();
+  });
+
+  $('body').on('click', '.open_profile', function() {
+    var username = $(this).attr("data-username");
+    if (room_id == 0) {
+      window.location.href = "profile?username="+username;
+      return;
+    }
+    window.open("profile?close=1&username="+username);
+  });
+
   /* Turn off autocomplete for input */
   $('input, :input').attr('autocomplete', 'off');
   $('.auto_off').val("");
@@ -78,6 +104,7 @@ function disablePage(url) {
 /* Utilises the jQuery quickPost implemented above, but also checks if session has expired. */
 function quickPost(url, data, callback) {
    return $.quickPost(url, data, function(data, status){
+      if (logged_out) return;
       if (data.session_error !== undefined && !session_expired){
         session_expired = true;
 

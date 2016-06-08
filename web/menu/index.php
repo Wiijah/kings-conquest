@@ -63,6 +63,8 @@ We used the following resources on our game:
   <li>CreateJS and EaselJS<br />http://www.createjs.com/</li>
   <li>Loading Animation<br />http://loading.io/</li>
   <li>Epic Fantasy Music<br />http://opengameart.org/content/epic- fantasy-music</li>
+  <li>QTip 2<br />http://qtip2.com/</li>
+  <li>Bebas Neue Font<br />https://www.fontsquirrel.com/license/bebas-neue</li>
 </ol>
 </div>
 <div class="goto_home_btn goto_home">Home</div>

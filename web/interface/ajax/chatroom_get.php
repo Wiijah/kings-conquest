@@ -19,7 +19,8 @@ while ($fetch = $result->fetch_object()) {
   if ($out != "[") $out .= ",";
   $out .= '{
    "id": '.$fetch->chat_id.',
-   "username":"['.digitalTime($fetch->created).'] '.$fetch->username.'",
+   "username":"'.$fetch->username.'",
+   "time":"'.digitalTime($fetch->created).'",
    "message":"'.secureOutput($message).'",
    "chat_type":"'.$fetch->chat_type.'",
    "colour":"'.$fetch->colour.'"

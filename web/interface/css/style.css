@@ -8,6 +8,18 @@
   -webkit-box-sizing: border-box;
   background-clip: padding-box;
 }
+.breadcrumbs {
+  font-family: BebasNeueLight;
+  font-size: 20px;
+}
+.standard_box {
+  font-family: BebasNeueBook;
+  font-size: 24px;
+  padding: 10px 10px 5px 10px;
+}
+.center {
+  text-align: center;
+}
 div#qTip{
   z-index:2000;
   padding: 4px 10px 3px 10px;
@@ -37,7 +49,7 @@ ul, ol {
   width: 100px;
 }
 a {
-  color: #62E0FF;
+  color: #CEF6F5;
   cursor: pointer;
   text-decoration: none;
 }

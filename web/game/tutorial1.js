@@ -609,9 +609,11 @@ function initGame() {
 }
 var muteIcon;
 var playIcon;
+var quitIcon;
 function destroyMenuDisplay(){
   stage.removeChild(muteIcon);
   stage.removeChild(playIcon);
+  stage.removeChild(quitIcon);
 }
 function drawMenuDisplay(){
   var audio = new Audio('Test.mp3');
@@ -629,7 +631,22 @@ function drawMenuDisplay(){
   playIcon.y = 5;
   playIcon.scaleX = 0.7;
   playIcon.scaleY = 0.7;
+  
+  quitIcon = new createjs.Bitmap("graphics/quit.png");
+  quitIcon.x = stage.canvas.width - 270;
+  quitIcon.y = 5;
+  quitIcon.scaleX = 0.68;
+  quitIcon.scaleY = 0.68;
 
+  stage.addChild(quitIcon);
+  quitIcon.addEventListener("click", function(event){
+
+    displayWarningBox(function(){
+      alert("quit the tutorial, location to game lobby");
+    },function(){
+      removeWarningBox();
+    });
+  });
 
   stage.addChild(muteIcon);
   muteIcon.addEventListener("click", function(event) {

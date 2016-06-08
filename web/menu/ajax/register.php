@@ -43,8 +43,8 @@ $db->autocommit(FALSE);
 /* Insert and create account */
 if (!$isSocialSignUp) $password = hashPass($password);
 
-$query = "INSERT INTO users (username, email, password) VALUES
-('{$username}', '{$email}', '{$password}')";
+$query = "INSERT INTO users (username, email, password, lastactive) VALUES
+('{$username}', '{$email}', '{$password}', '".time()."')";
 
 if (!$db->query($query)) {
   kc_error("An error occurred with creating your account. Please try again.");
