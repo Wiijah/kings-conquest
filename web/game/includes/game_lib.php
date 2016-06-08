@@ -15,6 +15,10 @@ function aoe($x, $y) {
            OR (x = '{$x}' AND y = '".($y - 1)."'))";
 }
 
+function totem($x, $y) {
+  return "(x >= '".($x - 1)."' AND y >= '".($y - 1)."' AND x <= '".($x + 1)."' AND y <= '".($y + 1)."')";
+}
+
 function update_unit($unit, $canMove = -1, $canAttack = -1, $outOfMoves = -1, $skillCoolDown = -1) {
   global $db;
 

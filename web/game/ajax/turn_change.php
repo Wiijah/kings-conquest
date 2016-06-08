@@ -27,7 +27,7 @@ while ($buff = $result->fetch_object()) {
 /* Heal units via Totem */
 $result = $db->query("SELECT * FROM units JOIN classes USING (class_id) WHERE room_id = '{$room_id}' AND name='totem'");
 while ($totem = $result->fetch_object()) {
-  $result2 = $db->query("SELECT * FROM units WHERE room_id = '{$room_id}' AND team = '{$team}' AND ".aoe($totem->x, $totem->y));
+  $result2 = $db->query("SELECT * FROM units WHERE room_id = '{$room_id}' AND team = '{$team}' AND unit_id != {$totem->unit_id} AND ".totem($totem->x, $totem->y));
   while ($unit = $result2->fetch_object()) {
     $heal = ceil($unit->max_hp * 0.03);
     if ($heal + $unit->hp > $unit->max_hp) $heal = $unit->max_hp - $unit->hp;
