@@ -14,3 +14,9 @@ function getOpp() {
   });
   //console.log("Real getOpp out");
 }
+
+function quit_game() {
+  rawPost("ajax/leave_game", {}, function(data) {
+    window.location.href = '../interface/game_stats?room_id'+room_id;
+  });
+}

@@ -77,11 +77,11 @@ function showTurnInfo(){
 	if (turn) {
 		var playerLabelBg = new createjs.Shape();
 		playerLabelBg.graphics.beginFill("#000000").drawRect(-stage.canvas.width ,stage.canvas.height - stage.canvas.height/2 ,stage.canvas.width * 2,80);
-		var playerLabel = new createjs.Text("Player2 Turn", "30px Arial", "#0000ff");
+		var playerLabel = new createjs.Text("Player2 Turn", "30px Arial", "#00cdff");
 	} else {
 		var playerLabelBg = new createjs.Shape();
 		playerLabelBg.graphics.beginFill("#000000").drawRect(-stage.canvas.width ,stage.canvas.height - stage.canvas.height/2 ,stage.canvas.width * 2,80);
-		var playerLabel = new createjs.Text("Player1 Turn", "30px Arial", "#ff0000");
+		var playerLabel = new createjs.Text("Player1 Turn", "30px Arial", "#ff5555");
 	}
 	playerLabel.x = stage.canvas.width - stage.canvas.width / 2 - 100;
 	playerLabel.y = stage.canvas.height -  stage.canvas.height / 2 + 20;
@@ -117,10 +117,19 @@ function handleBuffEffect(action) {
                 setTimeout(function() {
                     chars.removeChild(fire);
                 }, 1000);
-            }, 1000);
-            
+            }, 800);
             break;
         case "Heal":
+            setTimeout(function() {
+                var heal = new createjs.Sprite(unit.healEffect, "heal");
+                heal.x = unit.x;
+                heal.y = unit.y;
+                chars.addChild(heal);
+
+                setTimeout(function() {
+            chars.removeChild(heal);
+        }, 1000);
+            }, 800);
             break;
         case "Freeze":
             break;
@@ -227,7 +236,7 @@ function spawnUnit(data, isCreation, row, column){
 		createjs.Ticker.addEventListener("tick", stage);
 		// Configure unit coordinates
         unit.unit_id = data.unit_id;
-        // console.log("unit_id: " + unit.unit_id);
+        unit.commandable = data.commandable;
 		unit.hp = data.hp;
 		unit.max_hp = data.max_hp;
 		unit.attack = data.attack;
@@ -531,7 +540,7 @@ function drawMenuDisplay(){
 	  quitIcon.addEventListener("click", function(event){
 
     displayWarningBox(function(){
-      alert("quit the game, location to game lobby");
+      quit_game();
     },function(){
       removeWarningBox();
     });
@@ -555,10 +564,9 @@ function drawMenuDisplay(){
 }
 function removeBuff(buffType, unit) {
     var success = false;
-    console.log(unit);
-
     for (var i = 0; i < unit.buffs.length; i++) {
-        if (unit.buffs[i][0] === buffType) {
+        console.log(unit.buffs[i][0] == buffType);
+        if (unit.buffs[i][0] == buffType) {
             chars.removeChild(unit.buffs[i][2]);
             unit.buffs.splice(i, 1);
             success = true;
@@ -570,6 +578,7 @@ function removeBuff(buffType, unit) {
         unit.buffs[i][2].x = unit.hp_bar.x + i * 25;
         stage.update();
     }
+
     return success;
 }
 
@@ -725,10 +734,12 @@ function drawUnitCreationMenu() {
 	var listOfSources = [];
 	listOfSources.push("graphics/card/knight_card.png");
 	listOfSources.push("graphics/card/archer_card.png");
-	listOfSources.push("graphics/card/wizard_card.png");
+    listOfSources.push("graphics/card/wizard_card.png");
+    listOfSources.push("graphics/card/totem_card.png");
+	listOfSources.push("graphics/card/dragon_card.png");
 	//listOfSources.push("graphics/card/rogue_card.png");
 
-	createFloatingCards(listOfSources, ["knight","archer","wizard","rogue"]);
+	createFloatingCards(listOfSources, ["knight","archer","wizard","totem", "dragon"]);
 	unitCreationMenu.x = 50;
 	unitCreationMenu.y = window.innerHeight - 130;
 	bottomInterface.addChild(unitCreationMenu);
@@ -812,16 +823,30 @@ function createFloatingCards(listOfSources, correspondingUnit) {
                     // createNewUnit("knight");
                 });
 				break;
-			// case "rogue": 
-			// 	unitCards[i].addEventListener("click", function(event) {
-			// 		if (currentGold >= 100) {
-			// 			spawnUnit("rogue",false, 5,2,turn);
-			// 			currentGold -= 100;
-			// 			currentGoldDisplay.text = ("Gold: " + currentGold);
-			// 		}
-			// 		changed = true;
-			// 	});
-			// 	break;
+			case "totem":
+                unitCards[i].addEventListener("click", function(event) {
+                    var spawnTiles = findAvailableAndNonAvailableSpawnTiles(15);
+                    highlightArea(spawnTiles[0], "graphics/tile/green_tile.png", ["click"], [function(event) {
+                        var tile = event.target;
+                        createNewUnit("totem", tile.row, tile.column);
+                        clearSelectionEffects();
+                    }]);
+                    highlightArea(spawnTiles[1], "graphics/tile/red_tile.png", [], []);
+                    // createNewUnit("knight");
+                });
+                break;
+            case "dragon":
+                unitCards[i].addEventListener("click", function(event) {
+                    var spawnTiles = findAvailableAndNonAvailableSpawnTiles();
+                    highlightArea(spawnTiles[0], "graphics/tile/green_tile.png", ["click"], [function(event) {
+                        var tile = event.target;
+                        createNewUnit("dragon", tile.row, tile.column);
+                        clearSelectionEffects();
+                    }]);
+                    highlightArea(spawnTiles[1], "graphics/tile/red_tile.png", [], []);
+                    // createNewUnit("knight");
+                });
+                break;
 		}
 		
 		unitCards[i].addEventListener("mouseover", function(event) {
@@ -858,8 +883,9 @@ function addEventListenersToUnit(unit) {
             }
             if (!movingPlayer && !isAttacking && !isCasting) {
                 clearSelectionEffects();
+                // console.log(unit.row + " " + unit.column + " " + unit.commandable + " " + turn);
                 selectedCharacter = unit;
-                if (unit.team == turn && unit.team == team) showActionMenuNextToPlayer(unit);
+                if (unit.team == turn && unit.team == team && unit.commandable == 1) showActionMenuNextToPlayer(unit);
                 displayStats(unit);
                 return;
             }
@@ -2033,6 +2059,9 @@ function handleServerReply(data) {
         console.log("i: " + i);
         var action = data.actions[i];
         switch (action.action_type) {
+            case "update_unit":
+                handleUnitUpdate(action);
+                break;
             case "move_unit":
                 handleMove(action);
                 break;
@@ -2054,6 +2083,9 @@ function handleServerReply(data) {
                 break;
             case "turn_change":
                 changeTurn(action);
+                break;
+            case "update_gold":
+                handleGoldUdpate(action);
                 break;
             case "game_end":
                 handleGameEnd(action);
@@ -2139,6 +2171,14 @@ function findUnitByCoordinates(row, column) {
     return null;
 }
 
+function handleGoldUdpate(action) {
+    if (action.team == team) {
+        currentGold = action.gold;     
+        destroyGoldDisplay();
+        drawGoldDisplay();   
+    }
+}
+
 function changeTurn(action) {
     clearSelectionEffects();
     turn = action.new_turn;
@@ -2189,6 +2229,14 @@ function changeTurn(action) {
     }
 }
 
+function handleUnitUpdate(action) {
+    var unit = findUnitById(action.unit_id);
+    unit.canMove = action.canMove;
+    unit.canAttack = action.canAttack;
+    unit.skillCoolDown = action.skillCoolDown;
+    unit.outOfMoves = action.outOfMoves;
+}
+
 function handleOpponent(data) {
     console.log(data);
     if (data.error_code != 0) {
@@ -2210,6 +2258,9 @@ function handleOpponent(data) {
     for (var i = 0; i < data.actions.length; i++) {
         var action = data.actions[i];
         switch (action.action_type) {
+            case "update_unit":
+                handleUnitUpdate(action);
+                break;
             case "move_unit":
                 handleMove(action);
                 break;
@@ -2232,6 +2283,9 @@ function handleOpponent(data) {
             case "turn_change":
                 changeTurn(action);
                 break;
+            case "update_gold":
+                handleGoldUdpate(action);
+                break;
             case "game_end":
                 handleGameEnd(action);
                 break;
@@ -2246,21 +2300,31 @@ function handleGameEnd(action) {
     console.log("handle end game");
     //window.location.href = '../interface/game_stats?room_id='+room_id;
     gameEnd = true;
+    var reason = "";
+    if (action.reason == "king_death") reason = "By death of king.";
+    if (action.reason == "quit_game" && team == action.winner) reason = "Your opponent rage quitted.";
+    if (action.reason == "quit_game" && team != action.winner) reason = "You left the game.";
+
     var text = action.winner == 0 ? "Red player victory" : "Blue player victory";
-    var color = action.winner == 0 ? "#ff0000" : "#0000ff";
+    var color = action.winner == 0 ? "#ff5555" : "#00cdff";
     var endLabelBg = new createjs.Shape();
-    endLabelBg.graphics.beginFill("#000000").drawRect(-stage.canvas.width ,stage.canvas.height - stage.canvas.height/2 ,stage.canvas.width * 2,80);
+    endLabelBg.graphics.beginFill("#000000").drawRect(-stage.canvas.width ,stage.canvas.height - stage.canvas.height/2, stage.canvas.width * 2, 130);
     var endLabel = new createjs.Text(text, "30px Arial", color);
+    var reasonLabel = new createjs.Text(reason, "15px Arial", color);
+
     var restartLabel = new createjs.Text("Press \" c \" to continue", "15px Arial", color);
     
     endLabel.x = stage.canvas.width - stage.canvas.width / 2 - 100;
     endLabel.y = stage.canvas.height -  stage.canvas.height / 2 + 20;
+    reasonLabel.x = endLabel.x + 20;
+    reasonLabel.y = endLabel.y + 45;
     restartLabel.x = endLabel.x + 20;
-    restartLabel.y = endLabel.y + 35;
+    restartLabel.y = endLabel.y + 65;
     endLabelBg.alpha = 0.7;
 
     stage.addChild(endLabelBg);
     stage.addChild(restartLabel);
+    stage.addChild(reasonLabel);
     stage.addChild(endLabel);
     stage.mouseChildren = false;
 
