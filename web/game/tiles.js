@@ -624,7 +624,7 @@ function updateHP_bar(unit){
 		chars.removeChild(unit.hp_bar);
         blockMaps[unit.row][unit.column] = 0;
 		units.splice(units.indexOf(unit), 1);
-		for (var i = 0; i <= unit.buffs.length; i++) {
+		for (var i = 0; i <= 6; i++) {
 			removeBuff(i, unit);
 		}
 		// if (unit.address == "graphics/spritesheet/stand/ss_king_stand.png") {
@@ -818,11 +818,12 @@ function addEventListenersToUnit(unit) {
                 selectedCharacter = unit;
                 if (unit.team == turn && unit.team == team) showActionMenuNextToPlayer(unit);
                 displayStats(unit);
+                return;
             }
 
 
             // In this case, we are selecting the unit to be attacked
-            if (selectedCharacter != unit && isAttacking && selectedCharacter.team != unit.team) {
+            if (selectedCharacter != unit && !isCasting && isAttacking && selectedCharacter.team != unit.team) {
                 $.each(highlighted, function(i, coord) {
                     if (unit.row === coord.row && unit.column === coord.column) {
                     	serverValidate("attack", selectedCharacter, [unit]);
@@ -831,7 +832,7 @@ function addEventListenersToUnit(unit) {
             }
 
             // In this case, we are marking archer skill targets
-            if (selectedCharacter != unit && isCasting && remainingTargets != 0 && selectedCharacter.team != unit.team) {
+            if (selectedCharacter != unit && isCasting && selectedCharacter.skill == "Double Shoot" && selectedCharacter.team != unit.team) {
                 for (var i = 0; i < highlighted.length; i++) {
                     if (highlighted[i].row === unit.row && highlighted[i].column === unit.column) {
                         break;
@@ -841,18 +842,17 @@ function addEventListenersToUnit(unit) {
                 archerTargets.push(unit.unit_id);
                 console.log("adding units with coordinates: (" + unit.row + " " + unit.column + ") to archer targets");
                 remainingTargets--;
-                if (remainingTargets === 0) {
+                if (remainingTargets == 0) {
                     undoHighlights();
-                    serverValidate("skill", unit, archerTargets);
+                    serverValidate("skill", selectedCharacter, archerTargets);
                 }
-            
             }
 
 
 
 
             // In this case, we are selecting the unit to be attacked by the wizard spell
-            if (selectedCharacter != unit && isCasting && selectedCharacter.team != unit.team) {
+            if (selectedCharacter != unit && isCasting && selectedCharacter.skill == "Magic Damage" && selectedCharacter.team != unit.team) {
                 for (var i = 0; i < highlighted.length; i++) {
                     if (highlighted[i].row === unit.row && highlighted[i].column === unit.column) {
                         break;
@@ -908,9 +908,9 @@ function markArcherTargets(event) {
     archerTargets.push(unit.unit_id);
     console.log("adding units with coordinates: (" + unit.row + " " + unit.column + ") to archer targets");
     remainingTargets--;
-    if (remainingTargets === 0) {
+    if (remainingTargets == 0) {
         undoHighlights();
-        serverValidate("skill", unit, archerTargets);
+        serverValidate("skill", selectedCharacter, archerTargets);
     }
 }
 
@@ -1043,9 +1043,6 @@ function showActionMenuNextToPlayer(unit) {
 	attackButton = createClickableImage(attackSource, unit.x + 48, unit.y - 119, function() {
 		if (unit.canAttack) {
 			undoHighlights();
-			// isAttacking = true;
-			// drawRange(findReachableTiles(unit.column, unit.row, unit.attackRange, false), 1);
-			remainingAttackTimes = 1;
 			performAttack(unit);
 		}
 	});
@@ -1134,39 +1131,7 @@ function cast(skillName, unit) {
 	switch (skillName) {
 		case "Battle Cry": // King's skill
             serverValidate("skill", unit, []);
-			// $.each(units, function(i, value) {
-			// 	if (value.team === selectedCharacter.team) {
-			// 		//buff health
-			// 		var add = Math.ceil(0.1 * value.max_hp);
-			// 		if (value.hp + add < value.max_hp){
-			// 			value.hp += add;
-			// 		} else {
-			// 			value.hp = value.max_hp;
-			// 		}
-			// 		var heal = new createjs.Sprite(units[i].healEffect, "heal");
-			// 		heal.x = value.x;
-			// 		heal.y = value.y;
-			// 		chars.addChild(heal);
-			// 		updateHP_bar(value);
-			// 		//value.buffs.push([0,add,3]);
-			// 		//value.buffs.push([1,add,3]);
-			// 		//buff dmg
-			// 		applyBuff(2, value);
-			// 		// value.buffs.push([2,5,3]);
-			// 		setTimeout(function() {
-			// 			chars.removeChild(heal);
-			// 		}, 1000);
-			// 	}
-			// });
-			// isCasting = false;
-   //          selectedCharacter.outOfMoves = 1;
-   //          unit.skillCoolDown = 3;
-   //          playableUnitCount--;
-   //          changed = true;
-   //          undoMove.pop();
-			// // notify server
 
-			// // display updated json
 			break;
 		case "Double Shoot": // Archer's skill
 			archerSkillDone = false;
@@ -1198,9 +1163,7 @@ function cast(skillName, unit) {
                 serverValidate("skill", selectedCharacter, [event.target.row, event.target.column]);
             }, highlightWizardSpellCross, clearWizardSpellCross]);
 			break;
-		case "YoMAMA":
-			remainingAttackTimes = 1;
-			break;
+
 	}
 	destroyMenu();
 	destroyStats();
@@ -1363,7 +1326,7 @@ function showDamage(unit, critical, damage){
 
 
 
-function attack(attacker, target, dmg, isCritical){
+function attack(attacker, target, dmg, isCritical) {
 	// if (attacker.team != target.team) {
 		var sprite = new createjs.Sprite(attacker.spritesheet, "attack");
 		sprite.x = attacker.x;
@@ -1387,14 +1350,8 @@ function attack(attacker, target, dmg, isCritical){
 		var damageAnimation = new createjs.Sprite(attacker.damageEffect, "damage");
 		damageAnimation.x = target.x;
 		damageAnimation.y = target.y;
-			
-		// }
-		// if (isCasting && isAttacking) {
-		// 	applyBuff(3, target);
-		// }
 		chars.addChild(damageAnimation);
-		
-		remainingAttackTimes--;
+
 		isAttacking = false;
 
 
@@ -1814,7 +1771,6 @@ function keyEvent(event) {
 					undoHighlights();
 					// isAttacking = true;
 					// drawRange(findReachableTiles(unit.column, unit.row, unit.attackRange, false), 1);
-					remainingAttackTimes = 1;
 					performAttack(selectedCharacter);
 				}
 			}
@@ -2016,7 +1972,22 @@ function handleServerReply(data) {
         console.log("ERROR");
         return;
     }
+
+    // Fuck all this shit
+    var fuckingAttackCounter = 0;
+    var fuckingAttackActionList = [];
     for (var i = 0; i < data.actions.length; i++) {
+        if (data.actions[i].action_type == "attack_unit") {
+            var attacker = findUnitById(data.actions[i].attacker_id);
+            if (attacker.skill == "Double Shoot") {
+                fuckingAttackCounter++;
+                fuckingAttackActionList.push(data.actions[i]);
+            }
+        }
+    }
+    if (fuckingAttackCounter == 2) handleAttack2(fuckingAttackActionList);
+    for (var i = 0; i < data.actions.length; i++) {
+        console.log("i: " + i);
         var action = data.actions[i];
         switch (action.action_type) {
             case "move_unit":
@@ -2027,6 +1998,9 @@ function handleServerReply(data) {
                 handleCreate(action);
                 break;
             case "attack_unit":
+                if (fuckingAttackCounter == 2) break;
+                if (isCasting) isCasting = false;
+                if (isAttacking) isAttacking = false;
                 handleAttack(action);
                 // postAttack(findUnitById(action.attacker_id));
                 break;
@@ -2069,6 +2043,7 @@ function serverValidate(type, unit, additionalArgs) {
     }
 
     if (type === "skill") {
+        console.log(unit.skill);
         if (unit.skill === "Battle Cry" || unit.skill === "Shield") { // King and knight spell
             rawPost("ajax/cast_unit", {"caster_id": unit.unit_id}, handleServerReply);
         }
@@ -2078,7 +2053,7 @@ function serverValidate(type, unit, additionalArgs) {
         }
 
         if (unit.skill === "Double Shoot") { // Arher spell
-            console.log("posting to server");
+            console.log("id1: " + archerTargets[0] + "id2: " + archerTargets[1]);
             rawPost("ajax/cast_unit", {"caster_id": unit.unit_id, "target_id": archerTargets[0], "target_id2":archerTargets[1]}, handleServerReply);
         }
 
@@ -2115,7 +2090,7 @@ function findUnitById(id) {
 function findUnitByCoordinates(row, column) {
     for (var i = 0; i < units.length; i++) {
         if (units[i].row === row && units[i].column === column) {
-            return units[i].unit_id;
+            return units[i];
         }
     }
     console.log("Cannot find unit with coordinates: " + row + " " + column);
@@ -2190,6 +2165,9 @@ function handleOpponent(data) {
             case "attack_unit":
                 handleAttack(action);
                 break;
+            case "attack_unit_2":
+                handleAttack2(action);
+                break;   
             case "remove_buff":
                 handleRemoveBuff(action);
                 break;
@@ -2258,17 +2236,8 @@ function handleMove(action) {
 }
 
 
-// Check if there are remaining attack times, if yes, perform another one, otherwise
-function postAttack(attacker) {
-    if (remainingAttackTimes > 0) {
-        setTimeout(function() {
-            performAttack(attacker);
-        }, 1000);
-    } else {
-        attacker.canAttack = 0;
-        attacker.outOfMoves = 1;
-    }
-}
+
+
 
 function handleAttack(action) {
 	var attacker = findUnitById(action.attacker_id);
@@ -2281,6 +2250,15 @@ function handleAttack(action) {
         applyBuff(action.buffs[i], target);
     }
 	clearSelectionEffects();
+}
+
+
+
+function handleAttack2(attacks) {
+    handleAttack(attacks[0]);
+    setTimeout(function() {
+        handleAttack(attacks[1]);
+    }, 1300);
 }
 
 function handleCreate(action) {
