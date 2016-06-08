@@ -23,11 +23,22 @@ if ( $attacker->canAttack == 0 ) exit_error(104);
 if ( outOfAttackRange($attacker, $target)) exit_error(105);
 
 $result = $db->query("SELECT * FROM buff_instances WHERE unit_id = '{$target_id}' AND buff_id = 4");
-$buff = $result->fetch_object();
+$shield = $result->fetch_object();
 
 $actions = array();
 
-if (!$buff) {
+if ($shield) {
+	// remove buff
+	$db->query("DELETE FROM buff_instances WHERE unit_id = '{$target_id}' AND buff_id = 4");
+
+	$out = '{';
+	$out .= $SUCCESS.",";
+	$actions[] = action("remove_buff",
+		   jsonPair("unit_id", $target_id)
+	  .",".jsonPair("buff_id", $shield->buff_id));
+	$out .= jsonPair("actions", jsonArray($actions));
+	$out .= "}"; 
+} else { /* Normal attack */
 	// get new health
 	$damage = $attacker->attack;
 
@@ -62,18 +73,7 @@ if (!$buff) {
 	}
 	$out .= jsonPair("actions", jsonArray($actions));
 	$out .= "}";
-} else {
-	// remove buff
-	$db->query("DELETE FROM buff_instances WHERE unit_id = '{$target_id}' AND buff_id = 4");
-
-	$out = '{';
-	$out .= $SUCCESS.",";
-	$actions[] = action("remove_buff",
-		   jsonPair("unit_id", $target_id)
-	  .",".jsonPair("buff_id", $buff->buff_id));
-	$out .= jsonPair("actions", jsonArray($actions));
-	$out .= "}"; 
-}
+} 
 
 oppInsert($out);
 echo $out;
