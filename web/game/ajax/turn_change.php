@@ -13,6 +13,9 @@ $new_turn = ($old_turn + 1) % 2;
 /* Update the room to the new turn */
 $db->query("UPDATE rooms SET turn = '{$new_turn}' WHERE room_id = '{$room_id}'");
 
+/* Decrement buff turns left */
+$db->query("UPDATE buff_instances SET turns_left = turns_left - 1 WHERE turns_left > 0");
+
 /* Reset the moves */
 $db->query("UPDATE units SET canMove = 1, canAttack = 1, outOfMoves = 0 WHERE room_id = '{$room_id}' AND team = '{$new_turn}'");
 
