@@ -660,16 +660,17 @@ function updateHP_bar(unit){
 		// unit.hp_bar.graphics.clear();
 		// unit.hp_bar.graphics.beginFill("#000000").drawRect(0, 0, 80, 10);
 		// unit.hp_bar.graphics.beginFill("#ff0000").drawRect(0, 0, (getHealth(unit) / getMaxHealth(unit)) * 80, 10);
-		if (unit.team == 0){
-			unit.hp_bar.graphics.beginFill("#000000").drawRect(0, 0, 82, 12);
-			unit.hp_bar.graphics.beginFill("#000000").drawRect(1, 1, 80, 10);
-			unit.hp_bar.graphics.beginFill("#ff0000").drawRect(1, 1, (getHealth(unit)/getMaxHealth(unit)) * 80, 10);
-		} else {
-			unit.hp_bar.graphics.beginFill("#000000").drawRect(0, 0, 82, 12);
-			unit.hp_bar.graphics.beginFill("#000000").drawRect(1, 1, 80, 10);
-			unit.hp_bar.graphics.beginFill("#3399ff").drawRect(1, 1, (getHealth(unit)/getMaxHealth(unit)) * 80, 10);
-		}
+    }
+	if (unit.team == 0){
+		unit.hp_bar.graphics.beginFill("#000000").drawRect(0, 0, 82, 12);
+		unit.hp_bar.graphics.beginFill("#000000").drawRect(1, 1, 80, 10);
+		unit.hp_bar.graphics.beginFill("#ff0000").drawRect(1, 1, (getHealth(unit)/getMaxHealth(unit)) * 80, 10);
+	} else {
+		unit.hp_bar.graphics.beginFill("#000000").drawRect(0, 0, 82, 12);
+		unit.hp_bar.graphics.beginFill("#000000").drawRect(1, 1, 80, 10);
+		unit.hp_bar.graphics.beginFill("#3399ff").drawRect(1, 1, (getHealth(unit)/getMaxHealth(unit)) * 80, 10);
 	}
+	
 	unit.hp_bar.updateCache();
 }
 
@@ -1373,6 +1374,7 @@ function attack(attacker, target, dmg, isCritical){
 			
 		showDamage(target, isCritical == 1 ? 2 : 1, dmg);
 		target.hp -= dmg;
+        console.log("new hp: " + target.hp);
 		updateHP_bar(target);
 		
 		var damageAnimation = new createjs.Sprite(attacker.damageEffect, "damage");
