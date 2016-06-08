@@ -548,6 +548,7 @@ function drawMenuDisplay(){
 }
 function removeBuff(buffType, unit) {
     var success = false;
+    console.log(unit);
 
     for (var i = 0; i < unit.buffs.length; i++) {
         if (unit.buffs[i][0] === buffType) {
@@ -2137,12 +2138,12 @@ function changeTurn(action) {
     showTurnInfo();
     var effectsToApply = action.effects_to_apply;
     var unitsNewCD = action.units_new_cd;
-    var buffsToRemove = action.buffs_to_remove;
+    // var buffsToRemove = action.buffs_to_remove;
 
     // Remove the buffs with zero duration.
-    for (var i = 0; i < buffsToRemove.length; i++) {
-        removeBuff(buffsToRemove[i][0], buffsToRemove[i][1]);
-    }
+    // for (var i = 0; i < buffsToRemove.length; i++) {
+    //     removeBuff(buffsToRemove[i][0], findUnitById(buffsToRemove[i][1]));
+    // }
 
     // Refresh the cd of the skills.
     for (var i = 0; i < unitsNewCD.length; i++) {
