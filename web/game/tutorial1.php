@@ -77,12 +77,13 @@
 
    <div id="someBox3">
     <div id="box3_header">
-      <img src="./finishTutorial.png" style="line-height: 1px; vertical-align: bottom; margin-right: 5px" height="20" width="20" />Tutorial 1 : Basics
+      <img src="./finishTutorial.png" style="line-height: 1px; vertical-align: bottom; margin-right: 5px" height="20" width="20" />Congratulations
     </div>
     <div id="box3_body">
       <p>Well Done! Now you know how the move and attack works in King's Conquest. In the next Chapter, you will learn how to build your own army to fight against the enemy. </p><p>Click 'Next' to Tutorial2</p>
     </div>
     <div id="box_foot">
+      <button type="button" id="quitButton" class="btn2" ng-click="">Quit</button>
       <button type="button" id="nextButton" class="btn" ng-click="">Next</button>
     </div>
   </div>

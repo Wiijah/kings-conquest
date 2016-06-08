@@ -30,6 +30,27 @@ function displayWarningBox(action,action2) {
 	button2.click(action2);
 }
 
+
+function displayDoneBox(action,action2) {
+	var box = $("#someBox3");
+	var button = $("#quitButton");
+	var button2 = $("#nextButton");
+	box.show();
+	button.show();
+	button2.show();
+	button.click(action);
+	button2.click(action2);
+}
+
+function removeDoneBox(){
+	$("#someBox3").hide();
+	$("#quitButton").unbind();
+	$("#nextButton").unbind();
+}
+
+
+
+
 function removeWarningBox(){
 	$("#someBox2").hide();
 	$("#yesButton").unbind();
