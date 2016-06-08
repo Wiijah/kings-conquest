@@ -135,12 +135,45 @@ function attack_unit($attacker, $target) {
       .",".jsonPair("is_critical", $crit));
 
     if ($new_health <= 0 && $target->name == "king") {
-      $actions[] = action("game_end", jsonStr("reason", "king_death")
-        .",".jsonPair("winner", $team));
-      $db->query("UPDATE room_participants SET state = 'ended' WHERE room_id = '{$room_id}' AND event = ''");
-      $db->query("UPDATE rooms SET state = 'ended', winner = '$user->id' WHERE room_id = '{$room_id}'");
+      $opp_id = get_opponent_id();
+      $actions = array_merge($actions, gameEnd($user->id, $opp_id, "king_death"));
     }
   } 
+  return $actions;
+}
+
+function get_opponent_id() {
+  global $db;
+  global $user;
+  global $room_id;
+
+  $result = $db->query("SELECT * FROM room_participants WHERE user_id != '{$user->id}' AND room_id = '{$room_id}'");
+  $opp = $result->fetch_object();
+  return $opp->user_id;
+}
+
+function gameEnd($winner_id, $loser_id, $reason) {
+  global $db;
+  global $room_id;
+  global $TEAM_COLOURS;
+
+  $actions = array();
+
+  /* Get winner info */
+  $result = $db->query("SELECT * FROM room_participants WHERE user_id = '{$winner_id}' AND room_id = '{$room_id}'");
+  $winner_part = $result->fetch_object();
+  $winner_team = $TEAM_COLOURS[$winner_part->colour];
+
+  $actions[] = action("game_end", jsonStr("reason", $reason)
+        .",".jsonPair("winner", $winner_team));
+
+  /* Update room and room participants */
+  $db->query("UPDATE room_participants SET state = 'ended' WHERE room_id = '{$room_id}' AND event = ''");
+  $db->query("UPDATE rooms SET state = 'ended', winner = '$winner_id' WHERE room_id = '{$room_id}'");
+
+  /* Update user profiles */
+  $db->query("UPDATE users SET wins = wins + 1, kp = kp + 1000 WHERE id = '{$winner_id}'");
+  $db->query("UPDATE users SET losses = losses + 1, kp = kp + 300 WHERE id = '{$loser_id}'");
   return $actions;
 }
 

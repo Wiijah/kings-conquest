@@ -41,8 +41,8 @@ if ($caster->skill == "Shield") {
 } else if ($caster->skill == "Magic Damage") {
   $result = $db->query("{$SELECT_UNIT} room_id = '{$room_id}' AND team != '{$team}' AND {$AOE}");
   while ($fetch = $result->fetch_object()) {
-    $actions = array_merge($actions, attack_unit($caster, $fetch));
     $actions = array_merge($actions, give_buff($fetch, 5, 6));
+    $actions = array_merge($actions, attack_unit($caster, $fetch));
   }
 }
 
