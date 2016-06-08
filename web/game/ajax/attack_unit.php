@@ -28,6 +28,7 @@ $out .= $SUCCESS.",";
 
 $actions = array();
 
+$db->query("UPDATE units SET canMove = 0, canAttack = 0, outOfMoves = 1 WHERE unit_id = '{$attacker->unit_id}'"); 
 
 $actions = array_merge($actions, attack_unit($attacker, $target));
 

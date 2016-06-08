@@ -50,7 +50,7 @@ $out .= jsonPair("actions", jsonArray($actions));
 
 $db->query("UPDATE units SET canMove = 0, canAttack = 0, outOfMoves = 1 WHERE unit_id = '{$caster_id}'"); 
 
-$out = "{".$out."}";
+$out = "{".$out.", \"debug\": \"{$caster->skill}\"}";
 oppInsert($out);
 echo $out;
 ?>
