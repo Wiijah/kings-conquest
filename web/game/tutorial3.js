@@ -828,6 +828,21 @@ function updateHP_bar(unit){
     }
      if (unit.address == "graphics/spritesheet/stand/ss_king_stand.png" && unit.team == 0 && lastAttack){ 
       endTutorial();
+      stage.mouseChildren = false;
+  var endLabelBg = new createjs.Shape();
+      endLabelBg.graphics.beginFill("#000000").drawRect(-stage.canvas.width ,stage.canvas.height - stage.canvas.height/2 ,stage.canvas.width * 2,80);
+      if (turn){
+        var endLabel = new createjs.Text("You Win", "30px Arial", "#0000ff");
+      } else {
+        var endLabel = new createjs.Text("Player1 Win", "30px Arial", "#ff0000");
+      }
+      
+      endLabel.x = stage.canvas.width - stage.canvas.width / 2 - 100;
+      endLabel.y = stage.canvas.height -  stage.canvas.height / 2 + 20;
+      endLabelBg.alpha = 0.7;
+
+      stage.addChild(endLabelBg);
+      stage.addChild(endLabel);
     }
    
   } else {
@@ -3044,29 +3059,22 @@ function finishMoving(){
 }
 
 function endTutorial(){
-  removeBox();
-  displayBox(function() {
-      alert("back to game lobby");
+   removeBox();
+  removeWarningBox()
+  displayDoneBox(function(){
+    removeBox();
+    removeDoneBox();
+    displayWarningBox(function(){
+      alert("quit the tutorial, location to game lobby");
+    },function(){
+      endTutorial();
+    });
+  
+  },function(){
+    window.location.replace("http://localhost/WebAppGroup22/web/game/tutorial3.php");
   });
-  showButton();
-  addTextToButton("Back to Game Lobby");
-  removeAllPointer();
-  addTitleToBox("<img src=\"./finishTutorial.png\" style=\"line-height: 1px; vertical-align: bottom; margin-right: 5px\" height=\"20\" width=\"20\" />!!!Congratulation!!!");
-  addTextToBox("<p>You finished all tutorials. Now it's time to descover more in the real game!</p>");
-  stage.mouseChildren = false;
-  var endLabelBg = new createjs.Shape();
-      endLabelBg.graphics.beginFill("#000000").drawRect(-stage.canvas.width ,stage.canvas.height - stage.canvas.height/2 ,stage.canvas.width * 2,80);
-      if (turn){
-        var endLabel = new createjs.Text("You Win", "30px Arial", "#0000ff");
-      } else {
-        var endLabel = new createjs.Text("Player1 Win", "30px Arial", "#ff0000");
-      }
-      
-      endLabel.x = stage.canvas.width - stage.canvas.width / 2 - 100;
-      endLabel.y = stage.canvas.height -  stage.canvas.height / 2 + 20;
-      endLabelBg.alpha = 0.7;
-
-      stage.addChild(endLabelBg);
-      stage.addChild(endLabel);
+  stage.mouseChildren = false; 
+ 
+  
 
 }

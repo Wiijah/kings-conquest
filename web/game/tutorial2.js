@@ -3062,13 +3062,21 @@ function checkCompleness(){
 
 function endTutorial2(){
   removeBox();
-  displayBox(function(){
-      //To Tutorial 3
-      window.location.replace("http://localhost/WebAppGroup22/web/game/tutorial3.php");
+  removeWarningBox()
+  displayDoneBox(function(){
+    removeBox();
+    removeDoneBox();
+    displayWarningBox(function(){
+      alert("quit the tutorial, location to game lobby");
+    },function(){
+      endTutorial2();
     });
-    addTextToButton("OK");
-  addTitleToBox("<img src=\"./finishTutorial.png\" style=\"line-height: 1px; vertical-align: bottom; margin-right: 5px\" height=\"20\" width=\"20\" />Congratulations");
-  addTextToBox("<p>!!!Good job!!!</p><p>You finish Tutorial 2. Click 'OK' to stay in Tutorial 2</p> <p>Click 'Next' to start Tutorial 3</p>");
-}
+  
+  },function(){
+    window.location.replace("http://localhost/WebAppGroup22/web/game/tutorial3.php");
+  });
+  stage.mouseChildren = false; 
+}  
+
 
 

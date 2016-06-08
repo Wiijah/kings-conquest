@@ -2716,14 +2716,19 @@ function attack_instruction2(){
 function attack_instruction3(){
   attackTutorialDone = true;
   removeBox();
-  displayBox(function() {
-    //To Tutorial 2
+  removeWarningBox()
+  displayDoneBox(function(){
+    removeBox();
+    removeDoneBox();
+    displayWarningBox(function(){
+      alert("quit the tutorial, location to game lobby");
+    },function(){
+      attack_instruction3();
+    });
+  
+  },function(){
     window.location.replace("http://localhost/WebAppGroup22/web/game/tutorial2.php");
   });
-  showButton();
-  addPointerToEnemyUnit();
-  addTitleToBox("<img src=\"./finishTutorial.png\" style=\"line-height: 1px; vertical-align: bottom; margin-right: 5px\" height=\"20\" width=\"20\" />Congratulations");
-  addTextToBox("<p> Well Done! Now you know how the move and attack works in King's Conquest. In the next Chapter, you will learn how to build your own army to fight against the enemy. </p><p>Click 'Next' to Tutorial2</p>");
   stage.mouseChildren = false;
 }
 
