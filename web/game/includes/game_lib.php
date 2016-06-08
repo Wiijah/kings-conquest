@@ -45,7 +45,7 @@ function select_unit($unit_id) {
 function jsonUnit($unit) {
   global $db;
 
-  $result = $db->query("SELECT * FROM buff_instances WHERE unit_id = '{$unit->id}'");
+  $result = $db->query("SELECT * FROM buff_instances WHERE unit_id = '{$unit->unit_id}'");
   $buffs = "";
   $comma = "";
   while ($buff = $result->fetch_object()) {
