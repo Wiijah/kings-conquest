@@ -537,13 +537,17 @@ function removeBuff(buffType, unit) {
 
 
 function applyBuff(buffType, unit) {
+
+    var buffAlreadyExists = false;
     for (var i = 0; i < unit.buffs.length; i++) {
         if (unit.buffs[i][0] === buffType) {
-            chars.removeChild(unit.buffs[i][2]);
-            unit.buffs.splice(i, 1);
+            buffAlreadyExists = true;
             break;
         }
     }
+
+    if (buffAlreadyExists) removeBuff(buffType, unit);
+
     var buffIcon;
 	switch (buffType) {
 		case 0: // hp Buff 
@@ -1999,10 +2003,7 @@ function handleServerReply(data) {
                 break;
             case "attack_unit":
                 if (fuckingAttackCounter == 2) break;
-                if (isCasting) isCasting = false;
-                if (isAttacking) isAttacking = false;
                 handleAttack(action);
-                // postAttack(findUnitById(action.attacker_id));
                 break;
             case "remove_buff":
                 handleRemoveBuff(action);
@@ -2153,6 +2154,18 @@ function handleOpponent(data) {
         console.log("ERROR");
         return;
     }
+    var fuckingAttackCounter = 0;
+    var fuckingAttackActionList = [];
+    for (var i = 0; i < data.actions.length; i++) {
+        if (data.actions[i].action_type == "attack_unit") {
+            var attacker = findUnitById(data.actions[i].attacker_id);
+            if (attacker.skill == "Double Shoot") {
+                fuckingAttackCounter++;
+                fuckingAttackActionList.push(data.actions[i]);
+            }
+        }
+    }
+    if (fuckingAttackCounter == 2) handleAttack2(fuckingAttackActionList);
     for (var i = 0; i < data.actions.length; i++) {
         var action = data.actions[i];
         switch (action.action_type) {
@@ -2163,11 +2176,9 @@ function handleOpponent(data) {
                 handleCreate(action);
                 break;
             case "attack_unit":
+                if (fuckingAttackCounter == 2) break;
                 handleAttack(action);
                 break;
-            case "attack_unit_2":
-                handleAttack2(action);
-                break;   
             case "remove_buff":
                 handleRemoveBuff(action);
                 break;
