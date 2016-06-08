@@ -286,9 +286,6 @@ function spawnUnit(data, isCreation, row, column){
 			},
 			framerate: 4
 		});
-		unit.skill_no = data.skill_no;
-		unit.buffs = [];
-		unit.buff_icons = [];
 
 		// Configure the hp bar of the unit
 		hp_bar = new createjs.Shape();
@@ -304,6 +301,11 @@ function spawnUnit(data, isCreation, row, column){
 			hp_bar.graphics.beginFill("#3399ff").drawRect(1, 1, (getHealth(data)/getMaxHealth(data)) * 80, 10);
 		}
 		unit.hp_bar = hp_bar;
+
+        unit.buffs = [];
+        for (var i = 0; i < data.buffs.length; i++) {
+            applyBuff(data.buffs[i], unit);
+        }
 
 
 	// Configure move and attack range of the unit
@@ -453,17 +455,6 @@ function initGame() {
 	drawUnitCreationMenu();
 	drawBottomInterface();
 
-    // setInterval(function(){ 
-    //     if (!movingPlayer && !isAttacking && !isCasting && !isInHighlight) {
-    //         if (playableUnitCount === 0) {
-    //             clearSelectionEffects();
-    //             console.log("turn ended for current player");
-    //             turnEndPhase();
-    //             turn = 1 - turn;
-    //             turnStartPhase();
-    //         }
-    //     }
-    // }, 5000);
 
 
 	changed = true;
@@ -475,7 +466,7 @@ function initGame() {
   setTimeout(function() {getOpp(); }, 1000);
 
 }
-var muteIcon;
+var muteIcon; 
 var playIcon;
 function destroyMenuDisplay(){
 	stage.removeChild(quitIcon);
@@ -529,7 +520,7 @@ function removeBuff(buffType, unit) {
 
     for (var i = 0; i < unit.buffs.length; i++) {
         if (unit.buffs[i][0] === buffType) {
-            chars.removeChild(unit.buffs[i][3]);
+            chars.removeChild(unit.buffs[i][2]);
             unit.buffs.splice(i, 1);
             success = true;
             break;
@@ -537,7 +528,7 @@ function removeBuff(buffType, unit) {
     }
 
     for (var i = 0; i < unit.buffs.length; i++) {
-        unit.buffs[i][3].x = unit.hp_bar.x + i * 25;
+        unit.buffs[i][2].x = unit.hp_bar.x + i * 25;
         stage.update();
     }
     return success;
@@ -547,31 +538,32 @@ function removeBuff(buffType, unit) {
 function applyBuff(buffType, unit) {
     for (var i = 0; i < unit.buffs.length; i++) {
         if (unit.buffs[i][0] === buffType) {
-            chars.removeChild(unit.buffs[i][3]);
+            chars.removeChild(unit.buffs[i][2]);
             unit.buffs.splice(i, 1);
             break;
         }
     }
+    var buffIcon;
 	switch (buffType) {
 		case 0: // hp Buff 
             break;
 		case 1: // max hp Buff
             break;
 		case 2: // inc attack Buff
-			var buffIcon = new createjs.Bitmap("graphics/buff/buff_inc_attack.png");
-			unit.buffs.push([2, 1.2, 3, buffIcon]);
+			buffIcon = new createjs.Bitmap("graphics/buff/buff_inc_attack.png");
+			unit.buffs.push([2, 1.2, buffIcon]);
 			break;
 		case 3: // dec attack Buff
-            var buffIcon = new createjs.Bitmap("graphics/buff/buff_dec_attack.png");
-            unit.buffs.push([3, 0.8, 3, buffIcon]);
+            buffIcon = new createjs.Bitmap("graphics/buff/buff_dec_attack.png");
+            unit.buffs.push([3, 0.8, buffIcon]);
             break;
 		case 4:	// shield Buff
-			var buffIcon = new createjs.Bitmap("graphics/buff/buff_shield.png");
-			unit.buffs.push([4, 0, -1, buffIcon]);
+			buffIcon = new createjs.Bitmap("graphics/buff/buff_shield.png");
+			unit.buffs.push([4, 0, buffIcon]);
 			break;
         case 5: // burn Buff
-            var buffIcon = new createjs.Bitmap("graphics/buff/buff_burning.png");
-            unit.buffs.push([5, 0.02, 5, buffIcon]);
+            buffIcon = new createjs.Bitmap("graphics/buff/buff_burning.png");
+            unit.buffs.push([5, 0.02, buffIcon]);
 	}
 
 	buffIcon.x = unit.hp_bar.x + (unit.buffs.length - 1) * 25;
@@ -1053,7 +1045,7 @@ function showActionMenuNextToPlayer(unit) {
 		if (unit.skillCoolDown === 0) {
 			undoHighlights();
 			isCasting = true;
-			cast(unit.skill_no, unit);
+			cast(unit.skill, unit);
 		}
 	});
 
@@ -1127,9 +1119,9 @@ function handleKnightSkill(knight) {
 
 // }
 
-function cast(skillNo, unit) {
-	switch (skillNo) {
-		case 0: // King's skill
+function cast(skillName, unit) {
+	switch (skillName) {
+		case "Buffer": // King's skill
             serverValidate("skill", unit, []);
 			// $.each(units, function(i, value) {
 			// 	if (value.team === selectedCharacter.team) {
@@ -1165,7 +1157,7 @@ function cast(skillNo, unit) {
 
 			// // display updated json
 			break;
-		case 1: // Archer's skill
+		case "Double Shoot": // Archer's skill
 			archerSkillDone = false;
 			var reachableTiles = findReachableTiles(selectedCharacter.column, selectedCharacter.row, selectedCharacter.attackRange, false);
 			isCasting = false;
@@ -1174,24 +1166,24 @@ function cast(skillNo, unit) {
 			performAttack(unit);
 	    	unit.skillCoolDown = 3;
 			break;
-	    case 3: // Warrior's skill
+	    case "Shield": // Warrior's skill
 	    	undoHighlights();
-            applyBuff(4, selectedCharacter);
+            serverValidate("skill", unit, []);
+            // applyBuff(4, selectedCharacter);
 	    	selectedCharacter.outOfMoves = 1;
 	    	unit.skillCoolDown = 3;
-            playableUnitCount--;
 	    	isCasting = false;
 			changed = true;
 			undoMove.pop();
 	    	break;
-	    case 4: // Wizard's skill
+	    case "Magic Damage": // Wizard's skill
 	    	isCasting = true;
 	    	isAttacking = false;
 	    	// drawRange(findReachableTiles(selectedCharacter.column, selectedCharacter.row, selectedCharacter.attackRange, false), 2);
 	    	var reachableTiles = findReachableTiles(selectedCharacter.row, selectedCharacter.column, selectedCharacter.attackRange, false);
 	    	highlightArea(reachableTiles, "graphics/tile/red_tile.png", ["click", "mouseover", "mouseout"], [castWizardSpellOnClick, highlightWizardSpellCross, clearWizardSpellCross]);
 			break;
-		case 5:
+		case "YoMAMA":
 			remainingAttackTimes = 1;
 			break;
 	}
@@ -2042,13 +2034,13 @@ function handleServerReply(data) {
 
 function serverValidate(type, unit, additionalArgs) {
     console.log(type);
-    if (type == "move") {
+    if (type === "move") {
         console.log(path);
 
         console.log(unit.unit_id);
         rawPost("ajax/move_unit", {"unit_id" : String(unit.unit_id), "path" : JSON.stringify(path)}, handleServerReply);
     }
-    if (type == "create") {
+    if (type === "create") {
         rawPost("ajax/build_unit", {"name" : additionalArgs[0], "x": additionalArgs[1], "y": additionalArgs[2]}, handleServerReply);
     }
     if (type === "attack") {
@@ -2059,6 +2051,10 @@ function serverValidate(type, unit, additionalArgs) {
     if (type === "turn_change") {
         console.log("validate change");
         rawPost("ajax/turn_change", {}, handleServerReply);
+    }
+
+    if (type === "skill") {
+        rawPost("ajax/cast_unit", {"caster_id": unit.unit_id}, handleServerReply);
     }
 }
 
@@ -2184,7 +2180,7 @@ function handleGameEnd(action) {
     var endLabelBg = new createjs.Shape();
     endLabelBg.graphics.beginFill("#000000").drawRect(-stage.canvas.width ,stage.canvas.height - stage.canvas.height/2 ,stage.canvas.width * 2,80);
     var endLabel = new createjs.Text(text, "30px Arial", color);
-    var restartLabel = new createjs.Text("Press \" r \" to restart", "15px Arial", color);
+    var restartLabel = new createjs.Text("Press \" c \" to continue", "15px Arial", color);
     
     endLabel.x = stage.canvas.width - stage.canvas.width / 2 - 100;
     endLabel.y = stage.canvas.height -  stage.canvas.height / 2 + 20;
