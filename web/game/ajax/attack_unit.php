@@ -22,57 +22,18 @@ if ( $attacker->team == $target->team ) exit_error(103);
 if ( $attacker->canAttack == 0 ) exit_error(104);
 if ( outOfAttackRange($attacker, $target)) exit_error(105);
 
-$result = $db->query("SELECT * FROM buff_instances WHERE unit_id = '{$target_id}' AND buff_id = 4");
-$buff = $result->fetch_object();
+$out = '{';
+$out .= $SUCCESS.",";
+
 
 $actions = array();
 
-if (!$buff) {
-	// get new health
-	$damage = $attacker->attack;
+$db->query("UPDATE units SET canMove = 0, canAttack = 0, outOfMoves = 1 WHERE unit_id = '{$attacker->unit_id}'"); 
 
-  $crit = rand(1,100) <= ($attacker->luck * 100) ? '1' : '0';
-  if ($crit == '1') $damage *= 2;
-  
-	$new_health = $target->hp - $damage;
-	if ($new_health <= 0) { /* Target died */
-		$db->query("DELETE FROM units WHERE unit_id = '{$target_id}'");
-	} else { /* Target hurt but survived */
-		$db->query("UPDATE units SET hp = '{$new_health}' WHERE unit_id = '{$target_id}'");
-	}
+$actions = array_merge($actions, attack_unit($attacker, $target));
 
-	$db->query("UPDATE units SET canMove = 0, canAttack = 0, outOfMoves = 1 WHERE unit_id = '{$attacker_id}'"); 
-
-
-	// notify
-	$out = '{';
-	$out .= $SUCCESS.",";
-	$actions[] = action("attack_unit",
-		   jsonPair("attacker_id", $attacker_id)
-	  .",".jsonPair("buffs", "[]")
-	  .",".jsonPair("target_id", $target_id)
-	  .",".jsonPair("dmg", $damage)
-	  .",".jsonPair("is_critical", $crit));
-
-	if ($new_health <= 0 && $target->name == "king") {
-		$actions[] = action("game_end", jsonStr("reason", "king_death")
-			.",".jsonPair("winner", $team));
-	}
-	$out .= jsonPair("actions", jsonArray($actions));
-	$out .= "}";
-} else {
-	// remove buff
-	$db->query("DELETE FROM buff_instances WHERE unit_id = '{$target_id}' AND buff_id = 4");
-
-	$out = '{';
-	$out .= $SUCCESS.",";
-	$actions[] = action("remove_buff",
-		   jsonPair("unit_id", $target_id)
-	  .",".jsonPair("buff_id", $buff->buff_id));
-	$out .= jsonPair("actions", jsonArray($actions));
-	$out .= "}"; 
-}
-
+$out .= jsonPair("actions", jsonArray($actions));
+$out .= "}";
 oppInsert($out);
 echo $out;
 

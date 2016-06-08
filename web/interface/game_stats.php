@@ -1,7 +1,6 @@
 <?php
 $title = "Game Ended";
 require_once 'includes/header_checks.php';
-include 'includes/header.php';
 
 $room_id = secureStr($_GET['room_id']);
 $result = $db->query("SELECT * FROM rooms WHERE room_id = '{$room_id}' AND state = 'ended'");
@@ -12,7 +11,10 @@ if (!$room) {
   die();
 }
 
-$result = $db->query("SELECT * FROM users WHERE user_id = '{$room->winner}' AND state = 'ended'");
+include 'includes/header.php';
+
+$result = $db->query("SELECT * FROM users WHERE id = '{$room->winner}'");
+
 $opp = $result->fetch_object();
 
 include 'includes/logout_container.php';

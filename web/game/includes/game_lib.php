@@ -5,6 +5,8 @@ $TEAM_COLOURS = array("red" => 0, "blue" => 1);
 $TEAM_RED = 0;
 $TEAM_BLUE = 1;
 
+$SELECT_UNIT = "SELECT * FROM units JOIN classes ON units.class_id = classes.class_id WHERE";
+
 function create_unit($name, $x, $y, $team) {
   global $db;
   global $room_id;
@@ -35,14 +37,18 @@ function init_units() {
   create_unit("archer", 12, 11, $TEAM_COLOURS['blue']);
 }
 
-function select_unit($unit_id) {
-  global $db;
-  $result = $db->query("SELECT * FROM units JOIN classes ON units.class_id = classes.class_id WHERE unit_id = '{$unit_id}'");
-  if (!$result) return false;
-  return $result->fetch_object();
-}
 
 function jsonUnit($unit) {
+  global $db;
+
+  $result = $db->query("SELECT * FROM buff_instances WHERE unit_id = '{$unit->unit_id}'");
+  $buffs = "";
+  $comma = "";
+  while ($buff = $result->fetch_object()) {
+    $buffs .= $comma."{$buff->buff_id}";
+    $comma = ",";
+  }
+
   return '"'.$unit->unit_id.'": {
       '.jsonStr("address", $unit->address).','.
         jsonStr("spritesheet", $unit->spritesheet).','.
@@ -55,6 +61,7 @@ function jsonUnit($unit) {
         jsonPair("luck", $unit->luck).','.
         jsonPair("x", $unit->x).','.
         jsonPair("y", $unit->y).','.
+        jsonPair("buffs", "[{$buffs}]").','.
         jsonPair("moveRange", $unit->moveRange).','.
         jsonPair("team", $unit->team).','.
         jsonPair("attackRange", $unit->attackRange).','.
@@ -64,6 +71,117 @@ function jsonUnit($unit) {
         jsonPair("outOfMoves", $unit->outOfMoves).','.
         jsonStr("damageEffect", $unit->damageEffect).'
     }';
+}
+
+function select_unit($unit_id) {
+  global $db;
+  global $room_id;
+  $result = $db->query("SELECT * FROM units JOIN classes ON units.class_id = classes.class_id WHERE unit_id = '{$unit_id}' AND room_id = '{$room_id}'");
+  return $result->fetch_object();
+}
+function give_buff($unit, $buff_id, $turns_left) {
+  global $db;
+  $actions = array();
+  $result = $db->query("SELECT * FROM buff_instances WHERE buff_id = '{$buff_id}' AND unit_id = '{$unit->unit_id}'");
+  if ($result->num_rows == 0) {
+    $db->query("INSERT INTO buff_instances (buff_id, unit_id, turns_left) VALUES ('{$buff_id}', '{$unit->unit_id}', '{$turns_left}')");
+  } else {
+    $db->query("UPDATE buff_instances SET turns_left = '{$turns_left}' WHERE buff_id = '{$buff_id}' AND unit_id = '{$unit->unit_id}'");
+  }
+  $actions[] = action("apply_buff",
+       jsonPair("buff_id", $buff_id)
+    .",".jsonPair("unit_id", $unit->unit_id));
+  return $actions;
+}
+
+function attack_unit($attacker, $target) {
+  global $db;
+  global $user;
+  global $team;
+  global $room_id;
+
+  $result = $db->query("SELECT * FROM buff_instances WHERE unit_id = '{$target->unit_id}' AND buff_id = 4");
+  $shield = $result->fetch_object();
+
+  $actions = array();
+  if ($shield) {
+    // remove shield
+    $db->query("DELETE FROM buff_instances WHERE unit_id = '{$target->unit_id}' AND buff_id = 4");
+
+    $actions[] = action("remove_buff",
+         jsonPair("unit_id", $target->unit_id)
+      .",".jsonPair("buff_id", $shield->buff_id));
+    $out .= jsonPair("actions", jsonArray($actions));
+  } else { /* Normal attack */
+    // get new health
+    $damage = $attacker->attack;
+
+    $crit = rand(1,100) <= ($attacker->luck * 100) ? '1' : '0';
+    if ($crit == '1') $damage *= 2;
+    
+    $new_health = $target->hp - $damage;
+    if ($new_health <= 0) { /* Target died */
+      $db->query("DELETE FROM units WHERE unit_id = '{$target->unit_id}'");
+    } else { /* Target hurt but survived */
+      $db->query("UPDATE units SET hp = '{$new_health}' WHERE unit_id = '{$target->unit_id}'");
+    }
+
+    // notify
+    $actions[] = action("attack_unit",
+         jsonPair("attacker_id", $attacker->unit_id)
+      .",".jsonPair("buffs", "[]")
+      .",".jsonPair("target_id", $target->unit_id)
+      .",".jsonPair("dmg", $damage)
+      .",".jsonPair("is_critical", $crit));
+
+    if ($new_health <= 0 && $target->name == "king") {
+      $opp_id = get_opponent_id();
+      $result = $db->query("SELECT * FROM users WHERE id = '{$opp_id}'");
+      $opp = $result->fetch_object();
+      $actions = array_merge($actions, gameEnd($user, $opp, "king_death"));
+    }
+  } 
+  return $actions;
+}
+
+function get_opponent_id() {
+  global $db, $user, $room_id;
+  $result = $db->query("SELECT * FROM room_participants WHERE user_id != '{$user->id}' AND room_id = '{$room_id}'");
+  $opp = $result->fetch_object();
+  return $opp->user_id;
+}
+
+function gameEnd($winner, $loser, $reason) {
+  global $db;
+  global $room_id;
+  global $TEAM_COLOURS;
+
+  $actions = array();
+
+  /* Get winner info */
+  $result = $db->query("SELECT * FROM room_participants WHERE user_id = '{$winner->id}' AND room_id = '{$room_id}'");
+  $winner_part = $result->fetch_object();
+  $winner_team = $TEAM_COLOURS[$winner_part->colour];
+
+  $actions[] = action("game_end", jsonStr("reason", $reason)
+        .",".jsonPair("winner", $winner_team));
+
+  /* ELO */
+  $chance_win = abs((1 / (1 + pow(10, (($loser->elo - $winner->elo) / 400)))) * 100);
+  $chance_lose = abs(100 - $chance_win);
+
+  $elo_won = round(32 * ($chance_win / 100));
+  $elo_lost = round(32 * ($chance_lose / 100));
+  
+
+  /* Update room and room participants */
+  $db->query("UPDATE room_participants SET state = 'ended' WHERE room_id = '{$room_id}' AND event = ''");
+  $db->query("UPDATE rooms SET state = 'ended', winner = '$winner->id', elo_won = {$elo_won}, elo_lost = {$elo_lost} WHERE room_id = '{$room_id}'");
+
+  /* Update user profiles */
+  $db->query("UPDATE users SET wins = wins + 1, kp = kp + 1000, elo = elo + {$elo_won} WHERE id = '{$winner->id}'");
+  $db->query("UPDATE users SET losses = losses + 1, kp = kp + 300, elo = elo - {$elo_lost} WHERE id = '{$loser->id}'");
+  return $actions;
 }
 
 function oppInsert($json) {

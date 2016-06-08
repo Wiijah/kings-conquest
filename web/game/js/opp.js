@@ -1,16 +1,16 @@
 function getOpp() {
-  console.log("getOpp start of body with oldOPPID: " + lastOppID);
+//  console.log("getOpp start of body with oldOPPID: " + lastOppID);
 
   comPost("ajax/opp", {"opp_id" : String(lastOppID)}, nothing, function(data, status) {
-    console.log("Inside comPost callback with OppID: !" + data.opp_id);
+    //console.log("Inside comPost callback with OppID: !" + data.opp_id);
     if (data.error_code != 0) {
-      console.log("BAD BAD BAD BAD BAD opp Return !");
+      //console.log("BAD BAD BAD BAD BAD opp Return !");
       return;
     }
     lastOppID = data.opp_id;
     handleOpponent(data.json);
-    console.log("callback returned!");
+    //console.log("callback returned!");
     getOpp();
   });
-  console.log("Real getOpp out");
+  //console.log("Real getOpp out");
 }
