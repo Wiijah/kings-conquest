@@ -548,10 +548,9 @@ function drawMenuDisplay(){
 }
 function removeBuff(buffType, unit) {
     var success = false;
-    console.log(unit);
-
     for (var i = 0; i < unit.buffs.length; i++) {
-        if (unit.buffs[i][0] === buffType) {
+        console.log(unit.buffs[i][0] == buffType);
+        if (unit.buffs[i][0] == buffType) {
             chars.removeChild(unit.buffs[i][2]);
             unit.buffs.splice(i, 1);
             success = true;
@@ -563,6 +562,7 @@ function removeBuff(buffType, unit) {
         unit.buffs[i][2].x = unit.hp_bar.x + i * 25;
         stage.update();
     }
+
     return success;
 }
 
@@ -718,10 +718,12 @@ function drawUnitCreationMenu() {
 	var listOfSources = [];
 	listOfSources.push("graphics/card/knight_card.png");
 	listOfSources.push("graphics/card/archer_card.png");
-	listOfSources.push("graphics/card/wizard_card.png");
+    listOfSources.push("graphics/card/wizard_card.png");
+    listOfSources.push("graphics/card/totem_card.png");
+	listOfSources.push("graphics/card/dragon_card.png");
 	//listOfSources.push("graphics/card/rogue_card.png");
 
-	createFloatingCards(listOfSources, ["knight","archer","wizard","rogue"]);
+	createFloatingCards(listOfSources, ["knight","archer","wizard","totem", "dragon"]);
 	unitCreationMenu.x = 50;
 	unitCreationMenu.y = window.innerHeight - 130;
 	bottomInterface.addChild(unitCreationMenu);
@@ -2026,6 +2028,9 @@ function handleServerReply(data) {
         console.log("i: " + i);
         var action = data.actions[i];
         switch (action.action_type) {
+            case "update_unit":
+                handleUnitUpdate(action);
+                break;
             case "move_unit":
                 handleMove(action);
                 break;
@@ -2047,6 +2052,9 @@ function handleServerReply(data) {
                 break;
             case "turn_change":
                 changeTurn(action);
+                break;
+            case "update_gold":
+                handleGoldUdpate(action);
                 break;
             case "game_end":
                 handleGameEnd(action);
@@ -2132,6 +2140,14 @@ function findUnitByCoordinates(row, column) {
     return null;
 }
 
+function handleGoldUdpate(action) {
+    if (action.team == team) {
+        currentGold = action.gold;     
+        destroyGoldDisplay();
+        drawGoldDisplay();   
+    }
+}
+
 function changeTurn(action) {
     clearSelectionEffects();
     turn = action.new_turn;
@@ -2182,6 +2198,14 @@ function changeTurn(action) {
     }
 }
 
+function handleUnitUpdate(action) {
+    var unit = findUnitById(action.unit_id);
+    unit.canMove = action.canMove;
+    unit.canAttack = action.canAttack;
+    unit.skillCoolDown = actions.skillCoolDown;
+    unit.outOfMoves = actions.outOfMoves;
+}
+
 function handleOpponent(data) {
     console.log(data);
     if (data.error_code != 0) {
@@ -2203,6 +2227,9 @@ function handleOpponent(data) {
     for (var i = 0; i < data.actions.length; i++) {
         var action = data.actions[i];
         switch (action.action_type) {
+            case "update_unit":
+                handleUnitUpdate(action);
+                break;
             case "move_unit":
                 handleMove(action);
                 break;
@@ -2224,6 +2251,9 @@ function handleOpponent(data) {
                 break;
             case "turn_change":
                 changeTurn(action);
+                break;
+            case "update_gold":
+                handleGoldUdpate(action);
                 break;
             case "game_end":
                 handleGameEnd(action);
