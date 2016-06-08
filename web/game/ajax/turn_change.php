@@ -19,9 +19,8 @@ $result = $db->query("SELECT * FROM buff_instances JOIN buffs USING (buff_id) WH
 $buff_list = array();
 while ($buff = $result->fetch_object()) {
   $unit = select_unit($buff->unit_id);
-  $damage = $unit->max_hp * -0.02;
-  $unit->hp -= $damage;
-  $buff_list[] = triggerBufferJson($buff->name, $unit->unit_id, 0 - $damage);
+  $damage = $unit->max_hp * 0.02;
+  $buff_list = array_merge($buff_list, damageByBuff($buff, $unit, $damage));
 }
 
 /* Decrement buff turns left */

@@ -82,7 +82,7 @@ function select_unit($unit_id) {
 function give_buff($unit, $buff_id, $turns_left) {
   global $db;
   global $room_id;
-  
+
   $actions = array();
   $result = $db->query("SELECT * FROM buff_instances WHERE buff_id = '{$buff_id}' AND unit_id = '{$unit->unit_id}'");
   if ($result->num_rows == 0) {
@@ -143,6 +143,41 @@ function attack_unit($attacker, $target) {
       $actions = array_merge($actions, gameEnd($user, $opp, "king_death"));
     }
   } 
+  return $actions;
+}
+
+function damageByBuff($buff, $target, $damage) {
+  global $db, $room_id;
+  $result = $db->query("SELECT * FROM buff_instances WHERE unit_id = '{$target->unit_id}' AND buff_id = 4");
+  $shield = $result->fetch_object();
+
+  $actions = array();
+  if ($shield) {
+    $damage = 0;
+    // remove shield
+    $db->query("DELETE FROM buff_instances WHERE unit_id = '{$target->unit_id}' AND buff_id = 4");
+
+    $actions[] = action("remove_buff",
+         jsonPair("unit_id", $target->unit_id)
+      .",".jsonPair("buff_id", $shield->buff_id));
+    $out .= jsonPair("actions", jsonArray($actions));
+  } else { /* no shield */
+    $new_health = $target->hp - $damage;
+
+    if ($new_health <= 0) { /* Target died */
+      $db->query("DELETE FROM units WHERE unit_id = '{$target->unit_id}'");
+    } else { /* Target hurt but survived */
+      $db->query("UPDATE units SET hp = '{$new_health}' WHERE unit_id = '{$target->unit_id}'");
+    }
+
+    if ($new_health <= 0 && $target->name == "king") {
+      $opp_id = get_opponent_id();
+      $result = $db->query("SELECT * FROM users WHERE id = '{$opp_id}'");
+      $opp = $result->fetch_object();
+      $actions = array_merge($actions, gameEnd($user, $opp, "king_death"));
+    }
+  } 
+  $actions[] = triggerBufferJson($buff->buff_name, $target->unit_id, 0 - $damage);
   return $actions;
 }
 
