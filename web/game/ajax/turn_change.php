@@ -31,7 +31,7 @@ while ($totem = $result->fetch_object()) {
   while ($unit = $result2->fetch_object()) {
     $heal = ceil($unit->max_hp * 0.03);
     if ($heal + $unit->hp > $unit->max_hp) $heal = $unit->max_hp - $unit->hp;
-    $buff_list[] = triggerBufferJson("heal", $unit->unit_id, $heal);
+    $buff_list[] = triggerBufferJson("Heal", $unit->unit_id, $heal);
   }
 }
 
