@@ -9,6 +9,7 @@ if (!$player = $result->fetch_object()) {
 $room_id = $player->room_id;
 
 //Delete all units
+$db->query("DELETE FROM buff_instances");
 $db->query("DELETE FROM units WHERE room_id = {$room_id}");
 $db->query("UPDATE room_participants SET gold = '1000'");
 $db->query("UPDATE rooms SET turn = '0' WHERE room_id = '{$room_id}'");
