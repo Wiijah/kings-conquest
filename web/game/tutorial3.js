@@ -3051,7 +3051,7 @@ function endTutorial(){
   showButton();
   addTextToButton("Back to Game Lobby");
   removeAllPointer();
-  addTitleToBox("<img src=\"./i_icon.png\" style=\"line-height: 1px; vertical-align: bottom; margin-right: 5px\" height=\"20\" width=\"20\" />!!!Congratulation!!!");
+  addTitleToBox("<img src=\"./finishTutorial.png\" style=\"line-height: 1px; vertical-align: bottom; margin-right: 5px\" height=\"20\" width=\"20\" />!!!Congratulation!!!");
   addTextToBox("<p>You finished all tutorials. Now it's time to descover more in the real game!</p>");
   stage.mouseChildren = false;
   var endLabelBg = new createjs.Shape();

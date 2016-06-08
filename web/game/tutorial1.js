@@ -2534,7 +2534,7 @@ function backgroundInfo(){
   displayBox(function() {
     unit_instruction();
   });
-  addTitleToBox("Introduction");
+  addTitleToBox("<img src=\"./i_icon.png\" style=\"line-height: 1px; vertical-align: bottom; margin-right: 5px\" height=\"20\" width=\"20\" />Introduction");
   addTextToBox("<p>The colour of HP bar indicates the team of units. In this tutorial you will be the blue team.</p>");
   resetTheGame();
   spawnUnit(that.classStats.kingClass, true, 2, 5, 1);
@@ -2551,7 +2551,7 @@ function unit_instruction(){
   hideButton();
   addPointerToPlayerUnit();
   stage.mouseChildren = true;
-  addTitleToBox("Unit");
+  addTitleToBox("<img src=\"./i_icon.png\" style=\"line-height: 1px; vertical-align: bottom; margin-right: 5px\" height=\"20\" width=\"20\" />Unit");
   addTextToBox("<p> Here is your king, Now let's try click the king to see more information.</p>");
 }
 
@@ -2563,7 +2563,7 @@ function stats_instruction(){
   showButton();
   addTextToButton("Next");
   addPointerToPlayerUnit();
-  addTitleToBox("Stats Board");
+  addTitleToBox("<img src=\"./i_icon.png\" style=\"line-height: 1px; vertical-align: bottom; margin-right: 5px\" height=\"20\" width=\"20\" />Stats Board");
   addTextToBox("<p> Well done. Now you can see the detail information of the current unit on the right buttom cornor. Once you click on your unit you can see all details information of this unit. However if you click the opponent's unit you can only see it's HP.</p>");
   removeAllPointer();
   showMaskBox();
@@ -2589,7 +2589,7 @@ function hp_instruction(){
     attack_instruction();
   });
   addTextToButton("Next");
-  addTitleToBox("Hit Point (HP)");
+  addTitleToBox("<img src=\"./i_icon.png\" style=\"line-height: 1px; vertical-align: bottom; margin-right: 5px\" height=\"20\" width=\"20\" />Hit Point (HP)");
   addTextToBox("<p> HP indicates the hit points of the unit, the unit will die if its HP is less or equal to 0.</p><p>If you kill the enemy's king (attack him and let his HP reduce to 0, you win the game, and vise versa)</p>");
 }
 function attack_instruction(){
@@ -2600,7 +2600,7 @@ function attack_instruction(){
     range_instruction();
   });
   addTextToButton("Next");
-  addTitleToBox("Attack Damage (ATK)");
+  addTitleToBox("<img src=\"./i_icon.png\" style=\"line-height: 1px; vertical-align: bottom; margin-right: 5px\" height=\"20\" width=\"20\" />Attack Damage (ATK)");
   addTextToBox("<p> ATK is the damage you could give to the enemy target when attack.</p> <p>(Some skill might increase or decrease units' base attack damage. Will be explain in detail in Tutorial 2)</p>");
 }
 function range_instruction(){
@@ -2610,7 +2610,7 @@ function range_instruction(){
     skill_instruction();
   });
   addTextToButton("Next");
-  addTitleToBox("Attack Range (RNG)");
+  addTitleToBox("<img src=\"./i_icon.png\" style=\"line-height: 1px; vertical-align: bottom; margin-right: 5px\" height=\"20\" width=\"20\" />Attack Range (RNG)");
   addTextToBox("<p> RNG indicates the range of current unit can reach when the unit attacks. The range differs between units. </p> <p>(The attack range will be shown as red tiles after you click on attack button)</p>");
 }
 function skill_instruction(){
@@ -2620,7 +2620,7 @@ function skill_instruction(){
     cd_instruction();
   });
   addTextToButton("Next");
-  addTitleToBox("Skill");
+  addTitleToBox("<img src=\"./i_icon.png\" style=\"line-height: 1px; vertical-align: bottom; margin-right: 5px\" height=\"20\" width=\"20\" />Skill");
   addTextToBox("<p> Each unit has a unique skill. A unit can use its skill if the cool down for the skill is 0. </p><p> (Will be explain in detail in Tutorial 2)</p>");
 }
 function cd_instruction(){
@@ -2630,7 +2630,7 @@ function cd_instruction(){
     moveRange_instruction();
   });
   addTextToButton("Next");
-  addTitleToBox("Cool Down (CD)");
+  addTitleToBox("<img src=\"./i_icon.png\" style=\"line-height: 1px; vertical-align: bottom; margin-right: 5px\" height=\"20\" width=\"20\" />Cool Down (CD)");
   addTextToBox("<p> CD indicates how many turns left until the unit can use its skill again. CD will reduce by 1 each turn.</p> <p>The CD differs between units. Some skills have longer CD.</p>");
 }
 function moveRange_instruction(){
@@ -2640,7 +2640,7 @@ function moveRange_instruction(){
     luck_instruction();
   });
   addTextToButton("Next");
-  addTitleToBox("Move Range");
+  addTitleToBox("<img src=\"./i_icon.png\" style=\"line-height: 1px; vertical-align: bottom; margin-right: 5px\" height=\"20\" width=\"20\" />Move Range");
   addTextToBox("<p> Move Range is similar to the Attack Range, it indicates the positions that the unit can move to in one turn. Move range differs between units.</p><p>(The move range will be shown as green tiles after you click on move button)</p>");
 }
 function luck_instruction(){
@@ -2650,7 +2650,7 @@ function luck_instruction(){
     ingameMenu_instruction();
   });
   addTextToButton("Next");
-  addTitleToBox("Luck");
+  addTitleToBox("<img src=\"./i_icon.png\" style=\"line-height: 1px; vertical-align: bottom; margin-right: 5px\" height=\"20\" width=\"20\" />Luck");
   addTextToBox("<p> Luck is a fixed for each unit, it indicates the chance to get a critical hit when dealing demage to enemy units. (E.g. Luck = 0.2 means 20% chance to critical Hit)</p><p>(Critical Hit deals twice the damage as the normal attack)</p>");
 }
 function ingameMenu_instruction(){
@@ -2662,7 +2662,7 @@ function ingameMenu_instruction(){
   });
   hideButton();
   addPointerNearPlayerMove();
-  addTitleToBox("In Game Menu");
+  addTitleToBox("<img src=\"./i_icon.png\" style=\"line-height: 1px; vertical-align: bottom; margin-right: 5px\" height=\"20\" width=\"20\" />In Game Menu");
   addTextToBox("<p>This is the in game menu. It will be shown once you click on your units.</p><p>Now let's try to move our king first. Click on the Move in the menu, or press 'M' on your keyboard.</p>");
   interfaceIntroDone = true;
 }
@@ -2722,7 +2722,7 @@ function attack_instruction3(){
   });
   showButton();
   addPointerToEnemyUnit();
-  addTitleToBox("!!!Congratulations!!!");
+  addTitleToBox("<img src=\"./finishTutorial.png\" style=\"line-height: 1px; vertical-align: bottom; margin-right: 5px\" height=\"20\" width=\"20\" />Congratulations");
   addTextToBox("<p> Well Done! Now you know how the move and attack works in King's Conquest. In the next Chapter, you will learn how to build your own army to fight against the enemy. </p><p>Click 'Next' to Tutorial2</p>");
   stage.mouseChildren = false;
 }
