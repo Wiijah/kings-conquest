@@ -697,19 +697,29 @@ function drawUnitCreationMenu() {
 	bottomInterface.addChild(unitCreationMenu);
 }
 
-function findAvailableAndNonAvailableSpawnTiles() {
-    var availableSpawnTiles = [];
-    var nonAvailableSpawnTiles = [];
-    for (var i = 0; i < 4; i++) {
-        for (var j = 0; j < 4; j++) {
-            if (blockMaps[i][j] === 0) {
-                availableSpawnTiles.push([i, j]);
-            } else {
-                nonAvailableSpawnTiles.push([i, j]);
-            }
-        }
-    }
-    return [availableSpawnTiles, nonAvailableSpawnTiles];
+
+function findAvailableAndNonAvailableSpawnTiles(range) {
+   if (typeof(range) == "undefined") range = 3;
+   var availableSpawnTiles = [];
+   var nonAvailableSpawnTiles = [];
+   var originX = team == 0 ? 0 : 12;
+   var originY = team == 0 ? 0 : 13;
+   var di = team == 0 ? 1 : -1;
+   var dj = team == 0 ? 1 : -1;
+
+   for (var i = 0; i < range; i++) {
+       if (originX + i * di >= mapHeight || originX + i * di < 0) break;
+       for (var j = 0; j < range; j++) {
+           if (originY + j * dj >= mapWidth || originY + j * dj < 0) break;
+           if (blockMaps[originX + i * di][originY + j * dj] === 0) {
+               availableSpawnTiles.push([originX + i * di, originY + j * dj]);
+           } else {
+               nonAvailableSpawnTiles.push([originX + i * di, originY + j * dj]);
+           }
+       }
+   }
+
+   return [availableSpawnTiles, nonAvailableSpawnTiles];
 }
 
 
