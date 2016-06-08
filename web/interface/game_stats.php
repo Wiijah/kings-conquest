@@ -14,7 +14,7 @@ if (!$room) {
 include 'includes/header.php';
 
 
-$result = $db->query("SELECT * FROM users WHERE user_id = '{$room->winner}' AND state = 'ended'");
+$result = $db->query("SELECT * FROM users WHERE id = '{$room->winner}'");
 $opp = $result->fetch_object();
 
 include 'includes/logout_container.php';
