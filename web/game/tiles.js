@@ -22,7 +22,7 @@ var blockMaps;
 var tile_display;
 var highLight_tile;
 var tile_info_text;
-var endGame = false;
+var gameEnd = false;
 
 var moveButton;
 var attackButton;
@@ -1783,8 +1783,14 @@ function keyEvent(event) {
             }
             break;
         case 67: 
-        	draggable.x = 0;
-        	draggable.y = 0;
+            console.log(gameEnd);
+            if (gameEnd) {
+                console.log("yomama");
+                window.location.href = '../interface/game_stats?room_id='+room_id;
+            } else {
+        	   draggable.x = 0;
+        	   draggable.y = 0;
+            }
         	break; 
         case 77: //m
         	if (isDisplayingMenu) {
@@ -1845,13 +1851,14 @@ function keyEvent(event) {
 //			goFullScreen();
 			break;
         case 13: //enter
-        	if (!endGame) {
+        	if (!gameEnd) {
                 serverValidate("turn_change", null, []);
 	        	clearSelectionEffects();
 	        	// turn = 1 - turn;
 	        	// turnEndPhase();
 	        	// turnStartPhase();
 	        }
+            break;
     }
 }
 
@@ -2171,6 +2178,7 @@ function handleOpponent(data) {
 function handleGameEnd(action) {
     console.log("handle end game");
     //window.location.href = '../interface/game_stats?room_id='+room_id;
+    gameEnd = true;
     var text = action.winner == 0 ? "Red player victory" : "Blue player victory";
     var color = action.winner == 0 ? "#ff0000" : "#0000ff";
     var endLabelBg = new createjs.Shape();
@@ -2187,7 +2195,6 @@ function handleGameEnd(action) {
     stage.addChild(endLabelBg);
     stage.addChild(restartLabel);
     stage.addChild(endLabel);
-    endGame = true;
     stage.mouseChildren = false;
 
 }

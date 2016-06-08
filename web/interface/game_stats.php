@@ -13,8 +13,8 @@ if (!$room) {
 
 include 'includes/header.php';
 
+$result = $db->query("SELECT * FROM users WHERE id = '{$room->winner}'");
 
-$result = $db->query("SELECT * FROM users WHERE id = '{$room->winner}' AND state = 'ended'");
 $opp = $result->fetch_object();
 
 include 'includes/logout_container.php';
