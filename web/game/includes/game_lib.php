@@ -77,6 +77,58 @@ function jsonUnit($unit) {
     }';
 }
 
+function attack_unit($attacker, $target) {
+  global $db;
+  global $user;
+  global $team;
+  global $room_id;
+
+  $result = $db->query("SELECT * FROM buff_instances WHERE unit_id = '{$target->unit_id}' AND buff_id = 4");
+  $shield = $result->fetch_object();
+
+  $actions = array();
+  if ($shield) {
+    // remove shield
+    $db->query("DELETE FROM buff_instances WHERE unit_id = '{$target->unit_id}' AND buff_id = 4");
+
+    $actions[] = action("remove_buff",
+         jsonPair("unit_id", $target->unit_id)
+      .",".jsonPair("buff_id", $shield->buff_id));
+    $out .= jsonPair("actions", jsonArray($actions));
+  } else { /* Normal attack */
+    // get new health
+    $damage = $attacker->attack;
+
+    $crit = rand(1,100) <= ($attacker->luck * 100) ? '1' : '0';
+    if ($crit == '1') $damage *= 2;
+    
+    $new_health = $target->hp - $damage;
+    if ($new_health <= 0) { /* Target died */
+      $db->query("DELETE FROM units WHERE unit_id = '{$target->unit_id}'");
+    } else { /* Target hurt but survived */
+      $db->query("UPDATE units SET hp = '{$new_health}' WHERE unit_id = '{$target->unit_id}'");
+    }
+
+    $db->query("UPDATE units SET canMove = 0, canAttack = 0, outOfMoves = 1 WHERE unit_id = '{$attacker->unit_id}'"); 
+
+    // notify
+    $actions[] = action("attack_unit",
+         jsonPair("attacker_id", $attacker->unit_id)
+      .",".jsonPair("buffs", "[]")
+      .",".jsonPair("target_id", $target->unit_id)
+      .",".jsonPair("dmg", $damage)
+      .",".jsonPair("is_critical", $crit));
+
+    if ($new_health <= 0 && $target->name == "king") {
+      $actions[] = action("game_end", jsonStr("reason", "king_death")
+        .",".jsonPair("winner", $team));
+      $db->query("UPDATE room_participants SET state = 'ended' WHERE room_id = '{$room_id}' AND event = ''");
+      $db->query("UPDATE rooms SET state = 'ended', winner = '$user->id' WHERE room_id = '{$room_id}'");
+    }
+  } 
+  return $actions;
+}
+
 function oppInsert($json) {
   global $db;
   global $room_id;
