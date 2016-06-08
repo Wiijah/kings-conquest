@@ -10,12 +10,15 @@ require_once 'includes/back_container.php';
 if (isset($_GET['delete'])) {
   $other_id = secureStr($_GET['delete']);
   $other = $db->query("SELECT * FROM users WHERE id = '{$other_id}'")->fetch_object();
-  $result = $db->query("SELECT * FROM friends WHERE (user_id = '{$user->id}' AND other_id = '{$other_id}') OR (other_id = '{$user->id}' AND user_id = '{$other_id}')");
+  if ($other) {
+    $result = $db->query("SELECT * FROM friends WHERE (user_id = '{$user->id}' AND other_id = '{$other_id}') OR (other_id = '{$user->id}' AND user_id = '{$other_id}')");
 
-  if ($fetch = $result->fetch_object()) {
-    $db->query("DELETE FROM friends WHERE (user_id = '{$user->id}' AND other_id = '{$other_id}') OR (other_id = '{$user->id}' AND user_id = '{$other_id}')");
-    if ($fetch->accepted == 0) echo lightbox_alert("Friend Request Removed", "You have successfully cancelled the friend request from ".linkUsername($other).".");
-    if ($fetch->accepted == 1) echo lightbox_alert("Friend Removed", "You have successfully removed ".linkUsername($other)." from your friends list.");
+    if ($fetch = $result->fetch_object()) {
+      $db->query("DELETE FROM friends WHERE (user_id = '{$user->id}' AND other_id = '{$other_id}') OR (other_id = '{$user->id}' AND user_id = '{$other_id}')");
+      if ($fetch->accepted == 0 && $friend->user_id == $user->id) echo lightbox_alert("Friend Request Cancelled", "You have successfully cancelled the friend request to ".linkUsername($other).".");
+      if ($fetch->accepted == 0 && $friend->other_id == $user->id) echo lightbox_alert("Friend Request Declined", "You have successfully declined the friend request from ".linkUsername($other).".");
+      if ($fetch->accepted == 1) echo lightbox_alert("Friend Removed", "You have successfully removed ".linkUsername($other)." from your friends list.");
+    }
   }
 } //end if isset cancel
 
@@ -23,11 +26,13 @@ if (isset($_GET['delete'])) {
 if (isset($_GET['accept'])) {
   $other_id = secureStr($_GET['accept']);
   $other = $db->query("SELECT * FROM users WHERE id = '{$other_id}'")->fetch_object();
-  $result = $db->query("SELECT * FROM friends WHERE user_id = '{$other_id}' AND other_id = '{$user->id}'");
+  if ($other) {
+    $result = $db->query("SELECT * FROM friends WHERE user_id = '{$other_id}' AND other_id = '{$user->id}'");
 
-  if ($fetch = $result->fetch_object()) {
-    $db->query("UPDATE friends SET accepted = 1 WHERE user_id = '{$other_id}' AND other_id = '{$user->id}'");
-    if ($fetch->accepted == 0) echo lightbox_alert("Friend Accepted", "You have successfully accepted the friend request from ".linkUsername($other).".");
+    if ($fetch = $result->fetch_object()) {
+      $db->query("UPDATE friends SET accepted = 1 WHERE user_id = '{$other_id}' AND other_id = '{$user->id}'");
+      if ($fetch->accepted == 0) echo lightbox_alert("Friend Accepted", "You have successfully accepted the friend request from ".linkUsername($other).".");
+    }
   }
 } //end if isset cancel
 

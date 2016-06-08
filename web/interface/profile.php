@@ -20,7 +20,11 @@ $ach_html = getAchievementsHTML($prof->id);
 if ($ach_html == "") $ach_html = "This player has no achievements.";
 
 
-$friend_result = $db->query("SELECT * FROM friends WHERE (user_id = '{$user->id}' AND other_id = '{$prof->id}') OR (other_id = '{$user->id}' AND user_id = '{$prof->id}')");
+$friend_query = "SELECT * FROM friends WHERE (user_id = '{$user->id}' AND other_id = '{$prof->id}') OR (other_id = '{$user->id}' AND user_id = '{$prof->id}')";
+$friend_result = $db->query($friend_query);
+$friend = $friend_result->fetch_object();
+
+
 ?>
 
 <div class="small_container prof_user">
@@ -28,25 +32,45 @@ $friend_result = $db->query("SELECT * FROM friends WHERE (user_id = '{$user->id}
 <?php 
 
 if (isset($_GET['add'])) {
-  if (!$fetch = $friend_result->fetch_object()) {
+  if (!$friend) {
     $db->query("INSERT INTO friends (user_id, other_id) VALUES('{$user->id}', '{$prof->id}')");
     echo Message("Friend Request Sent", "You have successfully sent your friend request to ".linkUsername($prof).".");
-  } else if ($fetch->accepted == 0 && $user->id == $fetch->user_id) {
+  } else if ($friend->accepted == 0 && $user->id == $friend->user_id) {
     echo Message("Request Already Sent", "You already have a friend request sent to ".linkUsername($prof).".");
-  } else if ($fetch->accepted == 0 && $user->id == $fetch->other_id) {
+  } else if ($friend->accepted == 0 && $user->id == $friend->other_id) {
     $db->query("UPDATE friends SET accepted = 1 WHERE user_id = '{$prof->id}' AND other_id = '{$user->id}'");
     echo Message("Friend Request Accepted", "".linkUsername($prof)." had already sent you a friend request earlier. You accepted the friend request instead.");
   } else {
     echo Message("Already Friends", "You and ".linkUsername($prof)." already have each other added as friends.");
   }
-}
+} //end if ADD friend
+
+/* Delete/Cancel Friend Request */
+if (isset($_GET['delete'])) {
+  if ($friend) {
+    $db->query("DELETE FROM friends WHERE (user_id = '{$user->id}' AND other_id = '{$prof->id}') OR (other_id = '{$user->id}' AND user_id = '{$prof->id}')");
+    if ($friend->accepted == 0 && $friend->user_id == $user->id) echo Message("Friend Request Removed", "You have successfully cancelled the friend request to ".linkUsername($prof).".");
+    if ($friend->accepted == 0 && $friend->other_id == $user->id) echo Message("Friend Request Declined", "You have successfully declined the friend request from ".linkUsername($prof).".");
+    if ($friend->accepted == 1) echo Message("Friend Removed", "You have successfully removed ".linkUsername($prof)." from your friends list.");
+  }
+} //end if isset cancel
 
 echo genTitle("Profile Of {$prof->username}"); ?>
 <div class="play_profile box">
 <table class="play_table">
 <tr><td class="prof_avatar" colspan="2"><img src="<?php echo getAvatarURL($prof->id); ?>" />
 <br />
-<div class='btn lightbox_btn js_link' data-href='profile?username=<?php echo $prof->username; ?>&add=<?php echo $prof->id; ?>&close=<?php echo secureStr($close); ?>'>Add Friend</div>
+<?php
+$friend_result = $db->query($friend_query);
+$friend = $friend_result->fetch_object();
+$friend_text = "Add Friend"; $friend_link = "add";
+if ($friend) {
+  if ($friend->accepted == 0 && $user->id == $friend->user_id) {$friend_text = "Cancel Friend Request"; $friend_link="delete";}
+  if ($friend->accepted == 0 && $user->id == $friend->other_id) {$friend_text = "Accept Friend Request";}
+  if ($friend->accepted == 1) { $friend_text = "Unfriend"; $friend_link="delete";}
+}
+?>
+<div class='btn lightbox_btn js_link' data-href='profile?username=<?php echo $prof->username; ?>&<?php echo $friend_link; ?>=1&close=<?php echo secureStr($close); ?>'><?php echo $friend_text; ?></div>
 </td>
 </tr>
 <tr><th>Username</th><td><?php echo $prof->username; ?> </td></tr>
