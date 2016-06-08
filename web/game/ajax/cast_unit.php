@@ -45,7 +45,7 @@ if ($caster->skill == "Shield") {
 } else if ($caster->skill == "Magic Damage") {
   $result = $db->query("SELECT * FROM units WHERE room_id = '{$room_id}' AND team != '{$team}' AND {$AOE}");
   while ($fetch = $result->fetch_object()) {
-    $actions[] = attack_unit($caster, $fetch);
+    $actions = attack_unit($caster, $fetch);
   }
 }
 
