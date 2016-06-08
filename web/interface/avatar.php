@@ -77,9 +77,11 @@ if ($equipped_html == "") {
 
 <div class="small_container friends_container">
 <?php
-echo $message;
 
-echo genBreadcrumbs(array("Lobby|index", "Avatar")); ?>
+echo genBreadcrumbs(array("Lobby|index", "Avatar"));
+
+echo $message;
+?>
 
 <?php echo genTitle("Customise Avatar"); ?>
 <div class="box standard_box center">

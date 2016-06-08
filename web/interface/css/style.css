@@ -1,4 +1,7 @@
 /* Default styling */
+.highlight {
+  color: #FFA600;
+}
 * {
   margin: 0;
   padding: 0;

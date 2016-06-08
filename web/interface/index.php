@@ -57,9 +57,11 @@ var room_id = 0;
 
 <?php echo genTitle("Actions"); ?>
 <div class="play_btn btn lightbox_open" data-lb="create_game">Create Game</div>
-<div class="play_btn btn lightbox_open" data-lb="tutorial">How To Play</div>
+<div class="play_btn btn lightbox_open" data-lb="tutorial">Tutorials</div>
 <div class="play_btn btn" id="goto_friends">Friends</div>
-<div class="play_btn btn lightbox_open" data-lb="achievements">Achievements</div>
+<!--<div class="play_btn btn lightbox_open" data-lb="achievements">Achievements</div>-->
+<div class="play_btn btn js_link" data-href="shop">Shop</div>
+<div class="play_btn btn js_link" data-href="leaderboard">Leaderboard</div>
 
 
 <?php echo genTitle("Your Profile"); ?>
@@ -80,6 +82,16 @@ var room_id = 0;
 <tr><th>Sign Up Date</th><td><?php echo formatSQLDate($user->created); ?></td></tr>
 </table>
 </div> <!-- play_profile box -->
+
+
+<br />
+<?php
+$ach_html = getAchievementsHTML($user->id);
+if ($ach_html == "") $ach_html = "You have not yet earned any achievements.";
+echo genTitle("Achievements");
+?>
+<div class="play_profile box center achievements">
+<?php echo $ach_html; ?>
 
 </div> <!-- play_right -->
 
