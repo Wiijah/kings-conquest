@@ -7,6 +7,23 @@ $TEAM_BLUE = 1;
 
 $SELECT_UNIT = "SELECT * FROM units JOIN classes ON units.class_id = classes.class_id WHERE";
 
+function update_unit($unit, $canMove = -1, $canAttack = -1, $outOfMoves = -1, $skillCoolDown = -1) {
+  global $db;
+
+  if ($canMove == -1) $canMove = $unit->canMove;
+  if ($canAttack == -1) $canAttack = $unit->canAttack;
+  if ($outOfMoves == -1) $outOfMoves = $unit->outOfMoves;
+  if ($skillCoolDown == -1) $skillCoolDown = $unit->skillCoolDown;
+
+  $db->query("UPDATE units SET canMove = {$canMove}, canAttack = {$canAttack}, outOfMoves = {$outOfMoves}, skillCoolDown = {$skillCoolDown} WHERE unit_id = '{$unit->unit_id}'");
+
+  return '{ "action_type" : "update_unit",
+    "canMove" : '.$canMove.',
+    "canAttack" : '.$canAttack.',
+    "outOfMoves" : '.$outOfMoves.',
+    "skillCoolDown" : '.$skillCoolDown.'}';
+}
+
 function create_unit($name, $x, $y, $team) {
   global $db;
   global $room_id;
