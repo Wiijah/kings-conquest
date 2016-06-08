@@ -72,6 +72,7 @@ var room_id = 0;
 </td></tr>
 <tr><th>Username</th><td><?php echo $user->username; ?></td></tr>
 <tr><th>Email</th><td><?php echo $user->email; ?></td></tr>
+<tr><th>King Points</th><td><?php echo number_format($user->kp); ?></td></tr>
 <tr><th>Games Won</th><td><?php echo number_format($user->wins); ?></td></tr>
 <tr><th>Games Lost</th><td><?php echo number_format($user->losses); ?></td></tr>
 <tr><th>ELO Rating</th><td><?php echo number_format($user->elo); ?></td></tr>
