@@ -23,7 +23,6 @@ function hashPass($pass) {
 function passVerify($input, $encrypted_password) {
   return password_verify($input, $encrypted_password);
 }
-
 //ekko is an extension to echo, supporting undeclared variables
 function ekko(&$str) {
   if (!isset($str)) echo "";

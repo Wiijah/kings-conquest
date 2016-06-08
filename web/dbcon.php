@@ -14,6 +14,7 @@ if ($isLoggedIn) {
   $query = "SELECT * FROM users WHERE id = '".$_SESSION['id']."'";
   $res = $db->query($query);
   $user = $res->fetch_object();
+  updateLastActive();
 }
 
 if (!isset($_SESSION['token'])) {
@@ -41,5 +42,11 @@ function secureInt(&$input) {
 function secureOutput(&$str) {
   if (!isset($str)) return "";
   return htmlentities(stripslashes($str)); 
+}
+
+function updateLastActive() {
+  global $db;
+  global $user;
+  $db->query("UPDATE users SET lastactive = '".time()."' WHERE id = '{$user->id}'");
 }
 ?>
