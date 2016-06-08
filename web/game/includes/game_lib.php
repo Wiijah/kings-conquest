@@ -89,7 +89,7 @@ function jsonUnit($unit) {
         jsonPair("attack", $unit->attack).','.
         jsonStr("skill", $unit->skill).','.
         jsonPair("luck", $unit->luck).','.
-        jsonPair("commandable", $unit->luck).','.
+        jsonPair("commandable", $unit->commandable).','.
         jsonPair("x", $unit->x).','.
         jsonPair("y", $unit->y).','.
         jsonPair("buffs", "[{$buffs}]").','.

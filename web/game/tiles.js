@@ -531,7 +531,7 @@ function drawMenuDisplay(){
 	  quitIcon.addEventListener("click", function(event){
 
     displayWarningBox(function(){
-      alert("quit the game, location to game lobby");
+      quit_game();
     },function(){
       removeWarningBox();
     });

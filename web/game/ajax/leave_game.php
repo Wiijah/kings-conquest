@@ -9,20 +9,18 @@ if (!$opp = $result->fetch_object()) {
  exit_error($ERROR_NOT_IG); //Error, not in room
 }
 
-/* End the game and set the victor to the opponent */
-$db->query("UPDATE rooms SET state = 'ended', winner = '$opp->user_id' WHERE room_id = '{$room_id}'");
-$db->query("UPDATE room_participants SET state = 'ended' WHERE room_id = '{$room_id}' AND event = ''");
+$actions = array();
+
+/* End game */
+$opp_id = get_opponent_id();
+$result = $db->query("SELECT * FROM users WHERE id = '{$opp_id}'");
+$opp = $result->fetch_object();
+$actions = array_merge($actions, gameEnd($user, $opp, "quit_game"));
 
 $out = "{";
 $out .= $SUCCESS.",";
-$out .= action("game_end",
-        jsonPair("winner", 1 - $team)
-   .",".jsonStr("reason", "player_left")
-      );
-
-$out .= jsonPair("actions", "[{$action}]");
+$out .= jsonPair("actions", jsonArray($actions));
 $out .= "}";
-
 oppInsert($out);
 echo $out;
 ?>
