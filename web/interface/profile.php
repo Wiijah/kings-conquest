@@ -22,6 +22,10 @@ if ($close == 1) {
   $text = "Back To Friends";
   $link = "friends";
   $breadcrumbs = genBreadcrumbs(array("Lobby|index", "Friends|friends", "Profile Of {$prof->username}"))."<br />";
+} else if ($close == 3) { 
+  $text = "Back To Leaderboards";
+  $link = "leaderboard";
+  $breadcrumbs = genBreadcrumbs(array("Lobby|index", "Leaderboards|leaderboard", "Profile Of {$prof->username}"))."<br />";
 } else {
   $breadcrumbs = genBreadcrumbs(array("Lobby|index", "Profile Of {$prof->username}"))."<br />";
 }

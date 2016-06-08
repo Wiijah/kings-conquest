@@ -1,5 +1,5 @@
 <?php
-$title = "Avatar";
+$title = "Shop";
 require_once 'includes/header_checks.php';
 include 'includes/header.php';
 include 'includes/logout_container.php';
@@ -40,7 +40,7 @@ echo $message;
 <div class="box standard_box center">
 <img src="<?php echo getAvatarURL($user->id); ?>" class="avatar" />
 <br /><br />
-Here you can use your hard-earned King Points to purchase some merchandise.<br />
+Here you can use your hard-earned King Points to purchase merchandise.<br />
 You currently have <span class='highlight'><?php echo number_format($user->kp); ?></span> King Points.
 </div> 
 <br />
