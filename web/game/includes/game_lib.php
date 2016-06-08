@@ -7,6 +7,14 @@ $TEAM_BLUE = 1;
 
 $SELECT_UNIT = "SELECT * FROM units JOIN classes ON units.class_id = classes.class_id WHERE";
 
+function aoe($x, $y) {
+  return "((x = '{$x}' AND y = '{$y}')
+           OR (x = '".($x - 1)."' AND y = '{$y}')
+           OR (x = '".($x + 1)."' AND y = '{$y}')
+           OR (x = '{$x}' AND y = '".($y + 1)."')
+           OR (x = '{$x}' AND y = '".($y - 1)."'))";
+}
+
 function update_unit($unit, $canMove = -1, $canAttack = -1, $outOfMoves = -1, $skillCoolDown = -1) {
   global $db;
 
@@ -18,6 +26,7 @@ function update_unit($unit, $canMove = -1, $canAttack = -1, $outOfMoves = -1, $s
   $db->query("UPDATE units SET canMove = {$canMove}, canAttack = {$canAttack}, outOfMoves = {$outOfMoves}, skillCoolDown = {$skillCoolDown} WHERE unit_id = '{$unit->unit_id}'");
 
   return '{ "action_type" : "update_unit",
+    "unit_id" : '.$unit->unit_id.',
     "canMove" : '.$canMove.',
     "canAttack" : '.$canAttack.',
     "outOfMoves" : '.$outOfMoves.',
@@ -76,6 +85,7 @@ function jsonUnit($unit) {
         jsonPair("attack", $unit->attack).','.
         jsonStr("skill", $unit->skill).','.
         jsonPair("luck", $unit->luck).','.
+        jsonPair("commandable", $unit->luck).','.
         jsonPair("x", $unit->x).','.
         jsonPair("y", $unit->y).','.
         jsonPair("buffs", "[{$buffs}]").','.
@@ -127,6 +137,7 @@ function attack_unit($attacker, $target) {
   global $user;
   global $team;
   global $room_id;
+  global $player;
 
   $result = $db->query("SELECT * FROM buff_instances WHERE unit_id = '{$target->unit_id}' AND buff_id = 4");
   $shield = $result->fetch_object();
@@ -150,6 +161,7 @@ function attack_unit($attacker, $target) {
     $new_health = $target->hp - $damage;
     if ($new_health <= 0) { /* Target died */
       $db->query("DELETE FROM units WHERE unit_id = '{$target->unit_id}'");
+      $db->query("UPDATE room_participants SET unit_kills = unit_kills + 1 WHERE part_id = '{$player->part_id}'");
     } else { /* Target hurt but survived */
       $db->query("UPDATE units SET hp = '{$new_health}' WHERE unit_id = '{$target->unit_id}'");
     }
@@ -173,7 +185,7 @@ function attack_unit($attacker, $target) {
 }
 
 function damageByBuff($buff, $target, $damage) {
-  global $db, $room_id;
+  global $db, $room_id, $part_id;
   $result = $db->query("SELECT * FROM buff_instances WHERE unit_id = '{$target->unit_id}' AND buff_id = 4");
   $shield = $result->fetch_object();
 
@@ -192,6 +204,7 @@ function damageByBuff($buff, $target, $damage) {
 
     if ($new_health <= 0) { /* Target died */
       $db->query("DELETE FROM units WHERE unit_id = '{$target->unit_id}'");
+      $db->query("UPDATE room_participants SET unit_kills = unit_kills + 1 WHERE part_id = '{$player->part_id}'");
     } else { /* Target hurt but survived */
       $db->query("UPDATE units SET hp = '{$new_health}' WHERE unit_id = '{$target->unit_id}'");
     }
@@ -238,7 +251,7 @@ function gameEnd($winner, $loser, $reason) {
   
 
   /* Update room and room participants */
-  $db->query("UPDATE room_participants SET state = 'ended' WHERE room_id = '{$room_id}' AND event = ''");
+  $db->query("UPDATE room_participants SET event = 'ended' WHERE room_id = '{$room_id}' AND event = ''");
   $db->query("UPDATE rooms SET state = 'ended', winner = '$winner->id', elo_won = {$elo_won}, elo_lost = {$elo_lost} WHERE room_id = '{$room_id}'");
 
   /* Update user profiles */

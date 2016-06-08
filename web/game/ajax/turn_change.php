@@ -15,12 +15,24 @@ $actions = array();
 /* Update the room to the new turn */
 $db->query("UPDATE rooms SET turn = '{$new_turn}' WHERE room_id = '{$room_id}'");
 
+/* Burn effect */
 $result = $db->query("SELECT * FROM buff_instances JOIN buffs USING (buff_id) WHERE room_id = '{$room_id}' AND buff_id = 5");
 $buff_list = array();
 while ($buff = $result->fetch_object()) {
   $unit = select_unit($buff->unit_id);
   $damage = ceil($unit->max_hp * 0.02);
   $buff_list = array_merge($buff_list, damageByBuff($buff, $unit, $damage));
+}
+
+/* Heal units via Totem */
+$result = $db->query("SELECT * FROM units JOIN classes USING (class_id) WHERE room_id = '{$room_id}' AND name='totem'");
+while ($totem = $result->fetch_object()) {
+  $result2 = $db->query("SELECT * FROM units WHERE room_id = '{$room_id}' AND team = '{$team}' AND ".aoe($totem->x, $totem->y));
+  while ($unit = $result2->fetch_object()) {
+    $heal = ceil($unit->max_hp * 0.03);
+    if ($heal + $unit->hp > $unit->max_hp) $heal = $unit->max_hp - $unit->hp;
+    $buff_list[] = triggerBufferJson("Heal", $unit->unit_id, $heal);
+  }
 }
 
 /* Decrement buff turns left */
