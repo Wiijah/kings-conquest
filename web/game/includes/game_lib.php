@@ -81,10 +81,12 @@ function select_unit($unit_id) {
 }
 function give_buff($unit, $buff_id, $turns_left) {
   global $db;
+  global $room_id;
+  
   $actions = array();
   $result = $db->query("SELECT * FROM buff_instances WHERE buff_id = '{$buff_id}' AND unit_id = '{$unit->unit_id}'");
   if ($result->num_rows == 0) {
-    $db->query("INSERT INTO buff_instances (buff_id, unit_id, turns_left) VALUES ('{$buff_id}', '{$unit->unit_id}', '{$turns_left}')");
+    $db->query("INSERT INTO buff_instances (buff_id, unit_id, turns_left, room_id) VALUES ('{$buff_id}', '{$unit->unit_id}', '{$turns_left}', '{$room_id}')");
   } else {
     $db->query("UPDATE buff_instances SET turns_left = '{$turns_left}' WHERE buff_id = '{$buff_id}' AND unit_id = '{$unit->unit_id}'");
   }
