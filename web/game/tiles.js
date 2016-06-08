@@ -117,10 +117,19 @@ function handleBuffEffect(action) {
                 setTimeout(function() {
                     chars.removeChild(fire);
                 }, 1000);
-            }, 1000);
-            
+            }, 800);
             break;
         case "Heal":
+            setTimeout(function() {
+                var heal = new createjs.Sprite(unit.healEffect, "heal");
+                heal.x = unit.x;
+                heal.y = unit.y;
+                chars.addChild(heal);
+
+                setTimeout(function() {
+            chars.removeChild(heal);
+        }, 1000);
+            }, 800);
             break;
         case "Freeze":
             break;
@@ -227,7 +236,7 @@ function spawnUnit(data, isCreation, row, column){
 		createjs.Ticker.addEventListener("tick", stage);
 		// Configure unit coordinates
         unit.unit_id = data.unit_id;
-        // console.log("unit_id: " + unit.unit_id);
+        unit.commandable = data.commandable;
 		unit.hp = data.hp;
 		unit.max_hp = data.max_hp;
 		unit.attack = data.attack;
@@ -807,16 +816,30 @@ function createFloatingCards(listOfSources, correspondingUnit) {
                     // createNewUnit("knight");
                 });
 				break;
-			// case "rogue": 
-			// 	unitCards[i].addEventListener("click", function(event) {
-			// 		if (currentGold >= 100) {
-			// 			spawnUnit("rogue",false, 5,2,turn);
-			// 			currentGold -= 100;
-			// 			currentGoldDisplay.text = ("Gold: " + currentGold);
-			// 		}
-			// 		changed = true;
-			// 	});
-			// 	break;
+			case "totem":
+                unitCards[i].addEventListener("click", function(event) {
+                    var spawnTiles = findAvailableAndNonAvailableSpawnTiles(15);
+                    highlightArea(spawnTiles[0], "graphics/tile/green_tile.png", ["click"], [function(event) {
+                        var tile = event.target;
+                        createNewUnit("totem", tile.row, tile.column);
+                        clearSelectionEffects();
+                    }]);
+                    highlightArea(spawnTiles[1], "graphics/tile/red_tile.png", [], []);
+                    // createNewUnit("knight");
+                });
+                break;
+            case "dragon":
+                unitCards[i].addEventListener("click", function(event) {
+                    var spawnTiles = findAvailableAndNonAvailableSpawnTiles();
+                    highlightArea(spawnTiles[0], "graphics/tile/green_tile.png", ["click"], [function(event) {
+                        var tile = event.target;
+                        createNewUnit("dragon", tile.row, tile.column);
+                        clearSelectionEffects();
+                    }]);
+                    highlightArea(spawnTiles[1], "graphics/tile/red_tile.png", [], []);
+                    // createNewUnit("knight");
+                });
+                break;
 		}
 		
 		unitCards[i].addEventListener("mouseover", function(event) {
@@ -853,8 +876,9 @@ function addEventListenersToUnit(unit) {
             }
             if (!movingPlayer && !isAttacking && !isCasting) {
                 clearSelectionEffects();
+                // console.log(unit.row + " " + unit.column + " " + unit.commandable + " " + turn);
                 selectedCharacter = unit;
-                if (unit.team == turn && unit.team == team) showActionMenuNextToPlayer(unit);
+                if (unit.team == turn && unit.team == team && unit.commandable == 1) showActionMenuNextToPlayer(unit);
                 displayStats(unit);
                 return;
             }
@@ -2202,8 +2226,8 @@ function handleUnitUpdate(action) {
     var unit = findUnitById(action.unit_id);
     unit.canMove = action.canMove;
     unit.canAttack = action.canAttack;
-    unit.skillCoolDown = actions.skillCoolDown;
-    unit.outOfMoves = actions.outOfMoves;
+    unit.skillCoolDown = action.skillCoolDown;
+    unit.outOfMoves = action.outOfMoves;
 }
 
 function handleOpponent(data) {
