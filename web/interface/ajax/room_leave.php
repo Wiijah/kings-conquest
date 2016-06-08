@@ -7,8 +7,9 @@ $room_id = secureStr($_POST['room_id']);
 
 /* Check if the client already left the room or cannot leave the room */
 
-$result = $db->query("SELECT * FROM rooms WHERE room_id = {$room_id}");
+$result = $db->query("SELECT * FROM rooms WHERE room_id = '{$room_id}'");
 $room = $result->fetch_object();
+
 if ($result->num_rows == 0) { //room no longer exists
   die('{"kc_success":""}');
 }
@@ -28,7 +29,7 @@ $db->query("INSERT INTO chat (user, message, room_id, chat_type) VALUES
     ('{$user->id}', '{$message}', '{$room_id}', 'event')");
 
 /* Delete room and room participant records if owner */
-if ($participant->state == 'owner') {
+if ($part->state == 'owner') {
   $db->query("DELETE FROM rooms WHERE room_id = '{$room_id}'");
   $db->query("DELETE FROM room_participants WHERE room_id = '{$room_id}'");
 } else { /* Otherwise, leave the game without deleting the room */

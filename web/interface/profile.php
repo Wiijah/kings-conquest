@@ -46,7 +46,9 @@ $friend = $friend_result->fetch_object();
 echo $breadcrumbs;
 
 if (isset($_GET['add'])) {
-  if (!$friend) {
+  if ($prof->id == $user->id) {
+      echo Message("Cannot Add Yourself", "You cannot add yourself into your own friends list.");
+  } else if (!$friend) {
     $db->query("INSERT INTO friends (user_id, other_id) VALUES('{$user->id}', '{$prof->id}')");
     echo Message("Friend Request Sent", "You have successfully sent your friend request to ".linkUsername($prof).".");
   } else if ($friend->accepted == 0 && $user->id == $friend->user_id) {
