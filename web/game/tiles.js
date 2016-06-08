@@ -1121,7 +1121,7 @@ function handleKnightSkill(knight) {
 
 function cast(skillName, unit) {
 	switch (skillName) {
-		case "Buffer": // King's skill
+		case "Battle Cry": // King's skill
             serverValidate("skill", unit, []);
 			// $.each(units, function(i, value) {
 			// 	if (value.team === selectedCharacter.team) {
@@ -1181,7 +1181,9 @@ function cast(skillName, unit) {
 	    	isAttacking = false;
 	    	// drawRange(findReachableTiles(selectedCharacter.column, selectedCharacter.row, selectedCharacter.attackRange, false), 2);
 	    	var reachableTiles = findReachableTiles(selectedCharacter.row, selectedCharacter.column, selectedCharacter.attackRange, false);
-	    	highlightArea(reachableTiles, "graphics/tile/red_tile.png", ["click", "mouseover", "mouseout"], [castWizardSpellOnClick, highlightWizardSpellCross, clearWizardSpellCross]);
+	    	highlightArea(reachableTiles, "graphics/tile/red_tile.png", ["click", "mouseover", "mouseout"], [function(event) {
+                serverValidate("skill", selectedCharacter, [event.target.row, event.target.column]);
+            }, highlightWizardSpellCross, clearWizardSpellCross]);
 			break;
 		case "YoMAMA":
 			remainingAttackTimes = 1;
@@ -1805,7 +1807,7 @@ function keyEvent(event) {
 			}
 			break;
 		case 82: // keyboard r
-			if (endGame){
+			if (gameEnd){
 				location.reload();
 			}
 		case 83: //s
@@ -2054,7 +2056,14 @@ function serverValidate(type, unit, additionalArgs) {
     }
 
     if (type === "skill") {
-        rawPost("ajax/cast_unit", {"caster_id": unit.unit_id}, handleServerReply);
+        if (unit.skill === "Battle Cry" || unit.skill === "Shield") { // King and knight spell
+            rawPost("ajax/cast_unit", {"caster_id": unit.unit_id}, handleServerReply);
+        }
+
+        if (unit.skill === "Magic Damage") { // Wizard spell
+            rawPost("ajax/cast_unit", {"caster_id": unit.unit_id, "x": additionalArgs[0], "y": additionalArgs[1]}, handleServerReply);
+        }
+
     }
 }
 
