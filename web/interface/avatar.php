@@ -20,7 +20,15 @@ if ($items_html == "") {
   $items_html = "<div class='box center'><table class='play_table'><tr><th>Item</th><th>Quantity</th><th>Equip</th></tr>{$items_html}</table></div>";
 }
 
-/* Equip Item */
+/* Equipped HTML */
+$equipped_list = array();
+
+if ($user->head != 0) {
+  $result = $db->query("SELECT * FROM items WHERE item_id = '{$user->head}'");
+  $fetch = $result->fetch_object();
+  $equipped_list[] = $fetch;
+}
+
 
 
 ?>
@@ -34,6 +42,13 @@ if ($items_html == "") {
 <img src="<?php echo getAvatarURL($user->id); ?>" class="avatar" />
 <br /><br />
 Here you can customise your avatar with items you have earned.
+</div> 
+<br />
+
+<?php echo genTitle("Equipped Items"); ?>
+<div class="box center">
+<div class='box center'>
+<table class='play_table'><tr><th>Item</th><th>Quantity</th><th>Equip</th></tr>{$items_html}</table></div>
 </div> 
 <br />
 

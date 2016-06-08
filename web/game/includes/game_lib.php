@@ -43,6 +43,16 @@ function select_unit($unit_id) {
 }
 
 function jsonUnit($unit) {
+  global $db;
+
+  $result = $db->query("SELECT * FROM buff_instances WHERE unit_id = '{$unit->id}'");
+  $buffs = "";
+  $comma = "";
+  while ($buff = $result->fetch_object()) {
+    $buffs .= $comma."{$buff->buff_id}";
+    $comma = ",";
+  }
+
   return '"'.$unit->unit_id.'": {
       '.jsonStr("address", $unit->address).','.
         jsonStr("spritesheet", $unit->spritesheet).','.
@@ -55,6 +65,7 @@ function jsonUnit($unit) {
         jsonPair("luck", $unit->luck).','.
         jsonPair("x", $unit->x).','.
         jsonPair("y", $unit->y).','.
+        jsonPair("buffs", "[{$buffs}]").','.
         jsonPair("moveRange", $unit->moveRange).','.
         jsonPair("team", $unit->team).','.
         jsonPair("attackRange", $unit->attackRange).','.

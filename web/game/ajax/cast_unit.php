@@ -21,7 +21,6 @@ if ($target_id > 0) {
 if ($caster->skill == "Shield") {
   $db->query("INSERT INTO buff_instances (buff_id, unit_id, turns_left) VALUES ('4', '{$caster->unit_id}', '-1')");
 
-
   $out = '{';
   $out .= $SUCCESS.",";
   $actions[] = action("apply_buff",
