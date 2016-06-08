@@ -81,7 +81,7 @@
         z-index:30;
         right:180px;
         top:0;
-        background: rgba(0,0,0,.5);
+        background: rgba(0,0,0,.8);
         width:100%;
         height:100%;
        display: none;
@@ -93,8 +93,8 @@
         z-index: 30;
         margin-left: 100%;
         left: -180px;
-        top: 50px;
-        background: rgba(0,0,0,.5);
+        top: 80px;
+        background: rgba(0,0,0,.8);
         width:100%;
         height:100%;
         display: none;
@@ -106,9 +106,9 @@
       #maskBox3 {
         position:fixed;
         z-index:30;
-        left:520px;
+        left:540px;
         top:0;
-        background: rgba(0,0,0,.5);
+        background: rgba(0,0,0,.8);
         width:100%;
         height:100%;
         display: none;
@@ -119,9 +119,9 @@
         position:fixed;
         z-index: 30;
         margin-right: 100%;
-        right: -520px;
-        bottom: 170px;
-        background: rgba(0,0,0,.5);
+        right: -540px;
+        bottom: 150px;
+        background: rgba(0,0,0,.8);
         width:100%;
         height:100%;
         display: none;

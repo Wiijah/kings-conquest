@@ -116,6 +116,11 @@ function showTurnInfo(){
 
 
 function turnStartPhase() {
+  if (!turn){
+    stage.mouseChildren = false;
+  } else {
+    stage.mouseChildren = true;
+  }
 
   turnCount ++;
 
@@ -125,6 +130,14 @@ function turnStartPhase() {
   // }
   if (turnCount == 2 && currentUnit.skill_no == 3){
     if(!endCurrentUnitTutorial) kt_instruction4();
+  }
+
+  if (turnCount == 2 && currentUnit.skill_no == 4){
+    if(!endCurrentUnitTutorial) w_instruction5();
+  }
+
+  if (turnCount == 2 && currentUnit.skill_no == 6){
+    if(!endCurrentUnitTutorial) d_instruction5();
   }
 
   undoMove = [];
@@ -222,9 +235,9 @@ function turnStartPhase() {
       a_instruction5();
     }
 
-    if (currentUnit.address == "graphics/spritesheet/stand/ss_wizard_stand.png" && turnCount == 2) {
-      w_instruction5();
-    }
+    // if (currentUnit.address == "graphics/spritesheet/stand/ss_wizard_stand.png" && turnCount == 2) {
+    //   w_instruction5();
+    // }
 
     setTimeout(function(){
       showActionMenuNextToPlayer(enemyUnit);
@@ -906,14 +919,14 @@ function findAvailableAndNonAvailableSpawnTiles() {
     }
     return [availableSpawnTiles, nonAvailableSpawnTiles];
 }
-
+var finishAll = false;
 
 function createFloatingCards(listOfSources, correspondingUnit) {
   var numOfCards = listOfSources.length;
     var newUnitSpawnTiles = [];
   for (i = 0; i < listOfSources.length; i++) {
     unitCards[i] = new createjs.Bitmap(listOfSources[i]);
-    var unit_card_text = new createjs.Text("click", "12px 'Arial'", "#ffffff");
+    var unit_card_text = new createjs.Text("", "12px 'Arial'", "#ffffff");
     unitCards[i].y = 0;
     unitCards[i].x = i * (110);
     unitCards[i].scaleX = 0.60;
@@ -926,30 +939,40 @@ function createFloatingCards(listOfSources, correspondingUnit) {
     switch(unitCards[i].unitName ){
       case "king":
         unitCards[i].addEventListener("click", function(event) {
+                    if(kingDone) return;
+                    if(!endCurrentUnitTutorial) return;
                     if (!turn) return;
                     showKingTutorial();
         });
         break;
       case "knight": 
         unitCards[i].addEventListener("click", function(event) {
+          if(knightDone) return;
+          if(!endCurrentUnitTutorial) return;
                     if (!turn) return;
                     showKnightTutorial();
         });
         break;
       case "archer": 
         unitCards[i].addEventListener("click", function(event) {
+          if(archerDone) return;
+          if(!endCurrentUnitTutorial) return;
                     if (!turn) return;
                     showArcherTutorial();
         });
         break;
       case "wizard": 
         unitCards[i].addEventListener("click", function(event) {
+          if(wizardDone) return;
+          if(!endCurrentUnitTutorial) return;
                     if (!turn) return;
                     showWizardTutorial();
         });
         break;
       case "dragon":
         unitCards[i].addEventListener("click", function(event) {
+          if(dragonDone) return;
+          if(!endCurrentUnitTutorial) return;
                     if (!turn) return;
                     showDragonTutorial();
         });
@@ -2247,16 +2270,19 @@ function keyEvent(event) {
         clearSelectionEffects();
       }
     case 70:
-//      goFullScreen();
       break;
         case 13: //enter
+          if (!startTutorial) return;
+          if (turnCount == 0) return;
           if (!turn) return;
           if (!endGame) {
             endTurn();
           }
     }
 }
+var knight;
 function endTurn(){
+  if(!endCurrentUnitTutorial && !knight) return;
   clearSelectionEffects();
   turn = 1 - turn;
   turnEndPhase();
@@ -2599,17 +2625,19 @@ function resetInsturctions(){
   isAttacking = false;
   endCurrentUnitTutorial = false;
   removeBox();
+  knight = false;
 }
 
 // King Tutorial ==========================
-
+var start = false;
 function showKingTutorial(){
+  stage.update();
   turnCount = 0;
   resetInsturctions();
   displayBox(function() {
     k_instruction();
   });
-  addTitleToBox("King");
+  addTitleToBox("<img src=\"./i_icon.png\" style=\"line-height: 1px; vertical-align: bottom; margin-right: 5px\" height=\"20\" width=\"20\" />King");
   addTextToBox("<p>The king is the core of the army. He has really high HP and balanced damage and range.</p><p>Normal Attack: 25</p><p>Skill: Battle Cry</p><p>(Increase all team units' base attack by 20%.)</p>");
   resetTheGame();
   spawnUnit(that.classStats.kingClass, true, 2, 5, 1);
@@ -2619,6 +2647,7 @@ function showKingTutorial(){
 
 
 function k_instruction(){
+
   removeBox();
   displayBox(function() {
     removeBox();
@@ -2655,20 +2684,28 @@ function k_instruction3(){
 function k_instruction4(){
   endTurn();
   removeBox();
-  displayBox2(function() {
+  displayBox2(function(){
     removeBox();
-    checkCompleness();
-  },function(){
-    removeBox();
-    showKnightTutorial();
     checkCompleness();
   });
-  addTextToButton("OK");
-  addTextToButton2("Next");
+    addTextToButton("Next");
   addTitleToBox("King");
-  addTextToBox("<p>Excellent! Now you know how to use the king's skill.</p> <p>Click 'OK' to continue to play as the king or try another unit by clicking on the corresponding card in the bottom left corner of the window. </p><p>Click 'Next' to play the Knight Tutorial</p>");
+  addTextToBox("<p>Excellent! Now you know how to use the king's skill.</p> <p>Try another unit by clicking on the corresponding card in the bottom left corner of the window. </p><p>Click 'Next' to play the next character</p>");
   kingDone = 1;
+  unitCards[0].removeAllEventListeners();
+  toPlayList.splice(toPlayList.indexOf("king"),1);
   endCurrentUnitTutorial = true;
+
+
+    var done = new createjs.Bitmap("graphics/done.png");
+    done.scaleX = 0.65;
+    done.scaleY = 0.65;
+    done.y = bottomInterface.y + 80;
+    done.x = bottomInterface.x+80;
+    stage.addChild(done);
+    stage.update();
+    //unitCreationMenu.setChildIndex(unit_card_text, 999999);
+
 }
 
 
@@ -2681,7 +2718,7 @@ function showKnightTutorial(){
     kt_instruction();
   });
   addTextToBox("<p>A knight has really strong defensive abilities with his heavy armor. Because of this, knight has a short moving range compared to other classes. However knights are the best in melee combat. Be careful if they are in front of you.</p><p>Normal Attack: 40</p><p>Skill: Holy Shield</p><p>(Can block any damage from enemy once before getting destroyed.)</p>");
-  addTitleToBox("Knight");
+  addTitleToBox("<img src=\"./i_icon.png\" style=\"line-height: 1px; vertical-align: bottom; margin-right: 5px\" height=\"20\" width=\"20\" />Knight");
   resetTheGame();
 
   addTextToButton("Next");
@@ -2715,6 +2752,7 @@ function kt_instruction3(){
   removeBox();
   displayBox(function() {
     removeBox();
+    knight = true;
     endTurn();
   });
   showButton();
@@ -2725,20 +2763,24 @@ function kt_instruction3(){
 
 function kt_instruction4(){
   removeBox();
-  displayBox2(function() {
-    checkCompleness();
+  displayBox(function() {
     removeBox();
-  },function(){
-    removeBox();
-    showArcherTutorial();
     checkCompleness();
   });
-  addTextToButton("OK");
-  addTextToButton2("Next");
+    addTextToButton("Next");
   addTitleToBox("Knight");
-  addTextToBox("<p>Excellent! You take zero damage from the enemy king.</p> <p>Click 'OK' to continue to play as the knight or try another unit by clicking on the corresponding card in the bottom left corner of the window. </p><p>Click 'Next' to play the Archer Tutorial</p>");
+  addTextToBox("<p>Excellent! Now you know how to use the knight's skill.</p> <p>Try another unit by clicking on the corresponding card in the bottom left corner of the window. </p><p>Click 'Next' to play the next character</p>");
   knightDone = 1;
+  toPlayList.splice(toPlayList.indexOf("knight"),1);
   endCurrentUnitTutorial = true;
+  unitCards[1].removeAllEventListeners();
+      var done = new createjs.Bitmap("graphics/done.png");
+    done.scaleX = 0.65;
+    done.scaleY = 0.65;
+    done.y = bottomInterface.y + 80;
+    done.x = bottomInterface.x+190;
+    stage.addChild(done);
+    stage.update();
 }
 
 // Archer tutorial ==================
@@ -2752,7 +2794,7 @@ function showArcherTutorial(){
     a_instruction();
   });
   addTextToBox("<p>An archer is the master of using the bow and arrows. Really large attack range and he knows the weakness of enermy have a really high critical chance. </p> <p>Normal Attack: 20</p><p> Skill: Double Shoot</p><p>(shoot two fatal arrows to targets the arrow will decrease the target's base attack damage by 20% for 3 turns.)</p>");
-  addTitleToBox("Archer");
+  addTitleToBox("<img src=\"./i_icon.png\" style=\"line-height: 1px; vertical-align: bottom; margin-right: 5px\" height=\"20\" width=\"20\" />Archer");
   addTextToButton("Next");
   resetTheGame();
   spawnUnit(that.classStats.archerClass, true, 2, 5, 1);
@@ -2804,21 +2846,27 @@ function a_instruction4(){
 
 function a_instruction5(){
   removeBox();
-  displayBox2(function() {
+  displayBox(function() {
+      removeBox();
     checkCompleness();
-    removeBox();
-  },function(){
-    removeBox();
-    showWizardTutorial();
-    checkCompleness();
+    endCurrentUnitTutorial = true;  
   });
-  addTextToButton("OK");
-  addTextToButton2("Next");
+    addTextToButton("Next");
   addTitleToBox("Archer");
-  addTextToBox("<p>Excellent! Now you know the skill of archer.</p> <p>Click 'OK' to continue to play as the archer or try another unit by clicking on the corresponding card in the bottom left corner of the window. </p><p>Click 'Next' to play the Wizard Tutorial</p>");
+  addTextToBox("<p>Excellent! Now you know how to use the archer's skill.</p> <p>Try another unit by clicking on the corresponding card in the bottom left corner of the window. </p><p>Click 'Next' to play the next character</p>");
   archerDone = 1;
+  toPlayList.splice(toPlayList.indexOf("archer"),1);
   endCurrentUnitTutorial = true;
+  unitCards[2].removeAllEventListeners();
+      var done = new createjs.Bitmap("graphics/done.png");
+    done.scaleX = 0.65;
+    done.scaleY = 0.65;
+    done.y = bottomInterface.y + 80;
+    done.x = bottomInterface.x+300;
+    stage.addChild(done);
+    stage.update();
 }
+
 
 // Wizard tutorial ==================
 
@@ -2829,7 +2877,7 @@ function showWizardTutorial(){
     w_instruction();
   });
   addTextToBox("<p>A wizard uses arcane magic. Can deal really high AOE (Area of effect) demage and burn the targets. However wizards are less effective in melee combat. </p> <p>Normal Attack: 15 </p><p>Skill: Burning</p><p>(maximum 5 target in a cross) and the targets get 2% of its maximum health burning demage each turn.)</p>");
-  addTitleToBox("Wizard");
+  addTitleToBox("<img src=\"./i_icon.png\" style=\"line-height: 1px; vertical-align: bottom; margin-right: 5px\" height=\"20\" width=\"20\" />Wizard");
   resetTheGame();
   addTextToButton("Next");
   spawnUnit(that.classStats.wizardClass, true, 2, 5, 1);
@@ -2871,8 +2919,8 @@ function w_instruction4(){
   removeBox();
   displayBox(function() {
     removeBox();
+    knight = true;
     endTurn();
-    w_instruction5();
   });
   showButton();
   addTitleToBox("Wizard");
@@ -2881,20 +2929,25 @@ function w_instruction4(){
 
 function w_instruction5(){
   removeBox();
-  displayBox2(function() {
+  displayBox(function() {
+        removeBox();
     checkCompleness();
-    removeBox();
-  },function(){
-    removeBox();
-    showDragonTutorial();
-    checkCompleness();
+
   });
-  addTextToButton("OK");
-  addTextToButton2("Next");
+    addTextToButton("Next");
   addTitleToBox("Wizard");
-  addTextToBox("<p>Excellent! You can see the burning effect on the enemy king. Now you know the wizard skill. </p> <p>Click 'OK' to continue to play as the wizard or try another unit by clicking on the corresponding card in the bottom left corner of the window. </p><p>Click 'Next' to play the Dragon Tutorial</p>");
+  addTextToBox("<p>Excellent! Now you know how to use the wizard's skill.</p> <p>Try another unit by clicking on the corresponding card in the bottom left corner of the window. </p><p>Click 'Next' to play the next character</p>");
   wizardDone = 1;
+  toPlayList.splice(toPlayList.indexOf("wizard"),1);
   endCurrentUnitTutorial = true;
+  unitCards[3].removeAllEventListeners();
+        var done = new createjs.Bitmap("graphics/done.png");
+    done.scaleX = 0.65;
+    done.scaleY = 0.65;
+    done.y = bottomInterface.y + 80;
+    done.x = bottomInterface.x+410;
+    stage.addChild(done);
+    stage.update();
 }
 
 // dragon 
@@ -2906,7 +2959,7 @@ function showDragonTutorial(){
     d_instruction();
   });
   addTextToBox("<p> Dragon the most mysterious creature. It can control the ice and wind. Flying unit, can move over any terrains. </p> <p>Normal Attack: 35 </p><p>Skill: Icy Wind </p><p>(Deal AOE damage to maximum 5 units in a cross, and freeze them for 4 turns)</p>");
-  addTitleToBox("Dragon");
+  addTitleToBox("<img src=\"./i_icon.png\" style=\"line-height: 1px; vertical-align: bottom; margin-right: 5px\" height=\"20\" width=\"20\" />Dragon");
   resetTheGame();
   addTextToButton("Next");
   spawnUnit(that.classStats.dragonClass, true, 2, 5, 1);
@@ -2949,8 +3002,8 @@ function d_instruction4(){
   removeBox();
   displayBox(function() {
     removeBox();
+     knight = true;
     endTurn();
-    d_instruction5();
   });
   showButton();
   addTitleToBox("Dragon");
@@ -2959,39 +3012,61 @@ function d_instruction4(){
 
 function d_instruction5(){
     removeBox();
-    displayBox2(function() {
+    displayBox(function() {
       removeBox();
-      checkCompleness();
-    },function(){
-      removeBox();
-      showKingTutorial();
       checkCompleness();
     });
-    showButton2();
-    addTextToButton("OK");
-    addTextToButton2("Next");
+    addTextToButton("Next");
     addTitleToBox("Dragon");
-    addTextToBox("<p>Excellent! You can see the frozen effect on the enemy king. Now you know the dragon skill. </p> <p>Click 'OK' continue to play as the dragon or try another unit by clicking on the corresponding card in the bottom left corner of the window. </p><p>Click 'Next' to play the King Tutorial</p>");
+    addTextToBox("<p>Excellent! Now you know how to use the dragon's skill.</p> <p>Try another unit by clicking on the corresponding card in the bottom left corner of the window. </p><p>Click 'Next' to play the next character</p>");
     dragonDone = 1;
+    toPlayList.splice(toPlayList.indexOf("dragon"),1);
     endCurrentUnitTutorial = true;
+    unitCards[4].removeAllEventListeners();
+          var done = new createjs.Bitmap("graphics/done.png");
+    done.scaleX = 0.65;
+    done.scaleY = 0.65;
+    done.y = bottomInterface.y + 80;
+    done.x = bottomInterface.x+520;
+    stage.addChild(done);
+    stage.update();
 }
 // Tutorial check finish all
 
-
+var toPlayList = ["king","knight","archer","wizard","dragon"]
 function checkCompleness(){
-  if ((kingDone + archerDone + knightDone + wizardDone + dragonDone) == 5){
+
+  if (toPlayList.length == 0){
     endTutorial2();
+    return;
   }
+
+  switch(toPlayList[0]){
+      case "king":
+        showKingTutorial();
+        break;
+      case "knight": 
+        showKnightTutorial();
+        break;
+      case "archer": 
+        showArcherTutorial();
+        break;
+      case "wizard": 
+        showWizardTutorial();
+        break;
+      case "dragon":
+        showDragonTutorial();
+        break;
+    }
 }
 
 function endTutorial2(){
   removeBox();
-  displayBox2(function() {
-      removeBox();
-    },function(){
+  displayBox(function(){
       //To Tutorial 3
       window.location.replace("http://localhost/WebAppGroup22/web/game/tutorial3.php");
     });
+    addTextToButton("OK");
   addTitleToBox("!!!Congratulation!!!");
   addTextToBox("<p>!!!Good job!!!</p><p>You finish Tutorial 2. Click 'OK' to stay in Tutorial 2</p> <p>Click 'Next' to start Tutorial 3</p>");
 }

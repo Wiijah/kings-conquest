@@ -524,8 +524,8 @@ function drawMenuDisplay(){
 	quitIcon = new createjs.Bitmap("graphics/quit.png");
 	quitIcon.x = stage.canvas.width - 260;
 	quitIcon.y = 5;
-	quitIcon.scaleX = 0.13;
-	quitIcon.scaleY = 0.13;
+	quitIcon.scaleX = 0.68;
+	quitIcon.scaleY = 0.68;
 
 	stage.addChild(quitIcon);
 
