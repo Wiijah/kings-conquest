@@ -13,6 +13,7 @@ var offY;
 var isPlayerTurn;
 
 
+var lastMove;
 var path = [];
 var highlighted = [];
 var sub_highlighted = [];
@@ -51,6 +52,7 @@ var p2currentGold;
 var currentGoldDisplay;
 var mapDrawn = false;
 var resized = false;
+
 
 var turn = 0;
 var playableUnitCount = 0;
@@ -714,7 +716,7 @@ function createFloatingCards(listOfSources, correspondingUnit) {
     var newUnitSpawnTiles = [];
 	for (i = 0; i < listOfSources.length; i++) {
 		unitCards[i] = new createjs.Bitmap(listOfSources[i]);
-		var unit_card_text = new createjs.Text("$ 100", "12px 'Arial'", "#ffffff");
+		// var unit_card_text = new createjs.Text("$ 100", "12px 'Arial'", "#ffffff");
 		unitCards[i].y = 0;
 		unitCards[i].x = i * (110);
 		unitCards[i].scaleX = 0.60;
@@ -736,11 +738,17 @@ function createFloatingCards(listOfSources, correspondingUnit) {
 		greyUnitCards[i].text.y = unitCards[i].y+80;
 		greyUnitCards[i].text.x = unitCards[i].x+28;
 
-
 		switch(unitCards[i].unitName ){
 			case "knight": 
+                unitCards[i].price = 120;
+                unitCards[i].text = new createjs.Text("$ 120", "12px 'Arial'", "#ffffff");
 				unitCards[i].addEventListener("click", function(event) {
                     if (team != turn || isInHighlight) return;
+                    if (currentGold < unitCards[i].price) {
+
+                        return;
+                    } 
+
                     var spawnTiles = findAvailableAndNonAvailableSpawnTiles();
                     highlightArea(spawnTiles[0], "graphics/tile/green_tile.png", ["click"], [function(event) {
                         var tile = event.target;
@@ -748,10 +756,13 @@ function createFloatingCards(listOfSources, correspondingUnit) {
                         clearSelectionEffects();
                     }]);
                     highlightArea(spawnTiles[1], "graphics/tile/red_tile.png", [], []);
+
 					// createNewUnit("knight");
 				});
 				break;
 			case "archer": 
+                unitCards[i].price = 120;
+                unitCards[i].text = new createjs.Text("$ 120", "12px 'Arial'", "#ffffff");
 				unitCards[i].addEventListener("click", function(event) {
                     if (team != turn || isInHighlight) return;
                     var spawnTiles = findAvailableAndNonAvailableSpawnTiles();
@@ -765,6 +776,8 @@ function createFloatingCards(listOfSources, correspondingUnit) {
                 });
 				break;
 			case "wizard": 
+                unitCards[i].price = 150;
+                unitCards[i].text = new createjs.Text("$ 150", "12px 'Arial'", "#ffffff");
 				unitCards[i].addEventListener("click", function(event) {
                     if (team != turn || isInHighlight) return;
                     var spawnTiles = findAvailableAndNonAvailableSpawnTiles();
@@ -778,6 +791,8 @@ function createFloatingCards(listOfSources, correspondingUnit) {
                 });
 				break;
 			case "totem":
+                unitCards[i].price = 200;
+                unitCards[i].text = new createjs.Text("$ 200", "12px 'Arial'", "#ffffff");
                 unitCards[i].addEventListener("click", function(event) {
                     if (team != turn || isInHighlight) return;
                     var spawnTiles = findAvailableAndNonAvailableSpawnTiles(15);
@@ -791,6 +806,8 @@ function createFloatingCards(listOfSources, correspondingUnit) {
                 });
                 break;
             case "dragon":
+                unitCards[i].price = 300;
+                unitCards[i].text = new createjs.Text("$ 300", "12px 'Arial'", "#ffffff");
                 unitCards[i].addEventListener("click", function(event) {
                     if (team != turn || isInHighlight) return;
                     var spawnTiles = findAvailableAndNonAvailableSpawnTiles();
@@ -804,6 +821,9 @@ function createFloatingCards(listOfSources, correspondingUnit) {
                 });
                 break;
 		}
+
+        unitCards[i].text.y = unitCards[i].y+80;
+        unitCards[i].text.x = unitCards[i].x+28;
 		
 		unitCards[i].addEventListener("mouseover", function(event) {
 			unitCards[event.target.index].y -= 20;
@@ -1404,6 +1424,10 @@ function moveUnit() {
         	movingUnit.canMove = 1;
         	undo = false;
         } else {
+            undoMove.pop();
+            if (movingUnit.team == team) {
+                undoMove.push(movingUnit);
+            }
         	movingUnit.canMove = 0;
         }
 
@@ -1722,6 +1746,7 @@ function keyEvent(event) {
 			}
 			break;
 		case 32: //space
+            console.log(undoMove.length);
 			if(undoMove.length != 0){
 				if(!archerSkillDone){
 					selectedCharacter.skillCoolDown = 0;
@@ -1736,13 +1761,15 @@ function keyEvent(event) {
 				console.log("current row:" + fromX + ", current column:" + fromY);
 				console.log("prev row:" + toX + ", prev column:" + toY);
 				findPath(fromX, fromY, toX, toY);
-				blockMaps[fromX][fromY] = 0;
-				move();
-				blockMaps[toX][toY] = 1;
-				selectedCharacter.row = toX;
-				selectedCharacter.column = toY;
+                serverValidate("move", selectedCharacter, [path]);
+				// blockMaps[fromX][fromY] = 0;
+				// move();
+				// blockMaps[toX][toY] = 1;
+				// selectedCharacter.row = toX;
+				// selectedCharacter.column = toY;
 				clearSelectionEffects();
 			}
+            break;
 		case 70:
 //			goFullScreen();
 			break;
@@ -2046,6 +2073,20 @@ function handleGoldUdpate(action) {
         destroyGoldDisplay();
         drawGoldDisplay();   
     }
+
+    //  var matrix = new createjs.ColorMatrix().adjustSaturation(100);
+    // for (var i = 0; i < unitCards.length; i++) {
+    //     if (unitCards[i].price > currentGold) {
+    //         console.log("Cards " + i + ": not enough gold");
+    //         unitCards[i].filters = [new createjs.ColorMatrixFilter(matrix)];
+    //     } else {
+    //         unitCards[i].filters = [];
+    //     }
+    //     unitCards[i].cache(unitCards[i].x, unitCards[i].y, unitCards[i].width, unitCards[i].height);
+    //     // stage.update();
+    //     // stage.addChild(unitCards[i]);
+    // }  
+    // // myDisplayObject.cache();
 }
 
 function changeTurn(action) {
@@ -2212,8 +2253,6 @@ function handleMove(action) {
 	unit.row = toRow;
 	unit.column = toCol;
 	clearSelectionEffects();
-	undoMove.pop();
-	undoMove.push(unit);
 }
 
 
@@ -2248,6 +2287,7 @@ function handleCreate(action) {
     var unit = getFirstProp(action.unit);
 	spawnUnit(unit, false);
 	currentGold = action.gold;
+
 	destroyGoldDisplay();
 	drawGoldDisplay();
 
