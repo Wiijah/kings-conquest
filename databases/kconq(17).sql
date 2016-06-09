@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: Jun 09, 2016 at 05:44 PM
+-- Generation Time: Jun 09, 2016 at 08:23 PM
 -- Server version: 10.1.10-MariaDB
 -- PHP Version: 7.0.2
 
@@ -82,7 +82,7 @@ INSERT INTO `buffs` (`buff_id`, `buff_name`, `graphics`, `icon`) VALUES
 (3, 'battleCry', 'graphics/spritesheet/spell/ss_inc_attack.png', ''),
 (4, 'shield', '', 'graphics/buff/buff_shield.png'),
 (5, 'Burn', '', ''),
-(6, 'freeze', 'graphics/spritesheet/spell/ss_freeze.png', 'graphics/buffs/buff_frozen.png');
+(6, 'freeze', 'graphics/spritesheet/spell/ss_frozen.png', 'graphics/buffs/buff_frozen.png');
 
 -- --------------------------------------------------------
 
@@ -97,6 +97,13 @@ CREATE TABLE `buff_instances` (
   `turns_left` int(11) NOT NULL,
   `room_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `buff_instances`
+--
+
+INSERT INTO `buff_instances` (`bi_id`, `buff_id`, `unit_id`, `turns_left`, `room_id`) VALUES
+(2, 3, 14, 6, 1);
 
 -- --------------------------------------------------------
 
@@ -121,7 +128,11 @@ CREATE TABLE `chat` (
 INSERT INTO `chat` (`chat_id`, `created`, `user`, `message`, `room_id`, `chat_type`, `colour`) VALUES
 (1, '2016-06-09 08:16:36', 14, 'hey', 0, 'message', ''),
 (2, '2016-06-09 14:31:06', 9, 'hey mate', 0, 'message', ''),
-(3, '2016-06-09 14:31:07', 9, 'hows it going', 0, 'message', '');
+(3, '2016-06-09 14:31:07', 9, 'hows it going', 0, 'message', ''),
+(4, '2016-06-09 18:14:19', 9, 'Wumpus joined the room.', 1, 'event', ''),
+(5, '2016-06-09 18:14:20', 14, 'Leap Of Faith joined the room.', 1, 'event', ''),
+(6, '2016-06-09 18:18:15', 9, 'Wumpus joined the room.', 2, 'event', ''),
+(7, '2016-06-09 18:18:20', 14, 'Leap Of Faith joined the room.', 2, 'event', '');
 
 -- --------------------------------------------------------
 
@@ -311,6 +322,19 @@ CREATE TABLE `opp` (
   `json` text NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
+--
+-- Dumping data for table `opp`
+--
+
+INSERT INTO `opp` (`opp_id`, `room_id`, `user_id`, `team`, `json`) VALUES
+(1, 1, 9, 0, '{"error_code": 0,"actions": [{"action_type": "apply_buff", "buff_id": 4,"unit_id": 5},{ "action_type" : "update_unit",\n    "unit_id" : 5,\n    "canMove" : 0,\n    "canAttack" : 0,\n    "outOfMoves" : 1,\n    "skillCoolDown" : 6}], "debug": "Shield"}'),
+(2, 1, 9, 0, '{"error_code": 0,"actions": [{"action_type": "attack_unit", "attacker_id": 3,"buffs": [],"target_id": 4,"dmg": 15,"is_critical": 0},{ "action_type" : "update_unit",\n    "unit_id" : 3,\n    "canMove" : 0,\n    "canAttack" : 0,\n    "outOfMoves" : 1,\n    "skillCoolDown" : 0}]}'),
+(3, 1, 9, 0, '{"error_code": 0,"actions": [{"action_type": "attack_unit", "attacker_id": 6,"buffs": [],"target_id": 4,"dmg": 20,"is_critical": 0},{ "action_type" : "update_unit",\n    "unit_id" : 6,\n    "canMove" : 0,\n    "canAttack" : 0,\n    "outOfMoves" : 1,\n    "skillCoolDown" : 0}]}'),
+(4, 1, 9, 0, '{"error_code": 0,"actions": [{ "action_type" : "update_unit",\n    "unit_id" : ,\n    "canMove" : 0,\n    "canAttack" : 0,\n    "outOfMoves" : 1,\n    "skillCoolDown" : 6}], "debug": ""}'),
+(5, 1, 9, 0, '{"error_code": 0,"actions": [{ "action_type" : "update_unit",\n    "unit_id" : 16,\n    "canMove" : 0,\n    "canAttack" : 0,\n    "outOfMoves" : 1,\n    "skillCoolDown" : 6}], "debug": "Double Shoot"}'),
+(6, 2, 9, 0, '{"error_code": 0,"actions": [{"action_type": "attack_unit", "attacker_id": 23,"buffs": [],"target_id": 24,"dmg": 15,"is_critical": 0},{ "action_type" : "update_unit",\n    "unit_id" : 23,\n    "canMove" : 0,\n    "canAttack" : 0,\n    "outOfMoves" : 1,\n    "skillCoolDown" : 0}]}'),
+(7, 2, 9, 0, '{"error_code": 0,"actions": [{"action_type": "attack_unit", "attacker_id": 26,"buffs": [],"target_id": 24,"dmg": 20,"is_critical": 0},{"action_type": "game_end", "reason":"king_death","winner": 0},{ "action_type" : "update_unit",\n    "unit_id" : 26,\n    "canMove" : 0,\n    "canAttack" : 0,\n    "outOfMoves" : 1,\n    "skillCoolDown" : 0}]}');
+
 -- --------------------------------------------------------
 
 --
@@ -329,8 +353,17 @@ CREATE TABLE `rooms` (
   `turn` int(11) NOT NULL,
   `winner` int(11) NOT NULL,
   `elo_won` int(11) NOT NULL,
-  `elo_lost` int(11) NOT NULL
+  `elo_lost` int(11) NOT NULL,
+  `countdown` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `rooms`
+--
+
+INSERT INTO `rooms` (`room_id`, `user_id`, `joiner`, `created`, `name`, `password`, `max_players`, `state`, `turn`, `winner`, `elo_won`, `elo_lost`, `countdown`) VALUES
+(1, 9, 0, '2016-06-09 18:14:19', 'test', '', 2, 'ended', 0, 9, 0, 32, 1465496152),
+(2, 9, 0, '2016-06-09 18:18:15', 'test', '', 2, 'ended', 0, 9, 0, 32, 1465496392);
 
 -- --------------------------------------------------------
 
@@ -349,6 +382,16 @@ CREATE TABLE `room_participants` (
   `unit_kills` int(11) NOT NULL,
   `unit_spawns` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `room_participants`
+--
+
+INSERT INTO `room_participants` (`part_id`, `user_id`, `room_id`, `colour`, `state`, `event`, `gold`, `unit_kills`, `unit_spawns`) VALUES
+(1, 9, 1, 'red', 'owner', 'ended', 1000, 2, 0),
+(2, 14, 1, 'blue', 'ready', 'ended', 1000, 0, 0),
+(3, 9, 2, 'red', 'owner', 'ended', 500, 1, 0),
+(4, 14, 2, 'blue', 'ready', 'ended', 500, 0, 0);
 
 -- --------------------------------------------------------
 
@@ -373,6 +416,30 @@ CREATE TABLE `units` (
   `prev_x` int(11) NOT NULL DEFAULT '-1',
   `prev_y` int(11) NOT NULL DEFAULT '-1'
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `units`
+--
+
+INSERT INTO `units` (`unit_id`, `class_id`, `hp`, `max_hp`, `attack`, `skillCoolDown`, `x`, `y`, `team`, `canMove`, `canAttack`, `outOfMoves`, `room_id`, `prev_x`, `prev_y`) VALUES
+(11, 4, 30, 30, 25, 0, 3, 2, 0, 1, 1, 0, 1, -1, -1),
+(12, 5, 999, 999, 999, 0, 0, 0, 0, 1, 1, 0, 1, -1, -1),
+(13, 1, 200, 200, 15, 0, 3, 3, 0, 1, 1, 0, 1, -1, -1),
+(15, 3, 300, 300, 40, 0, 0, 2, 0, 1, 1, 0, 1, -1, -1),
+(16, 2, 200, 200, 20, 6, 0, 3, 0, 0, 0, 1, 1, -1, -1),
+(17, 6, 999, 999, 999, 0, 12, 13, 1, 1, 1, 0, 1, -1, -1),
+(18, 1, 200, 200, 15, 0, 9, 10, 1, 1, 1, 0, 1, -1, -1),
+(19, 3, 300, 300, 40, 0, 12, 10, 1, 1, 1, 0, 1, -1, -1),
+(20, 2, 200, 200, 20, 0, 12, 11, 1, 1, 1, 0, 1, -1, -1),
+(21, 4, 30, 30, 25, 0, 3, 2, 0, 1, 1, 0, 2, -1, -1),
+(22, 5, 999, 999, 999, 0, 0, 0, 0, 1, 1, 0, 2, -1, -1),
+(23, 1, 200, 200, 15, 0, 3, 3, 0, 0, 0, 1, 2, -1, -1),
+(25, 3, 300, 300, 40, 0, 0, 2, 0, 1, 1, 0, 2, -1, -1),
+(26, 2, 200, 200, 20, 0, 0, 3, 0, 0, 0, 1, 2, -1, -1),
+(27, 6, 999, 999, 999, 0, 12, 13, 1, 1, 1, 0, 2, -1, -1),
+(28, 1, 200, 200, 15, 0, 9, 10, 1, 1, 1, 0, 2, -1, -1),
+(29, 3, 300, 300, 40, 0, 12, 10, 1, 1, 1, 0, 2, -1, -1),
+(30, 2, 200, 200, 20, 0, 12, 11, 1, 1, 1, 0, 2, -1, -1);
 
 -- --------------------------------------------------------
 
@@ -408,12 +475,12 @@ INSERT INTO `users` (`id`, `password`, `email`, `username`, `wins`, `losses`, `e
 (6, '$2y$10$zmsIcYDqp8ScNRuDcj9jD.kbsW9vC7k655flzcYK66kC0jkWa0toK', 'alanduu50@gmail.com', 'xXN1NJ4Xx', 343, 148, 1742, '2016-05-23 21:22:33', 'normal', 1465372058, 1, 0, 0, 0, 5, 1000, 0),
 (7, '$2y$10$xGKFvkCEjUMSm1y6cr8v/.IsJCZfLhNtigg0eyETXQYbslu5X1IBK', 'kld14@ic.ac.uk', 'DragonSlayer52', 358, 145, 2100, '2016-05-23 21:22:01', 'normal', 1465372058, 1, 0, 0, 0, 0, 1000, 0),
 (8, '$2y$10$s7PfGa0iZcg2XDFrmEAnhegSMZzKi4Po4GyUEl1E9cA69tUJj5qSa', 'test@test.com', 'HaskellPrize', 147, 23, 2311, '2016-05-23 21:20:45', 'normal', 1465372058, 1, 0, 0, 0, 0, 1000, 0),
-(9, '$2y$10$y8geeo6e4vVMUkhJWycFruGOuplLwujzm8q4RZlZQPpkn6RKbkfpS', 'demo@demo.com', 'Wumpus', 199, 92, 889, '2016-05-23 21:20:18', 'normal', 1465483200, 1, 0, 0, 0, 5, 14650, 0),
+(9, '$2y$10$y8geeo6e4vVMUkhJWycFruGOuplLwujzm8q4RZlZQPpkn6RKbkfpS', 'demo@demo.com', 'Wumpus', 201, 92, 889, '2016-05-23 21:20:18', 'normal', 1465496310, 1, 0, 0, 0, 5, 16650, 0),
 (10, '$2y$10$h9fvGHQrrOHh35pNzhIsqOR.0jDi4ZmVtHiCvP1wCexLef072jYqy', 'tonyfield@rules.com', 'OhBaby', 214, 26, 1400, '2016-05-23 18:59:26', 'normal', 1465372058, 1, 0, 0, 0, 0, 1000, 0),
 (11, '$2y$10$jOeNVa.g.MTq8j7NoOY3k.RTVeYpcrxA7gq8zv8hp9yiVBsk0z3C.', 'debug@debug.com', 'debug', 212, 52, 1600, '2016-06-01 20:52:54', 'normal', 1465372058, 1, 0, 0, 0, 0, 1000, 0),
 (12, '$2y$10$7.dtDYkyCuARy8JOOvnEM..015QDAO7YDKsNEmue6deyEyJvIDwr2', 'goku@goku.com', 'goku', 211, 62, 970, '2016-06-01 20:53:04', 'normal', 1465372058, 1, 0, 0, 0, 0, 1000, 0),
 (13, '$2y$10$EVxl9C85A3EGzS9/mbr4mO1eZwdAa7RoFtuXRU.4lwdohCezvuQTu', 'veg@veg.com', 'veg', 311, 73, 800, '2016-06-01 20:53:57', 'normal', 1465372058, 1, 0, 0, 0, 0, 1000, 0),
-(14, '$2y$10$sxwp7k4OSuCdCiO7y.JsOucq/YbXFR4oF8aBcgeTJ.UixSPKh.xJm', 'hp@hp.com', 'Leap Of Faith', 343, 272, 2875, '2016-06-04 21:40:28', 'normal', 1465486753, 13, 0, 12, 10, 11, 2137478397, 0),
+(14, '$2y$10$sxwp7k4OSuCdCiO7y.JsOucq/YbXFR4oF8aBcgeTJ.UixSPKh.xJm', 'hp@hp.com', 'Leap Of Faith', 343, 274, 2811, '2016-06-04 21:40:28', 'normal', 1465496614, 13, 0, 12, 10, 11, 2137478997, 0),
 (15, '$2y$10$Q3aMDDCP8w2o8bV.SaRs4.4Mgr49ZHzl372S4qExpvmadU0mAHETi', 'asda@asda.com', 'asdasd', 0, 0, 870, '2016-06-04 21:40:51', 'normal', 1465372058, 1, 0, 0, 0, 0, 1000, 0),
 (16, '$2y$10$aZkr5proBXT1kbSu9WWoHOM/q4lHiyqVXj6/9FYTa9Tn6YaO31LPW', 'simon@simon.com', 'simon', 0, 0, 1200, '2016-06-06 09:29:26', 'normal', 1465372058, 1, 0, 0, 0, 0, 1000, 0),
 (17, '', '', 'guesto', 0, 0, 1000, '2016-06-07 13:22:51', 'guest', 1465372058, 1, 0, 0, 0, 0, 1000, 0),
@@ -544,12 +611,12 @@ ALTER TABLE `buffs`
 -- AUTO_INCREMENT for table `buff_instances`
 --
 ALTER TABLE `buff_instances`
-  MODIFY `bi_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `bi_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 --
 -- AUTO_INCREMENT for table `chat`
 --
 ALTER TABLE `chat`
-  MODIFY `chat_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `chat_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 --
 -- AUTO_INCREMENT for table `classes`
 --
@@ -584,22 +651,22 @@ ALTER TABLE `maps`
 -- AUTO_INCREMENT for table `opp`
 --
 ALTER TABLE `opp`
-  MODIFY `opp_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `opp_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 --
 -- AUTO_INCREMENT for table `rooms`
 --
 ALTER TABLE `rooms`
-  MODIFY `room_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `room_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 --
 -- AUTO_INCREMENT for table `room_participants`
 --
 ALTER TABLE `room_participants`
-  MODIFY `part_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `part_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 --
 -- AUTO_INCREMENT for table `units`
 --
 ALTER TABLE `units`
-  MODIFY `unit_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `unit_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
 --
 -- AUTO_INCREMENT for table `users`
 --
