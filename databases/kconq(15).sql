@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: Jun 09, 2016 at 12:22 PM
+-- Generation Time: Jun 09, 2016 at 03:08 PM
 -- Server version: 10.1.10-MariaDB
 -- PHP Version: 7.0.2
 
@@ -149,14 +149,14 @@ CREATE TABLE `classes` (
 --
 
 INSERT INTO `classes` (`class_id`, `name`, `address`, `spritesheet`, `info`, `max_hp`, `attack`, `skill`, `skillMaxCD`, `moveRange`, `attackRange`, `damageEffect`, `gold`, `luck`, `commandable`) VALUES
-(1, 'wizard', 'graphics/spritesheet/stand/ss_wizard_stand.png', 'graphics/spritesheet/attack/ss_wizard_attack.png', 'graphics/card/wizard_card.png', 200, 15, 'Magic Damage', 3, 3, 3, 'graphics/spritesheet/spell/ss_fireball.png', 100, 0.25, 1),
-(2, 'archer', 'graphics/spritesheet/stand/ss_archer_stand.png', 'graphics/spritesheet/attack/ss_archer_attack.png', 'graphics/card/archer_card.png', 200, 20, 'Double Shoot', 3, 3, 4, 'graphics/spritesheet/spell/ss_arrow.png', 100, 0.4, 1),
-(3, 'knight', 'graphics/spritesheet/stand/ss_knight_stand.png', 'graphics/spritesheet/attack/ss_knight_attack.png', 'graphics/card/knight_card.png', 300, 40, 'Shield', 3, 2, 1, 'graphics/spritesheet/spell/ss_physical_attack.png', 100, 0.15, 1),
-(4, 'king', 'graphics/spritesheet/stand/ss_king_stand.png', 'graphics/spritesheet/attack/ss_king_attack.png', 'graphics/card/king_card.png', 30, 25, 'Battle Cry', 3, 3, 2, 'graphics/spritesheet/spell/ss_physical_attack.png', 0, 0.2, 1),
-(5, 'red castle', 'graphics/spritesheet/special_unit/ss_castle_red.png', 'graphics/spritesheet/attack/ss_archer_attack.png', 'graphics/card/castle_card.png', 999, 999, 'RED', 0, 0, 10, 'graphics/spritesheet/spell/ss_physical_attack.png', 100, 0, 0),
-(6, 'blue castle', 'graphics/spritesheet/special_unit/ss_castle_blue.png', 'graphics/spritesheet/attack/ss_archer_attack.png', 'graphics/card/castle_card.png', 999, 999, 'BLUE', 0, 0, 10, 'graphics/spritesheet/spell/ss_physical_attack.png', 100, 0, 0),
-(7, 'dragon', 'graphics/spritesheet/stand/ss_dragon_stand.png', 'graphics/spritesheet/attack/ss_dragon_attack.png', 'graphics/card/dragon_card.png', 300, 35, 'Freeze', 3, 4, 3, 'graphics/spritesheet/spell/ss_icy_wind.png', 300, 0.25, 1),
-(8, 'totem', 'graphics/spritesheet/special_unit/ss_totem_stand.png', 'graphics/spritesheet/special_unit/ss_totem_heal.png', 'graphics/card/totem_card.png', 1, 1, 'N/A', 0, 0, 0, 'graphics/spritesheet/special_unit/ss_totem_heal.png', 200, 0, 0);
+(1, 'wizard', 'graphics/spritesheet/stand/ss_wizard_stand.png', 'graphics/spritesheet/attack/ss_wizard_attack.png', 'graphics/card/wizard_card.png', 200, 15, 'Magic Damage', 6, 3, 3, 'graphics/spritesheet/spell/ss_fireball.png', 100, 0.25, 1),
+(2, 'archer', 'graphics/spritesheet/stand/ss_archer_stand.png', 'graphics/spritesheet/attack/ss_archer_attack.png', 'graphics/card/archer_card.png', 200, 20, 'Double Shoot', 6, 3, 4, 'graphics/spritesheet/spell/ss_arrow.png', 100, 0.4, 1),
+(3, 'knight', 'graphics/spritesheet/stand/ss_knight_stand.png', 'graphics/spritesheet/attack/ss_knight_attack.png', 'graphics/card/knight_card.png', 300, 40, 'Shield', 6, 2, 1, 'graphics/spritesheet/spell/ss_physical_attack.png', 100, 0.15, 1),
+(4, 'king', 'graphics/spritesheet/stand/ss_king_stand.png', 'graphics/spritesheet/attack/ss_king_attack.png', 'graphics/card/king_card.png', 30, 25, 'Battle Cry', 6, 3, 2, 'graphics/spritesheet/spell/ss_physical_attack.png', 0, 0.2, 1),
+(5, 'red castle', 'graphics/spritesheet/special_unit/ss_castle_red.png', 'graphics/spritesheet/attack/ss_archer_attack.png', 'graphics/card/castle_card.png', 999, 999, 'RED', 6, 0, 10, 'graphics/spritesheet/spell/ss_physical_attack.png', 100, 0, 0),
+(6, 'blue castle', 'graphics/spritesheet/special_unit/ss_castle_blue.png', 'graphics/spritesheet/attack/ss_archer_attack.png', 'graphics/card/castle_card.png', 999, 999, 'BLUE', 6, 0, 10, 'graphics/spritesheet/spell/ss_physical_attack.png', 100, 0, 0),
+(7, 'dragon', 'graphics/spritesheet/stand/ss_dragon_stand.png', 'graphics/spritesheet/attack/ss_dragon_attack.png', 'graphics/card/dragon_card.png', 300, 35, 'Icy Wind', 6, 4, 3, 'graphics/spritesheet/spell/ss_icy_wind.png', 300, 0.25, 1),
+(8, 'totem', 'graphics/spritesheet/special_unit/ss_totem_stand.png', 'graphics/spritesheet/special_unit/ss_totem_heal.png', 'graphics/card/totem_card.png', 1, 1, 'N/A', 6, 0, 0, 'graphics/spritesheet/special_unit/ss_totem_heal.png', 200, 0, 0);
 
 -- --------------------------------------------------------
 
@@ -211,9 +211,11 @@ CREATE TABLE `inventory` (
 --
 
 INSERT INTO `inventory` (`inv_id`, `user_id`, `item_id`, `quantity`) VALUES
-(1, 14, 1, 2),
-(2, 14, 2, 7),
-(5, 9, 3, 5);
+(1, 14, 1, 3),
+(2, 14, 2, 9),
+(5, 9, 3, 5),
+(11, 14, 5, 1),
+(12, 14, 6, 1);
 
 -- --------------------------------------------------------
 
@@ -224,7 +226,7 @@ INSERT INTO `inventory` (`inv_id`, `user_id`, `item_id`, `quantity`) VALUES
 CREATE TABLE `items` (
   `item_id` int(11) NOT NULL,
   `name` varchar(64) NOT NULL,
-  `type` set('hat','eyes','wig','mouth','suit') NOT NULL,
+  `type` set('hat','eyes','wig','mouth','body','na') NOT NULL,
   `image` varchar(128) NOT NULL,
   `price` int(11) NOT NULL,
   `icon` varchar(64) NOT NULL,
@@ -237,8 +239,12 @@ CREATE TABLE `items` (
 
 INSERT INTO `items` (`item_id`, `name`, `type`, `image`, `price`, `icon`, `description`) VALUES
 (1, 'Crown', 'hat', 'avatars/crown.png', 0, '', 'Although a plain crown, the golden material of the crown radiates with the passion of a king.'),
-(2, 'Epic Crown', 'hat', 'avatars/epic_crown.png', 10000000, '', 'A crown of a legendary king. It is said that only the best of kings have touched this crown before.'),
-(3, 'Sunglasses', 'eyes', 'avatars/sunglasses.png', 250, '', 'A pair of sunglasses that will protect you from the sun.');
+(2, 'Jeweled Crown', 'hat', 'avatars/jeweled_crown.png', 2500, '', 'A crown of a legendary king. It is said that only the best of kings have touched this crown before.'),
+(3, 'Sunglasses', 'eyes', 'avatars/sunglasses.png', 250, '', 'A pair of sunglasses that will protect you from the sun.'),
+(4, 'Black Crown Shirt', 'body', 'avatars/black_crown_shirt.png', 1000, '', ''),
+(5, 'White Crown Shirt', 'body', 'avatars/white_crown_shirt.png', 1000, '', ''),
+(6, 'Blue King Shirt', 'body', 'avatars/blue_king_shirt.png', 100, '', ''),
+(7, 'Red Headband', 'hat', 'avatars/red_headband.png', 100, '', '');
 
 -- --------------------------------------------------------
 
@@ -374,6 +380,7 @@ CREATE TABLE `users` (
   `wig` int(11) NOT NULL,
   `eyes` int(11) NOT NULL,
   `mouth` int(11) NOT NULL,
+  `body` int(11) NOT NULL,
   `kp` int(11) NOT NULL DEFAULT '1000',
   `skin_colour` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -382,19 +389,19 @@ CREATE TABLE `users` (
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`id`, `password`, `email`, `username`, `wins`, `losses`, `elo`, `created`, `member_type`, `lastactive`, `hat`, `wig`, `eyes`, `mouth`, `kp`, `skin_colour`) VALUES
-(6, '$2y$10$zmsIcYDqp8ScNRuDcj9jD.kbsW9vC7k655flzcYK66kC0jkWa0toK', 'alanduu50@gmail.com', 'xXN1NJ4Xx', 343, 148, 1742, '2016-05-23 21:22:33', 'normal', 1465372058, 1, 0, 0, 0, 1000, 0),
-(7, '$2y$10$xGKFvkCEjUMSm1y6cr8v/.IsJCZfLhNtigg0eyETXQYbslu5X1IBK', 'kld14@ic.ac.uk', 'DragonSlayer52', 358, 145, 2100, '2016-05-23 21:22:01', 'normal', 1465372058, 1, 0, 0, 0, 1000, 0),
-(8, '$2y$10$s7PfGa0iZcg2XDFrmEAnhegSMZzKi4Po4GyUEl1E9cA69tUJj5qSa', 'test@test.com', 'HaskellPrize', 147, 23, 2311, '2016-05-23 21:20:45', 'normal', 1465372058, 1, 0, 0, 0, 1000, 0),
-(9, '$2y$10$y8geeo6e4vVMUkhJWycFruGOuplLwujzm8q4RZlZQPpkn6RKbkfpS', 'demo@demo.com', 'Wumpus', 199, 92, 889, '2016-05-23 21:20:18', 'normal', 1465466369, 1, 0, 0, 0, 14650, 0),
-(10, '$2y$10$h9fvGHQrrOHh35pNzhIsqOR.0jDi4ZmVtHiCvP1wCexLef072jYqy', 'tonyfield@rules.com', 'OhBaby', 214, 26, 1000, '2016-05-23 18:59:26', 'normal', 1465372058, 1, 0, 0, 0, 1000, 0),
-(11, '$2y$10$jOeNVa.g.MTq8j7NoOY3k.RTVeYpcrxA7gq8zv8hp9yiVBsk0z3C.', 'debug@debug.com', 'debug', 212, 52, 1000, '2016-06-01 20:52:54', 'normal', 1465372058, 1, 0, 0, 0, 1000, 0),
-(12, '$2y$10$7.dtDYkyCuARy8JOOvnEM..015QDAO7YDKsNEmue6deyEyJvIDwr2', 'goku@goku.com', 'goku', 211, 62, 1000, '2016-06-01 20:53:04', 'normal', 1465372058, 1, 0, 0, 0, 1000, 0),
-(13, '$2y$10$EVxl9C85A3EGzS9/mbr4mO1eZwdAa7RoFtuXRU.4lwdohCezvuQTu', 'veg@veg.com', 'veg', 311, 73, 1000, '2016-06-01 20:53:57', 'normal', 1465372058, 1, 0, 0, 0, 1000, 0),
-(14, '$2y$10$sxwp7k4OSuCdCiO7y.JsOucq/YbXFR4oF8aBcgeTJ.UixSPKh.xJm', 'hp@hp.com', 'harry potter', 29, 6, 1475, '2016-06-04 21:40:28', 'normal', 1465467721, 1, 0, 0, 0, 31800, 0),
-(15, '$2y$10$Q3aMDDCP8w2o8bV.SaRs4.4Mgr49ZHzl372S4qExpvmadU0mAHETi', 'asda@asda.com', 'asdasd', 0, 0, 1000, '2016-06-04 21:40:51', 'normal', 1465372058, 1, 0, 0, 0, 1000, 0),
-(16, '$2y$10$aZkr5proBXT1kbSu9WWoHOM/q4lHiyqVXj6/9FYTa9Tn6YaO31LPW', 'simon@simon.com', 'simon', 0, 0, 1000, '2016-06-06 09:29:26', 'normal', 1465372058, 1, 0, 0, 0, 1000, 0),
-(17, '', '', 'guesto', 0, 0, 1000, '2016-06-07 13:22:51', 'guest', 1465372058, 1, 0, 0, 0, 1000, 0);
+INSERT INTO `users` (`id`, `password`, `email`, `username`, `wins`, `losses`, `elo`, `created`, `member_type`, `lastactive`, `hat`, `wig`, `eyes`, `mouth`, `body`, `kp`, `skin_colour`) VALUES
+(6, '$2y$10$zmsIcYDqp8ScNRuDcj9jD.kbsW9vC7k655flzcYK66kC0jkWa0toK', 'alanduu50@gmail.com', 'xXN1NJ4Xx', 343, 148, 1742, '2016-05-23 21:22:33', 'normal', 1465372058, 1, 0, 0, 0, 5, 1000, 0),
+(7, '$2y$10$xGKFvkCEjUMSm1y6cr8v/.IsJCZfLhNtigg0eyETXQYbslu5X1IBK', 'kld14@ic.ac.uk', 'DragonSlayer52', 358, 145, 2100, '2016-05-23 21:22:01', 'normal', 1465372058, 1, 0, 0, 0, 0, 1000, 0),
+(8, '$2y$10$s7PfGa0iZcg2XDFrmEAnhegSMZzKi4Po4GyUEl1E9cA69tUJj5qSa', 'test@test.com', 'HaskellPrize', 147, 23, 2311, '2016-05-23 21:20:45', 'normal', 1465372058, 1, 0, 0, 0, 0, 1000, 0),
+(9, '$2y$10$y8geeo6e4vVMUkhJWycFruGOuplLwujzm8q4RZlZQPpkn6RKbkfpS', 'demo@demo.com', 'Wumpus', 199, 92, 889, '2016-05-23 21:20:18', 'normal', 1465466369, 1, 0, 0, 0, 5, 14650, 0),
+(10, '$2y$10$h9fvGHQrrOHh35pNzhIsqOR.0jDi4ZmVtHiCvP1wCexLef072jYqy', 'tonyfield@rules.com', 'OhBaby', 214, 26, 1000, '2016-05-23 18:59:26', 'normal', 1465372058, 1, 0, 0, 0, 0, 1000, 0),
+(11, '$2y$10$jOeNVa.g.MTq8j7NoOY3k.RTVeYpcrxA7gq8zv8hp9yiVBsk0z3C.', 'debug@debug.com', 'debug', 212, 52, 1000, '2016-06-01 20:52:54', 'normal', 1465372058, 1, 0, 0, 0, 0, 1000, 0),
+(12, '$2y$10$7.dtDYkyCuARy8JOOvnEM..015QDAO7YDKsNEmue6deyEyJvIDwr2', 'goku@goku.com', 'goku', 211, 62, 1000, '2016-06-01 20:53:04', 'normal', 1465372058, 1, 0, 0, 0, 0, 1000, 0),
+(13, '$2y$10$EVxl9C85A3EGzS9/mbr4mO1eZwdAa7RoFtuXRU.4lwdohCezvuQTu', 'veg@veg.com', 'veg', 311, 73, 1000, '2016-06-01 20:53:57', 'normal', 1465372058, 1, 0, 0, 0, 0, 1000, 0),
+(14, '$2y$10$sxwp7k4OSuCdCiO7y.JsOucq/YbXFR4oF8aBcgeTJ.UixSPKh.xJm', 'hp@hp.com', 'harry potter', 29, 6, 1475, '2016-06-04 21:40:28', 'normal', 1465477427, 7, 0, 3, 0, 0, 26600, 0),
+(15, '$2y$10$Q3aMDDCP8w2o8bV.SaRs4.4Mgr49ZHzl372S4qExpvmadU0mAHETi', 'asda@asda.com', 'asdasd', 0, 0, 1000, '2016-06-04 21:40:51', 'normal', 1465372058, 1, 0, 0, 0, 0, 1000, 0),
+(16, '$2y$10$aZkr5proBXT1kbSu9WWoHOM/q4lHiyqVXj6/9FYTa9Tn6YaO31LPW', 'simon@simon.com', 'simon', 0, 0, 1000, '2016-06-06 09:29:26', 'normal', 1465372058, 1, 0, 0, 0, 0, 1000, 0),
+(17, '', '', 'guesto', 0, 0, 1000, '2016-06-07 13:22:51', 'guest', 1465372058, 1, 0, 0, 0, 0, 1000, 0);
 
 --
 -- Indexes for dumped tables
@@ -542,12 +549,12 @@ ALTER TABLE `friends`
 -- AUTO_INCREMENT for table `inventory`
 --
 ALTER TABLE `inventory`
-  MODIFY `inv_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `inv_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 --
 -- AUTO_INCREMENT for table `items`
 --
 ALTER TABLE `items`
-  MODIFY `item_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `item_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 --
 -- AUTO_INCREMENT for table `maps`
 --

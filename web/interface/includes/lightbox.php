@@ -24,8 +24,4 @@ echo genLightbox("How To Play", "tutorial", "
     <div class='btn lightbox_btn' id='tut3'>Tutorial 3</div>
     <div class='btn lightbox_btn' id='tut4'>Tutorial 4</div>
    </div> ");
-
-$ach_html = getAchievementsHTML($user->id);
-if ($ach_html == "") $ach_html = "You have not earned any achievements yet.";
-echo genLightBox("Achievements", "achievements", "<div style='text-align: center'>{$ach_html}</a></div>");
 ?>

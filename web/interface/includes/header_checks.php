@@ -7,8 +7,8 @@ if (!isset($_SESSION['id'])) {
   die();
 }
 
-function getAchievementsHTML($user_id) {
-  global $db, $user;
+function getAchievementsHTML($prof) {
+  global $db;
 
   $ach = array();
   $result = $db->query("SELECT * FROM achievements");
@@ -18,10 +18,10 @@ function getAchievementsHTML($user_id) {
 
   $user_ach = array();
 
-  if ($user->wins >= 50) $user_ach['50_wins'] = $ach['50_wins'];
-  if ($user->wins >= 100) $user_ach['100_wins'] = $ach['100_wins'];
+  if ($prof->wins >= 50) $user_ach['50_wins'] = $ach['50_wins'];
+  if ($prof->wins >= 100) $user_ach['100_wins'] = $ach['100_wins'];
 
-  $result = $db->query("SELECT * FROM ach_instances WHERE user_id = '{$user_id}'");
+  $result = $db->query("SELECT * FROM ach_instances WHERE user_id = '{$prof->id}'");
   while ($fetch = $result->fetch_object()) {
     $user_ach[$fetch->ach_name] = $ach[$fetch->ach_name];
   }

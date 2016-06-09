@@ -14,10 +14,12 @@ $h = 600;
 
 addImage("avatars/vest.png");
 
-if ($prof->hat != 0) {
-  $result = $db->query("SELECT * FROM items WHERE item_id = {$prof->hat}");
-  $fetch = $result->fetch_object();
-  addImage($fetch->image);
+foreach ($LAYERS as $type) {
+  if ($prof->{$type} != 0) {
+    $result = $db->query("SELECT * FROM items WHERE item_id = '{$prof->{$type}}'");
+    $fetch = $result->fetch_object();
+    addImage($fetch->image);
+  }
 }
 
 function addImage($image) {
