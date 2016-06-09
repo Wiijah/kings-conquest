@@ -35,6 +35,7 @@ var bottomInterface  = new createjs.Container();
 var statsDisplay = new createjs.Container();
 var unitCreationMenu = new createjs.Container();
 var unitCards = [];
+var greyUnitCards = [];
 
 var isDisplayingMenu = false;
 var isInHighlight = false;
@@ -723,6 +724,19 @@ function createFloatingCards(listOfSources, correspondingUnit) {
 		unitCards[i].text = unit_card_text;
 		unitCards[i].text.y = unitCards[i].y+80;
 		unitCards[i].text.x = unitCards[i].x+28;
+
+		greyUnitCards[i] = new createjs.Bitmap(listOfSources[i].slice(0,-4) + "_gray.png");
+		greyUnitCards[i].y = unitCards[i].y;
+		greyUnitCards[i].x = unitCards[i].x;
+		greyUnitCards[i].scaleX = unitCards[i].scaleX;
+		greyUnitCards[i].scaleY = unitCards[i].scaleY;
+		greyUnitCards[i].index = unitCards[i].index;
+		greyUnitCards[i].unitName = correspondingUnit[i];
+		greyUnitCards[i].text = unit_card_text;
+		greyUnitCards[i].text.y = unitCards[i].y+80;
+		greyUnitCards[i].text.x = unitCards[i].x+28;
+
+
 		switch(unitCards[i].unitName ){
 			case "knight": 
 				unitCards[i].addEventListener("click", function(event) {
@@ -2236,7 +2250,30 @@ function handleCreate(action) {
 	currentGold = action.gold;
 	destroyGoldDisplay();
 	drawGoldDisplay();
+
+	for (var i = 0; i < unitCards.length; i++) {
+		if (unitCards[i].price > currentGold) {
+			greyOutCard(i);
+		} else {
+			colourCard(i);
+		}
+	}
+
     playableUnitCount++;
+}
+
+function greyOutCard(index) {
+	if (unitCreationMenu.getChildIndex(greyUnitCards[index]) == -1) {
+		unitCreationMenu.removeChild(unitCards[index]);
+		unitCreationMenu.addChild(greyUnitCards[index]);
+	}
+}
+
+function colourCard(index) {
+	if (unitCreationMenu.getChildIndex(unitCards[index]) == -1) {
+		unitCreationMenu.removeChild(greyUnitCards[index]);
+		unitCreationMenu.addChild(unitCards[index]);
+	}
 }
 
 function highlightArea(tiles, imgSource, callBackEventNames, callBackFunctions) {
