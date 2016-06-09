@@ -87,7 +87,7 @@ var bgss2 = new createjs.SpriteSheet({
         });  
 
 
- if (turn==0) {
+ if (turn == 1) {
  	bg = new createjs.Sprite(bgss, "tick");
  } else {
  	bg = new createjs.Sprite(bgss2, "tick");
@@ -110,23 +110,23 @@ function refreshTimer(remainingTime) {
   stage.removeChild(turnTimer);
   remainingTurnTime = remainingTime;
   if (remainingTurnTime === -1) {
-  	  stage.removeChild(bg);
-
-  	 setTimeout(function(){
-  	 	 serverValidate("turn_change", null, []);
+    stage.removeChild(bg);
+  	 
+    setTimeout(function(){
+  	 	 serverValidate("turn_change", null, [1]);
 	        	clearSelectionEffects();
-  	 },1000);
-  
+  	 },1);
 
 
-
-  } else {
+  } //else {
   	var timeText;
   	if (remainingTurnTime < 10){
   		timeText = "0" + remainingTurnTime;
   	} else {
   		timeText = remainingTurnTime;
   	}
+  	if (remainingTurnTime < 0) timeText = "00";
+
   	turnTimerbg = new createjs.Text("" + timeText, "70px '04b_19'", "#000000");
     turnTimerbg.x = stage.canvas.width - stage.canvas.width/2 -2;
     turnTimerbg.y = 48;
@@ -136,9 +136,8 @@ function refreshTimer(remainingTime) {
 
     stage.addChild(turnTimerbg);
     stage.addChild(turnTimer);
-  }
+ // }
 }
-
 
 
 
@@ -477,7 +476,10 @@ function initGame() {
 			spawnUnit(data.characters[i], false);
 		});
         // turnStartPhase();
-
+		if (enableCountDown) {
+	   	  refreshTimer(data.countdown);
+	   	  startTimer();
+	 	}
 	});
 
 	stage.canvas.width = window.innerWidth;
@@ -532,10 +534,7 @@ function initGame() {
 	stage.update();
   setTimeout(function() {getOpp(); }, 1000);
 
-  	if (enableCountDown) {
-    refreshTimer(90);
-    startTimer();
-  }
+  	
 
 
 
@@ -1879,7 +1878,7 @@ function keyEvent(event) {
 			break;
         case 13: //enter
         	if (!gameEnd) {
-                serverValidate("turn_change", null, []);
+                serverValidate("turn_change", null, [0]);
 	        	clearSelectionEffects();
 	        	// turn = 1 - turn;
 	        	// turnEndPhase();
@@ -2112,7 +2111,7 @@ function serverValidate(type, unit, additionalArgs) {
 
     if (type === "turn_change") {
         console.log("validate change");
-        rawPost("ajax/turn_change", {}, handleServerReply);
+        rawPost("ajax/turn_change", {"countdown" : additionalArgs[0]}, handleServerReply);
     }
 
     if (type === "skill") {
@@ -2207,10 +2206,6 @@ function changeTurn(action) {
 	stage.removeChild(bg);
   stage.removeChild(turnTimerbg);
   stage.removeChild(turnTimer);
-  if (enableCountDown) {
-	    refreshTimer(90);
-	    startTimer();
-   }
 
 
     clearSelectionEffects();
@@ -2218,6 +2213,13 @@ function changeTurn(action) {
     showTurnInfo();
     var effectsToApply = action.effects_to_apply;
     var unitsNewCD = action.units_new_cd;
+
+
+      if (enableCountDown) {
+	    refreshTimer(DEFAULT_COUNTDOWN);
+	    startTimer();
+   }
+
 
     // Refresh the cd of the skills.
     for (var i = 0; i < unitsNewCD.length; i++) {

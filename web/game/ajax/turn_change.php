@@ -2,16 +2,16 @@
 require_once 'ajax_common.php';
 
 $team = $TEAM_COLOURS[$player->colour];
-$is_countdown = secureStr($_GET['countdown']);
+$is_countdown = secureStr($_POST['countdown']);
 $time = time();
 
 $old_turn = $room->turn; //old player's turn
 
-if ($is_countdown == 1 && $time < $countdown) {
-  exit_error($ERROR_NOT_YOUR_TURN);
+if ($is_countdown == 1 && $time < $room->countdown + 1) {
+  exit_error(1503);
 }
 if ($old_turn != $team && $is_countdown != 1) {
-  exit_error($ERROR_NOT_YOUR_TURN);
+  exit_error(134);
 }
 
 $countdown = $time + $DEFAULT_COUNTDOWN;
