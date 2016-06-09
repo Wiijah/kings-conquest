@@ -135,7 +135,8 @@ function give_gold($part, $gold) {
 function give_buff($unit, $buff_id, $turns_left) {
   global $db;
   global $room_id;
-
+  if ($unit->commandable == 0) return;
+  
   $actions = array();
   $result = $db->query("SELECT * FROM buff_instances WHERE buff_id = '{$buff_id}' AND unit_id = '{$unit->unit_id}'");
   if ($result->num_rows == 0) {

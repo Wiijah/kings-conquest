@@ -2,7 +2,7 @@
 require_once 'ajax_common.php';
 
 $team = $TEAM_COLOURS[$player->colour];
-$countdown = secureStr($_GET['countdown']);
+$is_countdown = secureStr($_GET['countdown']);
 $time = time();
 
 $old_turn = $room->turn; //old player's turn
