@@ -12,11 +12,17 @@ $im = imagecreatefrompng("avatars/{$SKIN_COLOURS[$prof->skin_colour]}_man.png");
 $w = 600;
 $h = 600;
 
+addImage("avatars/vest.png");
+
 if ($prof->hat != 0) {
   $result = $db->query("SELECT * FROM items WHERE item_id = {$prof->hat}");
   $fetch = $result->fetch_object();
-  $item_image = imagecreatefrompng($fetch->image);
+  addImage($fetch->image);
+}
 
+function addImage($image) {
+  global $im;
+  $item_image = imagecreatefrompng($image);
   imagecopy($im, $item_image, 0, 0, 0, 0, 600, 600);
 }
 

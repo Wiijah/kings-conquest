@@ -66,6 +66,6 @@ function genBreadcrumbs($arr) {
 }
 
 function getAvatarURL($user_id) {
-  return "images/default_avatar.png";
+  return "av.php?id={$user_id}";
 }
 ?>
