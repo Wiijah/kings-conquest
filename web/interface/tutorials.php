@@ -73,7 +73,19 @@ You can leave the game room by clicking on <span class='highlight'>Leave Room</s
 
 <a name="items"></a><?php echo genTitle("Items & Avatars"); ?>
 <div class="box standard_box">
-You can buy items from the shop and use them to customise your avatar.
+You can buy items from the shop by spending <span class='highlight'>King Points</span> and use them to customise your avatar.<br /><br />
+To buy items from the shop, click on the <span class='highlight'>Shop</span> button from the lobby and click on <span class='highlight'>Purchase</span>.
+<img src="images/tut/avatar_shop.png" class="tut_img" />
+<img src="images/tut/arrow_right.png" class="arrow_right" />
+<img src="images/tut/avatar_purchase.png" class="tut_img" />
+<br /><br />
+You can <span class='highlight'>equip</span> items to personalise your avatar. To do so, click on the <span class='highlight'>Customise Avatar</span> button from the lobby and then click on <span class='highlight'>Equip</span> to equip an item.
+<img src="images/tut/avatar_btn.png" class="tut_img" />
+<img src="images/tut/arrow_right.png" class="arrow_right" />
+<img src="images/tut/avatar_equip.png" class="tut_img" />
+<br /><br />
+You can also unequip items from your avatar by clicking on <span class='highlight'>Unequip</span>.<br />
+<img src="images/tut/avatar_unequip.png" class="tut_mc" />
 </div><br />
 
 <a name="elo"></a><?php echo genTitle("ELO Rating"); ?>

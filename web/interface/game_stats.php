@@ -29,7 +29,6 @@ include 'includes/logout_container.php';
 include 'includes/logo.php';
 
 require_once 'includes/back_container.php';
-
 ?>
 
 <div class="small_container friends_container">
@@ -50,20 +49,24 @@ echo genTitle("End Game Stats");
 <?php echo genTitle("Winner"); ?>
 <div class="box">
 <table class="play_table">
+<tr><td class="prof_avatar" colspan="2"><img src="<?php echo getAvatarURL($winner->id); ?>" /></td></tr>
 <tr><th style='width: 50%'>Username</th><td><?php echo linkUsername($winner); ?></td></tr>
 <tr><th>ELO Gained</th><td><?php echo $room->elo_won; ?></td></tr>
 <tr><th>King Points Gained</th><td>1,000</td></tr>
-<tr><th>Units Killed</th><td><?php echo $winner_part->unit_kills; ?></td></tr>
+<tr><th>Unit Kills</th><td><?php echo $winner_part->unit_kills; ?></td></tr>
+<tr><th>Unit Deaths</th><td><?php echo $loser_part->unit_kills; ?></td></tr>
 </table>
 </div> <br />
 
 <?php echo genTitle("Loser"); ?>
 <div class="box">
 <table class="play_table">
+<tr><td class="prof_avatar" colspan="2"><img src="<?php echo getAvatarURL($loser->id); ?>" /></td></tr>
 <tr><th style='width: 50%'>Username</th><td><?php echo linkUsername($loser); ?></td></tr>
 <tr><th>ELO Lost</th><td><?php echo $room->elo_lost; ?></td></tr>
 <tr><th>King Points Gained</th><td>300</td></tr>
-<tr><th>Units Killed</th><td><?php echo $loser_part->unit_kills; ?></td></tr>
+<tr><th>Unit Kills</th><td><?php echo $loser_part->unit_kills; ?></td></tr>
+<tr><th>Unit Deaths</th><td><?php echo $winner_part->unit_kills; ?></td></tr>
 </table>
 </div> <!-- play_profile box -->
 
