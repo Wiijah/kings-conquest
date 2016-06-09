@@ -132,8 +132,9 @@ function handleBuffEffect(action) {
             }, 800);
             break;
         case "Freeze":
+            console.log("freeze triggered");
             setTimeout(function() {
-                var ice = new createjs.Sprite(unit.forzenEffect, "ice");
+                var ice = new createjs.Sprite(unit.frozenEffect, "ice");
                 ice.x = unit.x;
                 ice.y = unit.y;
                 chars.addChild(ice);
@@ -236,8 +237,8 @@ function spawnUnit(data, isCreation, row, column){
 		});
 		unit.healEffect = healEffect;
 
-        var forzenEffect = new createjs.SpriteSheet({
-            "images": [that.buffEffects.frozen],
+        var frozenEffect = new createjs.SpriteSheet({
+            "images": [that.buffEffects.freeze],
             "frames": {"width": 142, "height": 142, "count": 4, "regY": 110, "regX": 95},
             "animations": {
                 "ice":{
@@ -247,7 +248,7 @@ function spawnUnit(data, isCreation, row, column){
             },
             framerate: 4
         });
-        unit.forzenEffect = forzenEffect;
+        unit.frozenEffect = frozenEffect;
 
 
         unit.team = data.team;
@@ -432,10 +433,7 @@ function initGame() {
   setTimeout(function() {getOpp(); }, 1000);
 }
 
-<<<<<<< HEAD
-=======
 
->>>>>>> f98e4addf6a05655c2bab1ec07c1b182633c7ba2
 var muteIcon; 
 var playIcon;
 
@@ -549,9 +547,11 @@ function applyBuff(buffType, unit) {
         case 5: // burn Buff
             buffIcon = new createjs.Bitmap("graphics/buff/buff_burning.png");
             unit.buffs.push([5, 0.02, buffIcon]);
+            break;
         case 6: // freeze Buff
             buffIcon = new createjs.Bitmap("graphics/buff/buff_frozen.png");
             unit.buffs.push([6, -1, buffIcon]);
+            break;
 	}
 
 	buffIcon.x = unit.hp_bar.x + (unit.buffs.length - 1) * 25;
@@ -1024,6 +1024,9 @@ function showActionMenuNextToPlayer(unit) {
 	menuBackground.scaleX = 0.7;
     menuBackground.scaleY = 0.7;
 
+    console.log(unit.unit_id);
+    console.log(unit.outOfMoves);
+
 	moveSource = unit.canMove === 1 && unit.outOfMoves === 0 ? "graphics/ingame_menu/new_move.png"
 								    : "graphics/ingame_menu/new_move_gray.png";
 	moveButton = createClickableImage(moveSource, unit.x + 48, unit.y - 147, function() {
@@ -1042,6 +1045,7 @@ function showActionMenuNextToPlayer(unit) {
 			performAttack(unit);
 		}
 	});
+
 
 	skillSource = unit.skillCoolDown === 0 && unit.outOfMoves === 0 ? "graphics/ingame_menu/new_skill.png"
 								   : "graphics/ingame_menu/new_skill_gray.png";
@@ -1081,6 +1085,7 @@ function showActionMenuNextToPlayer(unit) {
 
 
 function cast(skillName, unit) {
+    console.log(skillName);
 	switch (skillName) {
 		case "Battle Cry": // King's skill
             serverValidate("skill", unit, []);
@@ -1114,7 +1119,7 @@ function cast(skillName, unit) {
 	    	var reachableTiles = findReachableTiles(selectedCharacter.row, selectedCharacter.column, selectedCharacter.attackRange, false);
 	    	highlightArea(reachableTiles, "graphics/tile/red_tile.png", ["click", "mouseover", "mouseout"], [function(event) {
                 serverValidate("skill", selectedCharacter, [event.target.row, event.target.column]);
-            }, highlightWizardSpellCross, clearWizardSpellCross]);
+            }, highlightSpellCross, clearSpellCross]);
 			break;
         case "Icy Wind":
             isCasting = true;
@@ -1487,7 +1492,7 @@ function findPath(fromX, fromY, toX, toY) {
 
 // A call back function that highlights all the possible definitions 
 // when a character is clicked.
-function findReachableTiles(x, y, range, isMoving) {
+function findReachableTiles(x, y, range, ignoreWater) {
 	var q = [];
 	var start = [x, y, 0];
 	var marked = [];
@@ -1518,7 +1523,7 @@ function findReachableTiles(x, y, range, isMoving) {
 				if (nx < 0 || nx >= mapHeight || ny < 0 || ny >= mapWidth) continue;
 
 				// Terrain check
-				if (blockMaps[nx][ny] != 0 && isMoving) continue;
+				if (blockMaps[nx][ny] != 0 && ignoreWater) continue;
 
 				// bounds and obstacle check here
 				if ($.inArray(nx * mapWidth + ny, marked) === -1) {
@@ -1958,7 +1963,7 @@ function serverValidate(type, unit, additionalArgs) {
             rawPost("ajax/cast_unit", {"caster_id": unit.unit_id}, handleServerReply);
         }
 
-        if (unit.skill === "Magic Damage") { // Wizard spell
+        if (unit.skill === "Magic Damage" || unit.skill === "Icy Wind") { // Wizard or Dragon spell
             rawPost("ajax/cast_unit", {"caster_id": unit.unit_id, "x": additionalArgs[0], "y": additionalArgs[1]}, handleServerReply);
         }
 
@@ -1966,6 +1971,7 @@ function serverValidate(type, unit, additionalArgs) {
             console.log("id1: " + archerTargets[0] + "id2: " + archerTargets[1]);
             rawPost("ajax/cast_unit", {"caster_id": unit.unit_id, "target_id": archerTargets[0], "target_id2":archerTargets[1]}, handleServerReply);
         }
+
 
     }
 }
@@ -2028,11 +2034,6 @@ function changeTurn(action) {
         unit.skillCoolDown = unitsNewCD[i][1];
     }
 
-    for (var i = 0; i < units.length; i++) {
-        units[i].canMove = 1;
-        units[i].canAttack = 1;
-        units[i].outOfMoves = 0;
-    }
 
     // Apply buff effects to units.
     for (var i = 0; i < effectsToApply.length; i++) {
