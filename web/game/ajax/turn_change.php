@@ -13,7 +13,7 @@ $new_turn = ($old_turn + 1) % 2;
 $actions = array();
 
 /* Reset the moves */
-$db->query("UPDATE units SET canMove = 1, canAttack = 1, outOfMoves = 0 WHERE room_id = '{$room_id}' AND team = '{$new_turn}'");
+$db->query("UPDATE units SET canMove = 1, canAttack = 1, outOfMoves = 0, prev_x = '-1', prev_y = '-1' WHERE room_id = '{$room_id}' AND team = '{$new_turn}'");
 
 /* skillCoolDown */
 $db->query("UPDATE units SET skillCoolDown = skillCoolDown - 1 WHERE room_id = '{$room_id}' AND skillCoolDown > 0");
