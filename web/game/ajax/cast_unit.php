@@ -45,13 +45,13 @@ if ($caster->skill == "Shield") {
     $actions[] = triggerBufferJson("IncAttack", $fetch->unit_id, 0);
   }
 } else if ($caster->skill == "Magic Damage") {
-  $result = $db->query("{$SELECT_UNIT} room_id = '{$room_id}' AND commandable = '1' AND team != '{$team}' AND {$AOE}");
+  $result = $db->query("{$SELECT_UNIT} room_id = '{$room_id}' AND team != '{$team}' AND {$AOE}");
   while ($fetch = $result->fetch_object()) {
     $actions = array_merge($actions, give_buff($fetch, 5, 6));
     $actions = array_merge($actions, attack_unit($caster, $fetch));
   }
 } else if ($caster->skill == "Double Shoot") {
-  $result = $db->query("{$SELECT_UNIT} room_id = '{$room_id}' AND commandable = '1' AND team != '{$team}' AND (unit_id = '{$target_id}' OR unit_id = '{$target_id2}')");
+  $result = $db->query("{$SELECT_UNIT} room_id = '{$room_id}' AND team != '{$team}' AND (unit_id = '{$target_id}' OR unit_id = '{$target_id2}')");
   $howMany = $target_id == $target_id2 ? 2 : 1;
   while ($fetch = $result->fetch_object()) {
     for ($i = 0; $i < $howMany; $i++) {
@@ -60,7 +60,7 @@ if ($caster->skill == "Shield") {
     }
   }
 } else if ($caster->skill == "Icy Wind") {
-  $result = $db->query("{$SELECT_UNIT} room_id = '{$room_id}' AND commandable = '1' AND team != '{$team}' AND {$AOE}");
+  $result = $db->query("{$SELECT_UNIT} room_id = '{$room_id}' AND team != '{$team}' AND {$AOE}");
   while ($fetch = $result->fetch_object()) {
     $actions = array_merge($actions, give_buff($fetch, 6, 2));
     $actions = array_merge($actions, attack_unit($caster, $fetch));
