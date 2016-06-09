@@ -6,6 +6,7 @@ $target_id = secureInt($_POST['target_id']);
 
 // get player team
 $team = $TEAM_COLOURS[$player->colour];
+if ($team != $room->turn) exit_error($ERROR_NOT_YOUR_TURN);
 
 //get both units
 $result = $db->query("SELECT * FROM units JOIN classes ON units.class_id = classes.class_id WHERE unit_id = '{$attacker_id}' AND room_id = '{$room_id}'");

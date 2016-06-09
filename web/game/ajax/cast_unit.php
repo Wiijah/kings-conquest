@@ -11,6 +11,9 @@ $y = secureInt($_POST['y']) * 1;
 // get player team
 $team = $TEAM_COLOURS[$player->colour];
 
+if ($team != $room->turn) exit_error($ERROR_NOT_YOUR_TURN);
+
+
 $AOE = "((x = '{$x}' AND y = '{$y}')
            OR (x = '".($x - 1)."' AND y = '{$y}')
            OR (x = '".($x + 1)."' AND y = '{$y}')

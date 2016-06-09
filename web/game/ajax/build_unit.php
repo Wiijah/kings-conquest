@@ -5,6 +5,7 @@ $x = secureInt($_POST['x']);
 $y = secureInt($_POST['y']);
 $name = secureStr($_POST['name']);
 $team = $TEAM_COLOURS[$player->colour];
+if ($team != $room->turn) exit_error($ERROR_NOT_YOUR_TURN);
 
 // $x = 3;
 // $y = 2;
