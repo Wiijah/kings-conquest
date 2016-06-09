@@ -25,6 +25,9 @@ $out .= jsonPair("gold", $player->gold).",";
 //   $out .= jsonPair("P{$i}currentGold", $part->gold).",";
 // }
 
+$countdown = max(0, $room->countdown - time());
+$out .= jsonPair("countdown", $countdown).",";
+
 /* Player Info */
 $out .= jsonPair("team", $TEAM_COLOURS[$player->colour]).",";
 $out .= jsonPair("turn", $room->turn).",";

@@ -63,16 +63,90 @@ var undoMove = [];
 var undo = false;
 
 var bgMusic = true;
+var enableCountDown = true;
+var turnTimer;
+var remainingTurnTime;
+var timerIntervalId;
+var bg;
+function startTimer() {
+ var bgss = new createjs.SpriteSheet({
+          "images": ["graphics/ss_cd.png"],
+          "frames": {"regX": 50, "height": 159, "count": 2, "regY": 50, "width": 371 },
+          "animations": {
+            "tick":[0,1]
+          },
+          framerate: 2
+        });  
+var bgss2 = new createjs.SpriteSheet({
+          "images": ["graphics/ss_cd2.png"],
+          "frames": {"regX": 50, "height": 159, "count": 2, "regY": 50, "width": 371 },
+          "animations": {
+            "tick":[0,1]
+          },
+          framerate: 2
+        });  
 
-function showTurnText() {
-    stage.removeChild(turnInfoText);
-    var turnText = turn == team ? "Your turn" : "Enemy's turn";
-    turnInfoText = new createjs.Text(turnText, "20px Arial", "#ffffff");
-    turnInfoText.x = 800;
-    turnInfoText.textBaseline = "alphabetic";
-    turnInfoText.y = 0;
-    stage.addChild(turnInfoText);
+
+ if (turn == 1) {
+ 	bg = new createjs.Sprite(bgss, "tick");
+ } else {
+ 	bg = new createjs.Sprite(bgss2, "tick");
+ }
+ 
+ bg.x = turnTimer.x - 100;
+ bg.y = turnTimer.y ;
+ stage.addChild(bg);
+ stage.setChildIndex(bg, 2);
+
+
+  if (typeof(timerIntervalId) != "undefined") window.clearInterval(timerIntervalId);
+  timerIntervalId = setInterval(function() {
+    refreshTimer(remainingTurnTime - 1);
+  }, 1000);
 }
+var turnTimerbg;
+function refreshTimer(remainingTime) {
+  stage.removeChild(turnTimerbg);
+  stage.removeChild(turnTimer);
+  remainingTurnTime = remainingTime;
+  if (remainingTurnTime === -1) {
+    stage.removeChild(bg);
+  	 
+	setTimeout(function(){
+  	 	 serverValidate("turn_change", null, [1]);
+	        	clearSelectionEffects();
+  	 },1);
+
+
+  } //else {
+  	var timeText;
+  	if (remainingTurnTime < 10){
+  		timeText = "0" + remainingTurnTime;
+  	} else {
+  		timeText = remainingTurnTime;
+  	}
+  	if (remainingTurnTime < 0) timeText = "00";
+
+  	turnTimerbg = new createjs.Text("" + timeText, "70px '04b_19'", "#000000");
+    turnTimerbg.x = stage.canvas.width - stage.canvas.width/2 + 2;
+    turnTimerbg.y = 48;
+    turnTimer = new createjs.Text("" + timeText, "70px '04b_19'", "#ffffff");
+    turnTimer.x = stage.canvas.width - stage.canvas.width/2;
+    turnTimer.y = 50;
+
+    stage.addChild(turnTimerbg);
+    stage.addChild(turnTimer);
+ // }
+}
+
+
+
+
+
+
+
+
+
 
 function showTurnInfo(){
 	stage.removeChild(playerLabel);
@@ -80,11 +154,11 @@ function showTurnInfo(){
 	if (turn) {
 		var playerLabelBg = new createjs.Shape();
 		playerLabelBg.graphics.beginFill("#000000").drawRect(-stage.canvas.width ,stage.canvas.height - stage.canvas.height/2 ,stage.canvas.width * 2,80);
-		var playerLabel = new createjs.Text("Player2 Turn", "30px Arial", "#00cdff");
+		var playerLabel = new createjs.Text("Blue Player Turn", "30px Arial", "#00cdff");
 	} else {
 		var playerLabelBg = new createjs.Shape();
 		playerLabelBg.graphics.beginFill("#000000").drawRect(-stage.canvas.width ,stage.canvas.height - stage.canvas.height/2 ,stage.canvas.width * 2,80);
-		var playerLabel = new createjs.Text("Player1 Turn", "30px Arial", "#ff5555");
+		var playerLabel = new createjs.Text("Red Player Turn", "30px Arial", "#ff5555");
 	}
 	playerLabel.x = stage.canvas.width - stage.canvas.width / 2 - 100;
 	playerLabel.y = stage.canvas.height -  stage.canvas.height / 2 + 20;
@@ -96,7 +170,6 @@ function showTurnInfo(){
 		stage.removeChild(playerLabel);
 		stage.removeChild(playerLabelBg);
 	}, 1000);
-    showTurnText();
 }
 
 
@@ -416,7 +489,10 @@ function initGame() {
 			spawnUnit(data.characters[i], false);
 		});
         // turnStartPhase();
-
+		if (enableCountDown) {
+	   	  refreshTimer(data.countdown);
+	   	  startTimer();
+	 	}
 	});
 
 	stage.canvas.width = window.innerWidth;
@@ -470,6 +546,13 @@ function initGame() {
 
 	stage.update();
   setTimeout(function() {getOpp(); }, 1000);
+
+  	
+
+
+
+
+  
 }
 
 
@@ -1830,7 +1913,7 @@ function keyEvent(event) {
         case 13: //enter
     if (turn != team || selectedCharacter.team != turn || selectedCharacter.team != team) return;
         	if (!gameEnd) {
-                serverValidate("turn_change", null, []);
+                serverValidate("turn_change", null, [0]);
 	        	clearSelectionEffects();
 	        	// turn = 1 - turn;
 	        	// turnEndPhase();
@@ -1894,6 +1977,8 @@ function update() {
 
 	stage.addChild(statsDisplay);
 	stage.addChild(unitCreationMenu);
+
+    bg.x = turnTimer.x - 100; //reposition counter bg
 }
 var tile_type;
 var tile_info_address;
@@ -2063,7 +2148,7 @@ function serverValidate(type, unit, additionalArgs) {
 
     if (type === "turn_change") {
         console.log("validate change");
-        rawPost("ajax/turn_change", {}, handleServerReply);
+        rawPost("ajax/turn_change", {"countdown" : additionalArgs[0]}, handleServerReply);
     }
 
     if (type === "skill") {
@@ -2155,11 +2240,24 @@ function handleGoldUdpate(action) {
 }
 
 function changeTurn(action) {
+
+	stage.removeChild(bg);
+  stage.removeChild(turnTimerbg);
+  stage.removeChild(turnTimer);
+
+
     clearSelectionEffects();
     turn = action.new_turn;
     showTurnInfo();
     var effectsToApply = action.effects_to_apply;
     var unitsNewCD = action.units_new_cd;
+
+
+      if (enableCountDown) {
+	    refreshTimer(DEFAULT_COUNTDOWN);
+	    startTimer();
+   }
+
 
     // Refresh the cd of the skills.
     for (var i = 0; i < unitsNewCD.length; i++) {
