@@ -1066,6 +1066,7 @@ function addEventListenersToUnit(unit) {
 
 function markArcherTargets(event) {
     var unit = findUnitByCoordinates(event.target.row, event.target.column);
+    if (unit == null) return;
     archerTargets.push(unit.unit_id);
     console.log("adding units with coordinates: (" + unit.row + " " + unit.column + ") to archer targets");
     remainingTargets--;
@@ -1833,7 +1834,6 @@ function keyEvent(event) {
             }
             break;
         case 67: 
-    if (turn != team || selectedCharacter.team != turn || selectedCharacter.team != team) return;
             console.log(gameEnd);
             if (gameEnd) {
                 console.log("yomama");
@@ -1865,7 +1865,6 @@ function keyEvent(event) {
 			}
 			break;
 		case 82: // keyboard r
-    if (turn != team || selectedCharacter.team != turn || selectedCharacter.team != team) return;
 			if (gameEnd){
 				location.reload();
 			}
@@ -1881,7 +1880,6 @@ function keyEvent(event) {
 			}
 			break;
 		case 32: //space
-    if (turn != team || selectedCharacter.team != turn || selectedCharacter.team != team) return;
             console.log(undoMove.length);
 			if(undoMove.length != 0){
 				if(!archerSkillDone){
@@ -1907,11 +1905,9 @@ function keyEvent(event) {
 			}
             break;
 		case 70:
-    if (turn != team || selectedCharacter.team != turn || selectedCharacter.team != team) return;
 //			goFullScreen();
 			break;
         case 13: //enter
-    if (turn != team || selectedCharacter.team != turn || selectedCharacter.team != team) return;
         	if (!gameEnd) {
                 serverValidate("turn_change", null, [0]);
 	        	clearSelectionEffects();
