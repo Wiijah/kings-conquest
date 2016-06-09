@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: Jun 09, 2016 at 10:16 AM
+-- Generation Time: Jun 09, 2016 at 12:22 PM
 -- Server version: 10.1.10-MariaDB
 -- PHP Version: 7.0.2
 
@@ -80,7 +80,8 @@ INSERT INTO `buffs` (`buff_id`, `buff_name`, `graphics`, `icon`) VALUES
 (1, 'heal', 'graphics/spritesheet/spell/ss_heal.png', ''),
 (2, 'burning', 'graphics/spritesheet/spell/ss_burning.png', ''),
 (4, 'shield', '', 'graphics/buff/buff_shield.png'),
-(5, 'Burn', '', '');
+(5, 'Burn', '', ''),
+(6, 'Freeze', 'graphics/spritesheet/spell/ss_freeze.png', 'graphics/buffs/buff_frozen.png');
 
 -- --------------------------------------------------------
 
@@ -111,6 +112,13 @@ CREATE TABLE `chat` (
   `chat_type` set('message','event') NOT NULL DEFAULT 'message',
   `colour` set('red','blue') NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `chat`
+--
+
+INSERT INTO `chat` (`chat_id`, `created`, `user`, `message`, `room_id`, `chat_type`, `colour`) VALUES
+(1, '2016-06-09 08:16:36', 14, 'hey', 0, 'message', '');
 
 -- --------------------------------------------------------
 
@@ -216,7 +224,7 @@ INSERT INTO `inventory` (`inv_id`, `user_id`, `item_id`, `quantity`) VALUES
 CREATE TABLE `items` (
   `item_id` int(11) NOT NULL,
   `name` varchar(64) NOT NULL,
-  `type` set('hat','eyes','wig','mouth') NOT NULL,
+  `type` set('hat','eyes','wig','mouth','suit') NOT NULL,
   `image` varchar(128) NOT NULL,
   `price` int(11) NOT NULL,
   `icon` varchar(64) NOT NULL,
@@ -228,8 +236,8 @@ CREATE TABLE `items` (
 --
 
 INSERT INTO `items` (`item_id`, `name`, `type`, `image`, `price`, `icon`, `description`) VALUES
-(1, 'Crown', 'hat', 'avatar/crown.png', 0, '', 'Although a plain crown, the golden material of the crown radiates with the passion of a king.'),
-(2, 'Epic Crown', 'hat', 'avatar/epic_crown.png', 10000000, '', 'A crown of a legendary king. It is said that only the best of kings have touched this crown before.'),
+(1, 'Crown', 'hat', 'avatars/crown.png', 0, '', 'Although a plain crown, the golden material of the crown radiates with the passion of a king.'),
+(2, 'Epic Crown', 'hat', 'avatars/epic_crown.png', 10000000, '', 'A crown of a legendary king. It is said that only the best of kings have touched this crown before.'),
 (3, 'Sunglasses', 'eyes', 'avatars/sunglasses.png', 250, '', 'A pair of sunglasses that will protect you from the sun.');
 
 -- --------------------------------------------------------
@@ -366,26 +374,27 @@ CREATE TABLE `users` (
   `wig` int(11) NOT NULL,
   `eyes` int(11) NOT NULL,
   `mouth` int(11) NOT NULL,
-  `kp` int(11) NOT NULL DEFAULT '1000'
+  `kp` int(11) NOT NULL DEFAULT '1000',
+  `skin_colour` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`id`, `password`, `email`, `username`, `wins`, `losses`, `elo`, `created`, `member_type`, `lastactive`, `hat`, `wig`, `eyes`, `mouth`, `kp`) VALUES
-(6, '$2y$10$zmsIcYDqp8ScNRuDcj9jD.kbsW9vC7k655flzcYK66kC0jkWa0toK', 'alanduu50@gmail.com', 'xXN1NJ4Xx', 343, 148, 1742, '2016-05-23 21:22:33', 'normal', 1465372058, 1, 0, 0, 0, 1000),
-(7, '$2y$10$xGKFvkCEjUMSm1y6cr8v/.IsJCZfLhNtigg0eyETXQYbslu5X1IBK', 'kld14@ic.ac.uk', 'DragonSlayer52', 358, 145, 2100, '2016-05-23 21:22:01', 'normal', 1465372058, 1, 0, 0, 0, 1000),
-(8, '$2y$10$s7PfGa0iZcg2XDFrmEAnhegSMZzKi4Po4GyUEl1E9cA69tUJj5qSa', 'test@test.com', 'HaskellPrize', 147, 23, 2311, '2016-05-23 21:20:45', 'normal', 1465372058, 1, 0, 0, 0, 1000),
-(9, '$2y$10$y8geeo6e4vVMUkhJWycFruGOuplLwujzm8q4RZlZQPpkn6RKbkfpS', 'demo@demo.com', 'Wumpus', 199, 92, 889, '2016-05-23 21:20:18', 'normal', 1465460172, 1, 0, 0, 0, 14650),
-(10, '$2y$10$h9fvGHQrrOHh35pNzhIsqOR.0jDi4ZmVtHiCvP1wCexLef072jYqy', 'tonyfield@rules.com', 'OhBaby', 214, 26, 1000, '2016-05-23 18:59:26', 'normal', 1465372058, 1, 0, 0, 0, 1000),
-(11, '$2y$10$jOeNVa.g.MTq8j7NoOY3k.RTVeYpcrxA7gq8zv8hp9yiVBsk0z3C.', 'debug@debug.com', 'debug', 212, 52, 1000, '2016-06-01 20:52:54', 'normal', 1465372058, 1, 0, 0, 0, 1000),
-(12, '$2y$10$7.dtDYkyCuARy8JOOvnEM..015QDAO7YDKsNEmue6deyEyJvIDwr2', 'goku@goku.com', 'goku', 211, 62, 1000, '2016-06-01 20:53:04', 'normal', 1465372058, 1, 0, 0, 0, 1000),
-(13, '$2y$10$EVxl9C85A3EGzS9/mbr4mO1eZwdAa7RoFtuXRU.4lwdohCezvuQTu', 'veg@veg.com', 'veg', 311, 73, 1000, '2016-06-01 20:53:57', 'normal', 1465372058, 1, 0, 0, 0, 1000),
-(14, '$2y$10$sxwp7k4OSuCdCiO7y.JsOucq/YbXFR4oF8aBcgeTJ.UixSPKh.xJm', 'hp@hp.com', 'harry potter', 29, 6, 1475, '2016-06-04 21:40:28', 'normal', 1465460172, 1, 0, 0, 0, 31800),
-(15, '$2y$10$Q3aMDDCP8w2o8bV.SaRs4.4Mgr49ZHzl372S4qExpvmadU0mAHETi', 'asda@asda.com', 'asdasd', 0, 0, 1000, '2016-06-04 21:40:51', 'normal', 1465372058, 1, 0, 0, 0, 1000),
-(16, '$2y$10$aZkr5proBXT1kbSu9WWoHOM/q4lHiyqVXj6/9FYTa9Tn6YaO31LPW', 'simon@simon.com', 'simon', 0, 0, 1000, '2016-06-06 09:29:26', 'normal', 1465372058, 1, 0, 0, 0, 1000),
-(17, '', '', 'guesto', 0, 0, 1000, '2016-06-07 13:22:51', 'guest', 1465372058, 1, 0, 0, 0, 1000);
+INSERT INTO `users` (`id`, `password`, `email`, `username`, `wins`, `losses`, `elo`, `created`, `member_type`, `lastactive`, `hat`, `wig`, `eyes`, `mouth`, `kp`, `skin_colour`) VALUES
+(6, '$2y$10$zmsIcYDqp8ScNRuDcj9jD.kbsW9vC7k655flzcYK66kC0jkWa0toK', 'alanduu50@gmail.com', 'xXN1NJ4Xx', 343, 148, 1742, '2016-05-23 21:22:33', 'normal', 1465372058, 1, 0, 0, 0, 1000, 0),
+(7, '$2y$10$xGKFvkCEjUMSm1y6cr8v/.IsJCZfLhNtigg0eyETXQYbslu5X1IBK', 'kld14@ic.ac.uk', 'DragonSlayer52', 358, 145, 2100, '2016-05-23 21:22:01', 'normal', 1465372058, 1, 0, 0, 0, 1000, 0),
+(8, '$2y$10$s7PfGa0iZcg2XDFrmEAnhegSMZzKi4Po4GyUEl1E9cA69tUJj5qSa', 'test@test.com', 'HaskellPrize', 147, 23, 2311, '2016-05-23 21:20:45', 'normal', 1465372058, 1, 0, 0, 0, 1000, 0),
+(9, '$2y$10$y8geeo6e4vVMUkhJWycFruGOuplLwujzm8q4RZlZQPpkn6RKbkfpS', 'demo@demo.com', 'Wumpus', 199, 92, 889, '2016-05-23 21:20:18', 'normal', 1465466369, 1, 0, 0, 0, 14650, 0),
+(10, '$2y$10$h9fvGHQrrOHh35pNzhIsqOR.0jDi4ZmVtHiCvP1wCexLef072jYqy', 'tonyfield@rules.com', 'OhBaby', 214, 26, 1000, '2016-05-23 18:59:26', 'normal', 1465372058, 1, 0, 0, 0, 1000, 0),
+(11, '$2y$10$jOeNVa.g.MTq8j7NoOY3k.RTVeYpcrxA7gq8zv8hp9yiVBsk0z3C.', 'debug@debug.com', 'debug', 212, 52, 1000, '2016-06-01 20:52:54', 'normal', 1465372058, 1, 0, 0, 0, 1000, 0),
+(12, '$2y$10$7.dtDYkyCuARy8JOOvnEM..015QDAO7YDKsNEmue6deyEyJvIDwr2', 'goku@goku.com', 'goku', 211, 62, 1000, '2016-06-01 20:53:04', 'normal', 1465372058, 1, 0, 0, 0, 1000, 0),
+(13, '$2y$10$EVxl9C85A3EGzS9/mbr4mO1eZwdAa7RoFtuXRU.4lwdohCezvuQTu', 'veg@veg.com', 'veg', 311, 73, 1000, '2016-06-01 20:53:57', 'normal', 1465372058, 1, 0, 0, 0, 1000, 0),
+(14, '$2y$10$sxwp7k4OSuCdCiO7y.JsOucq/YbXFR4oF8aBcgeTJ.UixSPKh.xJm', 'hp@hp.com', 'harry potter', 29, 6, 1475, '2016-06-04 21:40:28', 'normal', 1465467721, 1, 0, 0, 0, 31800, 0),
+(15, '$2y$10$Q3aMDDCP8w2o8bV.SaRs4.4Mgr49ZHzl372S4qExpvmadU0mAHETi', 'asda@asda.com', 'asdasd', 0, 0, 1000, '2016-06-04 21:40:51', 'normal', 1465372058, 1, 0, 0, 0, 1000, 0),
+(16, '$2y$10$aZkr5proBXT1kbSu9WWoHOM/q4lHiyqVXj6/9FYTa9Tn6YaO31LPW', 'simon@simon.com', 'simon', 0, 0, 1000, '2016-06-06 09:29:26', 'normal', 1465372058, 1, 0, 0, 0, 1000, 0),
+(17, '', '', 'guesto', 0, 0, 1000, '2016-06-07 13:22:51', 'guest', 1465372058, 1, 0, 0, 0, 1000, 0);
 
 --
 -- Indexes for dumped tables
@@ -503,7 +512,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `buffs`
 --
 ALTER TABLE `buffs`
-  MODIFY `buff_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `buff_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 --
 -- AUTO_INCREMENT for table `buff_instances`
 --
@@ -513,7 +522,7 @@ ALTER TABLE `buff_instances`
 -- AUTO_INCREMENT for table `chat`
 --
 ALTER TABLE `chat`
-  MODIFY `chat_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `chat_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 --
 -- AUTO_INCREMENT for table `classes`
 --

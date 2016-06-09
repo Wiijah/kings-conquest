@@ -319,17 +319,16 @@ function spawnUnit(data, isCreation, row, column){
 	chars.addChild(unit);
 	chars.addChild(hp_bar);
 
-	sortIndices(unit);
+	orderUnits();
 
-		unit.cache(0,0,150,150);
-		hp_bar.cache(0,0,100,120);
-		spawnAnimation.x = unit.x;
-		spawnAnimation.y = unit.y;
-		chars.addChild(spawnAnimation);
-		setTimeout(function() {
-			chars.removeChild(spawnAnimation);
-		}, 1000);
-
+	unit.cache(0,0,150,150);
+	hp_bar.cache(0,0,100,120);
+	spawnAnimation.x = unit.x;
+	spawnAnimation.y = unit.y;
+	chars.addChild(spawnAnimation);
+	setTimeout(function() {
+		chars.removeChild(spawnAnimation);
+	}, 1000);
 
 	addEventListenersToUnit(unit);
 }
@@ -431,9 +430,12 @@ function initGame() {
 	drawMenuDisplay();
 	stage.update();
   setTimeout(function() {getOpp(); }, 1000);
-
 }
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> f98e4addf6a05655c2bab1ec07c1b182633c7ba2
 var muteIcon; 
 var playIcon;
 
@@ -1412,6 +1414,19 @@ function sortIndices(unit) {
 				chars.swapChildren(unit, value.hp_bar);
 			}
 		}
+	});
+}
+
+function orderUnits() {
+	units.sort(function(a,b){return a.y < b.y;});
+
+	$.each(units, function(i, value) {
+		chars.setChildIndex(value, chars.getNumChildren()-1);
+	});
+
+
+	$.each(units, function(i, value) {
+		chars.setChildIndex(value.hp_bar, chars.getNumChildren()-1);
 	});
 }
 

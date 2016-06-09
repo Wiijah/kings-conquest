@@ -69,7 +69,7 @@
       Are you sure to quite the game? <br /><br />
     </div>
     <div id="box_foot">
-      <button type="button" id="yesButton" class="btn" ng-click="">Yes</button>
+      <button type="button" id="yesButton" class="btn2" ng-click="">Yes</button>
        <button type="button" id="noButton" class="btn" ng-click="">No</button>
     </div>
   </div>
@@ -82,7 +82,6 @@
    <p>You finished all tutorials. Now it's time to descover more in the real game!</p>
     </div>
     <div id="box_foot">
-      <button type="button" id="quitButton" class="btn2" ng-click="">Quit</button>
       <button type="button" id="nextButton" class="btn" ng-click="">Back To Game Lobby</button>
     </div>
   </div>

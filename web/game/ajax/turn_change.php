@@ -12,6 +12,12 @@ $new_turn = ($old_turn + 1) % 2;
 
 $actions = array();
 
+/* Reset the moves */
+$db->query("UPDATE units SET canMove = 1, canAttack = 1, outOfMoves = 0 WHERE room_id = '{$room_id}' AND team = '{$new_turn}'");
+
+/* skillCoolDown */
+$db->query("UPDATE units SET skillCoolDown = skillCoolDown - 1 WHERE room_id = '{$room_id}' AND skillCoolDown > 0");
+
 /* Update the room to the new turn */
 $db->query("UPDATE rooms SET turn = '{$new_turn}' WHERE room_id = '{$room_id}'");
 
@@ -22,6 +28,25 @@ while ($buff = $result->fetch_object()) {
   $unit = select_unit($buff->unit_id);
   $damage = ceil($unit->max_hp * 0.02);
   $buff_list = array_merge($buff_list, damageByBuff($buff, $unit, $damage));
+}
+
+/* Freeze effect */
+$result = $db->query("SELECT * FROM buff_instances JOIN buffs USING (buff_id) WHERE room_id = '{$room_id}' AND buff_id = 6");
+$buff_list = array();
+while ($buff = $result->fetch_object()) {
+  $unit = select_unit($buff->unit_id);
+  $buff_list = array_merge($buff_list, damageByBuff($buff, $unit, 0));
+  update_unit($unit, 0, 0, 0);
+}
+
+$result = $db->query("SELECT * FROM units WHERE room_id = '{$room_id}'");
+while ($unit = $result->fetch_object()) {
+  $actions[] = '{ "action_type" : "update_unit",
+    "unit_id" : '.$unit->unit_id.',
+    "canMove" : '.$unit->canMove.',
+    "canAttack" : '.$unit->canAttack.',
+    "outOfMoves" : '.$unit->outOfMoves.',
+    "skillCoolDown" : '.$unit->skillCoolDown.'}';
 }
 
 /* Heal units via Totem */
@@ -50,8 +75,6 @@ while ($fetch = $result->fetch_object()) {
 /* Remove buffs that are out of turns */
 $db->query("DELETE FROM buff_instances WHERE room_id = '{$room_id}' AND turns_left = 0");
 
-/* Reset the moves */
-$db->query("UPDATE units SET canMove = 1, canAttack = 1, outOfMoves = 0 WHERE room_id = '{$room_id}' AND team = '{$new_turn}'");
 
 $out = "{";
 $out .= $SUCCESS.",";
