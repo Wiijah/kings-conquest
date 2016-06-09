@@ -69,7 +69,7 @@ if ($room->state != 'ingame') { // game not started yet
   <style type="text/css">
 	  @font-face {
 		  font-family: 04b_19;
-		  src:url(./fonts/04B_19__.TTF);
+		  src:url("../fonts/04B_19__.TTF");
 	  }
   </style>
   <link rel="stylesheet" type="text/css" href="someCss.css">
