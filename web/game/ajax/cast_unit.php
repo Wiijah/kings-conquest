@@ -55,6 +55,12 @@ if ($caster->skill == "Shield") {
       $actions = array_merge($actions, attack_unit($caster, $fetch));
     }
   }
+} else if ($caster->skill == "Icy Wind") {
+  $result = $db->query("{$SELECT_UNIT} room_id = '{$room_id}' AND team != '{$team}' AND {$AOE}");
+  while ($fetch = $result->fetch_object()) {
+    $actions = array_merge($actions, give_buff($fetch, 6, 2));
+    $actions = array_merge($actions, attack_unit($caster, $fetch));
+  }
 }
 
 $actions[] = update_unit($caster, 0, 0, 1);
