@@ -146,6 +146,16 @@ function handleBuffEffect(action) {
                 }, 1000);
             }, 800);
             break;
+        case "IncAttack":
+            console.log("trigger king buff");
+            var incAttackEffect = new createjs.Sprite(unit.incAttack, "heal");
+            incAttackEffect.x = unit.x;
+            incAttackEffect.y = unit.y;
+            chars.addChild(incAttackEffect);
+            setTimeout(function() {
+                chars.removeChild(incAttackEffect);
+            }, 1000);
+        break;
     }
 }
 
@@ -252,6 +262,19 @@ function spawnUnit(data, isCreation, row, column){
             framerate: 4
         });
         unit.frozenEffect = frozenEffect;
+
+        var incAttack = new createjs.SpriteSheet({
+             "images": [that.buffEffects.battleCry],
+             "frames": {"width": 142, "height": 142, "count": 4, "regY": 110, "regX": 95},
+             "animations": {
+               "heal":{
+                 frames: [0,1,2,3],
+                 next: false
+                }
+            },
+            framerate: 4
+        });
+        unit.incAttack = incAttack;
 
 
         unit.team = data.team;
@@ -903,8 +926,8 @@ function addEventListenersToUnit(unit) {
 
 
 
-            // In this case, we are selecting the unit to be attacked by the wizard spell
-            if (selectedCharacter != unit && isCasting && selectedCharacter.skill == "Magic Damage" && selectedCharacter.team != unit.team) {
+            // In this case, we are selecting the unit to be attacked by the wizard or dragon spell
+            if (selectedCharacter != unit && isCasting && (selectedCharacter.skill == "Magic Damage" || selectedCharacter.skill == "Icy Wind") && selectedCharacter.team != unit.team) {
                 for (var i = 0; i < highlighted.length; i++) {
                     if (highlighted[i].row === unit.row && highlighted[i].column === unit.column) {
                         break;
@@ -913,6 +936,7 @@ function addEventListenersToUnit(unit) {
                 }
                 serverValidate("skill", selectedCharacter, [unit.row, unit.column]);
             }
+
             changed = true;
         });
 
@@ -1753,6 +1777,7 @@ function keyEvent(event) {
 			if (gameEnd){
 				location.reload();
 			}
+            break;
 		case 83: //s
 			if (isDisplayingMenu) {
 				if (selectedCharacter.skillCoolDown === 0) {
@@ -2085,6 +2110,7 @@ function findUnitByCoordinates(row, column) {
 }
 
 function handleGoldUdpate(action) {
+    console.log(team + " " + action.team + " " + action.gold);
     if (action.team == team) {
         currentGold = action.gold;     
 
@@ -2286,6 +2312,7 @@ function handleMove(action) {
 
 
 function handleAttack(action) {
+    console.log("handle attack");
     undoMove.pop();
 	var attacker = findUnitById(action.attacker_id);
 	var target = findUnitById(action.target_id);
@@ -2314,12 +2341,6 @@ function handleCreate(action) {
   	// console.log("action: " + getFirstProp(action.unit));
     var unit = getFirstProp(action.unit);
 	spawnUnit(unit, false);
-	currentGold = action.gold;
-
-	destroyGoldDisplay();
-	drawGoldDisplay();
-
-    playableUnitCount++;
 }
 
 function greyOutCard(index) {
