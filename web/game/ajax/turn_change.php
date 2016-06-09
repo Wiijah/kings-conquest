@@ -6,7 +6,11 @@ $is_countdown = secureStr($_GET['countdown']);
 $time = time();
 
 $old_turn = $room->turn; //old player's turn
-if ($old_turn != $team && $time < $room->countdown) {
+
+if ($is_countdown == 1 && $time < $countdown) {
+  exit_error($ERROR_NOT_YOUR_TURN);
+}
+if ($old_turn != $team && $is_countdown != 1) {
   exit_error($ERROR_NOT_YOUR_TURN);
 }
 
