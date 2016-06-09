@@ -435,6 +435,20 @@ function spawnUnit(data, isCreation, row, column, team){
     unit.healEffect = healEffect;
 
 
+    var incAttack = new createjs.SpriteSheet({
+      "images": [that.buffEffects.battleCry],
+      "frames": {"width": 142, "height": 142, "count": 4, "regY": 110, "regX": 95},
+      "animations": {
+        "heal":{
+          frames: [0,1,2,3],
+          next: false
+        }
+      },
+      framerate: 4
+    });
+    unit.incAttack = incAttack;
+
+
     var forzenEffect = new createjs.SpriteSheet({
       "images": [that.buffEffects.frozen],
       "frames": {"width": 142, "height": 142, "count": 4, "regY": 110, "regX": 95},
@@ -1466,7 +1480,7 @@ function cast(skillNo, unit) {
           } else {
             value.hp = value.max_hp;
           }
-          var heal = new createjs.Sprite(units[i].healEffect, "heal");
+          var heal = new createjs.Sprite(units[i].incAttack, "heal");
           heal.x = value.x;
           heal.y = value.y;
           chars.addChild(heal);
