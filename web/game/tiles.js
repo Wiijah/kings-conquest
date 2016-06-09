@@ -724,7 +724,7 @@ function createFloatingCards(listOfSources, correspondingUnit) {
 		switch(unitCards[i].unitName ){
 			case "knight": 
 				unitCards[i].addEventListener("click", function(event) {
-                    if (team != turn) return;
+                    if (team != turn || isInHighlight) return;
                     var spawnTiles = findAvailableAndNonAvailableSpawnTiles();
                     highlightArea(spawnTiles[0], "graphics/tile/green_tile.png", ["click"], [function(event) {
                         var tile = event.target;
@@ -737,7 +737,7 @@ function createFloatingCards(listOfSources, correspondingUnit) {
 				break;
 			case "archer": 
 				unitCards[i].addEventListener("click", function(event) {
-                    if (team != turn) return;
+                    if (team != turn || isInHighlight) return;
                     var spawnTiles = findAvailableAndNonAvailableSpawnTiles();
                     highlightArea(spawnTiles[0], "graphics/tile/green_tile.png", ["click"], [function(event) {
                         var tile = event.target;
@@ -750,7 +750,7 @@ function createFloatingCards(listOfSources, correspondingUnit) {
 				break;
 			case "wizard": 
 				unitCards[i].addEventListener("click", function(event) {
-                    if (team != turn) return;
+                    if (team != turn || isInHighlight) return;
                     var spawnTiles = findAvailableAndNonAvailableSpawnTiles();
                     highlightArea(spawnTiles[0], "graphics/tile/green_tile.png", ["click"], [function(event) {
                         var tile = event.target;
@@ -763,7 +763,7 @@ function createFloatingCards(listOfSources, correspondingUnit) {
 				break;
 			case "totem":
                 unitCards[i].addEventListener("click", function(event) {
-                    if (team != turn) return;
+                    if (team != turn || isInHighlight) return;
                     var spawnTiles = findAvailableAndNonAvailableSpawnTiles(15);
                     highlightArea(spawnTiles[0], "graphics/tile/green_tile.png", ["click"], [function(event) {
                         var tile = event.target;
@@ -776,7 +776,7 @@ function createFloatingCards(listOfSources, correspondingUnit) {
                 break;
             case "dragon":
                 unitCards[i].addEventListener("click", function(event) {
-                    if (team != turn) return;
+                    if (team != turn || isInHighlight) return;
                     var spawnTiles = findAvailableAndNonAvailableSpawnTiles();
                     highlightArea(spawnTiles[0], "graphics/tile/green_tile.png", ["click"], [function(event) {
                         var tile = event.target;
@@ -1428,7 +1428,7 @@ function sortIndices(unit) {
 }
 
 function orderUnits() {
-	units.sort(function(a,b){return a.y < b.y;});
+	units.sort(function(a,b){return a.y > b.y;});
 
 	$.each(units, function(i, value) {
 		chars.setChildIndex(value, chars.getNumChildren()-1);
@@ -1901,6 +1901,10 @@ function handleServerReply(data) {
         }
     }
 
+        if (fuckingAttackCounter == 2) {
+        handleAttack2(fuckingAttackActionList);
+    }
+
     for (var i = 0; i < data.actions.length; i++) {
         console.log("i: " + i);
         var action = data.actions[i];
@@ -2079,6 +2083,7 @@ function handleOpponent(data) {
         console.log("ERROR");
         return;
     }
+
     var fuckingAttackCounter = 0;
     var fuckingAttackActionList = [];
     for (var i = 0; i < data.actions.length; i++) {
@@ -2090,7 +2095,10 @@ function handleOpponent(data) {
             }
         }
     }
-    if (fuckingAttackCounter == 2) handleAttack2(fuckingAttackActionList);
+
+    if (fuckingAttackCounter == 2) {
+        handleAttack2(fuckingAttackActionList);
+    }
     for (var i = 0; i < data.actions.length; i++) {
         var action = data.actions[i];
         switch (action.action_type) {
