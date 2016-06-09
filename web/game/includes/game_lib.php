@@ -155,6 +155,11 @@ function attack_unit($attacker, $target) {
   global $room_id;
   global $player;
 
+  /* Refresh target */
+  $result = $db->query("SELECT * FROM units WHERE unit_id = '{$target->unit_id}'");
+  $target = $result->fetch_object();
+  if (!$target) return; //already dead
+
   $result = $db->query("SELECT * FROM buff_instances WHERE unit_id = '{$target->unit_id}' AND buff_id = 4");
   $shield = $result->fetch_object();
 
