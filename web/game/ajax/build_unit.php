@@ -7,6 +7,7 @@ $name = secureStr($_POST['name']);
 $team = $TEAM_COLOURS[$player->colour];
 if ($team != $room->turn) exit_error($ERROR_NOT_YOUR_TURN);
 
+$actions = array();
 // $x = 3;
 // $y = 2;
 // $name = "wizard";
@@ -34,18 +35,16 @@ if (!$unit) {
 }
 
 /* Remove the gold from the player */
-$player->gold -= $class->gold;
-$db->query("UPDATE room_participants SET gold = '{$player->gold}' WHERE user_id = '{$user->id}' AND room_id = '{$room_id}'");
 
 $out = "{";
 $out .= $SUCCESS.",";
 //$out .= jsonPair("gold", $player->gold).",";
-$action = action("create_unit",
-       jsonPair("unit", "{".jsonUnit($unit)."}")
-  .",".jsonPair("gold", $player->gold));
+$actions[] = action("create_unit",
+       jsonPair("unit", "{".jsonUnit($unit)."}"));
+$actions[] = give_gold($player, 0 - $class->gold);
 
 
-$out .= jsonPair("actions", "[{$action}]"); 
+$out .= jsonPair("actions", jsonArray($actions));
 $out .= "}";
 
 oppInsert($out);

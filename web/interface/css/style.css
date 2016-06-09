@@ -8,6 +8,9 @@
 ol {
   list-style-position:inside;
 }
+.avatarIcon {
+  width: 32px;
+}
 * {
   margin: 0;
   padding: 0;

@@ -2,6 +2,7 @@
 $title = "Shop";
 require_once 'includes/header_checks.php';
 include 'includes/header.php';
+include 'includes/avatar.php';
 include 'includes/logout_container.php';
 include 'includes/logo.php';
 require_once 'includes/back_container.php';
@@ -52,7 +53,7 @@ You currently have <span class='highlight'><?php echo number_format($user->kp); 
 <?php
 $result = $db->query("SELECT * FROM items WHERE price > 0 ORDER BY price ASC");
 while ($item = $result->fetch_object()) {
-  echo "<tr><td> - </td><td>{$item->name}</td><td>".number_format($item->price)."</td><td><a href='shop?purchase={$item->item_id}'>Purchase</a></td></tr>";
+  echo "<tr><td>".iconImg($item->image)."</td><td>{$item->name}</td><td>".number_format($item->price)."</td><td><a href='shop?purchase={$item->item_id}'>Purchase</a></td></tr>";
 }
 ?>
 </table>

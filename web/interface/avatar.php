@@ -2,6 +2,7 @@
 $title = "Avatar";
 require_once 'includes/header_checks.php';
 include 'includes/header.php';
+include 'includes/avatar.php';
 include 'includes/logout_container.php';
 include 'includes/logo.php';
 require_once 'includes/back_container.php';
@@ -23,10 +24,11 @@ if (isset($_GET['equip'])) {
     $message = Message("Item Equipped", "You have successfully equipped the {$item->name}.");
   }
 }
+
 /* Unequip Item */
 if (isset($_GET['unequip'])) {
   $type = secureStr($_GET['unequip']);
-  if ($user->{$type} != 0) {
+  if (in_array($type, $LAYERS) && $user->{$type} != 0) {
      give_item($user->{$type}, $user->id);
     $result = $db->query("SELECT * FROM inventory JOIN items USING (item_id) WHERE item_id = '{$user->{$type}}' AND user_id = '{$user->id}'");
     $item = $result->fetch_object();
@@ -43,34 +45,36 @@ $items_html = "";
 
 $result = $db->query("SELECT * FROM inventory JOIN items USING (item_id) WHERE user_id = '{$user->id}'");
 while ($fetch = $result->fetch_object()) {
-  $items_html .= "<tr><td>{$fetch->name}</td><td>{$fetch->quantity}<td><a href='avatar?equip={$fetch->item_id}'>Equip</a></td></tr>";
+  $items_html .= "<tr><td>".iconImg($fetch->image)."</td><td>{$fetch->name}</td><td>{$fetch->quantity}<td><a href='avatar?equip={$fetch->item_id}'>Equip</a></td></tr>";
 }
 
 if ($items_html == "") {
   $items_html = "<div class='box standard_box center'>You do not have any items in your inventory.</div>";
 } else {
-  $items_html = "<div class='box center'><table class='play_table'><tr><th>Item</th><th>Quantity</th><th>Equip</th></tr>{$items_html}</table></div>";
+  $items_html = "<div class='box center'><table class='play_table'><tr><th>-</th><th>Item</th><th>Quantity</th><th>Equip</th></tr>{$items_html}</table></div>";
 }
 
 /* Equipped HTML */
 $equipped_list = array();
 
-if ($user->hat != 0) {
-  $result = $db->query("SELECT * FROM items WHERE item_id = '{$user->hat}'");
-  $fetch = $result->fetch_object();
-  $equipped_list[] = $fetch;
+foreach ($LAYERS as $value) {
+  if ($user->{$value} != 0) {
+    $result = $db->query("SELECT * FROM items WHERE item_id = '{$user->{$value}}'");
+    $fetch = $result->fetch_object();
+    $equipped_list[] = $fetch;
+  }
 }
 
 $equipped_html = "";
 
 foreach ($equipped_list as $value) {
-  $equipped_html .= "<tr><td>".ucfirst($value->type)."</td><td>{$value->name}</td><td><a href='avatar?unequip={$fetch->type}'>Unequip</a></td></tr>";
+  $equipped_html .= "<tr><td>".iconImg($value->image)."</td><td>".ucfirst($value->type)."</td><td>{$value->name}</td><td><a href='avatar?unequip={$fetch->type}'>Unequip</a></td></tr>";
 }
 
 if ($equipped_html == "") {
   $equipped_html = "<div class='box standard_box center'>You do not have any items equipped.</div>";
 } else {
-  $equipped_html = "<div class='box center'><table class='play_table'><tr><th>Equipped To</th><th>Item</th><th>Unequip</th></tr>{$equipped_html}</table></div>";
+  $equipped_html = "<div class='box center'><table class='play_table'><tr><th>-</th><th>Equipped To</th><th>Item</th><th>Unequip</th></tr>{$equipped_html}</table></div>";
 }
 
 ?>
