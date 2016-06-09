@@ -642,7 +642,7 @@ function drawMenuDisplay(){
   quitIcon.addEventListener("click", function(event){
 
     displayWarningBox(function(){
-      alert("quit the tutorial, location to game lobby");
+      goto_tutorials();
     },function(){
       removeWarningBox();
     });
@@ -2721,13 +2721,13 @@ function attack_instruction3(){
     removeBox();
     removeDoneBox();
     displayWarningBox(function(){
-      alert("quit the tutorial, location to game lobby");
+      goto_tutorials();
     },function(){
       attack_instruction3();
     });
   
   },function(){
-    window.location.replace("http://localhost/WebAppGroup22/web/game/tutorial2.php");
+    window.location.href = 'tutorial2';
   });
   stage.mouseChildren = false;
 }

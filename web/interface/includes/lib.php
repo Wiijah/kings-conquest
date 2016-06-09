@@ -1,12 +1,15 @@
 <?php
 $ELO_COLOURS = array(
-  2000 => '5582FF',
-  1500 => 'FD55FF',
-  1400 => 'FF5557',
-  1300 => 'FF9848',
-  1200 => 'FFFC87',
-  1000 => 'FFFFFF',
-  0 => '00FF91'
+  2800 => array('FF0000', 'King'),
+  2500 => array('FF0070', 'Legendary'),
+  2200 => array('FF00CD', 'Grandmaster'),
+  2000 => array('6C00FF', 'Master'),
+  1800 => array('4131FF', 'Candidate Master'),
+  1600 => array('3166FF', 'Expert'),
+  1400 => array('1CFF91', 'Pro'),
+  1200 => array('FFF0C0', 'Soldier'),
+  1000 => array('FFFFFF', 'Recruit'),
+  0 => array('C19393', 'Noob')
 );
 $close = "";
 function linkUsername($prof) {
@@ -14,7 +17,7 @@ function linkUsername($prof) {
   $colour = "";
   foreach ($ELO_COLOURS as $key => $value) {
     if ($prof->elo >= $key) {
-      $colour = $value;
+      $colour = $value[0];
       break;
     }
   }

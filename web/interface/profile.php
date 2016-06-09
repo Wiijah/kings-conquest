@@ -75,7 +75,7 @@ if (isset($_GET['delete'])) {
   }
 } //end if isset cancel
 
-echo genTitle("Profile Of {$prof->username}"); ?>
+echo genTitle("Profile Of ".linkUsername($prof).""); ?>
 <div class="play_profile box">
 <table class="play_table">
 <tr><td class="prof_avatar" colspan="2"><img src="<?php echo getAvatarURL($prof->id); ?>" />

@@ -14,7 +14,7 @@ $(document).ready(function() {
     window.location.href = link;
   });
 
-  $('body').on('click', '.logout', function() {
+  $('body').on('click', '.logout_btn', function() {
     logged_out = true;
     window.location.href = "logout";
   });
@@ -146,6 +146,9 @@ function isStrLenCorrect(str, min, max) {
   return str.length >= min && str.length <= max;
 }
 
+function goto_tutorials() {
+  window.location.href = '../interface/tutorials';
+}
 /* Synchronous AJAX. */
 function syncPost(url, data, callback) {
   return $.ajax({
