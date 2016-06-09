@@ -884,7 +884,9 @@ function createNewUnit(unitType, row, column) {
 
 function addEventListenersToUnit(unit) {
     unit.addEventListener("click", function(event) {
+        console.log("isInHighlight : " + isInHighlight + "  isAttacking " + isAttacking + "     isCasting " + isCasting);
             if (isInHighlight && !isAttacking && !isCasting){
+                console.log("yomama2");
                 return;
             }
             if (!movingPlayer && !isAttacking && !isCasting) {
@@ -1164,6 +1166,7 @@ function cast(skillName, unit) {
 	switch (skillName) {
 		case "Battle Cry": // King's skill
             serverValidate("skill", unit, []);
+            isCasting = false;
             undoMove.pop();
 			break;
 		case "Double Shoot": // Archer's skill
@@ -1738,13 +1741,16 @@ createjs.Ticker.on("tick", function() {
 
 // createjs.Ticker.setFPS(30);
 function keyEvent(event) {
+    // console.log(team + " " + selectedCharacter.team  + " " + selectedCharacter.unit_id);
     switch(event.keyCode) {
         case 27:  //esc
+    if (turn != team || selectedCharacter.team != turn || selectedCharacter.team != team) return;
             if (isDisplayingMenu) {
             	clearSelectionEffects();
             }
             break;
         case 67: 
+    if (turn != team || selectedCharacter.team != turn || selectedCharacter.team != team) return;
             console.log(gameEnd);
             if (gameEnd) {
                 console.log("yomama");
@@ -1755,6 +1761,7 @@ function keyEvent(event) {
             }
         	break; 
         case 77: //m
+    if (turn != team || selectedCharacter.team != turn || selectedCharacter.team != team) return;
         	if (isDisplayingMenu) {
         		if (selectedCharacter.canMove) {
 					undoHighlights();
@@ -1764,6 +1771,7 @@ function keyEvent(event) {
         	}
         	break;
         case 65: //a
+    if (turn != team || selectedCharacter.team != turn || selectedCharacter.team != team) return;
         	if (isDisplayingMenu) {
 		        if (selectedCharacter.canAttack) {
 					undoHighlights();
@@ -1774,11 +1782,13 @@ function keyEvent(event) {
 			}
 			break;
 		case 82: // keyboard r
+    if (turn != team || selectedCharacter.team != turn || selectedCharacter.team != team) return;
 			if (gameEnd){
 				location.reload();
 			}
             break;
 		case 83: //s
+    if (turn != team || selectedCharacter.team != turn || selectedCharacter.team != team) return;
 			if (isDisplayingMenu) {
 				if (selectedCharacter.skillCoolDown === 0) {
 					undoHighlights();
@@ -1788,6 +1798,7 @@ function keyEvent(event) {
 			}
 			break;
 		case 32: //space
+    if (turn != team || selectedCharacter.team != turn || selectedCharacter.team != team) return;
             console.log(undoMove.length);
 			if(undoMove.length != 0){
 				if(!archerSkillDone){
@@ -1813,9 +1824,11 @@ function keyEvent(event) {
 			}
             break;
 		case 70:
+    if (turn != team || selectedCharacter.team != turn || selectedCharacter.team != team) return;
 //			goFullScreen();
 			break;
         case 13: //enter
+    if (turn != team || selectedCharacter.team != turn || selectedCharacter.team != team) return;
         	if (!gameEnd) {
                 serverValidate("turn_change", null, []);
 	        	clearSelectionEffects();
