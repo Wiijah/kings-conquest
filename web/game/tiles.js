@@ -63,7 +63,7 @@ var undoMove = [];
 var undo = false;
 
 var bgMusic = true;
-
+var enableCountDown = true;
 var turnTimer;
 var remainingTurnTime;
 var timerIntervalId;
@@ -85,7 +85,9 @@ var bgss2 = new createjs.SpriteSheet({
           },
           framerate: 2
         });  
- if (turn) {
+
+
+ if (turn==0) {
  	bg = new createjs.Sprite(bgss, "tick");
  } else {
  	bg = new createjs.Sprite(bgss2, "tick");
@@ -109,7 +111,15 @@ function refreshTimer(remainingTime) {
   remainingTurnTime = remainingTime;
   if (remainingTurnTime === -1) {
   	  stage.removeChild(bg);
-    endTurn();
+
+  	 setTimeout(function(){
+  	 	 serverValidate("turn_change", null, []);
+	        	clearSelectionEffects();
+  	 },1000);
+  
+
+
+
   } else {
   	var timeText;
   	if (remainingTurnTime < 10){
