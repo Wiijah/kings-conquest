@@ -93,13 +93,7 @@ if ($friend) {
 <div class='btn lightbox_btn js_link' data-href='profile?username=<?php echo $prof->username; ?>&<?php echo $friend_link; ?>=1&close=<?php echo secureStr($close); ?>'><?php echo $friend_text; ?></div>
 </td>
 </tr>
-<tr><th>Username</th><td><?php echo $prof->username; ?></td></tr>
-<tr><th>Email</th><td><?php echo $prof->email; ?></td></tr>
-<tr><th>Games Won</th><td><?php echo number_format($prof->wins); ?></td></tr>
-<tr><th>Games Lost</th><td><?php echo number_format($prof->losses); ?></td></tr>
-<tr><th>ELO Rating</th><td><?php echo number_format($prof->elo); ?></td></tr>
-<tr><th>Win/Loss Ratio</th><td><?php echo ratio($prof->wins, $prof->losses); ?></td></tr>
-<tr><th>Sign Up Date</th><td><?php echo formatSQLDate($prof->created); ?></td></tr>
+<?php echo genProf($prof); ?>
 </table>
 </div> <!-- play_profile box -->
 <br />

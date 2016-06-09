@@ -3,7 +3,10 @@
   margin: 0 auto;
   text-align: left;
 }
-.tut_img {
+.tut_mc {
+  margin-left: 200px;
+}
+.tut_img, .tut_mc {
   width: 340px;
   border-radius: 20px;
   border: 2px solid rgba(255, 255, 255, 0.1);

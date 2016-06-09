@@ -72,14 +72,7 @@ var room_id = 0;
 
 <div class='btn lightbox_btn js_link' data-href='avatar'>Customise Avatar</div>
 </td></tr>
-<tr><th>Username</th><td><?php echo $user->username; ?></td></tr>
-<tr><th>Email</th><td><?php echo $user->email; ?></td></tr>
-<tr><th>King Points</th><td><?php echo number_format($user->kp); ?></td></tr>
-<tr><th>Games Won</th><td><?php echo number_format($user->wins); ?></td></tr>
-<tr><th>Games Lost</th><td><?php echo number_format($user->losses); ?></td></tr>
-<tr><th>ELO Rating</th><td><?php echo number_format($user->elo); ?></td></tr>
-<tr><th>Win/Loss Ratio</th><td><?php echo ratio($user->wins, $user->losses); ?></td></tr>
-<tr><th>Sign Up Date</th><td><?php echo formatSQLDate($user->created); ?></td></tr>
+<?php echo genProf($user); ?>
 </table>
 </div> <!-- play_profile box -->
 
