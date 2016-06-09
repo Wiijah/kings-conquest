@@ -15,7 +15,7 @@ include 'includes/header.php';
 include 'includes/logout_container.php';
 include 'includes/logo.php';
 
-$close = secureStr($_GET['close']);
+$close = secureInt($_GET['close']);
 if ($close == 1) {
   $breadcrumbs = "";
 } else if ($close == 2) { 

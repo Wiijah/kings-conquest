@@ -37,9 +37,8 @@ For tutorials concerning gameplay, you can try out the four interactive tutorial
 
 <a name="intro"></a><?php echo genTitle("Introduction"); ?>
 <div class="box standard_box">
-Kings' Conquest is a turn-based fantasy multiplayer game.<br />
-It is completely free to play and can be played from your browser without any installations.<br />
-Playing a game requires you to use the standard <span class='highlight'>Lobby Room</span> system as we'll explain in the next few sections.
+Kings' Conquest is a turn-based fantasy multiplayer game.<br /><br />
+The game uses a <span class='highlight'>Lobby Room</span> system as we'll explain in the next three sections.
 </div><br />
 
 <a name="creating"></a><?php echo genTitle("Creating A Game"); ?>
@@ -59,7 +58,7 @@ To join a game, click on the <span class='highlight'>Join</span> game button.<br
 
 <a name="starting"></a><?php echo genTitle("Starting A Game"); ?>
 <div class="box standard_box">
-Only the room owner can start the game once all other players are ready and that the room is full.
+Once in the game room, you can chat to other players in that room. Only the room owner can start the game once all other players are ready and that the room is full.
 If you are not the room owner, then you must click <span class='highlight'>Ready</span> before the room owner can start the game.<br /><br />
 <img src="images/tut/start_game_ready.png" class="tut_mc" /><br /><br />
 
@@ -69,7 +68,8 @@ Otherwise, if you are the room owner, you may start the game by clicking <span c
 The room owner may also kick other players by clicking on the <span class='highlight'>Kick</span> as shown below.
 <img src="images/tut/start_game_kick.png" class="tut_mc" /><br /><br />
 
-You can leave the game room by clicking on <span class='highlight'>Leave Room</span> which is below the <span class='highlight'>Ready</span> or <span class='highlight'>Start</span> button.
+You can leave the game room by clicking on <span class='highlight'>Leave Room</span>.
+<img src="images/tut/start_game_leave.png" class="tut_mc" /><br /><br />
 </div><br />
 
 <a name="items"></a><?php echo genTitle("Items & Avatars"); ?>
