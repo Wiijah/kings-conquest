@@ -1130,7 +1130,7 @@ function cast(skillName, unit) {
 	switch (skillName) {
 		case "Battle Cry": // King's skill
             serverValidate("skill", unit, []);
-
+            undoMove.pop();
 			break;
 		case "Double Shoot": // Archer's skill
 			archerSkillDone = false;
@@ -1480,6 +1480,13 @@ function orderUnits() {
 		chars.setChildIndex(value.hp_bar, chars.getNumChildren()-1);
 		value.hp_bar.updateCache();
 	});
+
+    $.each(units, function(i, value) {
+        for (var i = 0; i < value.buffs.length; i++) {
+            chars.setChildIndex(value.buffs[i][2], chars.getNumChildren()-1);
+            // value.hp_bar.updateCache();
+        }
+    });
 }
 
 
@@ -2260,6 +2267,7 @@ function handleMove(action) {
 
 
 function handleAttack(action) {
+    undoMove.pop();
 	var attacker = findUnitById(action.attacker_id);
 	var target = findUnitById(action.target_id);
 	attack(attacker, target, action.dmg, action.is_critical);
@@ -2275,6 +2283,7 @@ function handleAttack(action) {
 
 
 function handleAttack2(attacks) {
+    undoMove.pop();
     handleAttack(attacks[0]);
     if (findUnitById(attacks[1].target_id) == null) return;
     setTimeout(function() {
