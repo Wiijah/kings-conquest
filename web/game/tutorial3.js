@@ -547,7 +547,7 @@ function findFreeSpace(){
 
 function initGame() {
 
-  stage.mouseChildren = false;
+  //stage.mouseChildren = false;
   createjs.Ticker.addEventListener("tick", keyEvent);
     this.document.onkeydown = keyEvent;
   stage.enableMouseOver(20);
@@ -2254,6 +2254,7 @@ createjs.Ticker.on("tick", function() {
 function keyEvent(event) {
     switch(event.keyCode) {
         case 27:  //esc
+            return;
             removeWarningBox();
             if (isDisplayingMenu) {
               clearSelectionEffects();
@@ -2295,6 +2296,7 @@ function keyEvent(event) {
       }
       break;
     case 82: //r
+      return;
       if (endGame){
         location.reload();
       }
@@ -2319,6 +2321,7 @@ function keyEvent(event) {
       }
       break;
     case 32: //space
+      return;
       if(undoMove.length != 0){
         if(!archerSkillDone){
           selectedCharacter.skillCoolDown = 0;
@@ -2850,7 +2853,7 @@ function card_instruction(){
   displayBox(function() {
     spawnEnemy();
     hideMaskBox2();
-    stage.mouseChildren = true;
+    //stage.mouseChildren = true;
     addPointerToCard();
   });
   addTitleToBox("<img src=\"./i_icon.png\" style=\"line-height: 1px; vertical-align: bottom; margin-right: 5px\" height=\"20\" width=\"20\" />Card System");

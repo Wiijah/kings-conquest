@@ -640,7 +640,6 @@ function drawMenuDisplay(){
 
   stage.addChild(quitIcon);
   quitIcon.addEventListener("click", function(event){
-
     displayWarningBox(function(){
       goto_tutorials();
     },function(){
@@ -2041,6 +2040,7 @@ createjs.Ticker.on("tick", function() {
 function keyEvent(event) {
     switch(event.keyCode) {
         case 27:  //esc
+            return;
             if (isDisplayingMenu) {
               clearSelectionEffects();
             }
@@ -2108,6 +2108,7 @@ function keyEvent(event) {
       }
       break;
     case 32: //space
+      return;
       if(undoMove.length != 0){
         if(!archerSkillDone){
           selectedCharacter.skillCoolDown = 0;

@@ -2177,16 +2177,17 @@ createjs.Ticker.on("tick", function() {
 function keyEvent(event) {
     switch(event.keyCode) {
         case 27:  //esc
+          return;
             if (isDisplayingMenu) {
               clearSelectionEffects();
             }
             break;
         case 67:
+          return;
           draggable.x = 0;
           draggable.y = 0;
           break; 
         case 77: //m
-
           if (firstClickSkill) return;
           if (isDisplayingMenu) {
             if (selectedCharacter.canMove) {
@@ -2209,6 +2210,7 @@ function keyEvent(event) {
       }
       break;
     case 82: //r
+      return;
       if (endGame){
         location.reload();
       }
@@ -2248,6 +2250,7 @@ function keyEvent(event) {
       }
       break;
     case 32: //space
+      return;
       if(undoMove.length != 0){
         if(!archerSkillDone){
           selectedCharacter.skillCoolDown = 0;
@@ -2272,6 +2275,7 @@ function keyEvent(event) {
     case 70:
       break;
         case 13: //enter
+          return;
           if (!startTutorial) return;
           if (turnCount == 0) return;
           if (!turn) return;
