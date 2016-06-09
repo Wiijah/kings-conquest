@@ -3074,7 +3074,7 @@ function endTutorial(){
     });
   
   },function(){
-    window.location.href = 'tutorial4';
+    goto_tutorials();
   });
   stage.mouseChildren = false; 
  
