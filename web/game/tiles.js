@@ -13,6 +13,7 @@ var offY;
 var isPlayerTurn;
 
 
+var lastMove;
 var path = [];
 var highlighted = [];
 var sub_highlighted = [];
@@ -50,6 +51,7 @@ var p2currentGold;
 var currentGoldDisplay;
 var mapDrawn = false;
 var resized = false;
+
 
 var turn = 0;
 var playableUnitCount = 0;
@@ -727,6 +729,11 @@ function createFloatingCards(listOfSources, correspondingUnit) {
                 unitCards[i].text = new createjs.Text("$ 120", "12px 'Arial'", "#ffffff");
 				unitCards[i].addEventListener("click", function(event) {
                     if (team != turn || isInHighlight) return;
+                    if (currentGold < unitCards[i].price) {
+
+                        return;
+                    } 
+
                     var spawnTiles = findAvailableAndNonAvailableSpawnTiles();
                     highlightArea(spawnTiles[0], "graphics/tile/green_tile.png", ["click"], [function(event) {
                         var tile = event.target;
@@ -734,6 +741,7 @@ function createFloatingCards(listOfSources, correspondingUnit) {
                         clearSelectionEffects();
                     }]);
                     highlightArea(spawnTiles[1], "graphics/tile/red_tile.png", [], []);
+
 					// createNewUnit("knight");
 				});
 				break;
@@ -1401,6 +1409,10 @@ function moveUnit() {
         	movingUnit.canMove = 1;
         	undo = false;
         } else {
+            undoMove.pop();
+            if (movingUnit.team == team) {
+                undoMove.push(movingUnit);
+            }
         	movingUnit.canMove = 0;
         }
 
@@ -1719,6 +1731,7 @@ function keyEvent(event) {
 			}
 			break;
 		case 32: //space
+            console.log(undoMove.length);
 			if(undoMove.length != 0){
 				if(!archerSkillDone){
 					selectedCharacter.skillCoolDown = 0;
@@ -1733,13 +1746,15 @@ function keyEvent(event) {
 				console.log("current row:" + fromX + ", current column:" + fromY);
 				console.log("prev row:" + toX + ", prev column:" + toY);
 				findPath(fromX, fromY, toX, toY);
-				blockMaps[fromX][fromY] = 0;
-				move();
-				blockMaps[toX][toY] = 1;
-				selectedCharacter.row = toX;
-				selectedCharacter.column = toY;
+                serverValidate("move", selectedCharacter, [path]);
+				// blockMaps[fromX][fromY] = 0;
+				// move();
+				// blockMaps[toX][toY] = 1;
+				// selectedCharacter.row = toX;
+				// selectedCharacter.column = toY;
 				clearSelectionEffects();
 			}
+            break;
 		case 70:
 //			goFullScreen();
 			break;
@@ -2044,17 +2059,19 @@ function handleGoldUdpate(action) {
         drawGoldDisplay();   
     }
 
-    var matrix = new createjs.ColorMatrix().adjustSaturation(-100);
-
-    for (var i = 0; i < 5; i++) {
-        if (unitsCards[i].price < currentGold) {
-            unitsCards[i].filters = [new createjs.ColorMatrixFilter(matrix)];
-        } else {
-            unitsCards[i].filters = [];
-        }
-        unitsCards.cache();
-    }  
-    // myDisplayObject.cache();
+    //  var matrix = new createjs.ColorMatrix().adjustSaturation(100);
+    // for (var i = 0; i < unitCards.length; i++) {
+    //     if (unitCards[i].price > currentGold) {
+    //         console.log("Cards " + i + ": not enough gold");
+    //         unitCards[i].filters = [new createjs.ColorMatrixFilter(matrix)];
+    //     } else {
+    //         unitCards[i].filters = [];
+    //     }
+    //     unitCards[i].cache(unitCards[i].x, unitCards[i].y, unitCards[i].width, unitCards[i].height);
+    //     // stage.update();
+    //     // stage.addChild(unitCards[i]);
+    // }  
+    // // myDisplayObject.cache();
 }
 
 function changeTurn(action) {
@@ -2221,8 +2238,6 @@ function handleMove(action) {
 	unit.row = toRow;
 	unit.column = toCol;
 	clearSelectionEffects();
-	undoMove.pop();
-	undoMove.push(unit);
 }
 
 
