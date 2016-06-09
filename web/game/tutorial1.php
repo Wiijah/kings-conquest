@@ -70,7 +70,7 @@
       Are you sure to quite the game? <br /><br />
     </div>
     <div id="box_foot">
-      <button type="button" id="yesButton" class="btn" ng-click="">Yes</button>
+      <button type="button" id="yesButton" class="btn2" ng-click="">Yes</button>
        <button type="button" id="noButton" class="btn" ng-click="">No</button>
     </div>
   </div>
