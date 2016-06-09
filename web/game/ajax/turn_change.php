@@ -93,16 +93,6 @@ $out .= "}";
 oppInsert($out);
 echo $out;
 
-function triggerBufferJson($buff_effect, $unit_id, $health_change) {
-  return '{"action_type" : "trigger_buff",
-    "buff_effect" : "'.$buff_effect.'",
-    "unit_id" : '.$unit_id.',
-    "health_change" : '.$health_change.'
-  }';
-}
-
-
-
 function removeBuffJson($buff_id, $unit_id) {
   return '{"action_type" : "remove_buff",
     "buff_id" : "'.$buff_id.'",

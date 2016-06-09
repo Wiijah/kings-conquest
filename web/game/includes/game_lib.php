@@ -7,6 +7,18 @@ $TEAM_BLUE = 1;
 
 $SELECT_UNIT = "SELECT * FROM units JOIN classes ON units.class_id = classes.class_id WHERE";
 
+
+
+function triggerBufferJson($buff_effect, $unit_id, $health_change) {
+  return '{"action_type" : "trigger_buff",
+    "buff_effect" : "'.$buff_effect.'",
+    "unit_id" : '.$unit_id.',
+    "health_change" : '.$health_change.'
+  }';
+}
+
+
+
 function aoe($x, $y) {
   return "((x = '{$x}' AND y = '{$y}')
            OR (x = '".($x - 1)."' AND y = '{$y}')

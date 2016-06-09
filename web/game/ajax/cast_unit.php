@@ -42,6 +42,7 @@ if ($caster->skill == "Shield") {
     $actions[] = action("apply_buff",
          jsonPair("buff_id", 2) 
     .",".jsonPair("unit_id", $fetch->unit_id));
+    $actions[] = triggerBufferJson("IncAttack", $fetch->unit_id, 0);
   }
 } else if ($caster->skill == "Magic Damage") {
   $result = $db->query("{$SELECT_UNIT} room_id = '{$room_id}' AND team != '{$team}' AND {$AOE}");
