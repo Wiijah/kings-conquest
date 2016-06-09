@@ -320,10 +320,12 @@ function spawnUnit(data, isCreation, row, column){
 	chars.addChild(unit);
 	chars.addChild(hp_bar);
 
-	orderUnits();
-
 	unit.cache(0,0,150,150);
 	hp_bar.cache(0,0,100,120);
+
+
+	orderUnits();
+
 	spawnAnimation.x = unit.x;
 	spawnAnimation.y = unit.y;
 	chars.addChild(spawnAnimation);
@@ -1264,8 +1266,7 @@ function attack(attacker, target, dmg, isCritical) {
 		sprite.scaleY = 0.7;
 		chars.removeChild(attacker);	
 		chars.addChild(sprite);
-
-
+		orderUnits();
 			
 		showDamage(target, isCritical == 1 ? 2 : 1, dmg);
 		target.hp -= dmg;
@@ -1284,6 +1285,7 @@ function attack(attacker, target, dmg, isCritical) {
 			chars.removeChild(sprite);
 			chars.addChild(attacker);
 			chars.removeChild(damageAnimation);
+			orderUnits();
 		}, 1000);
 
 		changed = true;
@@ -1428,15 +1430,17 @@ function sortIndices(unit) {
 }
 
 function orderUnits() {
-	units.sort(function(a,b){return a.y > b.y;});
+	units.sort(function(a,b){return a.y - b.y;});
 
 	$.each(units, function(i, value) {
 		chars.setChildIndex(value, chars.getNumChildren()-1);
+		value.updateCache();
 	});
 
 
 	$.each(units, function(i, value) {
 		chars.setChildIndex(value.hp_bar, chars.getNumChildren()-1);
+		value.hp_bar.updateCache();
 	});
 }
 
@@ -1699,7 +1703,7 @@ function keyEvent(event) {
 				if (selectedCharacter.skillCoolDown === 0) {
 					undoHighlights();
 					isCasting = true;
-					cast(selectedCharacter.skill_no, selectedCharacter);
+					cast(selectedCharacter.skill, selectedCharacter);
 				}
 			}
 			break;
