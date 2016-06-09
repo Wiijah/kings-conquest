@@ -106,6 +106,8 @@ var bgss2 = new createjs.SpriteSheet({
 }
 var turnTimerbg;
 function refreshTimer(remainingTime) {
+  if (gameEnd) return; //stop timer if game ended.
+  
   stage.removeChild(turnTimerbg);
   stage.removeChild(turnTimer);
   remainingTurnTime = remainingTime;
@@ -127,11 +129,12 @@ function refreshTimer(remainingTime) {
   	}
   	if (remainingTurnTime < 0) timeText = "00";
 
+    var offset_timer = -30;
   	turnTimerbg = new createjs.Text("" + timeText, "70px '04b_19'", "#000000");
-    turnTimerbg.x = stage.canvas.width - stage.canvas.width/2 + 2;
+    turnTimerbg.x = stage.canvas.width - stage.canvas.width/2 + 2 + offset_timer;
     turnTimerbg.y = 48;
     turnTimer = new createjs.Text("" + timeText, "70px '04b_19'", "#ffffff");
-    turnTimer.x = stage.canvas.width - stage.canvas.width/2;
+    turnTimer.x = stage.canvas.width - stage.canvas.width/2 + offset_timer;
     turnTimer.y = 50;
 
     stage.addChild(turnTimerbg);
@@ -235,6 +238,9 @@ function handleBuffEffect(action) {
 
 
 function resize() {
+
+  stage.canvas.height = $("body").prop("clientHeight");
+  stage.canvas.width = window.innerWidth;
 	// stage.canvas.width = window.innerWidth;
 	//stage.canvas.height = window.innerHeight;
 	//drawGame();
@@ -495,9 +501,8 @@ function initGame() {
 	 	}
 	});
 
-	stage.canvas.width = window.innerWidth;
 	stage.canvas.height = $("body").prop("clientHeight");//window.innerHeight; //$("body").prop("clientHeight");
-
+  stage.canvas.width = window.innerWidth;
 
 	draggable = new createjs.Container();
 	drag_box = new createjs.Shape();
@@ -1934,8 +1939,6 @@ function update() {
 		moveUnit();
 	}
 	if (resized) {	
-		stage.canvas.width = window.innerWidth;
-		stage.canvas.height = window.innerHeight;
 		drawGame();
 		destroyMenuDisplay();
 		drawMenuDisplay();

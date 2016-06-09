@@ -30,9 +30,11 @@ if ($room->state != 'ingame') { // game not started yet
           position: relative;
           background-image: url('graphics/background.jpg');
           background-position: repeat-x;
-          padding: 0px;
-          border: 0px;
-          margin: 0px;
+          display: block;
+          padding: 0;
+          margin: 0;
+          border: 0;
+          overflow: hidden;
         }
        /* #sun {
           position: absolute;
@@ -46,6 +48,10 @@ if ($room->state != 'ingame') { // game not started yet
           left: 0;
           z-index: 0;
         }*/
+      @font-face {
+        font-family: 04b_19;
+        src:url("../fonts/04B_19__.TTF");
+      }
         
       </style>
       <script>
@@ -64,13 +70,6 @@ if ($room->state != 'ingame') { // game not started yet
   <script src="../interface/js/common.js"></script>
   <script src="js/opp.js"></script>
 
-  <style type="text/css">
-    @font-face {
-      font-family: 04b_19;
-      src:url("../fonts/04B_19__.TTF");
-    }
-  </style>
-  
   </head>
   <body>
       
