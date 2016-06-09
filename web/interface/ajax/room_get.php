@@ -1,7 +1,9 @@
 <?php
 /* Output to the user all messages newer than the ID given */
-
 require_once 'ajax_common.php';
+require_once '../includes/lib.php';
+
+$close = 1;
 
 $room_id = secureInt($_POST['id']);
 
@@ -29,7 +31,11 @@ $result = $db->query("SELECT * FROM room_participants JOIN users ON room_partici
 
 $comma = "";
 while ($player = $result->fetch_object()) {
-  $out .= $comma.'{"user_id":"'.$player->user_id.'", "player": "'.$player->username.'", "colour": "'.$player->colour.'", "state": "'.$player->state.'"}';
+  $out .= $comma.'{"user_id":"'.$player->user_id.'",
+                   "player": "'.$player->username.'",
+                   "userlink":"'.linkUsername($player, true).'",
+                   "colour": "'.$player->colour.'",
+                   "state": "'.$player->state.'"}';
   $comma = ",";
 }
 

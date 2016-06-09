@@ -1,5 +1,7 @@
 <?php
 
+require_once '../../interface/includes/lib.php';
+
 /* Team enumerations */
 $TEAM_COLOURS = array("red" => 0, "blue" => 1);
 $TEAM_RED = 0;
@@ -268,6 +270,10 @@ function gameEnd($winner, $loser, $reason) {
   /* Get winner info */
   $result = $db->query("SELECT * FROM room_participants WHERE user_id = '{$winner->id}' AND room_id = '{$room_id}'");
   $winner_part = $result->fetch_object();
+
+  $result = $db->query("SELECT * FROM room_participants WHERE user_id = '{$loser->id}' AND room_id = '{$room_id}'");
+  $loser_part = $result->fetch_object();
+
   $winner_team = $TEAM_COLOURS[$winner_part->colour];
 
   $actions[] = action("game_end", jsonStr("reason", $reason)
@@ -277,8 +283,8 @@ function gameEnd($winner, $loser, $reason) {
   $chance_win = abs((1 / (1 + pow(10, (($loser->elo - $winner->elo) / 400)))) * 100);
   $chance_lose = abs(100 - $chance_win);
 
-  $elo_won = round(32 * ($chance_win / 100));
-  $elo_lost = round(32 * ($chance_lose / 100));
+  $elo_won = round(32 * ($chance_lose / 100));
+  $elo_lost = $elo_won;
   
 
   /* Update room and room participants */
@@ -288,6 +294,13 @@ function gameEnd($winner, $loser, $reason) {
   /* Update user profiles */
   $db->query("UPDATE users SET wins = wins + 1, kp = kp + 1000, elo = elo + {$elo_won} WHERE id = '{$winner->id}'");
   $db->query("UPDATE users SET losses = losses + 1, kp = kp + 300, elo = elo - {$elo_lost} WHERE id = '{$loser->id}'");
+
+  /* Give achievements if appropriate */
+  if ($winner->wins == 0) giveAch("first_win", $winner, $room_id);
+  if ($winner->wins == 49) giveAch("50_wins", $winner, $room_id);
+  if ($winner->wins == 99) giveAch("100_wins", $winner, $room_id);
+  if ($loser_part->unit_kills == 0) giveAch("perfect_win", $winner, $room_id);
+
   return $actions;
 }
 

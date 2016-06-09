@@ -54,7 +54,7 @@ You currently have <span class='highlight'><?php echo number_format($user->kp); 
 <?php
 $result = $db->query("SELECT * FROM items WHERE price > 0 ORDER BY price ASC");
 while ($item = $result->fetch_object()) {
-  echo "<tr><td>".iconImg($item->image)."</td><td>{$item->name}</td><td>".number_format($item->price)."</td><td><a href='shop?purchase={$item->item_id}'>Purchase</a></td></tr>";
+  echo "<tr><td>".avatarImg($item)."</td><td>".avatarTitle($item)."</td><td>".number_format($item->price)."</td><td><a href='shop?purchase={$item->item_id}'>Purchase</a></td></tr>";
 }
 ?>
 </table>

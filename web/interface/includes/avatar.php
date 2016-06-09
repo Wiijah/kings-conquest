@@ -11,6 +11,9 @@ function avatarImg($av) {
 
   return "<label title='".secureStr($av->description)."'><img src='".avatarIcon($av->image)."' class='avatarIcon' /></label>";
 }
+function avatarTitle($av) {
+  return "<label title='".secureStr($av->description)."'>{$av->name}</label>";
+}
 function iconImg($img) {
   return "<img src='".avatarIcon($img)."' class='avatarIcon' />";
 }

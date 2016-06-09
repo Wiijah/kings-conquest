@@ -22,6 +22,47 @@ function getRank($elo) {
   }
   return "";
 }
+
+function giveAch($ach_name, $prof, $room_id = 0) {
+  global $db;
+  $result = $db->query("SELECT * FROM ach_instances WHERE user_id = '{$prof->id}' AND ach_name = '{$ach_name}'");
+  if ($result->num_rows > 0) {
+    return;
+  } 
+  $db->query("INSERT INTO ach_instances (ach_name, user_id, room_id) VALUES('{$ach_name}', '{$prof->id}', '{$room_id}')");
+}
+
+function getAchievementsHTML($prof, $room_id = 0) {
+  global $db;
+
+  $ach = array();
+  $result = $db->query("SELECT * FROM achievements");
+  while ($fetch = $result->fetch_object()) {
+    $ach[$fetch->ach_name] = $fetch;
+  }
+
+  $user_ach = array();
+
+  //if ($prof->wins >= 50) $user_ach['50_wins'] = $ach['50_wins'];
+  //if ($prof->wins >= 100) $user_ach['100_wins'] = $ach['100_wins'];
+
+  $sql_extra = "";
+  if ($room_id != 0) $sql_extra = " AND room_id = {$room_id} AND alert != 0";
+  $result = $db->query("SELECT * FROM ach_instances WHERE user_id = '{$prof->id}'{$sql_extra}");
+  while ($fetch = $result->fetch_object()) {
+    $user_ach[$fetch->ach_name] = $ach[$fetch->ach_name];
+  }
+
+  if ($room_id != 0) $db->query("UPDATE ach_instances SET alert = 0 WHERE user_id = '{$prof->id}'{$sql_extra}");
+
+
+  $ach_html = "";
+  foreach ($user_ach as $value) {
+    $ach_html .= "<label title='{$value->label}'><img src='{$value->image}' class='achievement' /></label>";
+  }
+  return $ach_html;
+}
+
 function genProf($prof) {
   global $user;
   $email = $prof->member_type == "guest" ? "N/A" : $prof->email;
@@ -33,10 +74,10 @@ function genProf($prof) {
 <tr><th>Games Won</th><td>".number_format($prof->wins)."</td></tr>
 <tr><th>Games Lost</th><td>".number_format($prof->losses)."</td></tr>
 <tr><th>ELO Rating</th><td>".getRank($prof->elo)."<br /><small>".number_format($prof->elo)."</small></td></tr>
-<tr><th>Win/Loss Ratio</th><td>".ratio($prof->wins, $prof->losses)."</td></tr>
+<tr><th>Win/Loss Ratio</th><td>".percent($prof->wins, $prof->losses)."%</td></tr>
 <tr><th>Sign Up Date</th><td>".formatSQLDate($prof->created)."</td></tr>";
 }
-function linkUsername($prof) {
+function linkUsername($prof, $newTab = false) {
   global $close, $ELO_COLOURS;
   $colour = "";
   foreach ($ELO_COLOURS as $key => $value) {
@@ -45,7 +86,8 @@ function linkUsername($prof) {
       break;
     }
   }
-  return "<a href='profile?username={$prof->username}&close={$close}' style='color: #{$colour}' class='rank'>{$prof->username}</a>";
+  $nt = $newTab ? " target='_blank'" : "";
+  return "<a href='profile?username={$prof->username}&close={$close}' style='color: #{$colour}' class='rank'{$nt}>{$prof->username}</a>";
 }
 function Message($title, $text) {
   return genTitle($title)."<div class='box center standard_box'>{$text}</div><br />";
