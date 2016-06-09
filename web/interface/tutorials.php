@@ -20,7 +20,6 @@ For tutorials concerning gameplay, you can try out the four interactive tutorial
     <div class='btn lightbox_btn js_link' data-href='../game/tutorial1'>1. Basics</div>
     <div class='btn lightbox_btn js_link' data-href='../game/tutorial2'>2. Intermediate</div>
     <div class='btn lightbox_btn js_link' data-href='../game/tutorial3'>3. Advanced</div>
-    <div class='btn lightbox_btn js_link' data-href='../game/tutorial4'>4. Expert</div>
 </div> <br />
 
 <?php echo genTitle("Contents"); ?>
