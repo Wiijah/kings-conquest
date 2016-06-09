@@ -63,15 +63,17 @@ if ($room->state != 'ingame') { // game not started yet
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.3/jquery.min.js"></script>
   <script src="../interface/js/common.js"></script>
   <script src="js/opp.js"></script>
+
+  <style type="text/css">
+    @font-face {
+      font-family: 04b_19;
+      src:url("../fonts/04B_19__.TTF");
+    }
+  </style>
+  
   </head>
   <body>
       
-  <style type="text/css">
-	  @font-face {
-		  font-family: 04b_19;
-		  src:url("../fonts/04B_19__.TTF");
-	  }
-  </style>
   <link rel="stylesheet" type="text/css" href="someCss.css">
   <script src = "./someJs.js" type="text/javascript"> </script>
     <div id="someBox2">
