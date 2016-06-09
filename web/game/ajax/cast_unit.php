@@ -34,7 +34,7 @@ $actions = array();
 $out = $SUCCESS.",";
 
 if ($caster->skill == "Shield") {
-  $actions = array_merge($actions, give_buff($caster, 4, 6));
+  $actions = array_merge($actions, give_buff($caster, 4, -1));
 } else if ($caster->skill == "Battle Cry") {
   $result = $db->query("{$SELECT_UNIT} room_id = '{$room_id}' AND commandable = '1' AND team = '{$team}'");
   while ($fetch = $result->fetch_object()) {
