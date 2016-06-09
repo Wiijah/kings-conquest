@@ -50,7 +50,11 @@ for ($i = 0; $i < count($moves); $i++) {
 //update unit location
 $new_x = $moves[count($moves) - 1][0];
 $new_y = $moves[count($moves) - 1][1];
-$db->query("UPDATE units SET x = '{$new_x}', y = '{$new_y}', prev_x = '{$unit->x}', prev_y = '{$unit->y}' WHERE unit_id = '{$unit_id}'");
+
+$prev_x = $unit->canMove == 0 ? -1 : $unit->x;
+$prev_y = $unit->canMove == 0 ? -1 : $unit->y;
+
+$db->query("UPDATE units SET x = '{$new_x}', y = '{$new_y}', prev_x = '{$prev_x}', prev_y = '{$prev_y}' WHERE unit_id = '{$unit_id}'");
 
 $out = "{";
 $out .= $SUCCESS.",";
