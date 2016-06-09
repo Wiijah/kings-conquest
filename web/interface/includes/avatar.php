@@ -1,7 +1,7 @@
 <?php
 require_once '../common.php';
 $SKIN_COLOURS = array("pink", "peach", "indian", "brown", "black");
-$LAYERS = array("hat", "eyes", "mouth", "body");
+$LAYERS = array("hat", "eyes", "body", "mouth");
 
 function avatarIcon($img) {
   return str_replace("avatars/", "icons/", $img);

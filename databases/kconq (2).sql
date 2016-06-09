@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: Jun 09, 2016 at 04:14 PM
+-- Generation Time: Jun 09, 2016 at 05:44 PM
 -- Server version: 10.1.10-MariaDB
 -- PHP Version: 7.0.2
 
@@ -79,6 +79,7 @@ CREATE TABLE `buffs` (
 INSERT INTO `buffs` (`buff_id`, `buff_name`, `graphics`, `icon`) VALUES
 (1, 'heal', 'graphics/spritesheet/spell/ss_heal.png', ''),
 (2, 'burning', 'graphics/spritesheet/spell/ss_burning.png', ''),
+(3, 'battleCry', 'graphics/spritesheet/spell/ss_inc_attack.png', ''),
 (4, 'shield', '', 'graphics/buff/buff_shield.png'),
 (5, 'Burn', '', ''),
 (6, 'freeze', 'graphics/spritesheet/spell/ss_freeze.png', 'graphics/buffs/buff_frozen.png');
@@ -118,7 +119,9 @@ CREATE TABLE `chat` (
 --
 
 INSERT INTO `chat` (`chat_id`, `created`, `user`, `message`, `room_id`, `chat_type`, `colour`) VALUES
-(1, '2016-06-09 08:16:36', 14, 'hey', 0, 'message', '');
+(1, '2016-06-09 08:16:36', 14, 'hey', 0, 'message', ''),
+(2, '2016-06-09 14:31:06', 9, 'hey mate', 0, 'message', ''),
+(3, '2016-06-09 14:31:07', 9, 'hows it going', 0, 'message', '');
 
 -- --------------------------------------------------------
 
@@ -217,7 +220,10 @@ INSERT INTO `inventory` (`inv_id`, `user_id`, `item_id`, `quantity`) VALUES
 (11, 14, 5, 1),
 (12, 14, 6, 1),
 (15, 14, 8, 2),
-(18, 14, 7, 1);
+(18, 14, 7, 1),
+(20, 14, 12, 1),
+(21, 14, 3, 1),
+(23, 14, 9, 1);
 
 -- --------------------------------------------------------
 
@@ -249,7 +255,9 @@ INSERT INTO `items` (`item_id`, `name`, `type`, `image`, `price`, `description`)
 (8, 'Black Mask', 'mouth', 'avatars/black_mask.png', 100, 'A black mask worn by highly trained assassins.'),
 (9, 'Legendary Crown', 'hat', 'avatars/legendary_crown.png', 10000000, 'A crown of a legendary king. It is said that only the best of kings have touched this crown before.'),
 (10, 'Cigarette', 'mouth', 'avatars/cigarette.png', 2000, 'The cigarette smells awful.'),
-(11, 'Suit', 'body', 'avatars/suit.png', 17500, 'A black suit with a tie. Looks smart.');
+(11, 'Suit', 'body', 'avatars/suit.png', 17500, 'A black suit with a tie. Looks smart.'),
+(12, 'Monocle', 'eyes', 'avatars/monocle.png', 1750, 'A single eyeglass with a moustache.'),
+(13, 'Gentleman''s Hat', 'hat', 'avatars/gentlemans_hat.png', 1750, 'A hat worn by gentlemen.');
 
 -- --------------------------------------------------------
 
@@ -361,7 +369,9 @@ CREATE TABLE `units` (
   `canMove` tinyint(1) NOT NULL DEFAULT '1',
   `canAttack` tinyint(1) NOT NULL DEFAULT '1',
   `outOfMoves` tinyint(1) NOT NULL DEFAULT '0',
-  `room_id` int(11) NOT NULL
+  `room_id` int(11) NOT NULL,
+  `prev_x` int(11) NOT NULL DEFAULT '-1',
+  `prev_y` int(11) NOT NULL DEFAULT '-1'
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
@@ -398,16 +408,19 @@ INSERT INTO `users` (`id`, `password`, `email`, `username`, `wins`, `losses`, `e
 (6, '$2y$10$zmsIcYDqp8ScNRuDcj9jD.kbsW9vC7k655flzcYK66kC0jkWa0toK', 'alanduu50@gmail.com', 'xXN1NJ4Xx', 343, 148, 1742, '2016-05-23 21:22:33', 'normal', 1465372058, 1, 0, 0, 0, 5, 1000, 0),
 (7, '$2y$10$xGKFvkCEjUMSm1y6cr8v/.IsJCZfLhNtigg0eyETXQYbslu5X1IBK', 'kld14@ic.ac.uk', 'DragonSlayer52', 358, 145, 2100, '2016-05-23 21:22:01', 'normal', 1465372058, 1, 0, 0, 0, 0, 1000, 0),
 (8, '$2y$10$s7PfGa0iZcg2XDFrmEAnhegSMZzKi4Po4GyUEl1E9cA69tUJj5qSa', 'test@test.com', 'HaskellPrize', 147, 23, 2311, '2016-05-23 21:20:45', 'normal', 1465372058, 1, 0, 0, 0, 0, 1000, 0),
-(9, '$2y$10$y8geeo6e4vVMUkhJWycFruGOuplLwujzm8q4RZlZQPpkn6RKbkfpS', 'demo@demo.com', 'Wumpus', 199, 92, 889, '2016-05-23 21:20:18', 'normal', 1465466369, 1, 0, 0, 0, 5, 14650, 0),
-(10, '$2y$10$h9fvGHQrrOHh35pNzhIsqOR.0jDi4ZmVtHiCvP1wCexLef072jYqy', 'tonyfield@rules.com', 'OhBaby', 214, 26, 1000, '2016-05-23 18:59:26', 'normal', 1465372058, 1, 0, 0, 0, 0, 1000, 0),
-(11, '$2y$10$jOeNVa.g.MTq8j7NoOY3k.RTVeYpcrxA7gq8zv8hp9yiVBsk0z3C.', 'debug@debug.com', 'debug', 212, 52, 1000, '2016-06-01 20:52:54', 'normal', 1465372058, 1, 0, 0, 0, 0, 1000, 0),
-(12, '$2y$10$7.dtDYkyCuARy8JOOvnEM..015QDAO7YDKsNEmue6deyEyJvIDwr2', 'goku@goku.com', 'goku', 211, 62, 1000, '2016-06-01 20:53:04', 'normal', 1465372058, 1, 0, 0, 0, 0, 1000, 0),
-(13, '$2y$10$EVxl9C85A3EGzS9/mbr4mO1eZwdAa7RoFtuXRU.4lwdohCezvuQTu', 'veg@veg.com', 'veg', 311, 73, 1000, '2016-06-01 20:53:57', 'normal', 1465372058, 1, 0, 0, 0, 0, 1000, 0),
-(14, '$2y$10$sxwp7k4OSuCdCiO7y.JsOucq/YbXFR4oF8aBcgeTJ.UixSPKh.xJm', 'hp@hp.com', 'Leap Of Faith', 29, 6, 2875, '2016-06-04 21:40:28', 'normal', 1465481446, 9, 0, 3, 10, 11, 2137483647, 0),
-(15, '$2y$10$Q3aMDDCP8w2o8bV.SaRs4.4Mgr49ZHzl372S4qExpvmadU0mAHETi', 'asda@asda.com', 'asdasd', 0, 0, 1000, '2016-06-04 21:40:51', 'normal', 1465372058, 1, 0, 0, 0, 0, 1000, 0),
-(16, '$2y$10$aZkr5proBXT1kbSu9WWoHOM/q4lHiyqVXj6/9FYTa9Tn6YaO31LPW', 'simon@simon.com', 'simon', 0, 0, 1000, '2016-06-06 09:29:26', 'normal', 1465372058, 1, 0, 0, 0, 0, 1000, 0),
+(9, '$2y$10$y8geeo6e4vVMUkhJWycFruGOuplLwujzm8q4RZlZQPpkn6RKbkfpS', 'demo@demo.com', 'Wumpus', 199, 92, 889, '2016-05-23 21:20:18', 'normal', 1465483200, 1, 0, 0, 0, 5, 14650, 0),
+(10, '$2y$10$h9fvGHQrrOHh35pNzhIsqOR.0jDi4ZmVtHiCvP1wCexLef072jYqy', 'tonyfield@rules.com', 'OhBaby', 214, 26, 1400, '2016-05-23 18:59:26', 'normal', 1465372058, 1, 0, 0, 0, 0, 1000, 0),
+(11, '$2y$10$jOeNVa.g.MTq8j7NoOY3k.RTVeYpcrxA7gq8zv8hp9yiVBsk0z3C.', 'debug@debug.com', 'debug', 212, 52, 1600, '2016-06-01 20:52:54', 'normal', 1465372058, 1, 0, 0, 0, 0, 1000, 0),
+(12, '$2y$10$7.dtDYkyCuARy8JOOvnEM..015QDAO7YDKsNEmue6deyEyJvIDwr2', 'goku@goku.com', 'goku', 211, 62, 970, '2016-06-01 20:53:04', 'normal', 1465372058, 1, 0, 0, 0, 0, 1000, 0),
+(13, '$2y$10$EVxl9C85A3EGzS9/mbr4mO1eZwdAa7RoFtuXRU.4lwdohCezvuQTu', 'veg@veg.com', 'veg', 311, 73, 800, '2016-06-01 20:53:57', 'normal', 1465372058, 1, 0, 0, 0, 0, 1000, 0),
+(14, '$2y$10$sxwp7k4OSuCdCiO7y.JsOucq/YbXFR4oF8aBcgeTJ.UixSPKh.xJm', 'hp@hp.com', 'Leap Of Faith', 343, 272, 2875, '2016-06-04 21:40:28', 'normal', 1465486753, 13, 0, 12, 10, 11, 2137478397, 0),
+(15, '$2y$10$Q3aMDDCP8w2o8bV.SaRs4.4Mgr49ZHzl372S4qExpvmadU0mAHETi', 'asda@asda.com', 'asdasd', 0, 0, 870, '2016-06-04 21:40:51', 'normal', 1465372058, 1, 0, 0, 0, 0, 1000, 0),
+(16, '$2y$10$aZkr5proBXT1kbSu9WWoHOM/q4lHiyqVXj6/9FYTa9Tn6YaO31LPW', 'simon@simon.com', 'simon', 0, 0, 1200, '2016-06-06 09:29:26', 'normal', 1465372058, 1, 0, 0, 0, 0, 1000, 0),
 (17, '', '', 'guesto', 0, 0, 1000, '2016-06-07 13:22:51', 'guest', 1465372058, 1, 0, 0, 0, 0, 1000, 0),
-(23, '', '2234072218', 'queen', 0, 0, 1000, '2016-06-09 14:13:59', 'guest', 1465481643, 1, 0, 0, 0, 0, 1000, 0);
+(23, '', '2234072218', 'queen', 0, 0, 1000, '2016-06-09 14:13:59', 'guest', 1465481643, 1, 0, 0, 0, 0, 1000, 0),
+(24, '', '2566310987', 'how hot is labs', 0, 0, 1000, '2016-06-09 14:16:05', 'guest', 1465482029, 1, 0, 0, 0, 0, 1000, 0),
+(25, '', '1497627383.com', 'queens conquest', 0, 0, 1000, '2016-06-09 14:20:37', 'guest', 1465482058, 1, 0, 0, 0, 0, 1000, 0),
+(26, '', '568440910@549463178.com', 'batka', 0, 0, 1000, '2016-06-09 14:21:04', 'guest', 1465482066, 1, 0, 0, 0, 0, 1000, 0);
 
 --
 -- Indexes for dumped tables
@@ -536,7 +549,7 @@ ALTER TABLE `buff_instances`
 -- AUTO_INCREMENT for table `chat`
 --
 ALTER TABLE `chat`
-  MODIFY `chat_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `chat_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 --
 -- AUTO_INCREMENT for table `classes`
 --
@@ -556,12 +569,12 @@ ALTER TABLE `friends`
 -- AUTO_INCREMENT for table `inventory`
 --
 ALTER TABLE `inventory`
-  MODIFY `inv_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
+  MODIFY `inv_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
 --
 -- AUTO_INCREMENT for table `items`
 --
 ALTER TABLE `items`
-  MODIFY `item_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `item_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 --
 -- AUTO_INCREMENT for table `maps`
 --
@@ -591,7 +604,7 @@ ALTER TABLE `units`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
