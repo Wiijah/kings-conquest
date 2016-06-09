@@ -79,7 +79,7 @@ var room_id = 0;
 
 <br />
 <?php
-$ach_html = getAchievementsHTML($user->id);
+$ach_html = getAchievementsHTML($user);
 if ($ach_html == "") $ach_html = "You have not yet earned any achievements.";
 echo genTitle("Achievements");
 ?>

@@ -2,6 +2,7 @@
 $title = "Avatar";
 require_once 'includes/header_checks.php';
 include 'includes/header.php';
+include 'includes/avatar.php';
 include 'includes/logout_container.php';
 include 'includes/logo.php';
 require_once 'includes/back_container.php';
@@ -26,7 +27,7 @@ if (isset($_GET['equip'])) {
 /* Unequip Item */
 if (isset($_GET['unequip'])) {
   $type = secureStr($_GET['unequip']);
-  if ($user->{$type} != 0) {
+  if (in_array($type, $LAYERS) && $user->{$type} != 0) {
      give_item($user->{$type}, $user->id);
     $result = $db->query("SELECT * FROM inventory JOIN items USING (item_id) WHERE item_id = '{$user->{$type}}' AND user_id = '{$user->id}'");
     $item = $result->fetch_object();
@@ -55,10 +56,12 @@ if ($items_html == "") {
 /* Equipped HTML */
 $equipped_list = array();
 
-if ($user->hat != 0) {
-  $result = $db->query("SELECT * FROM items WHERE item_id = '{$user->hat}'");
-  $fetch = $result->fetch_object();
-  $equipped_list[] = $fetch;
+foreach ($LAYERS as $value) {
+  if ($user->{$value} != 0) {
+    $result = $db->query("SELECT * FROM items WHERE item_id = '{$user->{$value}}'");
+    $fetch = $result->fetch_object();
+    $equipped_list[] = $fetch;
+  }
 }
 
 $equipped_html = "";

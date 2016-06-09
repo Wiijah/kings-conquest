@@ -32,7 +32,7 @@ if ($close == 1) {
 
 require_once 'includes/back_container.php';
 
-$ach_html = getAchievementsHTML($prof->id);
+$ach_html = getAchievementsHTML($prof);
 if ($ach_html == "") $ach_html = "This player has no achievements.";
 
 
