@@ -9,5 +9,5 @@ $LOGIN_FORM_DIR = "menu";
 //including trailing slash
 $DOMAIN = "localhost/kingsconquest/";
 
-$DEFAULT_COUNTDOWN = 10;
+$DEFAULT_COUNTDOWN = 90;
 ?>

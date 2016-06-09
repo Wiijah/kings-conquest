@@ -112,7 +112,7 @@ function refreshTimer(remainingTime) {
   if (remainingTurnTime === -1) {
     stage.removeChild(bg);
   	 
-    setTimeout(function(){
+	setTimeout(function(){
   	 	 serverValidate("turn_change", null, [1]);
 	        	clearSelectionEffects();
   	 },1);
@@ -128,7 +128,7 @@ function refreshTimer(remainingTime) {
   	if (remainingTurnTime < 0) timeText = "00";
 
   	turnTimerbg = new createjs.Text("" + timeText, "70px '04b_19'", "#000000");
-    turnTimerbg.x = stage.canvas.width - stage.canvas.width/2 -2;
+    turnTimerbg.x = stage.canvas.width - stage.canvas.width/2 + 2;
     turnTimerbg.y = 48;
     turnTimer = new createjs.Text("" + timeText, "70px '04b_19'", "#ffffff");
     turnTimer.x = stage.canvas.width - stage.canvas.width/2;
@@ -147,15 +147,6 @@ function refreshTimer(remainingTime) {
 
 
 
-function showTurnText() {
-    stage.removeChild(turnInfoText);
-    var turnText = turn == team ? "Your turn" : "Enemy's turn";
-    turnInfoText = new createjs.Text(turnText, "20px Arial", "#ffffff");
-    turnInfoText.x = 800;
-    turnInfoText.textBaseline = "alphabetic";
-    turnInfoText.y = 0;
-    stage.addChild(turnInfoText);
-}
 
 function showTurnInfo(){
 	stage.removeChild(playerLabel);
@@ -163,11 +154,11 @@ function showTurnInfo(){
 	if (turn) {
 		var playerLabelBg = new createjs.Shape();
 		playerLabelBg.graphics.beginFill("#000000").drawRect(-stage.canvas.width ,stage.canvas.height - stage.canvas.height/2 ,stage.canvas.width * 2,80);
-		var playerLabel = new createjs.Text("Player2 Turn", "30px Arial", "#00cdff");
+		var playerLabel = new createjs.Text("Blue Player Turn", "30px Arial", "#00cdff");
 	} else {
 		var playerLabelBg = new createjs.Shape();
 		playerLabelBg.graphics.beginFill("#000000").drawRect(-stage.canvas.width ,stage.canvas.height - stage.canvas.height/2 ,stage.canvas.width * 2,80);
-		var playerLabel = new createjs.Text("Player1 Turn", "30px Arial", "#ff5555");
+		var playerLabel = new createjs.Text("Red Player Turn", "30px Arial", "#ff5555");
 	}
 	playerLabel.x = stage.canvas.width - stage.canvas.width / 2 - 100;
 	playerLabel.y = stage.canvas.height -  stage.canvas.height / 2 + 20;
@@ -179,7 +170,6 @@ function showTurnInfo(){
 		stage.removeChild(playerLabel);
 		stage.removeChild(playerLabelBg);
 	}, 1000);
-    showTurnText();
 }
 
 
@@ -1942,6 +1932,8 @@ function update() {
 
 	stage.addChild(statsDisplay);
 	stage.addChild(unitCreationMenu);
+
+    bg.x = turnTimer.x - 100; //reposition counter bg
 }
 var tile_type;
 var tile_info_address;
