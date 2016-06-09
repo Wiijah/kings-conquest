@@ -496,7 +496,7 @@ function initGame() {
 	});
 
 	stage.canvas.width = window.innerWidth;
-	stage.canvas.height = window.innerHeight; //$("body").prop("clientHeight");
+	stage.canvas.height = $("body").prop("clientHeight");//window.innerHeight; //$("body").prop("clientHeight");
 
 
 	draggable = new createjs.Container();
