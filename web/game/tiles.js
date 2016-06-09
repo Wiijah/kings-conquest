@@ -64,6 +64,80 @@ var undo = false;
 
 var bgMusic = true;
 
+var turnTimer;
+var remainingTurnTime;
+var timerIntervalId;
+var bg;
+function startTimer() {
+ var bgss = new createjs.SpriteSheet({
+          "images": ["graphics/ss_cd.png"],
+          "frames": {"regX": 50, "height": 159, "count": 2, "regY": 50, "width": 371 },
+          "animations": {
+            "tick":[0,1]
+          },
+          framerate: 2
+        });  
+var bgss2 = new createjs.SpriteSheet({
+          "images": ["graphics/ss_cd2.png"],
+          "frames": {"regX": 50, "height": 159, "count": 2, "regY": 50, "width": 371 },
+          "animations": {
+            "tick":[0,1]
+          },
+          framerate: 2
+        });  
+ if (turn) {
+ 	bg = new createjs.Sprite(bgss, "tick");
+ } else {
+ 	bg = new createjs.Sprite(bgss2, "tick");
+ }
+ 
+ bg.x = turnTimer.x - 100;
+ bg.y = turnTimer.y ;
+ stage.addChild(bg);
+ stage.setChildIndex(bg, 2);
+
+
+  if (typeof(timerIntervalId) != "undefined") window.clearInterval(timerIntervalId);
+  timerIntervalId = setInterval(function() {
+    refreshTimer(remainingTurnTime - 1);
+  }, 1000);
+}
+var turnTimerbg;
+function refreshTimer(remainingTime) {
+  stage.removeChild(turnTimerbg);
+  stage.removeChild(turnTimer);
+  remainingTurnTime = remainingTime;
+  if (remainingTurnTime === -1) {
+  	  stage.removeChild(bg);
+    endTurn();
+  } else {
+  	var timeText;
+  	if (remainingTurnTime < 10){
+  		timeText = "0" + remainingTurnTime;
+  	} else {
+  		timeText = remainingTurnTime;
+  	}
+  	turnTimerbg = new createjs.Text("" + timeText, "70px '04b_19'", "#000000");
+    turnTimerbg.x = stage.canvas.width - stage.canvas.width/2 -2;
+    turnTimerbg.y = 48;
+    turnTimer = new createjs.Text("" + timeText, "70px '04b_19'", "#ffffff");
+    turnTimer.x = stage.canvas.width - stage.canvas.width/2;
+    turnTimer.y = 50;
+
+    stage.addChild(turnTimerbg);
+    stage.addChild(turnTimer);
+  }
+}
+
+
+
+
+
+
+
+
+
+
 function showTurnText() {
     stage.removeChild(turnInfoText);
     var turnText = turn == team ? "Your turn" : "Enemy's turn";
@@ -447,6 +521,16 @@ function initGame() {
 
 	stage.update();
   setTimeout(function() {getOpp(); }, 1000);
+
+  	if (enableCountDown) {
+    refreshTimer(90);
+    startTimer();
+  }
+
+
+
+
+  
 }
 
 
@@ -2109,6 +2193,16 @@ function handleGoldUdpate(action) {
 }
 
 function changeTurn(action) {
+
+	stage.removeChild(bg);
+  stage.removeChild(turnTimerbg);
+  stage.removeChild(turnTimer);
+  if (enableCountDown) {
+	    refreshTimer(90);
+	    startTimer();
+   }
+
+
     clearSelectionEffects();
     turn = action.new_turn;
     showTurnInfo();
