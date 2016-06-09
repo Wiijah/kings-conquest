@@ -63,7 +63,7 @@ if ($caster->skill == "Shield") {
   }
 }
 
-$actions[] = update_unit($caster, 0, 0, 1);
+$actions[] = update_unit($caster, 0, 0, 1, 6);
 
 
 $out .= jsonPair("actions", jsonArray($actions));
