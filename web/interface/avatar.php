@@ -24,6 +24,7 @@ if (isset($_GET['equip'])) {
     $message = Message("Item Equipped", "You have successfully equipped the {$item->name}.");
   }
 }
+
 /* Unequip Item */
 if (isset($_GET['unequip'])) {
   $type = secureStr($_GET['unequip']);
@@ -44,13 +45,13 @@ $items_html = "";
 
 $result = $db->query("SELECT * FROM inventory JOIN items USING (item_id) WHERE user_id = '{$user->id}'");
 while ($fetch = $result->fetch_object()) {
-  $items_html .= "<tr><td>{$fetch->name}</td><td>{$fetch->quantity}<td><a href='avatar?equip={$fetch->item_id}'>Equip</a></td></tr>";
+  $items_html .= "<tr><td>".iconImg($fetch->image)."</td><td>{$fetch->name}</td><td>{$fetch->quantity}<td><a href='avatar?equip={$fetch->item_id}'>Equip</a></td></tr>";
 }
 
 if ($items_html == "") {
   $items_html = "<div class='box standard_box center'>You do not have any items in your inventory.</div>";
 } else {
-  $items_html = "<div class='box center'><table class='play_table'><tr><th>Item</th><th>Quantity</th><th>Equip</th></tr>{$items_html}</table></div>";
+  $items_html = "<div class='box center'><table class='play_table'><tr><th>-</th><th>Item</th><th>Quantity</th><th>Equip</th></tr>{$items_html}</table></div>";
 }
 
 /* Equipped HTML */
@@ -67,13 +68,13 @@ foreach ($LAYERS as $value) {
 $equipped_html = "";
 
 foreach ($equipped_list as $value) {
-  $equipped_html .= "<tr><td>".ucfirst($value->type)."</td><td>{$value->name}</td><td><a href='avatar?unequip={$fetch->type}'>Unequip</a></td></tr>";
+  $equipped_html .= "<tr><td>".iconImg($value->image)."</td><td>".ucfirst($value->type)."</td><td>{$value->name}</td><td><a href='avatar?unequip={$fetch->type}'>Unequip</a></td></tr>";
 }
 
 if ($equipped_html == "") {
   $equipped_html = "<div class='box standard_box center'>You do not have any items equipped.</div>";
 } else {
-  $equipped_html = "<div class='box center'><table class='play_table'><tr><th>Equipped To</th><th>Item</th><th>Unequip</th></tr>{$equipped_html}</table></div>";
+  $equipped_html = "<div class='box center'><table class='play_table'><tr><th>-</th><th>Equipped To</th><th>Item</th><th>Unequip</th></tr>{$equipped_html}</table></div>";
 }
 
 ?>
