@@ -2,11 +2,15 @@
 require_once 'ajax_common.php';
 
 $team = $TEAM_COLOURS[$player->colour];
+$countdown = secureStr($_GET['countdown']);
+$time = time();
 
 $old_turn = $room->turn; //old player's turn
-if ($old_turn != $team) {
+if ($old_turn != $team && $time < $room->countdown) {
   exit_error($ERROR_NOT_YOUR_TURN);
 }
+
+$countdown = $time + $DEFAULT_COUNTDOWN;
 
 $new_turn = ($old_turn + 1) % 2;
 
@@ -19,7 +23,7 @@ $db->query("UPDATE units SET canMove = 1, canAttack = 1, outOfMoves = 0, prev_x 
 $db->query("UPDATE units SET skillCoolDown = skillCoolDown - 1 WHERE room_id = '{$room_id}' AND skillCoolDown > 0");
 
 /* Update the room to the new turn */
-$db->query("UPDATE rooms SET turn = '{$new_turn}' WHERE room_id = '{$room_id}'");
+$db->query("UPDATE rooms SET turn = '{$new_turn}', countdown = '{$countdown}' WHERE room_id = '{$room_id}'");
 
 /* Burn effect */
 $result = $db->query("SELECT * FROM buff_instances JOIN buffs USING (buff_id) WHERE room_id = '{$room_id}' AND buff_id = 5");
@@ -49,7 +53,7 @@ while ($unit = $result->fetch_object()) {
 }
 
 /* Heal units via Totem */
-$result = $db->query("SELECT * FROM units JOIN classes USING (class_id) WHERE room_id = '{$room_id}' AND name='totem' AND team = '{$team}'");
+$result = $db->query("SELECT * FROM units JOIN classes USING (class_id) WHERE room_id = '{$room_id}' AND name='totem' AND team = '{$old_turn}'");
 while ($totem = $result->fetch_object()) {
   $result2 = $db->query("SELECT * FROM units WHERE room_id = '{$room_id}' AND team = '{$totem->team}' AND unit_id != {$totem->unit_id} AND ".totem($totem->x, $totem->y));
   while ($unit = $result2->fetch_object()) {
