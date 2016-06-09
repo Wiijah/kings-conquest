@@ -711,18 +711,18 @@ function createFloatingCards(listOfSources, correspondingUnit) {
     var newUnitSpawnTiles = [];
 	for (i = 0; i < listOfSources.length; i++) {
 		unitCards[i] = new createjs.Bitmap(listOfSources[i]);
-		var unit_card_text = new createjs.Text("$ 100", "12px 'Arial'", "#ffffff");
+		// var unit_card_text = new createjs.Text("$ 100", "12px 'Arial'", "#ffffff");
 		unitCards[i].y = 0;
 		unitCards[i].x = i * (110);
 		unitCards[i].scaleX = 0.60;
 		unitCards[i].scaleY = 0.60;
 		unitCards[i].index = i;
 		unitCards[i].unitName = correspondingUnit[i];
-		unitCards[i].text = unit_card_text;
-		unitCards[i].text.y = unitCards[i].y+80;
-		unitCards[i].text.x = unitCards[i].x+28;
+		// unitCards[i].text = unit_card_text;
 		switch(unitCards[i].unitName ){
 			case "knight": 
+                unitCards[i].price = 120;
+                unitCards[i].text = new createjs.Text("$ 120", "12px 'Arial'", "#ffffff");
 				unitCards[i].addEventListener("click", function(event) {
                     if (team != turn || isInHighlight) return;
                     var spawnTiles = findAvailableAndNonAvailableSpawnTiles();
@@ -736,6 +736,8 @@ function createFloatingCards(listOfSources, correspondingUnit) {
 				});
 				break;
 			case "archer": 
+                unitCards[i].price = 120;
+                unitCards[i].text = new createjs.Text("$ 120", "12px 'Arial'", "#ffffff");
 				unitCards[i].addEventListener("click", function(event) {
                     if (team != turn || isInHighlight) return;
                     var spawnTiles = findAvailableAndNonAvailableSpawnTiles();
@@ -749,6 +751,8 @@ function createFloatingCards(listOfSources, correspondingUnit) {
                 });
 				break;
 			case "wizard": 
+                unitCards[i].price = 150;
+                unitCards[i].text = new createjs.Text("$ 150", "12px 'Arial'", "#ffffff");
 				unitCards[i].addEventListener("click", function(event) {
                     if (team != turn || isInHighlight) return;
                     var spawnTiles = findAvailableAndNonAvailableSpawnTiles();
@@ -762,6 +766,8 @@ function createFloatingCards(listOfSources, correspondingUnit) {
                 });
 				break;
 			case "totem":
+                unitCards[i].price = 200;
+                unitCards[i].text = new createjs.Text("$ 200", "12px 'Arial'", "#ffffff");
                 unitCards[i].addEventListener("click", function(event) {
                     if (team != turn || isInHighlight) return;
                     var spawnTiles = findAvailableAndNonAvailableSpawnTiles(15);
@@ -775,6 +781,8 @@ function createFloatingCards(listOfSources, correspondingUnit) {
                 });
                 break;
             case "dragon":
+                unitCards[i].price = 300;
+                unitCards[i].text = new createjs.Text("$ 300", "12px 'Arial'", "#ffffff");
                 unitCards[i].addEventListener("click", function(event) {
                     if (team != turn || isInHighlight) return;
                     var spawnTiles = findAvailableAndNonAvailableSpawnTiles();
@@ -788,6 +796,9 @@ function createFloatingCards(listOfSources, correspondingUnit) {
                 });
                 break;
 		}
+
+        unitCards[i].text.y = unitCards[i].y+80;
+        unitCards[i].text.x = unitCards[i].x+28;
 		
 		unitCards[i].addEventListener("mouseover", function(event) {
 			unitCards[event.target.index].y -= 20;
@@ -1699,7 +1710,7 @@ function keyEvent(event) {
 				if (selectedCharacter.skillCoolDown === 0) {
 					undoHighlights();
 					isCasting = true;
-					cast(selectedCharacter.skill_no, selectedCharacter);
+					cast(selectedCharacter.skill, selectedCharacter);
 				}
 			}
 			break;
@@ -2028,6 +2039,18 @@ function handleGoldUdpate(action) {
         destroyGoldDisplay();
         drawGoldDisplay();   
     }
+
+    var matrix = new createjs.ColorMatrix().adjustSaturation(-100);
+
+    for (var i = 0; i < 5; i++) {
+        if (unitsCards[i].price < currentGold) {
+            unitsCards[i].filters = [new createjs.ColorMatrixFilter(matrix)];
+        } else {
+            unitsCards[i].filters = [];
+        }
+        unitsCards.cache();
+    }  
+    // myDisplayObject.cache();
 }
 
 function changeTurn(action) {
@@ -2230,9 +2253,8 @@ function handleCreate(action) {
     var unit = getFirstProp(action.unit);
 	spawnUnit(unit, false);
 	currentGold = action.gold;
-	destroyGoldDisplay();
-	drawGoldDisplay();
-    playableUnitCount++;
+	// destroyGoldDisplay();
+	// drawGoldDisplay();
 }
 
 function highlightArea(tiles, imgSource, callBackEventNames, callBackFunctions) {
