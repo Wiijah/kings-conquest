@@ -15,7 +15,8 @@
 	"buffEffects":{
 		"heal" : "graphics/spritesheet/spell/ss_heal.png",
 		"burning": "graphics/spritesheet/spell/ss_burning.png",
-		"frozen": "graphics/spritesheet/spell/ss_frozen.png"
+		"frozen": "graphics/spritesheet/spell/ss_frozen.png",
+		"battleCry": "graphics/spritesheet/spell/ss_inc_attack.png"
 	},
 	"classStats": {
 		"kingClass": {
