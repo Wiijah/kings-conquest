@@ -724,6 +724,7 @@ function createFloatingCards(listOfSources, correspondingUnit) {
 		switch(unitCards[i].unitName ){
 			case "knight": 
 				unitCards[i].addEventListener("click", function(event) {
+                    if (team != turn) return;
                     var spawnTiles = findAvailableAndNonAvailableSpawnTiles();
                     highlightArea(spawnTiles[0], "graphics/tile/green_tile.png", ["click"], [function(event) {
                         var tile = event.target;
@@ -736,6 +737,7 @@ function createFloatingCards(listOfSources, correspondingUnit) {
 				break;
 			case "archer": 
 				unitCards[i].addEventListener("click", function(event) {
+                    if (team != turn) return;
                     var spawnTiles = findAvailableAndNonAvailableSpawnTiles();
                     highlightArea(spawnTiles[0], "graphics/tile/green_tile.png", ["click"], [function(event) {
                         var tile = event.target;
@@ -748,6 +750,7 @@ function createFloatingCards(listOfSources, correspondingUnit) {
 				break;
 			case "wizard": 
 				unitCards[i].addEventListener("click", function(event) {
+                    if (team != turn) return;
                     var spawnTiles = findAvailableAndNonAvailableSpawnTiles();
                     highlightArea(spawnTiles[0], "graphics/tile/green_tile.png", ["click"], [function(event) {
                         var tile = event.target;
@@ -760,6 +763,7 @@ function createFloatingCards(listOfSources, correspondingUnit) {
 				break;
 			case "totem":
                 unitCards[i].addEventListener("click", function(event) {
+                    if (team != turn) return;
                     var spawnTiles = findAvailableAndNonAvailableSpawnTiles(15);
                     highlightArea(spawnTiles[0], "graphics/tile/green_tile.png", ["click"], [function(event) {
                         var tile = event.target;
@@ -772,6 +776,7 @@ function createFloatingCards(listOfSources, correspondingUnit) {
                 break;
             case "dragon":
                 unitCards[i].addEventListener("click", function(event) {
+                    if (team != turn) return;
                     var spawnTiles = findAvailableAndNonAvailableSpawnTiles();
                     highlightArea(spawnTiles[0], "graphics/tile/green_tile.png", ["click"], [function(event) {
                         var tile = event.target;
