@@ -120,7 +120,8 @@ function select_unit($unit_id) {
   global $db;
   global $room_id;
   global $TEAM_COLOURS;
-  $result = $db->query("SELECT * FROM units JOIN classes ON units.class_id = classes.class_id WHERE unit_id = '{$unit_id}' AND room_id = '{$room_id}'");
+  global $SELECT_UNIT;
+  $result = $db->query("{$SELECT_UNIT} unit_id = '{$unit_id}' AND room_id = '{$room_id}'");
   return $result->fetch_object();
 }
 
@@ -156,8 +157,7 @@ function attack_unit($attacker, $target) {
   global $player;
 
   /* Refresh target */
-  $result = $db->query("SELECT * FROM units WHERE unit_id = '{$target->unit_id}'");
-  $target = $result->fetch_object();
+  $target = select_unit($target->unit_id);
   if (!$target) return; //already dead
 
   $result = $db->query("SELECT * FROM buff_instances WHERE unit_id = '{$target->unit_id}' AND buff_id = 4");
