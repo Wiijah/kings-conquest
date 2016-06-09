@@ -27,7 +27,7 @@ $buff_list = array();
 while ($buff = $result->fetch_object()) {
   $unit = select_unit($buff->unit_id);
   $damage = ceil($unit->max_hp * 0.02);
-  $buff_list = array_merge($buff_list, damageByBuff($buff, $unit, 0 - $damage));
+  $buff_list = array_merge($buff_list, damageByBuff($buff, $unit, $damage));
 }
 
 /* Freeze effect */
