@@ -45,7 +45,7 @@ $items_html = "";
 
 $result = $db->query("SELECT * FROM inventory JOIN items USING (item_id) WHERE user_id = '{$user->id}'");
 while ($fetch = $result->fetch_object()) {
-  $items_html .= "<tr><td>".avatarImg($fetch)."</td><td>{$fetch->name}</td><td>{$fetch->quantity}<td><a href='avatar?equip={$fetch->item_id}'>Equip</a></td></tr>";
+  $items_html .= "<tr><td>".avatarImg($fetch)."</td><td>".avatarTitle($fetch)."</td><td>{$fetch->quantity}<td><a href='avatar?equip={$fetch->item_id}'>Equip</a></td></tr>";
 }
 
 if ($items_html == "") {
@@ -68,13 +68,13 @@ foreach ($LAYERS as $value) {
 $equipped_html = "";
 
 foreach ($equipped_list as $value) {
-  $equipped_html .= "<tr><td>".avatarImg($value)."</td><td>".ucfirst($value->type)."</td><td>{$value->name}</td><td><a href='avatar?unequip={$fetch->type}'>Unequip</a></td></tr>";
+  $equipped_html .= "<tr><td>".avatarImg($value)."</td><td>".avatarTitle($value)."</td><td>".ucfirst($value->type)."</td><td><a href='avatar?unequip={$fetch->type}'>Unequip</a></td></tr>";
 }
 
 if ($equipped_html == "") {
   $equipped_html = "<div class='box standard_box center'>You do not have any items equipped.</div>";
 } else {
-  $equipped_html = "<div class='box center'><table class='play_table'><tr><th>-</th><th>Type</th><th>Item</th><th>Unequip</th></tr>{$equipped_html}</table></div>";
+  $equipped_html = "<div class='box center'><table class='play_table'><tr><th>-</th><th>Item</th><th>Type</th><th>Unequip</th></tr>{$equipped_html}</table></div>";
 }
 
 ?>

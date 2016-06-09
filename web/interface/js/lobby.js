@@ -49,7 +49,7 @@ function lobby_refresh() {
     var rooms = data.rooms;
     var rooms_html = '<tr><th>Room Name</th><th>Room Owner</th><th>Number of Players</th><th>Password?</th><th>Join</th></tr>';
     for (var i = 0; i < rooms.length; i++) {
-      var user_link = "<a href='profile.php?username="+rooms[i].player+"'>"+rooms[i].player+"</a>";
+      var user_link = rooms[i].userlink;
       var pass_yn = rooms[i].password == 1 ? "Yes" : "No";
       rooms_html += "<tr><td>"+rooms[i].room_name+"</td><td>"+user_link+"</td><td>"+rooms[i].num_of_players+"/"+rooms[i].max_players+"</td><td>"+pass_yn+"</td><td><div class='btn join_room' data-room-id='"+rooms[i].room_id+"' data-password='"+rooms[i].password+"'>Join</div></td></tr>";
     }

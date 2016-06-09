@@ -47,6 +47,8 @@ $actions[] = give_gold($player, 0 - $class->gold);
 $out .= jsonPair("actions", jsonArray($actions));
 $out .= "}";
 
+$db->query("UPDATE room_participants SET unit_spawns = unit_spawns + 1 WHERE part_id = '{$player->part_id}'");
+
 oppInsert($out);
 echo $out;
 ?>

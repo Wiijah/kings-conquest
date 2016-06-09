@@ -36,6 +36,12 @@ require_once 'includes/back_container.php';
 <?php
 echo genBreadcrumbs(array("Lobby|index", "End Game Stats"));
 echo genTitle("End Game Stats");
+
+$ach_html = getAchievementsHTML($user, $room->room_id);
+if ($ach_html != "") {
+  echo '<script>
+lightbox_alert("Achievement Earned!", "From this game, you have earned the following achievements:<br /><br />'.$ach_html.'");</script>';
+}
 ?>
 <div class="box">
 <table class="play_table">
