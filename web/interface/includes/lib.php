@@ -24,7 +24,8 @@ function getRank($elo) {
 }
 function genProf($prof) {
   global $user;
-  $email = $user->id == $prof->id ? "<tr><th>Email</th><td>".$prof->email."</td></tr>" : "";
+  $email = $prof->member_type == "guest" ? "N/A" : $prof->email;
+  $email = $user->id == $prof->id ? "<tr><th>Email</th><td>".$email."</td></tr>" : "";
 
   return "<tr><th>Username</th><td>".linkUsername($prof)."</td></tr>
 ".$email."

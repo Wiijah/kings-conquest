@@ -15,7 +15,7 @@ if (!isStrLenCorrect($username, 3, 16)) kc_error("Your display name must be betw
 if (!preg_match('~^[a-z0-9 ]+$~i', $username)) kc_error("Display names are not allowed to contain special characters.");
 
 $db->autocommit(FALSE);
-$email = rand(1,2147483647) + "@"+rand(1,2147483647) +".com";
+$email = rand(1,2147483647) . "@". rand(1,2147483647) . ".com";
 
 $query = "INSERT INTO users (username, email, password, member_type, lastactive) VALUES
 ('{$username}', '{$email}', '{$password}', 'guest', '".time()."')";
