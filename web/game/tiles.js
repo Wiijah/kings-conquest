@@ -373,6 +373,16 @@ function initGame() {
 		// p1currentGold = data.P1currentGold;
 		// p2currentGold = data.P2currentGold;
 		currentGold = data.gold;
+
+
+		for (var i = 0; i < unitCards.length; i++) {
+			if (unitCards[i].price > currentGold) {
+				greyOutCard(i);
+			} else {
+				colourCard(i);
+			}
+		}
+
 		drawGoldDisplay();
 		that.drawMap(that.mapData);
 
@@ -434,6 +444,7 @@ function initGame() {
 	window.addEventListener('resize', resize, false);
 
 	drawMenuDisplay();
+
 	stage.update();
   setTimeout(function() {getOpp(); }, 1000);
 }
@@ -723,9 +734,6 @@ function createFloatingCards(listOfSources, correspondingUnit) {
 		unitCards[i].scaleY = 0.60;
 		unitCards[i].index = i;
 		unitCards[i].unitName = correspondingUnit[i];
-		unitCards[i].text = unit_card_text;
-		unitCards[i].text.y = unitCards[i].y+80;
-		unitCards[i].text.x = unitCards[i].x+28;
 
 		greyUnitCards[i] = new createjs.Bitmap(listOfSources[i].slice(0,-4) + "_gray.png");
 		greyUnitCards[i].y = unitCards[i].y;
@@ -734,9 +742,6 @@ function createFloatingCards(listOfSources, correspondingUnit) {
 		greyUnitCards[i].scaleY = unitCards[i].scaleY;
 		greyUnitCards[i].index = unitCards[i].index;
 		greyUnitCards[i].unitName = correspondingUnit[i];
-		greyUnitCards[i].text = unit_card_text;
-		greyUnitCards[i].text.y = unitCards[i].y+80;
-		greyUnitCards[i].text.x = unitCards[i].x+28;
 
 		switch(unitCards[i].unitName ){
 			case "knight": 
@@ -825,6 +830,11 @@ function createFloatingCards(listOfSources, correspondingUnit) {
         unitCards[i].text.y = unitCards[i].y+80;
         unitCards[i].text.x = unitCards[i].x+28;
 		
+
+		greyUnitCards[i].text = unitCards[i].text;
+		greyUnitCards[i].text.y = unitCards[i].y+80;
+		greyUnitCards[i].text.x = unitCards[i].x+28;
+
 		unitCards[i].addEventListener("mouseover", function(event) {
 			unitCards[event.target.index].y -= 20;
 			unitCards[event.target.index].text.y  -= 20;
@@ -2070,6 +2080,15 @@ function findUnitByCoordinates(row, column) {
 function handleGoldUdpate(action) {
     if (action.team == team) {
         currentGold = action.gold;     
+
+		for (var i = 0; i < unitCards.length; i++) {
+			if (unitCards[i].price > currentGold) {
+				greyOutCard(i);
+			} else {
+				colourCard(i);
+			}
+		}
+
         destroyGoldDisplay();
         drawGoldDisplay();   
     }
@@ -2291,21 +2310,15 @@ function handleCreate(action) {
 	destroyGoldDisplay();
 	drawGoldDisplay();
 
-	for (var i = 0; i < unitCards.length; i++) {
-		if (unitCards[i].price > currentGold) {
-			greyOutCard(i);
-		} else {
-			colourCard(i);
-		}
-	}
-
     playableUnitCount++;
 }
 
 function greyOutCard(index) {
+	console.log("FCK");
 	if (unitCreationMenu.getChildIndex(greyUnitCards[index]) == -1) {
 		unitCreationMenu.removeChild(unitCards[index]);
 		unitCreationMenu.addChild(greyUnitCards[index]);
+		unitCreationMenu.addChild(greyUnitCards[index].text);
 	}
 }
 
@@ -2313,6 +2326,7 @@ function colourCard(index) {
 	if (unitCreationMenu.getChildIndex(unitCards[index]) == -1) {
 		unitCreationMenu.removeChild(greyUnitCards[index]);
 		unitCreationMenu.addChild(unitCards[index]);
+		unitCreationMenu.addChild(unitCards[index].text);
 	}
 }
 
