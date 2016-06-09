@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: Jun 09, 2016 at 03:08 PM
+-- Generation Time: Jun 09, 2016 at 04:14 PM
 -- Server version: 10.1.10-MariaDB
 -- PHP Version: 7.0.2
 
@@ -81,7 +81,7 @@ INSERT INTO `buffs` (`buff_id`, `buff_name`, `graphics`, `icon`) VALUES
 (2, 'burning', 'graphics/spritesheet/spell/ss_burning.png', ''),
 (4, 'shield', '', 'graphics/buff/buff_shield.png'),
 (5, 'Burn', '', ''),
-(6, 'Freeze', 'graphics/spritesheet/spell/ss_freeze.png', 'graphics/buffs/buff_frozen.png');
+(6, 'freeze', 'graphics/spritesheet/spell/ss_freeze.png', 'graphics/buffs/buff_frozen.png');
 
 -- --------------------------------------------------------
 
@@ -215,7 +215,9 @@ INSERT INTO `inventory` (`inv_id`, `user_id`, `item_id`, `quantity`) VALUES
 (2, 14, 2, 9),
 (5, 9, 3, 5),
 (11, 14, 5, 1),
-(12, 14, 6, 1);
+(12, 14, 6, 1),
+(15, 14, 8, 2),
+(18, 14, 7, 1);
 
 -- --------------------------------------------------------
 
@@ -229,7 +231,6 @@ CREATE TABLE `items` (
   `type` set('hat','eyes','wig','mouth','body','na') NOT NULL,
   `image` varchar(128) NOT NULL,
   `price` int(11) NOT NULL,
-  `icon` varchar(64) NOT NULL,
   `description` text NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
@@ -237,14 +238,18 @@ CREATE TABLE `items` (
 -- Dumping data for table `items`
 --
 
-INSERT INTO `items` (`item_id`, `name`, `type`, `image`, `price`, `icon`, `description`) VALUES
-(1, 'Crown', 'hat', 'avatars/crown.png', 0, '', 'Although a plain crown, the golden material of the crown radiates with the passion of a king.'),
-(2, 'Jeweled Crown', 'hat', 'avatars/jeweled_crown.png', 2500, '', 'A crown of a legendary king. It is said that only the best of kings have touched this crown before.'),
-(3, 'Sunglasses', 'eyes', 'avatars/sunglasses.png', 250, '', 'A pair of sunglasses that will protect you from the sun.'),
-(4, 'Black Crown Shirt', 'body', 'avatars/black_crown_shirt.png', 1000, '', ''),
-(5, 'White Crown Shirt', 'body', 'avatars/white_crown_shirt.png', 1000, '', ''),
-(6, 'Blue King Shirt', 'body', 'avatars/blue_king_shirt.png', 100, '', ''),
-(7, 'Red Headband', 'hat', 'avatars/red_headband.png', 100, '', '');
+INSERT INTO `items` (`item_id`, `name`, `type`, `image`, `price`, `description`) VALUES
+(1, 'Crown', 'hat', 'avatars/crown.png', 0, 'Although a plain crown, the golden material of the crown radiates with the passion of a king.'),
+(2, 'Jeweled Crown', 'hat', 'avatars/jeweled_crown.png', 2500, 'A crown with some jewels embedded on it.'),
+(3, 'Sunglasses', 'eyes', 'avatars/sunglasses.png', 250, 'A pair of sunglasses that will protect you from the sun.'),
+(4, 'Black Crown Shirt', 'body', 'avatars/black_crown_shirt.png', 1000, 'A black shirt with a crown imprinted on it.'),
+(5, 'White Crown Shirt', 'body', 'avatars/white_crown_shirt.png', 1000, 'A white shirt with a crown imprinted on it.'),
+(6, 'Blue King Shirt', 'body', 'avatars/blue_king_shirt.png', 100, 'A blue shirt with the letter K imprinted on it. The K stands for King in Kings'' Conquest.'),
+(7, 'Red Headband', 'hat', 'avatars/red_headband.png', 100, 'A headband worn by ninjas.'),
+(8, 'Black Mask', 'mouth', 'avatars/black_mask.png', 100, 'A black mask worn by highly trained assassins.'),
+(9, 'Legendary Crown', 'hat', 'avatars/legendary_crown.png', 10000000, 'A crown of a legendary king. It is said that only the best of kings have touched this crown before.'),
+(10, 'Cigarette', 'mouth', 'avatars/cigarette.png', 2000, 'The cigarette smells awful.'),
+(11, 'Suit', 'body', 'avatars/suit.png', 17500, 'A black suit with a tie. Looks smart.');
 
 -- --------------------------------------------------------
 
@@ -398,10 +403,11 @@ INSERT INTO `users` (`id`, `password`, `email`, `username`, `wins`, `losses`, `e
 (11, '$2y$10$jOeNVa.g.MTq8j7NoOY3k.RTVeYpcrxA7gq8zv8hp9yiVBsk0z3C.', 'debug@debug.com', 'debug', 212, 52, 1000, '2016-06-01 20:52:54', 'normal', 1465372058, 1, 0, 0, 0, 0, 1000, 0),
 (12, '$2y$10$7.dtDYkyCuARy8JOOvnEM..015QDAO7YDKsNEmue6deyEyJvIDwr2', 'goku@goku.com', 'goku', 211, 62, 1000, '2016-06-01 20:53:04', 'normal', 1465372058, 1, 0, 0, 0, 0, 1000, 0),
 (13, '$2y$10$EVxl9C85A3EGzS9/mbr4mO1eZwdAa7RoFtuXRU.4lwdohCezvuQTu', 'veg@veg.com', 'veg', 311, 73, 1000, '2016-06-01 20:53:57', 'normal', 1465372058, 1, 0, 0, 0, 0, 1000, 0),
-(14, '$2y$10$sxwp7k4OSuCdCiO7y.JsOucq/YbXFR4oF8aBcgeTJ.UixSPKh.xJm', 'hp@hp.com', 'harry potter', 29, 6, 1475, '2016-06-04 21:40:28', 'normal', 1465477427, 7, 0, 3, 0, 0, 26600, 0),
+(14, '$2y$10$sxwp7k4OSuCdCiO7y.JsOucq/YbXFR4oF8aBcgeTJ.UixSPKh.xJm', 'hp@hp.com', 'Leap Of Faith', 29, 6, 2875, '2016-06-04 21:40:28', 'normal', 1465481446, 9, 0, 3, 10, 11, 2137483647, 0),
 (15, '$2y$10$Q3aMDDCP8w2o8bV.SaRs4.4Mgr49ZHzl372S4qExpvmadU0mAHETi', 'asda@asda.com', 'asdasd', 0, 0, 1000, '2016-06-04 21:40:51', 'normal', 1465372058, 1, 0, 0, 0, 0, 1000, 0),
 (16, '$2y$10$aZkr5proBXT1kbSu9WWoHOM/q4lHiyqVXj6/9FYTa9Tn6YaO31LPW', 'simon@simon.com', 'simon', 0, 0, 1000, '2016-06-06 09:29:26', 'normal', 1465372058, 1, 0, 0, 0, 0, 1000, 0),
-(17, '', '', 'guesto', 0, 0, 1000, '2016-06-07 13:22:51', 'guest', 1465372058, 1, 0, 0, 0, 0, 1000, 0);
+(17, '', '', 'guesto', 0, 0, 1000, '2016-06-07 13:22:51', 'guest', 1465372058, 1, 0, 0, 0, 0, 1000, 0),
+(23, '', '2234072218', 'queen', 0, 0, 1000, '2016-06-09 14:13:59', 'guest', 1465481643, 1, 0, 0, 0, 0, 1000, 0);
 
 --
 -- Indexes for dumped tables
@@ -509,7 +515,8 @@ ALTER TABLE `units`
 ALTER TABLE `users`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `email` (`email`),
-  ADD UNIQUE KEY `username` (`username`);
+  ADD UNIQUE KEY `username` (`username`),
+  ADD UNIQUE KEY `email_2` (`email`);
 
 --
 -- AUTO_INCREMENT for dumped tables
@@ -549,12 +556,12 @@ ALTER TABLE `friends`
 -- AUTO_INCREMENT for table `inventory`
 --
 ALTER TABLE `inventory`
-  MODIFY `inv_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+  MODIFY `inv_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
 --
 -- AUTO_INCREMENT for table `items`
 --
 ALTER TABLE `items`
-  MODIFY `item_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `item_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 --
 -- AUTO_INCREMENT for table `maps`
 --
@@ -584,7 +591,7 @@ ALTER TABLE `units`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
