@@ -166,7 +166,6 @@ function attack_unit($attacker, $target) {
     $actions[] = action("remove_buff",
          jsonPair("unit_id", $target->unit_id)
       .",".jsonPair("buff_id", $shield->buff_id));
-    $out .= jsonPair("actions", jsonArray($actions));
   } else { /* Normal attack */
     // get new health
     $damage = $attacker->attack;
@@ -223,7 +222,6 @@ function damageByBuff($buff, $target, $damage) {
     $actions[] = action("remove_buff",
          jsonPair("unit_id", $target->unit_id)
       .",".jsonPair("buff_id", $shield->buff_id));
-    $out .= jsonPair("actions", jsonArray($actions));
   } else { /* no shield */
     $new_health = $target->hp - $damage;
 
