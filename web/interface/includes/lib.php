@@ -74,7 +74,7 @@ function genProf($prof) {
 <tr><th>Games Won</th><td>".number_format($prof->wins)."</td></tr>
 <tr><th>Games Lost</th><td>".number_format($prof->losses)."</td></tr>
 <tr><th>ELO Rating</th><td>".getRank($prof->elo)."<br /><small>".number_format($prof->elo)."</small></td></tr>
-<tr><th>Win/Loss Ratio</th><td>".ratio($prof->wins, $prof->losses)."</td></tr>
+<tr><th>Win/Loss Ratio</th><td>".percent($prof->wins, $prof->losses)."%</td></tr>
 <tr><th>Sign Up Date</th><td>".formatSQLDate($prof->created)."</td></tr>";
 }
 function linkUsername($prof, $newTab = false) {

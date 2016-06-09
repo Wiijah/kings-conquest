@@ -2683,7 +2683,7 @@ function k_instruction2(){
     removeBox();
   });
   addTitleToBox("King");
-  addTextToBox("<p>King's default attack damage is 25. Now try to click on the skill button (Or press 'S' on your keyboard) to use king's skill. </p>");
+  addTextToBox("<p>King's default attack damage is 25. Now try to click on the skill button (or press 'S' on your keyboard) to use king's skill. </p>");
   addPointerNearPlayerSkill();
 }
 
@@ -2696,7 +2696,7 @@ function k_instruction3(){
   });
   showButton();
   addTitleToBox("King");
-  addTextToBox("<p>Well Done. However any unit in King's Conquest can't move or attack anymore after using the skill. So remember to move to a good position before using skill. Now it's enemy's turn.</p>");
+  addTextToBox("<p>Well done. However any unit in King's Conquest can't move or attack anymore after using the skill. So remember to move to a good position before using the skill. Now it's the enemy's turn.</p>");
 }
 
 function k_instruction4(){
@@ -2708,7 +2708,7 @@ function k_instruction4(){
   });
     addTextToButton("Next");
   addTitleToBox("King");
-  addTextToBox("<p>Excellent! Now you know how to use the king's skill.</p> <p>Try another unit by clicking on the corresponding card in the bottom left corner of the window. </p><p>Click 'Next' to play the next character</p>");
+  addTextToBox("<p>Excellent! Now you know how to use the king's skill.</p> <p>Try another unit by clicking on the corresponding card in the bottom left corner of the window. </p><p>Click 'Next' to play the next character.</p>");
   kingDone = 1;
   unitCards[0].removeAllEventListeners();
   toPlayList.splice(toPlayList.indexOf("king"),1);
@@ -2776,7 +2776,7 @@ function kt_instruction3(){
   showButton();
   addTextToButton("Next");
   addTitleToBox("Knight");
-  addTextToBox("<p>Well Done. If you can not reach any unit in this turn, setting up your shield will be the best choice. Now it's enemy's turn. Let's see your how powerful the shield is.</p>");
+  addTextToBox("<p>Well done. If you cannot reach any unit in this turn, setting up your shield will be the best choice. Now it's the enemy's turn. Let's see your how powerful the shield is.</p>");
 }
 
 function kt_instruction4(){
@@ -2787,7 +2787,7 @@ function kt_instruction4(){
   });
     addTextToButton("Next");
   addTitleToBox("Knight");
-  addTextToBox("<p>Excellent! Now you know how to use the knight's skill.</p> <p>Try another unit by clicking on the corresponding card in the bottom left corner of the window. </p><p>Click 'Next' to play the next character</p>");
+  addTextToBox("<p>Excellent! Now you know how to use the knight's skill.</p> <p>Try another unit by clicking on the corresponding card in the bottom left corner of the window. </p><p>Click 'Next' to play the next character.</p>");
   knightDone = 1;
   toPlayList.splice(toPlayList.indexOf("knight"),1);
   endCurrentUnitTutorial = true;
@@ -2811,7 +2811,7 @@ function showArcherTutorial(){
   displayBox(function() {
     a_instruction();
   });
-  addTextToBox("<p>An archer is the master of using the bow and arrows. Really large attack range and he knows the weakness of enermy have a really high critical chance. </p> <p>Normal Attack: 20</p><p> Skill: Double Shoot</p><p>(shoot two fatal arrows to targets the arrow will decrease the target's base attack damage by 20% for 3 turns.)</p>");
+  addTextToBox("<p>An archer is the master of using the bow and arrow. The archer has a really large attack range and a high critical chance. </p> <p>Normal Attack: 20</p><p> Skill: Double Shoot</p><p>(shoots two arrows to up to two targets and the arrows will decrease the target's base attack damage by 20% for 3 turns.)</p>");
   addTitleToBox("<img src=\"./i_icon.png\" style=\"line-height: 1px; vertical-align: bottom; margin-right: 5px\" height=\"20\" width=\"20\" />Archer");
   addTextToButton("Next");
   resetTheGame();
@@ -2859,7 +2859,7 @@ function a_instruction4(){
     a_instruction5();
   });
   addTitleToBox("Archer");
-  addTextToBox("<p>Nice one. You can now give the enemy king another shoot.</p> <p>In real game, you might use archer skill on two different units to decrease their demage</p>");
+  addTextToBox("<p>Nice one. You can now give the enemy king another shoot.</p> <p>In a real game, you might use archer skill on two different units to decrease their damage</p>");
 }
 
 function a_instruction5(){
@@ -2894,7 +2894,7 @@ function showWizardTutorial(){
   displayBox(function() {
     w_instruction();
   });
-  addTextToBox("<p>A wizard uses arcane magic. Can deal really high AOE (Area of effect) demage and burn the targets. However wizards are less effective in melee combat. </p> <p>Normal Attack: 15 </p><p>Skill: Burning</p><p>(maximum 5 target in a cross) and the targets get 2% of its maximum health burning demage each turn.)</p>");
+  addTextToBox("<p>A wizard uses arcane magic. Can deal really high AOE (area of effect) demage and burn the targets. However wizards are less effective in melee combat. </p> <p>Normal Attack: 15 </p><p>Skill: Burning</p><p>(maximum 5 target in a cross) and the targets lose 2% of its maximum health due to burning damage each turn.)</p>");
   addTitleToBox("<img src=\"./i_icon.png\" style=\"line-height: 1px; vertical-align: bottom; margin-right: 5px\" height=\"20\" width=\"20\" />Wizard");
   resetTheGame();
   addTextToButton("Next");
@@ -2976,7 +2976,7 @@ function showDragonTutorial(){
   displayBox(function() {
     d_instruction();
   });
-  addTextToBox("<p> Dragon the most mysterious creature. It can control the ice and wind. Flying unit, can move over any terrains. </p> <p>Normal Attack: 35 </p><p>Skill: Icy Wind </p><p>(Deal AOE damage to maximum 5 units in a cross, and freeze them for 4 turns)</p>");
+  addTextToBox("<p> The dragon is the most mysterious creature. It can control the ice and wind. Flying unit, can move over any terrains. </p> <p>Normal Attack: 35 </p><p>Skill: Icy Wind </p><p>(Deal AOE damage to maximum 5 units in a cross, and freeze them for 4 turns)</p>");
   addTitleToBox("<img src=\"./i_icon.png\" style=\"line-height: 1px; vertical-align: bottom; margin-right: 5px\" height=\"20\" width=\"20\" />Dragon");
   resetTheGame();
   addTextToButton("Next");
