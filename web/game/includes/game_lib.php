@@ -135,6 +135,8 @@ function give_gold($part, $gold) {
 function give_buff($unit, $buff_id, $turns_left) {
   global $db;
   global $room_id;
+  $unit = select_unit($unit->unit_id);
+  if (!$unit) return array();
   if ($unit->commandable == 0) return array();
 
   $actions = array();
