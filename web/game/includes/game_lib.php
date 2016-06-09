@@ -220,7 +220,7 @@ function damageByBuff($buff, $target, $damage) {
       $actions = array_merge($actions, gameEnd($user, $opp, "king_death"));
     }
   } 
-  $actions[] = triggerBufferJson($buff->buff_name, $target->unit_id, 0 - $damage);
+  $actions[] = triggerBufferJson(ucfirst($buff->buff_name), $target->unit_id, 0 - $damage);
   return $actions;
 }
 

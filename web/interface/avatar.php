@@ -25,7 +25,7 @@ if (isset($_GET['equip'])) {
 }
 /* Unequip Item */
 if (isset($_GET['unequip'])) {
-  $type = secureInt($_GET['unequip']);
+  $type = secureStr($_GET['unequip']);
   if ($user->{$type} != 0) {
      give_item($user->{$type}, $user->id);
     $result = $db->query("SELECT * FROM inventory JOIN items USING (item_id) WHERE item_id = '{$user->{$type}}' AND user_id = '{$user->id}'");
