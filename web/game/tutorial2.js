@@ -1587,6 +1587,7 @@ function castDragonSpellOnClick(event){
     }
 }
 function castWizardSpellOnClick(event) {
+  //if(!endCurrentUnitTutorial) addPointerToTile(2,2);
   var kongda = true;
   $.each(units, function(i, unit) {
     if (unit.column == event.target.column && unit.row == event.target.row && unit.team != selectedCharacter.team) {
@@ -2202,6 +2203,7 @@ function keyEvent(event) {
           draggable.y = 0;
           break; 
         case 77: //m
+          return;
           if (firstClickSkill) return;
           if (isDisplayingMenu) {
             if (selectedCharacter.canMove) {
@@ -2212,6 +2214,7 @@ function keyEvent(event) {
           }
           break;
         case 65: //a
+           return;
           if (firstClickSkill) return;
           if (isDisplayingMenu) {
             if (selectedCharacter.canAttack) {
@@ -2867,7 +2870,7 @@ function a_instruction5(){
   displayBox(function() {
       removeBox();
     checkCompleness();
-    endCurrentUnitTutorial = true;  
+    //endCurrentUnitTutorial = true;  
   });
     addTextToButton("Next");
   addTitleToBox("Archer");
@@ -2889,6 +2892,7 @@ function a_instruction5(){
 // Wizard tutorial ==================
 
 function showWizardTutorial(){
+  console.log("showWizardTutorial");
   turnCount = 0;
   resetInsturctions();
   displayBox(function() {
@@ -2904,6 +2908,8 @@ function showWizardTutorial(){
 }
 
 function w_instruction(){
+
+  console.log("wi1");
   removeBox();
   displayBox(function() {
     removeBox();
@@ -2915,6 +2921,7 @@ function w_instruction(){
 }
 
 function w_instruction2(){
+  console.log("wi2");
   removeBox();
   displayBox(function() {
     removeBox();
@@ -2925,6 +2932,7 @@ function w_instruction2(){
 }
 
 function w_instruction3(){
+  console.log("wi3");
   removeBox();
   displayBox(function() {
     removeBox();
@@ -2934,6 +2942,8 @@ function w_instruction3(){
 }
 
 function w_instruction4(){
+
+  console.log("wi4");
   removeBox();
   displayBox(function() {
     removeBox();
@@ -2946,6 +2956,7 @@ function w_instruction4(){
 }
 
 function w_instruction5(){
+  console.log("wi5");
   removeBox();
   displayBox(function() {
         removeBox();
