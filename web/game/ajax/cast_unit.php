@@ -38,10 +38,7 @@ if ($caster->skill == "Shield") {
 } else if ($caster->skill == "Battle Cry") {
   $result = $db->query("{$SELECT_UNIT} room_id = '{$room_id}' AND commandable = '1' AND team = '{$team}'");
   while ($fetch = $result->fetch_object()) {
-    $db->query("INSERT INTO buff_instances (buff_id, unit_id, turns_left) VALUES ('2', '{$fetch->unit_id}', '4')");
-    $actions[] = action("apply_buff",
-         jsonPair("buff_id", 2) 
-    .",".jsonPair("unit_id", $fetch->unit_id));
+    $actions = array_merge($actions, give_buff($fetch, 2, 4));
     $actions[] = triggerBufferJson("IncAttack", $fetch->unit_id, 0);
   }
 } else if ($caster->skill == "Magic Damage") {

@@ -135,6 +135,8 @@ function give_gold($part, $gold) {
 function give_buff($unit, $buff_id, $turns_left) {
   global $db;
   global $room_id;
+  $unit = select_unit($unit->unit_id);
+  if (!$unit) return array();
   if ($unit->commandable == 0) return array();
 
   $actions = array();
@@ -159,7 +161,7 @@ function attack_unit($attacker, $target) {
 
   /* Refresh target */
   $target = select_unit($target->unit_id);
-  if (!$target) return; //already dead
+  if (!$target) return array(); //already dead
 
   $result = $db->query("SELECT * FROM buff_instances WHERE unit_id = '{$target->unit_id}' AND buff_id = 4");
   $shield = $result->fetch_object();
