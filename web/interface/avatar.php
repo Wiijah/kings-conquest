@@ -74,7 +74,7 @@ foreach ($equipped_list as $value) {
 if ($equipped_html == "") {
   $equipped_html = "<div class='box standard_box center'>You do not have any items equipped.</div>";
 } else {
-  $equipped_html = "<div class='box center'><table class='play_table'><tr><th>-</th><th>Equipped To</th><th>Item</th><th>Unequip</th></tr>{$equipped_html}</table></div>";
+  $equipped_html = "<div class='box center'><table class='play_table'><tr><th>-</th><th>Type</th><th>Item</th><th>Unequip</th></tr>{$equipped_html}</table></div>";
 }
 
 ?>

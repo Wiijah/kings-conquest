@@ -32,7 +32,6 @@ $colour = 255;
 $colour2 = imagecolorallocate($im, $colour, $colour, $colour);
 $size = 6;
 
-
 header ('Content-type: image/png');
 imagepng($im, NULL, 0);
 imagedestroy($im);
