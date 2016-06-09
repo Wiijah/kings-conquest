@@ -32,7 +32,6 @@ while ($buff = $result->fetch_object()) {
 
 /* Freeze effect */
 $result = $db->query("SELECT * FROM buff_instances JOIN buffs USING (buff_id) WHERE room_id = '{$room_id}' AND buff_id = 6");
-$buff_list = array();
 while ($buff = $result->fetch_object()) {
   $unit = select_unit($buff->unit_id);
   $buff_list = array_merge($buff_list, damageByBuff($buff, $unit, 0));
@@ -50,15 +49,15 @@ while ($unit = $result->fetch_object()) {
 }
 
 /* Heal units via Totem */
-$result = $db->query("SELECT * FROM units JOIN classes USING (class_id) WHERE room_id = '{$room_id}' AND name='totem'");
+$result = $db->query("SELECT * FROM units JOIN classes USING (class_id) WHERE room_id = '{$room_id}' AND name='totem' AND team = '{$team}'");
 while ($totem = $result->fetch_object()) {
-  $result2 = $db->query("SELECT * FROM units WHERE room_id = '{$room_id}' AND team = '{$team}' AND unit_id != {$totem->unit_id} AND ".totem($totem->x, $totem->y));
+  $result2 = $db->query("SELECT * FROM units WHERE room_id = '{$room_id}' AND team = '{$totem->team}' AND unit_id != {$totem->unit_id} AND ".totem($totem->x, $totem->y));
   while ($unit = $result2->fetch_object()) {
     $heal = ceil($unit->max_hp * 0.03);
     if ($heal + $unit->hp > $unit->max_hp) $heal = $unit->max_hp - $unit->hp;
     $buff_list[] = triggerBufferJson("Heal", $unit->unit_id, $heal);
     $unit->hp += $heal;
-    $db->query("UPDATE units SET hp = {$heal} WHERE unit_id = '{$unit->unit_id}'");
+    $db->query("UPDATE units SET hp = {$unit->hp} WHERE unit_id = '{$unit->unit_id}'");
   }
 }
 
