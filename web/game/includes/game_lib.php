@@ -159,6 +159,11 @@ function attack_unit($attacker, $target) {
     // get new health
     $damage = $attacker->attack;
 
+
+    $result = $db->query("SELECT * FROM buff_instances WHERE unit_id = '{$attacker->unit_id}' AND buff_id = 2");
+    $battle_cry = $result->fetch_object();
+    $damage = ceil($damage * 1.2);
+
     $crit = rand(1,100) <= ($attacker->luck * 100) ? '1' : '0';
     if ($crit == '1') $damage *= 2;
     
