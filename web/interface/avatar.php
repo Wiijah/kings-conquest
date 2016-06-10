@@ -77,6 +77,14 @@ if ($equipped_html == "") {
   $equipped_html = "<div class='box center'><table class='play_table'><tr><th>-</th><th>Item</th><th>Type</th><th>Unequip</th></tr>{$equipped_html}</table></div>";
 }
 
+if (isset($_GET['skin'])) {
+  $skin = secureInt($_GET['skin']);
+  $error = false;
+  if ($skin < 0 || $skin >= count($SKIN_CODES)) $error = true;
+  if (!$error) {
+    $db->query("UPDATE users SET skin_colour = {$skin} WHERE id = {$user->id}");
+  }
+}
 ?>
 
 <div class="small_container friends_container">
@@ -90,6 +98,12 @@ echo $message;
 <?php echo genTitle("Customise Avatar"); ?>
 <div class="box standard_box center">
 <img src="<?php echo getAvatarURL($user->id); ?>" class="avatar" />
+<br />
+<?php
+for ($i = 0; $i < count($SKIN_CODES); $i++) {
+  echo "<a href='avatar?skin={$i}'><div class='skin' style='background-color: #{$SKIN_CODES[$i]}' data-skin='{$i}'></div></a>";
+}
+?>
 <br />
 <div class='btn lightbox_btn js_link' data-href='shop'>Shop</div><br />
 Here you can customise your avatar with items you have earned.
