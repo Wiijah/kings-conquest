@@ -39,7 +39,7 @@ echo $message;
 
 <?php echo genTitle("Shop"); ?>
 <div class="box standard_box center">
-<img src="<?php echo getAvatarURL($user->id); ?>" class="avatar" />
+<img src="images/shopkeeper.png" class="avatar" />
 <br />
 <div class='btn lightbox_btn js_link' data-href='avatar'>Customise Avatar</div><br />
 Here you can use your hard-earned King Points to purchase merchandise.<br />

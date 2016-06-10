@@ -68,7 +68,7 @@ foreach ($LAYERS as $value) {
 $equipped_html = "";
 
 foreach ($equipped_list as $value) {
-  $equipped_html .= "<tr><td>".avatarImg($value)."</td><td>".avatarTitle($value)."</td><td>".ucfirst($value->type)."</td><td><a href='avatar?unequip={$fetch->type}'>Unequip</a></td></tr>";
+  $equipped_html .= "<tr><td>".avatarImg($value)."</td><td>".avatarTitle($value)."</td><td>".ucfirst($value->type)."</td><td><a href='avatar?unequip={$value->type}'>Unequip</a></td></tr>";
 }
 
 if ($equipped_html == "") {
