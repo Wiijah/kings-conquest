@@ -82,7 +82,7 @@
    <p>You finished all tutorials. Now it's time to descover more in the real game!</p>
     </div>
     <div id="box_foot">
-      <button type="button" id="nextButton" class="btn" ng-click="">Back To Game Lobby</button>
+      <button type="button" id="nextButton" class="btn" ng-click="">Back To Tutorials</button>
     </div>
   </div>
 

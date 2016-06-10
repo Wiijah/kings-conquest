@@ -152,10 +152,4 @@ Use the form below to search for particular users to add.
  <!-- friends_profile box -->
 </div> <!-- small_container -->
 
-<div class="clear"></div>
-<div class="footer">
-<div class="white_line footer_line"></div>
-&copy; 2016 Kings' Conquest
-</div>
-</body>
-</html>
+<?php include 'includes/footer.php'; ?>

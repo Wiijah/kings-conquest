@@ -105,10 +105,4 @@ foreach ($ELO_COLOURS as $key => $value) {
 </div><br />
 
 
-<div class="clear"></div>
-<div class="footer">
-<div class="white_line footer_line"></div>
-&copy; 2016 Kings' Conquest
-</div>
-</body>
-</html>
+<?php include 'includes/footer.php'; ?>

@@ -1,5 +1,6 @@
 <?php
 $title = "Room";
+$hide_footer_links = true;
 require_once 'includes/header_checks.php';
 
 $result = $db->query("SELECT * FROM room_participants WHERE user_id = '{$user->id}' AND event = '' ORDER BY room_id DESC LIMIT 1");
@@ -97,10 +98,4 @@ if ($isOwner) {
 
 </div> <!-- play_container -->
 
-<div class="clear"></div>
-<div class="footer">
-<div class="white_line footer_line"></div>
-&copy; 2016 Kings' Conquest
-</div>
-</body>
-</html>
+<?php include 'includes/footer.php'; ?>
