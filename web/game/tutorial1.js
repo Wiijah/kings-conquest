@@ -2493,6 +2493,8 @@ function addPointerNearPlayerAttack(){
 function removeAllPointer(){
   chars.removeChild(pointerVertical);
   chars.removeChild(pointerHorizontal);
+  stage.removeChild(pointerVertical);
+  stage.removeChild(pointerHorizontal);
 }
 
 function resetInsturctions(){
@@ -2581,9 +2583,9 @@ function hp_instruction(){
   pointerHorizontal = new createjs.Sprite(ph_spritesheet, "pointer");
   pointerHorizontal.scaleX = 0.7;
   pointerHorizontal.scaleY = 0.6;
-  pointerHorizontal.x = statsDisplay.x + 35;
-  pointerHorizontal.y = statsDisplay.y + 50;
-  chars.addChild(pointerHorizontal);
+  pointerHorizontal.x = statsDisplay.x + 265;
+  pointerHorizontal.y = statsDisplay.y  -17;
+  stage.addChild(pointerHorizontal);
   stage.setChildIndex( pointerHorizontal, stage.getNumChildren()-1);
   removeBox();
   displayBox(function() {
@@ -2602,7 +2604,7 @@ function attack_instruction(){
   });
   addTextToButton("Next");
   addTitleToBox("<img src=\"./i_icon.png\" style=\"line-height: 1px; vertical-align: bottom; margin-right: 5px\" height=\"20\" width=\"20\" />Attack Damage (ATK)");
-  addTextToBox("<p> ATK is the damage you could give to the enemy target when you attack.</p> <p>(Some skill might increase or decrease units' base attack damage. This will be explained in detail in Tutorial 2)</p>");
+  addTextToBox("<p> ATK is the damage you could deal to the enemy target when you attack.</p> <p>(Some skill might increase or decrease units' base attack damage. This will be explained in detail in Tutorial 2)</p>");
 }
 function range_instruction(){
   pointerHorizontal.y  += 15;
@@ -2611,8 +2613,8 @@ function range_instruction(){
     skill_instruction();
   });
   addTextToButton("Next");
-  addTitleToBox("<img src=\"./i_icon.png\" style=\"line-height: 1px; vertical-align: bottom; margin-right: 5px\" height=\"20\" width=\"20\" />Attack Range (RNG)");
-  addTextToBox("<p> RNG indicates the range of which the current unit can attack. The range differs between units. </p> <p>(The attack range will be shown as red tiles after you click on attack button)</p>");
+  addTitleToBox("<img src=\"./i_icon.png\" style=\"line-height: 1px; vertical-align: bottom; margin-right: 5px\" height=\"20\" width=\"20\" />Attack Range");
+  addTextToBox("<p> RANGE indicates the range of which the current unit can attack. The range differs between units. </p> <p>(The attack range will be shown as red tiles after you click on attack button)</p>");
 }
 function skill_instruction(){
   pointerHorizontal.y  += 15;
@@ -2632,7 +2634,7 @@ function cd_instruction(){
   });
   addTextToButton("Next");
   addTitleToBox("<img src=\"./i_icon.png\" style=\"line-height: 1px; vertical-align: bottom; margin-right: 5px\" height=\"20\" width=\"20\" />Cool Down (CD)");
-  addTextToBox("<p> CD indicates how many turns left until the unit can use its skill again. CD will reduce by 1 each turn.</p> <p>The CD differs between units. Some skills have longer CD.</p>");
+  addTextToBox("<p> CD indicates how many turns left until the unit can use its skill again. CD will reduce by 1 each turn.</p>");
 }
 function moveRange_instruction(){
   pointerHorizontal.y  += 15;
