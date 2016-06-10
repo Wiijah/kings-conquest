@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: Jun 10, 2016 at 02:00 AM
+-- Generation Time: Jun 10, 2016 at 11:34 AM
 -- Server version: 10.1.10-MariaDB
 -- PHP Version: 7.0.2
 
@@ -39,7 +39,8 @@ CREATE TABLE `achievements` (
 INSERT INTO `achievements` (`ach_name`, `image`, `label`) VALUES
 ('100_wins', 'images/achievements/100_wins.png', 'For winning 100 games.'),
 ('50_wins', 'images/achievements/50_wins.png', 'For winning 50 games.'),
-('first_win', 'images/achievements/perfect_win.png', 'For winning a game for the first time.'),
+('first_lost', 'images/achievements/bronze_trophy.png', 'For losing a game for the first time.'),
+('first_win', 'images/achievements/silver_trophy.png', 'For winning a game for the first time.'),
 ('perfect_win', 'images/achievements/perfect_win.png', 'For winning a game without losing any units.');
 
 -- --------------------------------------------------------
@@ -136,7 +137,6 @@ CREATE TABLE `chat` (
 --
 
 INSERT INTO `chat` (`chat_id`, `created`, `user`, `message`, `room_id`, `chat_type`, `colour`) VALUES
-(1, '2016-06-09 08:16:36', 14, 'hey', 0, 'message', ''),
 (2, '2016-06-09 14:31:06', 9, 'hey mate', 0, 'message', ''),
 (3, '2016-06-09 14:31:07', 9, 'hows it going', 0, 'message', ''),
 (4, '2016-06-09 18:14:19', 9, 'Wumpus joined the room.', 1, 'event', ''),
@@ -171,7 +171,11 @@ INSERT INTO `chat` (`chat_id`, `created`, `user`, `message`, `room_id`, `chat_ty
 (33, '2016-06-09 23:06:00', 28, 'donald trump joined the room.', 11, 'event', ''),
 (34, '2016-06-09 23:06:02', 14, 'Leap Of Faith joined the room.', 11, 'event', ''),
 (35, '2016-06-09 23:59:36', 28, 'donald trump joined the room.', 12, 'event', ''),
-(36, '2016-06-09 23:59:53', 28, 'donald trump left the room.', 12, 'event', '');
+(36, '2016-06-09 23:59:53', 28, 'donald trump left the room.', 12, 'event', ''),
+(37, '2016-06-10 00:02:16', 28, 'donald trump joined the room.', 13, 'event', ''),
+(38, '2016-06-10 00:02:28', 14, 'Leap Of Faith joined the room.', 13, 'event', ''),
+(39, '2016-06-10 00:03:53', 28, 'donald trump joined the room.', 14, 'event', ''),
+(40, '2016-06-10 00:04:03', 14, 'Leap Of Faith joined the room.', 14, 'event', '');
 
 -- --------------------------------------------------------
 
@@ -422,7 +426,9 @@ INSERT INTO `opp` (`opp_id`, `room_id`, `user_id`, `team`, `json`) VALUES
 (42, 10, 28, 1, '{"error_code": 0,"actions": [{ "action_type" : "update_unit",\n    "unit_id" : 81,\n    "canMove" : 1,\n    "canAttack" : 1,\n    "outOfMoves" : 0,\n    "skillCoolDown" : 0},{ "action_type" : "update_unit",\n    "unit_id" : 82,\n    "canMove" : 1,\n    "canAttack" : 1,\n    "outOfMoves" : 0,\n    "skillCoolDown" : 0},{ "action_type" : "update_unit",\n    "unit_id" : 83,\n    "canMove" : 1,\n    "canAttack" : 1,\n    "outOfMoves" : 0,\n    "skillCoolDown" : 0},{ "action_type" : "update_unit",\n    "unit_id" : 84,\n    "canMove" : 0,\n    "canAttack" : 0,\n    "outOfMoves" : 1,\n    "skillCoolDown" : 0},{ "action_type" : "update_unit",\n    "unit_id" : 85,\n    "canMove" : 1,\n    "canAttack" : 1,\n    "outOfMoves" : 0,\n    "skillCoolDown" : 0},{ "action_type" : "update_unit",\n    "unit_id" : 86,\n    "canMove" : 1,\n    "canAttack" : 1,\n    "outOfMoves" : 0,\n    "skillCoolDown" : 0},{ "action_type" : "update_unit",\n    "unit_id" : 87,\n    "canMove" : 1,\n    "canAttack" : 1,\n    "outOfMoves" : 0,\n    "skillCoolDown" : 0},{ "action_type" : "update_unit",\n    "unit_id" : 88,\n    "canMove" : 1,\n    "canAttack" : 1,\n    "outOfMoves" : 0,\n    "skillCoolDown" : 0},{ "action_type" : "update_unit",\n    "unit_id" : 89,\n    "canMove" : 1,\n    "canAttack" : 1,\n    "outOfMoves" : 0,\n    "skillCoolDown" : 0},{ "action_type" : "update_unit",\n    "unit_id" : 90,\n    "canMove" : 1,\n    "canAttack" : 1,\n    "outOfMoves" : 0,\n    "skillCoolDown" : 0},{"action_type": "turn_change", "new_turn": 0,"effects_to_apply": [],"units_new_cd": [],"buffs_to_remove": []},{"action_type" : "update_gold", "gold" : 520, "team" : 1},{"action_type" : "update_gold", "gold" : 520, "team" : 0}]}'),
 (43, 10, 14, 0, '{"error_code": 0,"actions": [{ "action_type" : "update_unit",\n    "unit_id" : 81,\n    "canMove" : 1,\n    "canAttack" : 1,\n    "outOfMoves" : 0,\n    "skillCoolDown" : 0},{ "action_type" : "update_unit",\n    "unit_id" : 82,\n    "canMove" : 1,\n    "canAttack" : 1,\n    "outOfMoves" : 0,\n    "skillCoolDown" : 0},{ "action_type" : "update_unit",\n    "unit_id" : 83,\n    "canMove" : 1,\n    "canAttack" : 1,\n    "outOfMoves" : 0,\n    "skillCoolDown" : 0},{ "action_type" : "update_unit",\n    "unit_id" : 84,\n    "canMove" : 1,\n    "canAttack" : 1,\n    "outOfMoves" : 0,\n    "skillCoolDown" : 0},{ "action_type" : "update_unit",\n    "unit_id" : 85,\n    "canMove" : 1,\n    "canAttack" : 1,\n    "outOfMoves" : 0,\n    "skillCoolDown" : 0},{ "action_type" : "update_unit",\n    "unit_id" : 86,\n    "canMove" : 1,\n    "canAttack" : 1,\n    "outOfMoves" : 0,\n    "skillCoolDown" : 0},{ "action_type" : "update_unit",\n    "unit_id" : 87,\n    "canMove" : 1,\n    "canAttack" : 1,\n    "outOfMoves" : 0,\n    "skillCoolDown" : 0},{ "action_type" : "update_unit",\n    "unit_id" : 88,\n    "canMove" : 1,\n    "canAttack" : 1,\n    "outOfMoves" : 0,\n    "skillCoolDown" : 0},{ "action_type" : "update_unit",\n    "unit_id" : 89,\n    "canMove" : 1,\n    "canAttack" : 1,\n    "outOfMoves" : 0,\n    "skillCoolDown" : 0},{ "action_type" : "update_unit",\n    "unit_id" : 90,\n    "canMove" : 1,\n    "canAttack" : 1,\n    "outOfMoves" : 0,\n    "skillCoolDown" : 0},{"action_type": "turn_change", "new_turn": 1,"effects_to_apply": [],"units_new_cd": [],"buffs_to_remove": []},{"action_type" : "update_gold", "gold" : 530, "team" : 0},{"action_type" : "update_gold", "gold" : 530, "team" : 1}]}'),
 (44, 10, 28, 1, '{"error_code": 0,"actions": [{"action_type": "attack_unit", "attacker_id": 84,"buffs": [],"target_id": 81,"dmg": 50,"is_critical": 1},{"action_type": "game_end", "reason":"king_death","winner": 1},{ "action_type" : "update_unit",\n    "unit_id" : 84,\n    "canMove" : 0,\n    "canAttack" : 0,\n    "outOfMoves" : 1,\n    "skillCoolDown" : 0}]}'),
-(45, 11, 14, 1, '{"error_code": 0,"actions": [{"action_type": "game_end", "reason":"quit_game","winner": 0}]}');
+(45, 11, 14, 1, '{"error_code": 0,"actions": [{"action_type": "game_end", "reason":"quit_game","winner": 0}]}'),
+(46, 13, 28, 0, '{"error_code": 0,"actions": [{"action_type": "attack_unit", "attacker_id": 103,"buffs": [],"target_id": 104,"dmg": 30,"is_critical": 1},{"action_type": "game_end", "reason":"king_death","winner": 0},{ "action_type" : "update_unit",\n    "unit_id" : 103,\n    "canMove" : 0,\n    "canAttack" : 0,\n    "outOfMoves" : 1,\n    "skillCoolDown" : 0}]}'),
+(47, 14, 28, 0, '{"error_code": 0,"actions": [{"action_type": "attack_unit", "attacker_id": 113,"buffs": [],"target_id": 114,"dmg": 30,"is_critical": 1},{"action_type": "game_end", "reason":"king_death","winner": 0},{ "action_type" : "update_unit",\n    "unit_id" : 113,\n    "canMove" : 0,\n    "canAttack" : 0,\n    "outOfMoves" : 1,\n    "skillCoolDown" : 0}]}');
 
 -- --------------------------------------------------------
 
@@ -459,7 +465,9 @@ INSERT INTO `rooms` (`room_id`, `user_id`, `joiner`, `created`, `name`, `passwor
 (8, 27, 0, '2016-06-09 22:29:12', 'asda', '', 2, 'ended', 0, 27, 0, 32, 1465511501),
 (9, 14, 0, '2016-06-09 22:35:12', 'yo momma', '', 2, 'ended', 1, 28, 0, 32, 1465511917),
 (10, 14, 0, '2016-06-09 22:48:09', 'testt', '', 2, 'ended', 1, 28, 32, 32, 1465512598),
-(11, 28, 0, '2016-06-09 23:06:00', 'asda', '', 2, 'ended', 0, 28, 32, 32, 1465513655);
+(11, 28, 0, '2016-06-09 23:06:00', 'asda', '', 2, 'ended', 0, 28, 32, 32, 1465513655),
+(13, 28, 0, '2016-06-10 00:02:16', 'yo momma', '', 2, 'ended', 0, 28, 32, 32, 1465517057),
+(14, 28, 0, '2016-06-10 00:03:53', 'sdf', '', 2, 'ended', 0, 28, 32, 32, 1465517137);
 
 -- --------------------------------------------------------
 
@@ -501,7 +509,11 @@ INSERT INTO `room_participants` (`part_id`, `user_id`, `room_id`, `colour`, `sta
 (21, 14, 10, 'red', 'ready', 'ended', 530, 0, 0),
 (22, 28, 10, 'blue', 'ready', 'ended', 530, 1, 0),
 (23, 28, 11, 'red', 'owner', 'ended', 500, 0, 0),
-(24, 14, 11, 'blue', 'ready', 'ended', 500, 0, 0);
+(24, 14, 11, 'blue', 'ready', 'ended', 500, 0, 0),
+(26, 28, 13, 'red', 'owner', 'ended', 500, 1, 0),
+(27, 14, 13, 'blue', 'ready', 'ended', 500, 0, 0),
+(28, 28, 14, 'red', 'owner', 'ended', 500, 1, 0),
+(29, 14, 14, 'blue', 'ready', 'ended', 500, 0, 0);
 
 -- --------------------------------------------------------
 
@@ -613,7 +625,25 @@ INSERT INTO `units` (`unit_id`, `class_id`, `hp`, `max_hp`, `attack`, `skillCool
 (97, 6, 999, 999, 999, 0, 12, 13, 1, 1, 1, 0, 11, -1, -1),
 (98, 1, 200, 200, 15, 0, 9, 10, 1, 1, 1, 0, 11, -1, -1),
 (99, 3, 300, 300, 40, 0, 12, 10, 1, 1, 1, 0, 11, -1, -1),
-(100, 2, 200, 200, 20, 0, 12, 11, 1, 1, 1, 0, 11, -1, -1);
+(100, 2, 200, 200, 20, 0, 12, 11, 1, 1, 1, 0, 11, -1, -1),
+(101, 4, 30, 30, 25, 0, 3, 2, 0, 1, 1, 0, 13, -1, -1),
+(102, 5, 999, 999, 999, 0, 0, 0, 0, 1, 1, 0, 13, -1, -1),
+(103, 1, 200, 200, 15, 0, 3, 3, 0, 0, 0, 1, 13, -1, -1),
+(105, 3, 300, 300, 40, 0, 0, 2, 0, 1, 1, 0, 13, -1, -1),
+(106, 2, 200, 200, 20, 0, 0, 3, 0, 1, 1, 0, 13, -1, -1),
+(107, 6, 999, 999, 999, 0, 12, 13, 1, 1, 1, 0, 13, -1, -1),
+(108, 1, 200, 200, 15, 0, 9, 10, 1, 1, 1, 0, 13, -1, -1),
+(109, 3, 300, 300, 40, 0, 12, 10, 1, 1, 1, 0, 13, -1, -1),
+(110, 2, 200, 200, 20, 0, 12, 11, 1, 1, 1, 0, 13, -1, -1),
+(111, 4, 30, 30, 25, 0, 3, 2, 0, 1, 1, 0, 14, -1, -1),
+(112, 5, 999, 999, 999, 0, 0, 0, 0, 1, 1, 0, 14, -1, -1),
+(113, 1, 200, 200, 15, 0, 3, 3, 0, 0, 0, 1, 14, -1, -1),
+(115, 3, 300, 300, 40, 0, 0, 2, 0, 1, 1, 0, 14, -1, -1),
+(116, 2, 200, 200, 20, 0, 0, 3, 0, 1, 1, 0, 14, -1, -1),
+(117, 6, 999, 999, 999, 0, 12, 13, 1, 1, 1, 0, 14, -1, -1),
+(118, 1, 200, 200, 15, 0, 9, 10, 1, 1, 1, 0, 14, -1, -1),
+(119, 3, 300, 300, 40, 0, 12, 10, 1, 1, 1, 0, 14, -1, -1),
+(120, 2, 200, 200, 20, 0, 12, 11, 1, 1, 1, 0, 14, -1, -1);
 
 -- --------------------------------------------------------
 
@@ -654,7 +684,7 @@ INSERT INTO `users` (`id`, `password`, `email`, `username`, `wins`, `losses`, `e
 (11, '$2y$10$jOeNVa.g.MTq8j7NoOY3k.RTVeYpcrxA7gq8zv8hp9yiVBsk0z3C.', 'debug@debug.com', 'debug', 212, 52, 1600, '2016-06-01 20:52:54', 'normal', 1465372058, 1, 0, 0, 0, 0, 1000, 0),
 (12, '$2y$10$7.dtDYkyCuARy8JOOvnEM..015QDAO7YDKsNEmue6deyEyJvIDwr2', 'goku@goku.com', 'goku', 211, 62, 970, '2016-06-01 20:53:04', 'normal', 1465372058, 1, 0, 0, 0, 0, 1000, 0),
 (13, '$2y$10$EVxl9C85A3EGzS9/mbr4mO1eZwdAa7RoFtuXRU.4lwdohCezvuQTu', 'veg@veg.com', 'veg', 311, 73, 800, '2016-06-01 20:53:57', 'normal', 1465372058, 1, 0, 0, 0, 0, 1000, 0),
-(14, '$2y$10$sxwp7k4OSuCdCiO7y.JsOucq/YbXFR4oF8aBcgeTJ.UixSPKh.xJm', 'hp@hp.com', 'Leap Of Faith', 345, 279, 2715, '2016-06-04 21:40:28', 'normal', 1465513774, 13, 0, 12, 10, 11, 2137482497, 0),
+(14, '$2y$10$sxwp7k4OSuCdCiO7y.JsOucq/YbXFR4oF8aBcgeTJ.UixSPKh.xJm', 'hp@hp.com', 'Leap Of Faith', 345, 281, 2651, '2016-06-04 21:40:28', 'normal', 1465517050, 13, 0, 12, 10, 11, 2137483097, 0),
 (15, '$2y$10$Q3aMDDCP8w2o8bV.SaRs4.4Mgr49ZHzl372S4qExpvmadU0mAHETi', 'asda@asda.com', 'asdasd', 0, 0, 870, '2016-06-04 21:40:51', 'normal', 1465372058, 1, 0, 0, 0, 0, 1000, 0),
 (16, '$2y$10$aZkr5proBXT1kbSu9WWoHOM/q4lHiyqVXj6/9FYTa9Tn6YaO31LPW', 'simon@simon.com', 'simon', 0, 0, 1200, '2016-06-06 09:29:26', 'normal', 1465372058, 1, 0, 0, 0, 0, 1000, 0),
 (17, '', '', 'guesto', 0, 0, 1000, '2016-06-07 13:22:51', 'guest', 1465372058, 1, 0, 0, 0, 0, 1000, 0),
@@ -663,7 +693,7 @@ INSERT INTO `users` (`id`, `password`, `email`, `username`, `wins`, `losses`, `e
 (25, '', '1497627383.com', 'queens conquest', 0, 0, 1000, '2016-06-09 14:20:37', 'guest', 1465482058, 1, 0, 0, 0, 0, 1000, 0),
 (26, '', '568440910@549463178.com', 'batka', 0, 0, 1000, '2016-06-09 14:21:04', 'guest', 1465482066, 1, 0, 0, 0, 0, 1000, 0),
 (27, '', '223181721@637244910.com', 'obama', 1, 2, 1000, '2016-06-09 19:52:50', 'guest', 1465511503, 0, 0, 0, 0, 0, 3600, 0),
-(28, '', '1366697652@370747727.com', 'donald trump', 3, 0, 1064, '2016-06-09 22:36:35', 'guest', 1465516849, 1, 0, 0, 0, 0, 4000, 0);
+(28, '', '1366697652@370747727.com', 'donald trump', 5, 0, 1128, '2016-06-09 22:36:35', 'guest', 1465551273, 1, 0, 0, 0, 0, 6000, 0);
 
 --
 -- Indexes for dumped tables
@@ -792,7 +822,7 @@ ALTER TABLE `buff_instances`
 -- AUTO_INCREMENT for table `chat`
 --
 ALTER TABLE `chat`
-  MODIFY `chat_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=37;
+  MODIFY `chat_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=41;
 --
 -- AUTO_INCREMENT for table `classes`
 --
@@ -827,22 +857,22 @@ ALTER TABLE `maps`
 -- AUTO_INCREMENT for table `opp`
 --
 ALTER TABLE `opp`
-  MODIFY `opp_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=46;
+  MODIFY `opp_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=48;
 --
 -- AUTO_INCREMENT for table `rooms`
 --
 ALTER TABLE `rooms`
-  MODIFY `room_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `room_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 --
 -- AUTO_INCREMENT for table `room_participants`
 --
 ALTER TABLE `room_participants`
-  MODIFY `part_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
+  MODIFY `part_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=30;
 --
 -- AUTO_INCREMENT for table `units`
 --
 ALTER TABLE `units`
-  MODIFY `unit_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=101;
+  MODIFY `unit_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=121;
 --
 -- AUTO_INCREMENT for table `users`
 --
