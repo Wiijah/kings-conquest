@@ -443,6 +443,7 @@ function spawnUnit(data, isCreation, row, column){
 
 
 function initGame() {
+	
 	createjs.Ticker.addEventListener("tick", keyEvent);
     this.document.onkeydown = keyEvent;
 	stage.enableMouseOver(20);
