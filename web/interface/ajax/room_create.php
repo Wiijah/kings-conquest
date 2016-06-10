@@ -3,7 +3,7 @@
 require_once 'ajax_common.php';
 
 $room_name = trim($_POST['room_name']);
-$room_pass = trim($_POST['room_pass']);
+$room_pass = ($_POST['room_pass']);
 
 /* Input is checked client-side before posting, however, if the client decides to modify client-side checking, then
    an arbitrary but valid values are substituted in */
