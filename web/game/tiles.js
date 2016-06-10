@@ -1128,12 +1128,12 @@ function displayStats(unit) {
 	bmp.y = 10;
 	bmp.x = 20; // 226
 	//stage.update();
-	var text = unit.team == team ? new createjs.Text("UNITID:" + unit.unit_id + "\nHP : " + getHealth(unit) + "/" + getMaxHealth(unit) + "\n" +
+	var text = unit.team == team ? new createjs.Text("HP : " + getHealth(unit) + "/" + getMaxHealth(unit) + "\n" +
 		"ATK : "  + getAttack(unit) + "\n" + "RNG : " + unit.attackRange + "\n" +
 		"SKILL : " + unit.skill +  "\n" + "CD: " + unit.skillCoolDown  + "\n" +
 		"MOV. RANGE : " + unit.moveRange + "\n" +
 		"LCK : " + getLuck(unit), "15px Arial", "#000000")
-	: new createjs.Text("UNITID:" + unit.unit_id + "\nHP : " + getHealth(unit) + "/" + getMaxHealth(unit) + "\n" +
+	: new createjs.Text("HP : " + getHealth(unit) + "/" + getMaxHealth(unit) + "\n" +
 		"ATK : "  + "???"  + "\n" + "RNG : " + "???" + "\n" +
 		"SKILL : " + "???"  + "\n" +"CD: " + "???" + "\n" +
 		"MOV. RANGE : " + "???" + "\n" +
