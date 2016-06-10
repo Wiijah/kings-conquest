@@ -46,7 +46,7 @@ lightbox_alert("Achievement Earned!", "From this game, you have earned the follo
 <div class="box">
 <table class="play_table">
 <tr><td class="prof_avatar" colspan="2"><img src="images/the_bridge.png" /></td></tr>
-<tr><th style='width: 50%'>Room Name</th><td><?php echo $room->name; ?></td></tr>
+<tr><th style='width: 50%'>Room Name</th><td><?php echo secureOutput($room->name); ?></td></tr>
 <tr><th>Map</th><td>The Bridge</td></tr>
 <tr><th>Number of Players</th><td>2</td></tr>
 </table>
