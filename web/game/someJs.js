@@ -32,6 +32,7 @@ function displayWarningBox(action,action2) {
 
 
 function displayDoneBox(action,action2) {
+	updateTut();
 	var box = $("#someBox3");
 	var button = $("#quitButton");
 	var button2 = $("#nextButton");

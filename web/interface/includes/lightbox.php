@@ -17,11 +17,12 @@ echo genLightbox("Enter Room", "enter_room", "
     <div class='btn lightbox_btn' id='lightbox_btn_enter_room'>Join Room</div>
     <div class='btn lightbox_btn lightbox_close'>Cancel</div>");
 
-echo genLightbox("How To Play", "tutorial", "
-  <div class='center'>Select from one of four tutorials below.<br /><br />
-    <div class='btn lightbox_btn' id='tut1'>Tutorial 1</div>
-    <div class='btn lightbox_btn' id='tut2'>Tutorial 2</div>
-    <div class='btn lightbox_btn' id='tut3'>Tutorial 3</div>
-    <div class='btn lightbox_btn' id='tut4'>Tutorial 4</div>
+echo genLightbox("Welcome", "tutorial", "
+  <div class='center'>Welcome to Kings' Conquest!<br /><br />If this is your first time here, then you may want to look at the tutorials section. If you cancel, you can still revisit the tutorials anytime you wish.<br /><br />
+    <div class='btn lightbox_btn js_link' data-href='tutorials'>Visit Tutorials</div>
+    <div class='btn lightbox_btn lightbox_close'>Cancel</div>
+    <img src='images/archer.png' class='tut_guy' />
+    <img src='images/wizard.png' class='tut_guy_left' />
    </div> ");
+
 ?>

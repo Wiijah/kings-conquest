@@ -19,3 +19,18 @@
   width: 400px;
   margin: 0 auto;
 }
+.tut_guy {
+  height: 100px;
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+}
+.tut_guy_left {
+  height: 100px;
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+}
+.tut_done {
+  color: #00ff42 !important;
+}

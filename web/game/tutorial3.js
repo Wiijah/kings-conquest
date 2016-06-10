@@ -57,6 +57,7 @@ var undo = false;
 var bgMusic = true;
 
 //Tutorial 3
+var tut_num = 3;
 var currentUnit;
 var currentUnit2;
 var enemyUnit;

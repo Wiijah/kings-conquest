@@ -19,6 +19,7 @@
   <script src="js/common.js"></script>
   <script src="js/style.js"></script>
   <script src="js/lightbox.js"></script>
+  <script src="js/tutorial.js"></script>
   <script src="../utils/qtip.js"></script>
   <script>
   <!--

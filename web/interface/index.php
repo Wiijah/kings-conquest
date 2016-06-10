@@ -22,6 +22,11 @@ if ($part = $result->fetch_object()) {
 include 'includes/header.php';
 include 'includes/logout_container.php';
 include 'includes/logo.php';
+
+if ($user->tutorial == 0) {
+  $db->query("UPDATE users SET tutorial = 1 WHERE id = {$user->id}");
+  echo '<script>lightbox_open("tutorial");</script>';
+}
 ?>
 <script>
 <!--

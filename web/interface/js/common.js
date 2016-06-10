@@ -130,6 +130,12 @@ function comPost(url, data, timeout_cb, callback) {
    });
 }
 
+function updateTut() {
+  rawPost("../interface/ajax/tutorial", {"tut": tut_num, "tut2": tut_num}, function (data) {
+    console.log(data.kc_error);
+  });
+}
+
 /* Function that does nothing, useful for passing callback functions that do nothing. */
 function nothing() {}
 

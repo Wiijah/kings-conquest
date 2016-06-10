@@ -5,6 +5,9 @@ include 'includes/header.php';
 include 'includes/logout_container.php';
 include 'includes/logo.php';
 require_once 'includes/back_container.php';
+
+$crown = '<img src="images/crown.png" style="position: absolute; width: 65px; top: -32px; right: -19px;" />';
+$lock = '<img src="images/lock.png" style="position: absolute; width: 27px; top: 6px; right: 15px;" />';
 ?>
 
 <div class="small_container friends_container">
@@ -17,9 +20,12 @@ echo genBreadcrumbs(array("Lobby|index", "Tutorials"));
 Welcome to the tutorials section.<br />
 For tutorials concerning gameplay, you can try out the four interactive tutorials below.<br /><br />
 
-    <div class='btn lightbox_btn js_link' data-href='../game/tutorial1'>1. Basics</div>
-    <div class='btn lightbox_btn js_link' data-href='../game/tutorial2'>2. Intermediate</div>
-    <div class='btn lightbox_btn js_link' data-href='../game/tutorial3'>3. Advanced</div>
+
+    <div class='btn lightbox_btn goto_tut' data-href='../game/tutorial1' data-tut="1">1. Basics<?php if ($user->tutorial >= 2) echo $crown; ?></div>
+
+
+    <div class='btn lightbox_btn goto_tut' data-href='../game/tutorial2' data-tut="2">2. Intermediate<?php if ($user->tutorial >= 3) echo $crown; ?><?php if ($user->tutorial <= 1) echo $lock; ?></div>
+    <div class='btn lightbox_btn goto_tut' data-href='../game/tutorial3' data-tut="3">3. Advanced<?php if ($user->tutorial >= 4) echo $crown; ?><?php if ($user->tutorial <= 2) echo $lock; ?></div>
 </div> <br />
 
 <?php echo genTitle("Contents"); ?>
