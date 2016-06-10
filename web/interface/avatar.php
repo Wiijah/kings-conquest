@@ -7,6 +7,20 @@ include 'includes/logout_container.php';
 include 'includes/logo.php';
 require_once 'includes/back_container.php';
 
+
+/* Update achievements */
+$result = $db->query("SELECT * FROM users");
+while ($fetch = $result->fetch_object()) {
+  $room_id = 0;
+  if ($fetch->wins > 0) giveAch("first_win", $fetch, $room_id);
+  if ($fetch->losses > 0) giveAch("first_lost", $fetch, $room_id);
+  if ($fetch->wins > 49) giveAch("50_wins", $fetch, $room_id);
+  if ($fetch->wins > 99) giveAch("100_wins", $fetch, $room_id);
+  if ($fetch->wins > 0) giveAch("perfect_win", $fetch, $room_id);
+}
+
+/* End achievements */
+
 $message = "";
 /* Equip Item */
 if (isset($_GET['equip'])) {
