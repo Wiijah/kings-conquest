@@ -2543,6 +2543,7 @@ function performAttack() {
   var reachableTiles = findReachableTiles(selectedCharacter.row, selectedCharacter.column, selectedCharacter.attackRange, false);
   highlightArea(reachableTiles, "graphics/tile/red_tile.png", ["click"], [function(event) {
     var tile = event.target;
+    if (tile.row == 2 && tile.column == 0) return;
     $.each(units, function(i, unit) {
       if (unit.row == tile.row && unit.column == tile.column && selectedCharacter.team != unit.team){
         attack(selectedCharacter, unit);
@@ -2931,7 +2932,6 @@ function checkingDragon(){
   addTextToBox("<p>You can see your dragon can deal 35 damages when attack. Before you attack it's better to check the remaining HP of enemy units</p><p>Click the enemy unit to see their stats</p>")
   removeAllPointer();
 }
-
 
 
 var checkDone = false;
