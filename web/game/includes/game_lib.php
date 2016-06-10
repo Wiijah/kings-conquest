@@ -299,7 +299,7 @@ function gameEnd($winner, $loser, $reason) {
   if ($winner->wins == 0) giveAch("first_win", $winner, $room_id);
   if ($winner->wins == 49) giveAch("50_wins", $winner, $room_id);
   if ($winner->wins == 99) giveAch("100_wins", $winner, $room_id);
-  if ($loser_part->unit_kills == 0) giveAch("perfect_win", $winner, $room_id);
+  if ($loser_part->unit_kills == 0) giveAch("perfect_win", $loser, $room_id);
 
   return $actions;
 }
