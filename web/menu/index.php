@@ -22,7 +22,7 @@ if (isset($_SESSION['id'])) {
   <body>
   <?php include 'includes/lightbox.php'; ?>
   <canvas id="gameCanvas" width="1920px" height="1180px"></canvas>
-  <img src="graphics/sun.png" id="sun" />
+  
   <div class="clouds"></div>
   <img src="images/logo_login.png" id="top" />
   <div id="slogan">Turn-based Fantasy Multiplayer Game</div>
