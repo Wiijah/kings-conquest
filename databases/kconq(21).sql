@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: Jun 10, 2016 at 12:41 PM
+-- Generation Time: Jun 10, 2016 at 01:54 PM
 -- Server version: 10.1.10-MariaDB
 -- PHP Version: 7.0.2
 
@@ -460,33 +460,34 @@ CREATE TABLE `users` (
   `mouth` int(11) NOT NULL,
   `body` int(11) NOT NULL,
   `kp` int(11) NOT NULL DEFAULT '1000',
-  `skin_colour` int(11) NOT NULL
+  `skin_colour` int(11) NOT NULL,
+  `tutorial` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`id`, `password`, `email`, `username`, `wins`, `losses`, `elo`, `created`, `member_type`, `lastactive`, `hat`, `wig`, `eyes`, `mouth`, `body`, `kp`, `skin_colour`) VALUES
-(6, '$2y$10$zmsIcYDqp8ScNRuDcj9jD.kbsW9vC7k655flzcYK66kC0jkWa0toK', 'alanduu50@gmail.com', 'xXN1NJ4Xx', 343, 148, 1742, '2016-05-23 21:22:33', 'normal', 1465372058, 1, 0, 0, 0, 5, 1000, 0),
-(7, '$2y$10$xGKFvkCEjUMSm1y6cr8v/.IsJCZfLhNtigg0eyETXQYbslu5X1IBK', 'kld14@ic.ac.uk', 'DragonSlayer52', 358, 145, 2100, '2016-05-23 21:22:01', 'normal', 1465372058, 1, 0, 0, 0, 0, 1000, 0),
-(8, '$2y$10$s7PfGa0iZcg2XDFrmEAnhegSMZzKi4Po4GyUEl1E9cA69tUJj5qSa', 'test@test.com', 'HaskellPrize', 147, 23, 2311, '2016-05-23 21:20:45', 'normal', 1465372058, 1, 0, 0, 0, 0, 1000, 0),
-(9, '$2y$10$y8geeo6e4vVMUkhJWycFruGOuplLwujzm8q4RZlZQPpkn6RKbkfpS', 'demo@demo.com', 'Wumpus', 201, 92, 889, '2016-05-23 21:20:18', 'normal', 1465555256, 1, 0, 0, 0, 5, 16650, 5),
-(10, '$2y$10$h9fvGHQrrOHh35pNzhIsqOR.0jDi4ZmVtHiCvP1wCexLef072jYqy', 'tonyfield@rules.com', 'OhBaby', 214, 26, 1400, '2016-05-23 18:59:26', 'normal', 1465372058, 1, 0, 0, 0, 0, 1000, 0),
-(11, '$2y$10$jOeNVa.g.MTq8j7NoOY3k.RTVeYpcrxA7gq8zv8hp9yiVBsk0z3C.', 'debug@debug.com', 'debug', 212, 52, 1600, '2016-06-01 20:52:54', 'normal', 1465372058, 1, 0, 0, 0, 0, 1000, 0),
-(12, '$2y$10$7.dtDYkyCuARy8JOOvnEM..015QDAO7YDKsNEmue6deyEyJvIDwr2', 'goku@goku.com', 'goku', 211, 62, 970, '2016-06-01 20:53:04', 'normal', 1465372058, 1, 0, 0, 0, 0, 1000, 0),
-(13, '$2y$10$EVxl9C85A3EGzS9/mbr4mO1eZwdAa7RoFtuXRU.4lwdohCezvuQTu', 'veg@veg.com', 'veg', 311, 73, 800, '2016-06-01 20:53:57', 'normal', 1465372058, 1, 0, 0, 0, 0, 1000, 0),
-(14, '$2y$10$sxwp7k4OSuCdCiO7y.JsOucq/YbXFR4oF8aBcgeTJ.UixSPKh.xJm', 'hp@hp.com', 'Leap Of Faith', 345, 281, 2651, '2016-06-04 21:40:28', 'normal', 1465517050, 13, 0, 12, 10, 11, 2137483097, 0),
-(15, '$2y$10$Q3aMDDCP8w2o8bV.SaRs4.4Mgr49ZHzl372S4qExpvmadU0mAHETi', 'asda@asda.com', 'asdasd', 0, 0, 870, '2016-06-04 21:40:51', 'normal', 1465372058, 1, 0, 0, 0, 0, 1000, 0),
-(16, '$2y$10$aZkr5proBXT1kbSu9WWoHOM/q4lHiyqVXj6/9FYTa9Tn6YaO31LPW', 'simon@simon.com', 'simon', 0, 0, 1200, '2016-06-06 09:29:26', 'normal', 1465372058, 1, 0, 0, 0, 0, 1000, 0),
-(17, '', '', 'guesto', 0, 0, 1000, '2016-06-07 13:22:51', 'guest', 1465372058, 1, 0, 0, 0, 0, 1000, 0),
-(23, '', '2234072218', 'queen', 0, 0, 1000, '2016-06-09 14:13:59', 'guest', 1465481643, 1, 0, 0, 0, 0, 1000, 0),
-(24, '', '2566310987', 'how hot is labs', 0, 0, 1000, '2016-06-09 14:16:05', 'guest', 1465482029, 1, 0, 0, 0, 0, 1000, 0),
-(25, '', '1497627383.com', 'queens conquest', 0, 0, 1000, '2016-06-09 14:20:37', 'guest', 1465482058, 1, 0, 0, 0, 0, 1000, 0),
-(26, '', '568440910@549463178.com', 'batka', 0, 0, 1000, '2016-06-09 14:21:04', 'guest', 1465482066, 1, 0, 0, 0, 0, 1000, 0),
-(27, '', '223181721@637244910.com', 'obama', 1, 2, 1000, '2016-06-09 19:52:50', 'guest', 1465511503, 0, 0, 0, 0, 0, 3600, 0),
-(28, '', '1366697652@370747727.com', 'donald trump', 5, 0, 1128, '2016-06-09 22:36:35', 'guest', 1465552143, 1, 0, 0, 0, 0, 6000, 0),
-(29, '', '17071479@1723581365.com', 'sdfg', 0, 0, 1000, '2016-06-10 10:07:39', 'guest', 1465555317, 1, 0, 0, 0, 0, 1000, 0);
+INSERT INTO `users` (`id`, `password`, `email`, `username`, `wins`, `losses`, `elo`, `created`, `member_type`, `lastactive`, `hat`, `wig`, `eyes`, `mouth`, `body`, `kp`, `skin_colour`, `tutorial`) VALUES
+(6, '$2y$10$zmsIcYDqp8ScNRuDcj9jD.kbsW9vC7k655flzcYK66kC0jkWa0toK', 'alanduu50@gmail.com', 'xXN1NJ4Xx', 343, 148, 1742, '2016-05-23 21:22:33', 'normal', 1465372058, 1, 0, 0, 0, 5, 1000, 0, 0),
+(7, '$2y$10$xGKFvkCEjUMSm1y6cr8v/.IsJCZfLhNtigg0eyETXQYbslu5X1IBK', 'kld14@ic.ac.uk', 'DragonSlayer52', 358, 145, 2100, '2016-05-23 21:22:01', 'normal', 1465372058, 1, 0, 0, 0, 0, 1000, 0, 0),
+(8, '$2y$10$s7PfGa0iZcg2XDFrmEAnhegSMZzKi4Po4GyUEl1E9cA69tUJj5qSa', 'test@test.com', 'HaskellPrize', 147, 23, 2311, '2016-05-23 21:20:45', 'normal', 1465372058, 1, 0, 0, 0, 0, 1000, 0, 0),
+(9, '$2y$10$y8geeo6e4vVMUkhJWycFruGOuplLwujzm8q4RZlZQPpkn6RKbkfpS', 'demo@demo.com', 'Wumpus', 201, 92, 889, '2016-05-23 21:20:18', 'normal', 1465559551, 1, 0, 0, 0, 5, 16650, 5, 1),
+(10, '$2y$10$h9fvGHQrrOHh35pNzhIsqOR.0jDi4ZmVtHiCvP1wCexLef072jYqy', 'tonyfield@rules.com', 'OhBaby', 214, 26, 1400, '2016-05-23 18:59:26', 'normal', 1465372058, 1, 0, 0, 0, 0, 1000, 0, 0),
+(11, '$2y$10$jOeNVa.g.MTq8j7NoOY3k.RTVeYpcrxA7gq8zv8hp9yiVBsk0z3C.', 'debug@debug.com', 'debug', 212, 52, 1600, '2016-06-01 20:52:54', 'normal', 1465372058, 1, 0, 0, 0, 0, 1000, 0, 0),
+(12, '$2y$10$7.dtDYkyCuARy8JOOvnEM..015QDAO7YDKsNEmue6deyEyJvIDwr2', 'goku@goku.com', 'goku', 211, 62, 970, '2016-06-01 20:53:04', 'normal', 1465372058, 1, 0, 0, 0, 0, 1000, 0, 0),
+(13, '$2y$10$EVxl9C85A3EGzS9/mbr4mO1eZwdAa7RoFtuXRU.4lwdohCezvuQTu', 'veg@veg.com', 'veg', 311, 73, 800, '2016-06-01 20:53:57', 'normal', 1465372058, 1, 0, 0, 0, 0, 1000, 0, 0),
+(14, '$2y$10$sxwp7k4OSuCdCiO7y.JsOucq/YbXFR4oF8aBcgeTJ.UixSPKh.xJm', 'hp@hp.com', 'Leap Of Faith', 345, 281, 2651, '2016-06-04 21:40:28', 'normal', 1465517050, 13, 0, 12, 10, 11, 2137483097, 0, 0),
+(15, '$2y$10$Q3aMDDCP8w2o8bV.SaRs4.4Mgr49ZHzl372S4qExpvmadU0mAHETi', 'asda@asda.com', 'asdasd', 0, 0, 870, '2016-06-04 21:40:51', 'normal', 1465372058, 1, 0, 0, 0, 0, 1000, 0, 0),
+(16, '$2y$10$aZkr5proBXT1kbSu9WWoHOM/q4lHiyqVXj6/9FYTa9Tn6YaO31LPW', 'simon@simon.com', 'simon', 0, 0, 1200, '2016-06-06 09:29:26', 'normal', 1465372058, 1, 0, 0, 0, 0, 1000, 0, 0),
+(17, '', '', 'guesto', 0, 0, 1000, '2016-06-07 13:22:51', 'guest', 1465372058, 1, 0, 0, 0, 0, 1000, 0, 0),
+(23, '', '2234072218', 'queen', 0, 0, 1000, '2016-06-09 14:13:59', 'guest', 1465481643, 1, 0, 0, 0, 0, 1000, 0, 0),
+(24, '', '2566310987', 'how hot is labs', 0, 0, 1000, '2016-06-09 14:16:05', 'guest', 1465482029, 1, 0, 0, 0, 0, 1000, 0, 0),
+(25, '', '1497627383.com', 'queens conquest', 0, 0, 1000, '2016-06-09 14:20:37', 'guest', 1465482058, 1, 0, 0, 0, 0, 1000, 0, 0),
+(26, '', '568440910@549463178.com', 'batka', 0, 0, 1000, '2016-06-09 14:21:04', 'guest', 1465482066, 1, 0, 0, 0, 0, 1000, 0, 0),
+(27, '', '223181721@637244910.com', 'obama', 1, 2, 1000, '2016-06-09 19:52:50', 'guest', 1465511503, 0, 0, 0, 0, 0, 3600, 0, 0),
+(28, '', '1366697652@370747727.com', 'donald trump', 5, 0, 1128, '2016-06-09 22:36:35', 'guest', 1465552143, 1, 0, 0, 0, 0, 6000, 0, 0),
+(29, '', '17071479@1723581365.com', 'sdfg', 0, 0, 1000, '2016-06-10 10:07:39', 'guest', 1465558024, 1, 0, 0, 0, 0, 1000, 0, 3);
 
 --
 -- Indexes for dumped tables
