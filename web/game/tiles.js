@@ -1994,7 +1994,7 @@ function imageNumber(number) {
 		case 0 :
 			tile_info_address = "graphics/tile_info/tile_grass.png";
 			tile_type = "Grass";
-			return "graphics/tile/3d_tile/grass3.png";
+			return "graphics/tile/3d_tile/grass2.png";
 		case 1 :
 			tile_info_address = "graphics/tile_info/tile_mud.png";
 			tile_type = "Mud";
