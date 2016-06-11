@@ -604,7 +604,7 @@ function initGame() {
   window.addEventListener('resize', resize, false);
 
   drawMenuDisplay();
-  stage.update();
+  //stage.update();
   draggable.mouseChildren = false;
 
 }
@@ -661,7 +661,7 @@ function drawMenuDisplay(){
     stage.removeChild(playIcon);
     stage.addChild(muteIcon);
   });
-  stage.update();
+  //stage.update();
 
 }
 function removeBuff(buffType, unit) {
@@ -1987,7 +1987,7 @@ function drawMap(data) {
       upper.removeChild(highLight_tile);
       //stage.removeChild(tile_display);
       //stage.removeChild(tile_info_text);
-      stage.update();
+      //stage.update();
     }
   }
 
@@ -1996,7 +1996,7 @@ function drawMap(data) {
       if (upper.removeChild(highLight_tile)){
         stage.removeChild(tile_display);
         stage.removeChild(tile_info_text);
-        stage.update();
+        //stage.update();
       }
       stage.removeChild(tile_display);
       stage.removeChild(tile_info_text);
@@ -2027,7 +2027,7 @@ function drawMap(data) {
       highLight_tile.regY = 32.5;
       upper.addChild(highLight_tile);
     }
-    stage.update();
+   // stage.update();
   }
 
 createjs.Ticker.addEventListener("tick", update);
@@ -2188,7 +2188,7 @@ function update() {
     resized = false;
   }
   if (changed) {
-    stage.update();
+    //stage.update();
     changed = false;
   }
   upper.x = draggable.x;
