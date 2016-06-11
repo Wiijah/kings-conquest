@@ -1261,7 +1261,7 @@ function cast(skillName, unit) {
 			break;
 		case "Double Shoot": // Archer's skill
 			archerSkillDone = false;
-			var reachableTiles = findReachableTiles(selectedCharacter.row, selectedCharacter.column, selectedCharacter.attackRange, false);
+			var reachableTiles = findReachableTiles(selectedCharacter.row, selectedCharacter.column, selectedCharacter.attackRange, true);
 			isCasting = true;
 			undoHighlights();
 			remainingTargets = 2;
@@ -1284,7 +1284,7 @@ function cast(skillName, unit) {
 	    	isCasting = true;
 	    	isAttacking = false;
 	    	// drawRange(findReachableTiles(selectedCharacter.column, selectedCharacter.row, selectedCharacter.attackRange, false), 2);
-	    	var reachableTiles = findReachableTiles(selectedCharacter.row, selectedCharacter.column, selectedCharacter.attackRange, false);
+	    	var reachableTiles = findReachableTiles(selectedCharacter.row, selectedCharacter.column, selectedCharacter.attackRange, true);
 	    	highlightArea(reachableTiles, "graphics/tile/red_tile.png", ["click", "mouseover", "mouseout"], [function(event) {
                 serverValidate("skill", selectedCharacter, [event.target.row, event.target.column]);
             }, highlightSpellCross, clearSpellCross]);
@@ -1292,7 +1292,7 @@ function cast(skillName, unit) {
         case "Icy Wind":
             isCasting = true;
             isAttacking = false;
-            var reachableTiles = findReachableTiles(selectedCharacter.row, selectedCharacter.column, selectedCharacter.attackRange, false);
+            var reachableTiles = findReachableTiles(selectedCharacter.row, selectedCharacter.column, selectedCharacter.attackRange, true);
             highlightArea(reachableTiles, "graphics/tile/red_tile.png", ["click", "mouseover", "mouseout"], [function(event) {
                 serverValidate("skill", selectedCharacter, [event.target.row, event.target.column]);
             }, highlightSpellCross, clearSpellCross]);
@@ -1617,7 +1617,8 @@ function orderUnits() {
 }
 
 
-function findPath(fromX, fromY, toX, toY) {
+
+function findPath(fromX, fromY, toX, toY, ignoreObstacle) {
 	var parent = new Array(mapWidth * mapHeight);
 	var vis = new Array(mapWidth * mapHeight);
 	var q = [];
@@ -1645,9 +1646,8 @@ function findPath(fromX, fromY, toX, toY) {
 				if (nx < 0 || nx >= mapHeight || ny < 0 || ny >= mapWidth) continue;
 
 				// Terrain check
-				if (blockMaps[nx][ny] != 0) continue;
+				if (!ignoreObstacle && blockMaps[nx][ny] != 0) continue;
 
-				// bounds and obstacle check here
 				if (vis[nx * mapWidth + ny] === false) {
 					vis[nx * mapWidth + ny] = true;
 					q.push([nx, ny]);
@@ -1674,6 +1674,7 @@ function findPath(fromX, fromY, toX, toY) {
 // A call back function that highlights all the possible definitions 
 // when a character is clicked.
 function findReachableTiles(x, y, range, ignoreWater) {
+    if (typeof(ignoreWater) === "undefined") ignoreWater = false;
 	var q = [];
 	var start = [x, y, 0];
 	var marked = [];
@@ -1704,7 +1705,7 @@ function findReachableTiles(x, y, range, ignoreWater) {
 				if (nx < 0 || nx >= mapHeight || ny < 0 || ny >= mapWidth) continue;
 
 				// Terrain check
-				if (blockMaps[nx][ny] != 0 && ignoreWater) continue;
+				if (blockMaps[nx][ny] != 0 && !ignoreWater) continue;
 
 				// bounds and obstacle check here
 				if ($.inArray(nx * mapWidth + ny, marked) === -1) {
@@ -2046,13 +2047,14 @@ $(function(){
 function moveCharacter(unit) {
   	unit.prevRow = unit.row;
  	unit.prevColumn = unit.column;
-	var reachableTiles = findReachableTiles(unit.row, unit.column, unit.moveRange, true);
+    var ignoreObstacle = unit.skill == "Icy Wind" ? true : false
+	var reachableTiles = findReachableTiles(unit.row, unit.column, unit.moveRange, ignoreObstacle);
 	highlightArea(reachableTiles, "graphics/tile/green_tile.png", ["click"], [function(event) {
 		// server request
 		var fromX = selectedCharacter.row;
 		var fromY = selectedCharacter.column;
 		var tile = event.target;
-		findPath(fromX, fromY, tile.row, tile.column);
+		findPath(fromX, fromY, tile.row, tile.column, ignoreObstacle);
 
 		serverValidate("move", selectedCharacter, [path]);
 	}]);
