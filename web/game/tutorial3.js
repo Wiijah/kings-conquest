@@ -2445,11 +2445,11 @@ function imageNumber(number) {
     case 0 :
       tile_info_address = "graphics/tile_info/tile_grass.png";
       tile_type = "Grass";
-      return "graphics/tile/3d_tile/grass.png";
+      return "graphics/tile/3d_tile/grass2.png";
     case 1 :
       tile_info_address = "graphics/tile_info/tile_mud.png";
       tile_type = "Mud";
-      return "graphics/tile/3d_tile/mud.png";
+      return "graphics/tile/3d_tile/mud3.png";
     case 2 :
       tile_info_address = "graphics/tile_info/tile_stone_bridge.png";
       tile_type = "Stone Bridge";
