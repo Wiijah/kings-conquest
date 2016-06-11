@@ -1955,9 +1955,14 @@ function update() {
 		draggable.addChild(drag_box);
 
 		$.each(unitCards, function(i, value) {
-			stage.removeChild(value.text);
-			stage.removeChild(value);
+			unitCreationMenu.removeChild(value.text);
+			if (unitCreationMenu.getChildIndex(value) != -1) unitCreationMenu.removeChild(value);
 		});
+
+		$.each(greyUnitCards, function(i, value) {
+			if (unitCreationMenu.getChildIndex(value) != -1) unitCreationMenu.removeChild(value);
+		});
+
 		unitCards = [];
 		drawUnitCreationMenu();
 		resized = false;
