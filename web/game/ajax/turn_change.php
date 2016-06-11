@@ -7,7 +7,7 @@ $time = time();
 
 $old_turn = $room->turn; //old player's turn
 
-if ($is_countdown == 1 && $time < $room->countdown + 1) {
+if ($is_countdown == 1 && $time < $room->countdown - 1) {
   exit_error(1503);
 }
 if ($old_turn != $team && $is_countdown != 1) {

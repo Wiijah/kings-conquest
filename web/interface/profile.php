@@ -90,7 +90,12 @@ if ($friend) {
   if ($friend->accepted == 1) { $friend_text = "Unfriend"; $friend_link="delete";}
 }
 ?>
-<div class='btn lightbox_btn js_link' data-href='profile?username=<?php echo $prof->username; ?>&<?php echo $friend_link; ?>=1&close=<?php echo secureStr($close); ?>'><?php echo $friend_text; ?></div>
+<?php
+if ($prof->id != $user->id) {
+?><div class='btn lightbox_btn js_link' data-href='profile?username=<?php echo $prof->username; ?>&<?php echo $friend_link; ?>=1&close=<?php echo secureStr($close); ?>'><?php echo $friend_text; ?></div>
+<?php
+}
+?>
 </td>
 </tr>
 <?php echo genProf($prof); ?>
