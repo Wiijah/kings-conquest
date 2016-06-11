@@ -11,6 +11,7 @@ $ERROR_NOT_YOUR_TURN = 8; //action when not user's turn
 $ERROR_PLAYER_LEFT_GAME = 9; //other player left the game
 $ERROR_UNKNOWN = 10; // something that shouldn't ever happen no matter what
 $ERROR_GAME_ENDED = 11;
+$ERROR_DO_NOTHING = 12; //do nothing
 
 require_once '../../common.php';
 
