@@ -75,7 +75,7 @@ We used the following resources on our game:
 Kings' Conquest is a <span class='home_highlight'>turned-based multiplayer
 game</span> aimed at fans of the <span class='home_highlight'>fantasy</span> or
 <span class='home_highlight'>strategy</span> genre.<br /><br />
-Best viewed with both eyes open and on Chrome.
+Best viewed with Chrome and with both eyes open.
 </div>
 <div class="goto_home_btn goto_credits">Credits</div>
 </div>

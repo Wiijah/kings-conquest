@@ -137,6 +137,8 @@ if (isset($_GET['search'])) {
 ?>
 <?php echo genTitle("Find Friends"); ?>
 <div class="box standard_box center">
+<img src="images/friends.png" class="avatar" />
+<br />
 Use the form below to search for particular users to add.
 <br /><br />
 <form action="friends" method="GET">
