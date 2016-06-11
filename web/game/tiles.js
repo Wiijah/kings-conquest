@@ -550,7 +550,7 @@ function initGame() {
 
 	drawMenuDisplay();
 
-	stage.update();
+	// stage.update();
   setTimeout(function() {getOpp(); }, 1000);
 
   	
@@ -616,7 +616,7 @@ function drawMenuDisplay(){
 		stage.removeChild(playIcon);
 		stage.addChild(muteIcon);
 	});
-	stage.update();
+	// stage.update();
 
 }
 
@@ -1779,7 +1779,7 @@ function drawMap(data) {
 			upper.removeChild(highLight_tile);
 			stage.removeChild(tile_display);
 			stage.removeChild(tile_info_text);
-			stage.update();
+			// stage.update();
 		}
 	}
 
@@ -1788,7 +1788,7 @@ function drawMap(data) {
 			if (upper.removeChild(highLight_tile)){
 				stage.removeChild(tile_display);
 				stage.removeChild(tile_info_text);
-				stage.update();
+				// stage.update();
 			}
 			stage.removeChild(tile_display);
 			stage.removeChild(tile_info_text);
@@ -1819,7 +1819,7 @@ function drawMap(data) {
 			highLight_tile.regY = 32.5;
 			upper.addChild(highLight_tile);
 		}
-		stage.update();
+		// stage.update();
 	}
 
 createjs.Ticker.addEventListener("tick", update);
@@ -1968,7 +1968,7 @@ function update() {
 		resized = false;
 	}
 	if (changed) {
-		stage.update();
+		// stage.update();
 		changed = false;
 	}
 	upper.x = draggable.x;
