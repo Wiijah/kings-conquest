@@ -1261,7 +1261,7 @@ function cast(skillName, unit) {
 			break;
 		case "Double Shoot": // Archer's skill
 			archerSkillDone = false;
-			var reachableTiles = findReachableTiles(selectedCharacter.row, selectedCharacter.column, selectedCharacter.attackRange, false);
+			var reachableTiles = findReachableTiles(selectedCharacter.row, selectedCharacter.column, selectedCharacter.attackRange, true);
 			isCasting = true;
 			undoHighlights();
 			remainingTargets = 2;
@@ -1284,7 +1284,7 @@ function cast(skillName, unit) {
 	    	isCasting = true;
 	    	isAttacking = false;
 	    	// drawRange(findReachableTiles(selectedCharacter.column, selectedCharacter.row, selectedCharacter.attackRange, false), 2);
-	    	var reachableTiles = findReachableTiles(selectedCharacter.row, selectedCharacter.column, selectedCharacter.attackRange, false);
+	    	var reachableTiles = findReachableTiles(selectedCharacter.row, selectedCharacter.column, selectedCharacter.attackRange, true);
 	    	highlightArea(reachableTiles, "graphics/tile/red_tile.png", ["click", "mouseover", "mouseout"], [function(event) {
                 serverValidate("skill", selectedCharacter, [event.target.row, event.target.column]);
             }, highlightSpellCross, clearSpellCross]);
@@ -1292,7 +1292,7 @@ function cast(skillName, unit) {
         case "Icy Wind":
             isCasting = true;
             isAttacking = false;
-            var reachableTiles = findReachableTiles(selectedCharacter.row, selectedCharacter.column, selectedCharacter.attackRange, false);
+            var reachableTiles = findReachableTiles(selectedCharacter.row, selectedCharacter.column, selectedCharacter.attackRange, true);
             highlightArea(reachableTiles, "graphics/tile/red_tile.png", ["click", "mouseover", "mouseout"], [function(event) {
                 serverValidate("skill", selectedCharacter, [event.target.row, event.target.column]);
             }, highlightSpellCross, clearSpellCross]);
@@ -1617,6 +1617,7 @@ function orderUnits() {
 }
 
 
+
 function findPath(fromX, fromY, toX, toY, ignoreObstacle) {
 	var parent = new Array(mapWidth * mapHeight);
 	var vis = new Array(mapWidth * mapHeight);
@@ -1673,6 +1674,7 @@ function findPath(fromX, fromY, toX, toY, ignoreObstacle) {
 // A call back function that highlights all the possible definitions 
 // when a character is clicked.
 function findReachableTiles(x, y, range, ignoreWater) {
+    if (typeof(ignoreWater) === "undefined") ignoreWater = false;
 	var q = [];
 	var start = [x, y, 0];
 	var marked = [];
