@@ -22,6 +22,7 @@ if ($room->state != 'ingame') { // game not started yet
   header ("Location: ../{$LOGGEDIN_DIR}/room");
   die();
 }
+
 ?>
 <html>
   <head>
@@ -60,10 +61,12 @@ if ($room->state != 'ingame') { // game not started yet
   $result = $db->query("SELECT * FROM opp WHERE room_id = '{$room_id}' AND user_id != '{$user->id}' ORDER BY opp_id DESC LIMIT 1");
   $fetch = $result->fetch_object();
   $lastOppID = $fetch ? $fetch->opp_id : "0";
+  $isSpectating = $player->colour == "spectator";
+
   echo "var lastOppID = {$lastOppID};";
   echo "var room_id = {$room_id};";
   echo "var DEFAULT_COUNTDOWN = {$room->default_countdown};";
-  echo "var isSpectating = false;";
+  echo "var isSpectating = ".var_export($isSpectating, true).";";
   ?>
       </script>
   <script src="https://code.createjs.com/createjs-2015.11.26.min.js"></script>

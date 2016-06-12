@@ -1,4 +1,6 @@
 <?php
+
+$spectate_page = true;
 require_once 'ajax_common.php';
 /* Get basic data */
 $opp_id = secureInt($_POST['opp_id']) * 1;
