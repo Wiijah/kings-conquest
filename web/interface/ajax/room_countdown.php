@@ -26,6 +26,7 @@ if (!in_array($room_countdown, $COUNTDOWNS)) {
 }
 
 $db->query("UPDATE rooms SET default_countdown = '{$room_countdown}' WHERE room_id = '{$room_id}'");
+$db->query("UPDATE room_participants SET state = 'notready' WHERE room_id = '{$room_id}' AND state = 'ready'");
 
 echo $AJAX_SUCCESS;
 ?>

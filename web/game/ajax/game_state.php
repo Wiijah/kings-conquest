@@ -4,7 +4,7 @@ require_once 'ajax_common.php';
 $out = "{";
 
 /* Print map */
-$result = $db->query("SELECT * FROM maps WHERE map_id = 1");
+$result = $db->query("SELECT * FROM maps WHERE map_id = '{$room->map_id}'");
 $map = $result->fetch_object();
 
 $out .= jsonPair("main", $map->points).", ";
