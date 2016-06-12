@@ -1881,7 +1881,7 @@ function keyEvent(event) {
     // console.log(team + " " + selectedCharacter.team  + " " + selectedCharacter.unit_id);
     switch(event.keyCode) {
         case 27:  //esc
-    if (turn != team || selectedCharacter.team != turn || selectedCharacter.team != team) return;
+    if (turn != team || selectedCharacter.team != turn || selectedCharacter.team != team || isSpectating) return;
             if (isDisplayingMenu) {
             	clearSelectionEffects();
             }
@@ -1897,7 +1897,7 @@ function keyEvent(event) {
             }
         	break; 
         case 77: //m
-    if (turn != team || selectedCharacter.team != turn || selectedCharacter.team != team) return;
+    if (turn != team || selectedCharacter.team != turn || selectedCharacter.team != team || isSpectating) return;
         	if (isDisplayingMenu) {
         		if (selectedCharacter.canMove) {
 					undoHighlights();
@@ -1907,7 +1907,7 @@ function keyEvent(event) {
         	}
         	break;
         case 65: //a
-    if (turn != team || selectedCharacter.team != turn || selectedCharacter.team != team) return;
+    if (turn != team || selectedCharacter.team != turn || selectedCharacter.team != team || isSpectating) return;
         	if (isDisplayingMenu) {
 		        if (selectedCharacter.canAttack) {
 					undoHighlights();
@@ -1923,7 +1923,7 @@ function keyEvent(event) {
 			}
             break;
 		case 83: //s
-    if (turn != team || selectedCharacter.team != turn || selectedCharacter.team != team) return;
+    if (turn != team || selectedCharacter.team != turn || selectedCharacter.team != team || isSpectating) return;
 			if (isDisplayingMenu) {
 				if (selectedCharacter.skillCoolDown === 0) {
 					undoHighlights();
@@ -1933,6 +1933,7 @@ function keyEvent(event) {
 			}
 			break;
 		case 32: //space
+             if (isSpectating) return;
             console.log(undoMove.length);
 			if(undoMove.length != 0){
 				if(!archerSkillDone){
@@ -1961,6 +1962,7 @@ function keyEvent(event) {
 //			goFullScreen();
 			break;
         case 13: //enter
+        if (isSpectating) return;
         	if (!gameEnd) {
                 serverValidate("turn_change", null, [0]);
 	        	clearSelectionEffects();
@@ -2182,7 +2184,7 @@ function handleServerReply(data) {
             case "game_end":
                 handleGameEnd(action);
                 break;
-            case default:
+            default:
                 console.log("Yo wot alan");
                 return;
         }
