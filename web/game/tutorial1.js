@@ -294,7 +294,7 @@ function spawnUnit(data, isCreation, row, column, team){
 
     var spriteSheet = new createjs.SpriteSheet({
             "images": [data.address],
-            "frames": {"regX": 0, "height": 142, "count": 2, "regY": -10, "width": 113 },
+            "frames": {"regX": 0, "height": 142, "count": 2, "regY": -30, "width": 113 },
             "animations": {
               "stand":[0,1]
             },
@@ -303,6 +303,7 @@ function spawnUnit(data, isCreation, row, column, team){
 
     var unit = new createjs.Sprite(spriteSheet, "stand");
 
+    //move!
     
     createjs.Ticker.timingMode = createjs.Ticker.RAF; 
     createjs.Ticker.addEventListener("tick", stage);
@@ -312,6 +313,10 @@ function spawnUnit(data, isCreation, row, column, team){
     unit.attack = data.attack;
     unit.base_attack = unit.attack;
     unit.luck = data.luck;
+
+
+    //unit = unit.moveAnimation;
+
 
     var spawnSpriteSheet = new createjs.SpriteSheet({
           "images": ["graphics/spritesheet/special_unit/ss_unit_creation.png"],
@@ -419,6 +424,19 @@ function spawnUnit(data, isCreation, row, column, team){
     unit.buffs = [];
     unit.buff_icons = [];
 
+
+     var moveSpriteSheet = new createjs.SpriteSheet({
+            "images": [data.move],
+            "frames": {"regX": 80, "height": 142, "count": 4, "regY": 100, "width": 142 },
+            "animations": {
+              "walk":[0,1,2,3]
+            },
+            framerate: 4
+    });
+    unit.moveAnimation = new createjs.Sprite(moveSpriteSheet, "walk");
+    unit.moveAnimation.x = unit.x;
+    unit.moveAnimation.y = unit.y;
+
     // Configure the hp bar of the unit
     hp_bar = new createjs.Shape();
     hp_bar.x = unit.x - 40;
@@ -452,7 +470,16 @@ function spawnUnit(data, isCreation, row, column, team){
     blockMaps[unit.row][unit.column] = 1;
 
     // Add the unit and its hp bar to the stage
+      unit.moveAnimation.scaleX = 0.7;
+      unit.moveAnimation.scaleY = 0.7;
+
+
+
       draggable.addChild(unit);
+     // draggable.removeChild(unit.moveAnimation);
+
+
+
       draggable.addChild(hp_bar);
       chars.addChild(spawnAnimation);
     
@@ -604,7 +631,7 @@ function initGame() {
   window.addEventListener('resize', resize, false);
 
   drawMenuDisplay();
-  stage.update();
+  //stage.update();
   draggable.mouseChildren = false;
 
 }
@@ -661,7 +688,7 @@ function drawMenuDisplay(){
     stage.removeChild(playIcon);
     stage.addChild(muteIcon);
   });
-  stage.update();
+  //stage.update();
 
 }
 function removeBuff(buffType, unit) {
@@ -1695,8 +1722,8 @@ function undoHighlights() {
 // Move the player by a fixed amount
 function movePlayer() {
   if (turn) {
-    var playerX = selectedCharacter.x;
-      playerY = selectedCharacter.y;
+    var playerX = selectedCharacter.moveAnimation.x;
+      playerY = selectedCharacter.moveAnimation.y;
   } else {
     var playerX = enemyUnit.x;
     playerY = enemyUnit.y;
@@ -1731,8 +1758,8 @@ function movePlayer() {
   var stepY = coefficientY * MOVEMENT_STEP / 2;
 
 
-  selectedCharacter.x += stepX;
-  selectedCharacter.y += stepY;
+  selectedCharacter.moveAnimation.x += stepX;
+  selectedCharacter.moveAnimation.y += stepY;
   selectedCharacter.hp_bar.x += stepX;
   selectedCharacter.hp_bar.y += stepY;
 
@@ -1745,9 +1772,17 @@ function movePlayer() {
 
 
   if ((playerX === destX) && (playerY === destY)) {
+
       path.splice(0,1);
       if (path.length == 0) {
-
+      console.log("finish move");
+      selectedCharacter.x = selectedCharacter.moveAnimation.x;
+      selectedCharacter.y = selectedCharacter.moveAnimation.y;
+      draggable.removeChild(selectedCharacter.moveAnimation);
+      draggable.addChild(selectedCharacter);
+      //unit = movingUnit;
+      //draggable.removeChild(selectedCharacter.moveAnimation);
+      //draggable.addChild(selectedCharacter);
         sortIndices(selectedCharacter);
         movingPlayer = false;
         if (undo){
@@ -1987,7 +2022,7 @@ function drawMap(data) {
       upper.removeChild(highLight_tile);
       //stage.removeChild(tile_display);
       //stage.removeChild(tile_info_text);
-      stage.update();
+      //stage.update();
     }
   }
 
@@ -1996,7 +2031,7 @@ function drawMap(data) {
       if (upper.removeChild(highLight_tile)){
         stage.removeChild(tile_display);
         stage.removeChild(tile_info_text);
-        stage.update();
+        //stage.update();
       }
       stage.removeChild(tile_display);
       stage.removeChild(tile_info_text);
@@ -2027,7 +2062,7 @@ function drawMap(data) {
       highLight_tile.regY = 32.5;
       upper.addChild(highLight_tile);
     }
-    stage.update();
+   // stage.update();
   }
 
 createjs.Ticker.addEventListener("tick", update);
@@ -2188,7 +2223,7 @@ function update() {
     resized = false;
   }
   if (changed) {
-    stage.update();
+    //stage.update();
     changed = false;
   }
   upper.x = draggable.x;
@@ -2213,11 +2248,11 @@ function imageNumber(number) {
     case 0 :
       tile_info_address = "graphics/tile_info/tile_grass.png";
       tile_type = "Grass";
-      return "graphics/tile/3d_tile/grass.png";
+      return "graphics/tile/3d_tile/grass2.png";
     case 1 :
       tile_info_address = "graphics/tile_info/tile_mud.png";
       tile_type = "Mud";
-      return "graphics/tile/3d_tile/mud.png";
+      return "graphics/tile/3d_tile/mud2.png";
     case 2 :
       tile_info_address = "graphics/tile_info/tile_stone_bridge.png";
       tile_type = "Stone Bridge";
@@ -2267,7 +2302,7 @@ $(function(){
     }, 10);
 })
 
-
+var movingUnit;
 function moveCharacter(unit) {
   unit.prevRow = unit.row;
   unit.prevColumn = unit.column;
@@ -2286,6 +2321,16 @@ function moveCharacter(unit) {
       move_instruction2();
     }
     blockMaps[fromX][fromY] = 0;
+    //movingUnit = unit.moveAnimation;
+    //movingUnit = unit;
+    //draggable.addChild(unit.moveAnimation);
+    //draggable.removeChild(unit);
+    //unit = unit.moveAnimation;
+    //console.log(draggable.removeChild(unit));
+      chars.removeChild(unit);
+      draggable.addChild(unit.moveAnimation);
+
+
     move();
     blockMaps[tile.row][tile.column] = 1;
     selectedCharacter.row = tile.row;

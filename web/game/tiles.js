@@ -550,7 +550,7 @@ function initGame() {
 
 	drawMenuDisplay();
 
-	stage.update();
+	// stage.update();
   setTimeout(function() {getOpp(); }, 1000);
 
   	
@@ -616,7 +616,7 @@ function drawMenuDisplay(){
 		stage.removeChild(playIcon);
 		stage.addChild(muteIcon);
 	});
-	stage.update();
+	// stage.update();
 
 }
 
@@ -1784,7 +1784,7 @@ function drawMap(data) {
 			upper.removeChild(highLight_tile);
 			stage.removeChild(tile_display);
 			stage.removeChild(tile_info_text);
-			stage.update();
+			// stage.update();
 		}
 	}
 
@@ -1793,7 +1793,7 @@ function drawMap(data) {
 			if (upper.removeChild(highLight_tile)){
 				stage.removeChild(tile_display);
 				stage.removeChild(tile_info_text);
-				stage.update();
+				// stage.update();
 			}
 			stage.removeChild(tile_display);
 			stage.removeChild(tile_info_text);
@@ -1824,7 +1824,7 @@ function drawMap(data) {
 			highLight_tile.regY = 32.5;
 			upper.addChild(highLight_tile);
 		}
-		stage.update();
+		// stage.update();
 	}
 
 createjs.Ticker.addEventListener("tick", update);
@@ -1960,15 +1960,20 @@ function update() {
 		draggable.addChild(drag_box);
 
 		$.each(unitCards, function(i, value) {
-			stage.removeChild(value.text);
-			stage.removeChild(value);
+			unitCreationMenu.removeChild(value.text);
+			if (unitCreationMenu.getChildIndex(value) != -1) unitCreationMenu.removeChild(value);
 		});
+
+		$.each(greyUnitCards, function(i, value) {
+			if (unitCreationMenu.getChildIndex(value) != -1) unitCreationMenu.removeChild(value);
+		});
+
 		unitCards = [];
 		drawUnitCreationMenu();
 		resized = false;
 	}
 	if (changed) {
-		stage.update();
+		// stage.update();
 		changed = false;
 	}
 	upper.x = draggable.x;
@@ -1994,11 +1999,11 @@ function imageNumber(number) {
 		case 0 :
 			tile_info_address = "graphics/tile_info/tile_grass.png";
 			tile_type = "Grass";
-			return "graphics/tile/3d_tile/grass.png";
+			return "graphics/tile/3d_tile/grass2.png";
 		case 1 :
 			tile_info_address = "graphics/tile_info/tile_mud.png";
 			tile_type = "Mud";
-			return "graphics/tile/3d_tile/mud.png";
+			return "graphics/tile/3d_tile/mud2.png";
 		case 2 :
 			tile_info_address = "graphics/tile_info/tile_stone_bridge.png";
 			tile_type = "Stone Bridge";
