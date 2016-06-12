@@ -1142,9 +1142,9 @@ function drawStatsDisplay() {
 
 function displayStats(unit) {
 	if(unit.team === 1){
-		var drag_box = new createjs.Bitmap("/graphics/stats_background_self.png");
+		var drag_box = new createjs.Bitmap("graphics/stats_background_self.png");
 	} else {
-		var drag_box = new createjs.Bitmap("/graphics/stats_background_opponent.png");
+		var drag_box = new createjs.Bitmap("graphics/stats_background_opponent.png");
 	}
 	
 	drag_box.scaleX = 0.8;
