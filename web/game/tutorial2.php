@@ -53,7 +53,7 @@
       <img src="./i_icon.png" style="line-height: 1px; vertical-align: bottom; margin-right: 5px" height="20" width="20" />Tutorial 2 : Intermediate
     </div>
     <div id="box_body">
-      Now you know the unit creation system. There are several units with different skills in King's Conquest. In this tutorial, you are going to learn the skill of each unit. Let's start with the king.<br /><br />
+      Now you know the basic actions move and attack in Kings Conquest. There are several units with different skills in King's Conquest. In this tutorial, you are going to learn the <b>skill of each unit</b>. Let's start with the king.<br /><br />
     </div>
     <div id="box_foot">
       <button type="button" id="actionButton" class="btn" ng-click="">Next</button>
@@ -82,7 +82,7 @@
       <img src="./finishTutorial.png" style="line-height: 1px; vertical-align: bottom; margin-right: 5px" height="20" width="20" />Congratulations
     </div>
     <div id="box3_body">
-    <p>Good job!</p><p>You finish Tutorial 2. In the next Chapter, you will learn how to build your own army to fight against the enemy. </p><p>Click 'Next' to Tutorial 3</p>
+    <b style="color:red;">Good job!</b><br><br>You finish Tutorial 2. In the next Chapter, you will learn how to build your own army to fight against the enemy. <br><br><b style="color:black;">Click 'Next' to Tutorial 3</b>
     </div>
     <div id="box_foot">
       <button type="button" id="quitButton" class="btn2" ng-click="">Quit</button>

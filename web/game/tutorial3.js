@@ -460,11 +460,12 @@ function spawnUnit(data, isCreation, row, column, team){
             },
             framerate: 4
     });
+
     unit.moveAnimation = new createjs.Sprite(moveSpriteSheet, "walk");
     unit.moveAnimation.x = unit.x;
     unit.moveAnimation.y = unit.y;
-      unit.moveAnimation.scaleX = 0.7;
-      unit.moveAnimation.scaleY = 0.7;
+    unit.moveAnimation.scaleX = 0.7;
+    unit.moveAnimation.scaleY = 0.7;
 
 
 
@@ -1939,9 +1940,9 @@ function movePlayer() {
     var playerX = selectedCharacter.moveAnimation.x;
       playerY = selectedCharacter.moveAnimation.y;
   } else {
-    var playerX = enemyUnit.moveAnimation.x;
-    playerY = enemyUnit.moveAnimation.y;
     selectedCharacter = enemyUnit;
+    var playerX = selectedCharacter.moveAnimation.x;
+    playerY = selectedCharacter.moveAnimation.y;
   }
   
       destX = path[0][0],
@@ -1973,7 +1974,7 @@ function movePlayer() {
 
 
   selectedCharacter.moveAnimation.x += stepX;
-  selectedCharacter.moveAnimationy += stepY;
+  selectedCharacter.moveAnimation.y += stepY;
   selectedCharacter.hp_bar.x += stepX;
   selectedCharacter.hp_bar.y += stepY;
 
@@ -1987,11 +1988,15 @@ function movePlayer() {
 
   if ((playerX === destX) && (playerY === destY)) {
       path.splice(0,1);
+
       if (path.length == 0) {
-        selectedCharacter.x = selectedCharacter.moveAnimation.x;
+
+      selectedCharacter.x = selectedCharacter.moveAnimation.x;
       selectedCharacter.y = selectedCharacter.moveAnimation.y;
       draggable.removeChild(selectedCharacter.moveAnimation);
       draggable.addChild(selectedCharacter);
+
+
         sortIndices(selectedCharacter);
         movingPlayer = false;
         if (lastAttack) addPointerNearPlayer2Attack();
@@ -2539,8 +2544,9 @@ function moveCharacter(unit) {
 
 
     blockMaps[fromX][fromY] = 0;
-          chars.removeChild(unit);
-      draggable.addChild(unit.moveAnimation);
+    
+    chars.removeChild(unit);
+    draggable.addChild(unit.moveAnimation);
 
     move();
     blockMaps[tile.row][tile.column] = 1;
