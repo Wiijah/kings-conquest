@@ -2182,6 +2182,9 @@ function handleServerReply(data) {
             case "game_end":
                 handleGameEnd(action);
                 break;
+            case default:
+                console.log("Yo wot alan");
+                return;
         }
     }
 }
@@ -2231,7 +2234,7 @@ function serverValidate(type, unit, additionalArgs) {
 
 function performAttack(attacker) {
 	isAttacking = true;
-	var reachableTiles = findReachableTiles(attacker.row, attacker.column, attacker.attackRange, false);
+	var reachableTiles = findReachableTiles(attacker.row, attacker.column, attacker.attackRange, true);
 	highlightArea(reachableTiles, "graphics/tile/red_tile.png", ["click"], [function(event) {
 		var tile = event.target;
 		$.each(units, function(i, target) {
