@@ -13,7 +13,7 @@ if ($result->num_rows == 0) {
 
 $result = $db->query("SELECT * FROM room_participants WHERE user_id = {$user->id} AND event = ''");
 if ($result->num_rows > 0) {
-  die('{"kc_error":"You cannot join a room if you are already in a room."}');
+  die('{"kc_error":"You cannot join a room if you already joined another room as a player."}');
 }
 
 $result = $db->query("SELECT * FROM room_participants WHERE room_id = {$room_id} AND event = ''");

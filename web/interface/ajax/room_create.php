@@ -18,7 +18,7 @@ if (!isStrLenCorrect($room_pass, 0, 20)) {
 $room_name = secureStr($room_name);
 if ($room_pass != "") $room_pass = hashPass($room_name);
 
-$result = $db->query("SELECT * FROM room_participants WHERE user_id = {$user->id} AND event = ''");
+$result = $db->query("SELECT * FROM room_participants WHERE user_id = {$user->id} AND event = '' AND colour != 'spectator'");
 if ($result->num_rows > 0) {
   kc_error("You cannot join a room if you are already in a room.");
 }

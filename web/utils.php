@@ -12,9 +12,11 @@ function genTitle($title) {
   return "<div class='title'><h1>{$title}</h1></div>";
 }
 
-function select_part($user_id, $room_id, $is_spectator = 0) {
+function select_part($user_id, $room_id, $is_spectator = -1) {
   global $db;
-  $result = $db->query("SELECT * FROM room_participants WHERE user_id = '{$user_id}' AND room_id = '{$room_id}' AND is_spectator = '{$is_spectator}' AND event = ''");
+  $extra_sql = "";
+  if ($is_spectator != -1) $extra_sql = " AND is_spectator = '{$is_spectator}'";
+  $result = $db->query("SELECT * FROM room_participants WHERE user_id = '{$user_id}' AND room_id = '{$room_id}' AND event = ''{$extra_sql}");
   if (!$result) return false;
   return $result->fetch_object();
 }
