@@ -16,12 +16,12 @@ function genTitle($title) {
     'salt' => "a93d92454321l3p09o6009"
 );*/
 function hashPass($pass) {
-  //password_hash uses a random salt, so no need to set one
+  if ($pass == "") return "";
   return password_hash($pass, PASSWORD_BCRYPT);
 }
 
 function passVerify($input, $encrypted_password) {
-  return password_verify($input, $encrypted_password);
+  return $input == "" && $encrypted_password == "" || password_verify($input, $encrypted_password);
 }
 //ekko is an extension to echo, supporting undeclared variables
 function ekko(&$str) {
