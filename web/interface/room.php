@@ -9,7 +9,7 @@ if (!$part = $result->fetch_object()) {
   die();
 }
 
-$result = $db->query("SELECT * FROM rooms INNER JOIN users ON rooms.user_id = users.id WHERE room_id = '{$part->room_id}'");
+$result = $db->query("SELECT * FROM rooms INNER JOIN users ON rooms.user_id = users.id JOIN maps USING (map_id) WHERE room_id = '{$part->room_id}'");
 if (!$room = $result->fetch_object()) {
   header ("Location: index");
   die();
@@ -32,6 +32,18 @@ include 'includes/logo.php';
 $max_players = 2;
 
 $isOwner = $room->user_id == $user->id;
+
+$maps = "";
+$result = $db->query("SELECT * FROM maps ORDER BY map_id ASC");
+while ($fetch = $result->fetch_object()) {
+  $maps .= "<option value='{$fetch->map_id}'>{$fetch->map_name}</option>";
+}
+
+$countdowns = "";
+foreach ($COUNTDOWNS as $value) {
+  $countdowns .= "<option value='{$value}'>{$value} seconds</option>";
+}
+
 ?>
 <script>
 var room_id = <?php echo $room->room_id; ?>;
@@ -71,7 +83,20 @@ var isOwner = <?php var_export($isOwner); ?>;
 <tr><td class="play_avatar" colspan="2"><img src="images/the_bridge.png" /></td></tr>
 <tr><th>Game Name</th><td><?php echo secureOutput($room->name); ?></td></tr>
 <tr><th>Room Owner</th><td><?php echo $room->username; ?></td></tr>
-<tr><th>Map</th><td>The Bridge</td></tr>
+
+<?php
+if ($isOwner) {
+?>
+<tr><th>Map</th><td><select id="select_map" class="text"><?php echo $maps; ?></select></td></tr>
+<tr><th>Time Limit Per Turn</th><td><select id="select_countdown" class="text"><?php echo $countdowns; ?></select></td></tr>
+<?php
+} else {
+?>
+<tr><th>Map</th><td id="map"><?php echo $room->map_name; ?></td></tr>
+<tr><th>Time Limit Per Turn</th><td id="countdown"><?php echo $room->default_countdown; ?> seconds</td></tr>
+<?php
+}
+?>
 <tr><th>Mode</th><td>Regicide</td></tr>
 <tr><th>Players</th><td id="info_num_players">1/2</td></tr>
 </table>

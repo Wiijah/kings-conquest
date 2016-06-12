@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: Jun 11, 2016 at 04:51 PM
+-- Generation Time: Jun 12, 2016 at 03:15 PM
 -- Server version: 10.1.10-MariaDB
 -- PHP Version: 7.0.2
 
@@ -187,8 +187,11 @@ CREATE TABLE `chat` (
 --
 
 INSERT INTO `chat` (`chat_id`, `created`, `user`, `message`, `room_id`, `chat_type`, `colour`) VALUES
-(16, '2016-06-11 00:42:18', 36, 'ZICH joined the room.', 7, 'event', ''),
-(17, '2016-06-11 00:42:32', 37, 'CHUBAKA joined the room.', 7, 'event', '');
+(18, '2016-06-12 12:27:17', 14, 'uh', 0, 'message', ''),
+(19, '2016-06-12 12:27:38', 14, 'Leap Of Faith joined the room.', 8, 'event', ''),
+(20, '2016-06-12 12:51:48', 14, 'Leap Of Faith left the room.', 8, 'event', ''),
+(21, '2016-06-12 12:51:50', 14, 'Leap Of Faith joined the room.', 9, 'event', ''),
+(22, '2016-06-12 12:51:52', 9, 'Wumpus joined the room.', 9, 'event', '');
 
 -- --------------------------------------------------------
 
@@ -211,22 +214,23 @@ CREATE TABLE `classes` (
   `damageEffect` varchar(64) NOT NULL,
   `gold` int(11) NOT NULL DEFAULT '100',
   `luck` float NOT NULL,
-  `commandable` int(11) NOT NULL DEFAULT '1'
+  `commandable` int(11) NOT NULL DEFAULT '1',
+  `move` varchar(64) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `classes`
 --
 
-INSERT INTO `classes` (`class_id`, `name`, `address`, `spritesheet`, `info`, `max_hp`, `attack`, `skill`, `skillMaxCD`, `moveRange`, `attackRange`, `damageEffect`, `gold`, `luck`, `commandable`) VALUES
-(1, 'wizard', 'graphics/spritesheet/stand/ss_wizard_stand.png', 'graphics/spritesheet/attack/ss_wizard_attack.png', 'graphics/card/wizard_card.png', 200, 15, 'Magic Damage', 6, 3, 3, 'graphics/spritesheet/spell/ss_fireball.png', 100, 0.25, 1),
-(2, 'archer', 'graphics/spritesheet/stand/ss_archer_stand.png', 'graphics/spritesheet/attack/ss_archer_attack.png', 'graphics/card/archer_card.png', 200, 20, 'Double Shoot', 6, 3, 4, 'graphics/spritesheet/spell/ss_arrow.png', 100, 0.4, 1),
-(3, 'knight', 'graphics/spritesheet/stand/ss_knight_stand.png', 'graphics/spritesheet/attack/ss_knight_attack.png', 'graphics/card/knight_card.png', 300, 40, 'Shield', 6, 2, 1, 'graphics/spritesheet/spell/ss_physical_attack.png', 100, 0.15, 1),
-(4, 'king', 'graphics/spritesheet/stand/ss_king_stand.png', 'graphics/spritesheet/attack/ss_king_attack.png', 'graphics/card/king_card.png', 100, 25, 'Battle Cry', 6, 3, 2, 'graphics/spritesheet/spell/ss_physical_attack.png', 0, 0.2, 1),
-(5, 'red castle', 'graphics/spritesheet/special_unit/ss_castle_red.png', 'graphics/spritesheet/attack/ss_archer_attack.png', 'graphics/card/castle_card.png', 999, 999, 'RED', 6, 0, 10, 'graphics/spritesheet/spell/ss_physical_attack.png', 100, 0, 0),
-(6, 'blue castle', 'graphics/spritesheet/special_unit/ss_castle_blue.png', 'graphics/spritesheet/attack/ss_archer_attack.png', 'graphics/card/castle_card.png', 999, 999, 'BLUE', 6, 0, 10, 'graphics/spritesheet/spell/ss_physical_attack.png', 100, 0, 0),
-(7, 'dragon', 'graphics/spritesheet/stand/ss_dragon_stand.png', 'graphics/spritesheet/attack/ss_dragon_attack.png', 'graphics/card/dragon_card.png', 300, 35, 'Icy Wind', 6, 4, 3, 'graphics/spritesheet/spell/ss_icy_wind.png', 300, 0.25, 1),
-(8, 'totem', 'graphics/spritesheet/special_unit/ss_totem_stand.png', 'graphics/spritesheet/special_unit/ss_totem_heal.png', 'graphics/card/totem_card.png', 1, 1, 'N/A', 6, 0, 0, 'graphics/spritesheet/special_unit/ss_totem_heal.png', 200, 0, 0);
+INSERT INTO `classes` (`class_id`, `name`, `address`, `spritesheet`, `info`, `max_hp`, `attack`, `skill`, `skillMaxCD`, `moveRange`, `attackRange`, `damageEffect`, `gold`, `luck`, `commandable`, `move`) VALUES
+(1, 'wizard', 'graphics/spritesheet/stand/ss_wizard_stand.png', 'graphics/spritesheet/attack/ss_wizard_attack.png', 'graphics/card/wizard_card.png', 200, 15, 'Magic Damage', 6, 3, 3, 'graphics/spritesheet/spell/ss_fireball.png', 100, 0.25, 1, 'graphics/spritesheet/move/ss_wizard_move.png'),
+(2, 'archer', 'graphics/spritesheet/stand/ss_archer_stand.png', 'graphics/spritesheet/attack/ss_archer_attack.png', 'graphics/card/archer_card.png', 200, 20, 'Double Shoot', 6, 3, 4, 'graphics/spritesheet/spell/ss_arrow.png', 100, 0.4, 1, 'graphics/spritesheet/move/ss_archer_move.png'),
+(3, 'knight', 'graphics/spritesheet/stand/ss_knight_stand.png', 'graphics/spritesheet/attack/ss_knight_attack.png', 'graphics/card/knight_card.png', 300, 40, 'Shield', 6, 2, 1, 'graphics/spritesheet/spell/ss_physical_attack.png', 100, 0.15, 1, 'graphics/spritesheet/move/ss_knight_move.png'),
+(4, 'king', 'graphics/spritesheet/stand/ss_king_stand.png', 'graphics/spritesheet/attack/ss_king_attack.png', 'graphics/card/king_card.png', 100, 25, 'Battle Cry', 6, 3, 2, 'graphics/spritesheet/spell/ss_physical_attack.png', 0, 0.2, 1, 'graphics/spritesheet/move/ss_king_move.png'),
+(5, 'red castle', 'graphics/spritesheet/special_unit/ss_castle_red.png', 'graphics/spritesheet/attack/ss_archer_attack.png', 'graphics/card/castle_card.png', 999, 999, 'RED', 6, 0, 10, 'graphics/spritesheet/spell/ss_physical_attack.png', 100, 0, 0, ''),
+(6, 'blue castle', 'graphics/spritesheet/special_unit/ss_castle_blue.png', 'graphics/spritesheet/attack/ss_archer_attack.png', 'graphics/card/castle_card.png', 999, 999, 'BLUE', 6, 0, 10, 'graphics/spritesheet/spell/ss_physical_attack.png', 100, 0, 0, ''),
+(7, 'dragon', 'graphics/spritesheet/stand/ss_dragon_stand.png', 'graphics/spritesheet/attack/ss_dragon_attack.png', 'graphics/card/dragon_card.png', 300, 35, 'Icy Wind', 6, 4, 3, 'graphics/spritesheet/spell/ss_icy_wind.png', 300, 0.25, 1, 'graphics/spritesheet/move/ss_dragon_move.png'),
+(8, 'totem', 'graphics/spritesheet/special_unit/ss_totem_stand.png', 'graphics/spritesheet/special_unit/ss_totem_heal.png', 'graphics/card/totem_card.png', 1, 1, 'N/A', 6, 0, 0, 'graphics/spritesheet/special_unit/ss_totem_heal.png', 200, 0, 0, '');
 
 -- --------------------------------------------------------
 
@@ -300,18 +304,18 @@ INSERT INTO `inventory` (`inv_id`, `user_id`, `item_id`, `quantity`) VALUES
 (1, 14, 1, 3),
 (2, 14, 2, 9),
 (5, 9, 3, 4),
-(11, 14, 5, 1),
 (15, 14, 8, 2),
-(18, 14, 7, 1),
-(20, 14, 12, 1),
-(21, 14, 3, 1),
-(23, 14, 9, 1),
+(20, 14, 12, 2),
 (25, 27, 1, 1),
 (26, 9, 1, 1),
 (27, 33, 1, 1),
 (31, 32, 1, 1),
 (32, 34, 1, 1),
-(33, 14, 6, 1);
+(33, 14, 6, 1),
+(36, 14, 5, 1),
+(37, 14, 9, 1),
+(38, 14, 13, 1),
+(39, 14, 11, 1);
 
 -- --------------------------------------------------------
 
@@ -383,7 +387,8 @@ CREATE TABLE `maps` (
 --
 
 INSERT INTO `maps` (`map_id`, `map_name`, `points`) VALUES
-(1, 'The Bridge', '{"0":[4, 4, 4, 0 ,1, 1, 1, 1, 1, 1, 1, 0, 1 ,0],\n "1":[4, 4, 4, 4 ,4, 4, 5, 5, 5, 5, 5, 5, 6 ,5],\n "2":[4, 4, 4, 0 ,1, 4, 5, 5, 5, 5, 5, 5, 6 ,5],\n "3":[0, 0, 0, 0 ,1, 4, 5, 5, 4, 4, 4, 0, 1 ,0],\n "4":[0, 1, 1, 1 ,1, 4, 3, 3, 4, 1, 1, 1, 1 ,0],\n "5":[0, 1, 1, 1 ,1, 4, 5, 5, 4, 1, 1, 1, 1 ,0],\n "6":[0, 1, 1, 1 ,1, 1, 5, 5, 1, 1, 1, 1, 1 ,0],\n "7":[0, 1, 1, 1 ,1, 4, 5, 5, 4, 1, 1, 1, 1 ,0],\n "8":[0, 1, 1, 1 ,1, 4, 3, 3, 4, 1, 1, 1, 1 ,0],\n "9":[0, 1, 1, 1 ,1, 4, 5, 5, 4, 1, 0, 0, 0 ,0],\n "10":[5, 6, 5, 5 ,5, 5, 5, 5, 4, 1, 0, 4, 4 ,4],\n "11":[5, 6, 5, 5 ,5, 5, 5, 5, 4, 4, 4, 4, 4 ,4],\n "12":[0, 1, 0, 1 ,1, 1, 1, 1, 1, 1, 0, 4, 4 ,4]\n}');
+(1, 'The Bridge', '{"0":[4, 4, 4, 0 ,1, 1, 1, 1, 1, 1, 1, 0, 1 ,0],\n "1":[4, 4, 4, 4 ,4, 4, 5, 5, 5, 5, 5, 5, 6 ,5],\n "2":[4, 4, 4, 0 ,1, 4, 5, 5, 5, 5, 5, 5, 6 ,5],\n "3":[0, 0, 0, 0 ,1, 4, 5, 5, 4, 4, 4, 0, 1 ,0],\n "4":[0, 1, 1, 1 ,1, 4, 3, 3, 4, 1, 1, 1, 1 ,0],\n "5":[0, 1, 1, 1 ,1, 4, 5, 5, 4, 1, 1, 1, 1 ,0],\n "6":[0, 1, 1, 1 ,1, 1, 5, 5, 1, 1, 1, 1, 1 ,0],\n "7":[0, 1, 1, 1 ,1, 4, 5, 5, 4, 1, 1, 1, 1 ,0],\n "8":[0, 1, 1, 1 ,1, 4, 3, 3, 4, 1, 1, 1, 1 ,0],\n "9":[0, 1, 1, 1 ,1, 4, 5, 5, 4, 1, 0, 0, 0 ,0],\n "10":[5, 6, 5, 5 ,5, 5, 5, 5, 4, 1, 0, 4, 4 ,4],\n "11":[5, 6, 5, 5 ,5, 5, 5, 5, 4, 4, 4, 4, 4 ,4],\n "12":[0, 1, 0, 1 ,1, 1, 1, 1, 1, 1, 0, 4, 4 ,4]\n}'),
+(2, 'Waterfall', '{"0":[4, 4, 4, 0 ,1, 1, 1, 1, 1, 1, 1, 0, 1 ,0],\r\n "1":[4, 4, 4, 4 ,4, 4, 5, 5, 5, 5, 5, 5, 6 ,5],\r\n "2":[4, 4, 4, 0 ,1, 4, 5, 5, 5, 5, 5, 5, 6 ,5],\r\n "3":[0, 0, 0, 0 ,1, 4, 5, 5, 4, 4, 4, 0, 1 ,0],\r\n "4":[0, 1, 1, 1 ,1, 4, 3, 3, 4, 1, 1, 1, 1 ,0],\r\n "5":[0, 1, 1, 1 ,1, 4, 5, 5, 4, 1, 1, 1, 1 ,0],\r\n "6":[0, 1, 1, 1 ,1, 1, 5, 5, 1, 1, 1, 1, 1 ,0],\r\n "7":[0, 1, 1, 1 ,1, 4, 5, 5, 4, 1, 1, 1, 1 ,0],\r\n "8":[0, 1, 1, 1 ,1, 4, 3, 3, 4, 1, 1, 1, 1 ,0],\r\n "9":[0, 1, 1, 1 ,1, 4, 5, 5, 4, 1, 0, 0, 0 ,0],\r\n "10":[5, 6, 5, 5 ,5, 5, 5, 5, 4, 1, 0, 4, 4 ,4],\r\n "11":[5, 6, 5, 5 ,5, 5, 5, 5, 4, 4, 4, 4, 4 ,4],\r\n "12":[0, 1, 0, 1 ,1, 1, 1, 1, 1, 1, 0, 4, 4 ,4]\r\n}');
 
 -- --------------------------------------------------------
 
@@ -532,20 +537,23 @@ CREATE TABLE `rooms` (
   `winner` int(11) NOT NULL,
   `elo_won` int(11) NOT NULL,
   `elo_lost` int(11) NOT NULL,
-  `countdown` int(11) NOT NULL
+  `countdown` int(11) NOT NULL,
+  `default_countdown` int(11) NOT NULL DEFAULT '90',
+  `map_id` int(11) NOT NULL DEFAULT '1'
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `rooms`
 --
 
-INSERT INTO `rooms` (`room_id`, `user_id`, `joiner`, `created`, `name`, `password`, `max_players`, `state`, `turn`, `winner`, `elo_won`, `elo_lost`, `countdown`) VALUES
-(1, 31, 0, '2016-06-10 13:00:12', 'sdfgsdfg', '', 2, 'ended', 0, 32, 16, 16, 1465563720),
-(2, 14, 0, '2016-06-10 13:25:18', 'sdfgsdfg', '', 2, 'ended', 1, 34, 32, 32, 1465565323),
-(3, 34, 0, '2016-06-10 13:40:16', 'ASDFG', '', 2, 'ended', 1, 34, 15, 15, 1465566200),
-(5, 14, 0, '2016-06-10 13:47:41', 'hello guys', '', 2, 'ended', 0, 34, 32, 32, 1465566825),
-(6, 14, 0, '2016-06-10 13:52:45', 'asda', '', 2, 'ended', 0, 14, 0, 0, 1465567038),
-(7, 36, 0, '2016-06-11 00:42:18', 'NORTH KOREA', '', 2, 'ingame', 0, 0, 0, 0, 1465607258);
+INSERT INTO `rooms` (`room_id`, `user_id`, `joiner`, `created`, `name`, `password`, `max_players`, `state`, `turn`, `winner`, `elo_won`, `elo_lost`, `countdown`, `default_countdown`, `map_id`) VALUES
+(1, 31, 0, '2016-06-10 13:00:12', 'sdfgsdfg', '', 2, 'ended', 0, 32, 16, 16, 1465563720, 90, 1),
+(2, 14, 0, '2016-06-10 13:25:18', 'sdfgsdfg', '', 2, 'ended', 1, 34, 32, 32, 1465565323, 90, 1),
+(3, 34, 0, '2016-06-10 13:40:16', 'ASDFG', '', 2, 'ended', 1, 34, 15, 15, 1465566200, 90, 1),
+(5, 14, 0, '2016-06-10 13:47:41', 'hello guys', '', 2, 'ended', 0, 34, 32, 32, 1465566825, 90, 1),
+(6, 14, 0, '2016-06-10 13:52:45', 'asda', '', 2, 'ended', 0, 14, 0, 0, 1465567038, 90, 1),
+(7, 36, 0, '2016-06-11 00:42:18', 'NORTH KOREA', '', 2, 'ingame', 0, 0, 0, 0, 1465607258, 90, 1),
+(9, 14, 0, '2016-06-12 12:51:50', 'qweqwe', '', 2, 'pregame', 0, 0, 0, 0, 0, 90, 1);
 
 -- --------------------------------------------------------
 
@@ -581,7 +589,9 @@ INSERT INTO `room_participants` (`part_id`, `user_id`, `room_id`, `colour`, `sta
 (10, 14, 6, 'red', 'owner', 'ended', 500, 0, 0),
 (11, 34, 6, 'blue', 'ready', 'ended', 500, 0, 0),
 (12, 36, 7, 'red', 'owner', '', 160, 1, 2),
-(13, 37, 7, 'blue', 'ready', '', 160, 2, 2);
+(13, 37, 7, 'blue', 'ready', '', 160, 2, 2),
+(15, 14, 9, 'red', 'owner', '', 500, 0, 0),
+(16, 9, 9, 'blue', 'notready', '', 500, 0, 0);
 
 -- --------------------------------------------------------
 
@@ -712,12 +722,12 @@ INSERT INTO `users` (`id`, `password`, `email`, `username`, `wins`, `losses`, `e
 (6, '$2y$10$zmsIcYDqp8ScNRuDcj9jD.kbsW9vC7k655flzcYK66kC0jkWa0toK', 'alanduu50@gmail.com', 'xXN1NJ4Xx', 343, 148, 1742, '2016-05-23 21:22:33', 'normal', 1465372058, 1, 0, 0, 0, 5, 1000, 0, 0),
 (7, '$2y$10$xGKFvkCEjUMSm1y6cr8v/.IsJCZfLhNtigg0eyETXQYbslu5X1IBK', 'kld14@ic.ac.uk', 'DragonSlayer52', 358, 145, 2100, '2016-05-23 21:22:01', 'normal', 1465372058, 1, 0, 0, 0, 0, 1000, 0, 0),
 (8, '$2y$10$s7PfGa0iZcg2XDFrmEAnhegSMZzKi4Po4GyUEl1E9cA69tUJj5qSa', 'test@test.com', 'HaskellPrize', 147, 23, 2311, '2016-05-23 21:20:45', 'normal', 1465372058, 1, 0, 0, 0, 0, 1000, 0, 0),
-(9, '$2y$10$y8geeo6e4vVMUkhJWycFruGOuplLwujzm8q4RZlZQPpkn6RKbkfpS', 'demo@demo.com', 'Wumpus', 201, 92, 889, '2016-05-23 21:20:18', 'normal', 1465563486, 0, 0, 3, 0, 5, 16650, 3, 1),
+(9, '$2y$10$y8geeo6e4vVMUkhJWycFruGOuplLwujzm8q4RZlZQPpkn6RKbkfpS', 'demo@demo.com', 'Wumpus', 201, 92, 889, '2016-05-23 21:20:18', 'normal', 1465737315, 0, 0, 3, 0, 5, 16650, 3, 1),
 (10, '$2y$10$h9fvGHQrrOHh35pNzhIsqOR.0jDi4ZmVtHiCvP1wCexLef072jYqy', 'tonyfield@rules.com', 'OhBaby', 214, 26, 1400, '2016-05-23 18:59:26', 'normal', 1465372058, 1, 0, 0, 0, 0, 1000, 0, 0),
 (11, '$2y$10$jOeNVa.g.MTq8j7NoOY3k.RTVeYpcrxA7gq8zv8hp9yiVBsk0z3C.', 'debug@debug.com', 'debug', 212, 52, 1600, '2016-06-01 20:52:54', 'normal', 1465372058, 1, 0, 0, 0, 0, 1000, 0, 0),
 (12, '$2y$10$7.dtDYkyCuARy8JOOvnEM..015QDAO7YDKsNEmue6deyEyJvIDwr2', 'goku@goku.com', 'goku', 211, 62, 970, '2016-06-01 20:53:04', 'normal', 1465372058, 1, 0, 0, 0, 0, 1000, 0, 0),
 (13, '$2y$10$EVxl9C85A3EGzS9/mbr4mO1eZwdAa7RoFtuXRU.4lwdohCezvuQTu', 'veg@veg.com', 'veg', 311, 73, 800, '2016-06-01 20:53:57', 'normal', 1465372058, 1, 0, 0, 0, 0, 1000, 0, 0),
-(14, '$2y$10$sxwp7k4OSuCdCiO7y.JsOucq/YbXFR4oF8aBcgeTJ.UixSPKh.xJm', 'hp@hp.com', 'Leap Of Faith', 346, 283, 2587, '2016-06-04 21:40:28', 'normal', 1465656709, 13, 0, 12, 10, 11, 2137484697, 0, 1),
+(14, '$2y$10$IQSSyY./kNwyvuT7l5gxVOFeTTDB50Bfyt5yw9GqQgf.f.shFazX.', 'hiya@hiya.com', 'Leap Of Faith', 346, 283, 2587, '2016-06-04 21:40:28', 'normal', 1465737315, 7, 0, 3, 10, 11, 2137467197, 0, 1),
 (15, '$2y$10$Q3aMDDCP8w2o8bV.SaRs4.4Mgr49ZHzl372S4qExpvmadU0mAHETi', 'asda@asda.com', 'asdasd', 0, 0, 870, '2016-06-04 21:40:51', 'normal', 1465372058, 1, 0, 0, 0, 0, 1000, 0, 0),
 (16, '$2y$10$aZkr5proBXT1kbSu9WWoHOM/q4lHiyqVXj6/9FYTa9Tn6YaO31LPW', 'simon@simon.com', 'simon', 0, 0, 1200, '2016-06-06 09:29:26', 'normal', 1465372058, 1, 0, 0, 0, 0, 1000, 0, 0),
 (17, '', '', 'guesto', 0, 0, 1000, '2016-06-07 13:22:51', 'guest', 1465372058, 1, 0, 0, 0, 0, 1000, 0, 0),
@@ -864,7 +874,7 @@ ALTER TABLE `buff_instances`
 -- AUTO_INCREMENT for table `chat`
 --
 ALTER TABLE `chat`
-  MODIFY `chat_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
+  MODIFY `chat_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
 --
 -- AUTO_INCREMENT for table `classes`
 --
@@ -884,7 +894,7 @@ ALTER TABLE `friends`
 -- AUTO_INCREMENT for table `inventory`
 --
 ALTER TABLE `inventory`
-  MODIFY `inv_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=34;
+  MODIFY `inv_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=40;
 --
 -- AUTO_INCREMENT for table `items`
 --
@@ -894,7 +904,7 @@ ALTER TABLE `items`
 -- AUTO_INCREMENT for table `maps`
 --
 ALTER TABLE `maps`
-  MODIFY `map_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `map_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 --
 -- AUTO_INCREMENT for table `opp`
 --
@@ -904,12 +914,12 @@ ALTER TABLE `opp`
 -- AUTO_INCREMENT for table `rooms`
 --
 ALTER TABLE `rooms`
-  MODIFY `room_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `room_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 --
 -- AUTO_INCREMENT for table `room_participants`
 --
 ALTER TABLE `room_participants`
-  MODIFY `part_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `part_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 --
 -- AUTO_INCREMENT for table `units`
 --
