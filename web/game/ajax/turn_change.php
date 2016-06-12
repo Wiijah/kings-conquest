@@ -34,6 +34,7 @@ $result = $db->query("SELECT * FROM buff_instances JOIN buffs USING (buff_id) WH
 $buff_list = array();
 while ($buff = $result->fetch_object()) {
   $unit = select_unit($buff->unit_id);
+  if (!$unit) continue;
   $damage = ceil($unit->max_hp * 0.02);
   $buff_list = array_merge($buff_list, damageByBuff($buff, $unit, $damage));
 }
@@ -42,6 +43,7 @@ while ($buff = $result->fetch_object()) {
 $result = $db->query("SELECT * FROM buff_instances JOIN buffs USING (buff_id) WHERE room_id = '{$room_id}' AND buff_id = 6");
 while ($buff = $result->fetch_object()) {
   $unit = select_unit($buff->unit_id);
+  if (!$unit) continue;
   $buff_list = array_merge($buff_list, damageByBuff($buff, $unit, 0));
   update_unit($unit, 0, 0, 1);
 }
