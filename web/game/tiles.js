@@ -385,6 +385,21 @@ function spawnUnit(data, isCreation, row, column){
 			framerate: 4
 		});
 
+		var moveSpriteSheet = new createjs.SpriteSheet({
+            "images": [data.move],
+            "frames": {"regX": 80, "height": 142, "count": 4, "regY": 100, "width": 142 },
+            "animations": {
+              "walk":[0,1,2,3]
+            },
+            framerate: 4
+	    });
+	    unit.moveAnimation = new createjs.Sprite(moveSpriteSheet, "walk");
+	    unit.moveAnimation.x = unit.x;
+	    unit.moveAnimation.y = unit.y;
+	    unit.moveAnimation.scaleX = 0.7;
+	    unit.moveAnimation.scaleY = 0.7;
+
+
 		// Configure the hp bar of the unit
 		hp_bar = new createjs.Shape();
 		hp_bar.x = unit.x - 40;
@@ -1499,8 +1514,8 @@ function undoHighlights() {
 
 // Move the player by a fixed amount
 function moveUnit() {
-  var playerX = movingUnit.x,
-      playerY = movingUnit.y,
+  var playerX = movingUnit.moveAnimation.x,
+      playerY = movingUnit.moveAnimation.y,
       destX = path[0][0],
       destY = path[0][1];
 
@@ -1528,8 +1543,8 @@ function moveUnit() {
   var stepY = coefficientY * MOVEMENT_STEP / 2;
 
 
-  movingUnit.x += stepX;
-  movingUnit.y += stepY;
+  movingUnit.moveAnimation.x += stepX;
+  movingUnit.moveAnimation.y += stepY;
   movingUnit.hp_bar.x += stepX;
   movingUnit.hp_bar.y += stepY;
 
@@ -1544,6 +1559,12 @@ function moveUnit() {
   if ((playerX === destX) && (playerY === destY)) {
       path.splice(0,1);
       if (path.length == 0) {
+      	movingUnit.x = movingUnit.moveAnimation.x;
+      	movingUnit.y = movingUnit.moveAnimation.y;
+
+      	console.log(chars.getChildIndex(movingUnit.moveAnimation));
+      	chars.removeChild(movingUnit.moveAnimation);
+      	chars.addChild(movingUnit);
 
       	sortIndices(movingUnit);
         movingPlayer = false;
@@ -2060,6 +2081,9 @@ function moveCharacter(unit) {
 		var fromY = selectedCharacter.column;
 		var tile = event.target;
 		findPath(fromX, fromY, tile.row, tile.column, ignoreObstacle);
+
+	    chars.removeChild(unit);
+	    chars.addChild(unit.moveAnimation);
 
 		serverValidate("move", selectedCharacter, [path]);
 	}]);
