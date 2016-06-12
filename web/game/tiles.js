@@ -254,7 +254,7 @@ function spawnUnit(data, isCreation, row, column){
 	chars.removeChild(spawnAnimation);
 		var spriteSheet = new createjs.SpriteSheet({
           	"images": [data.address],
-          	"frames": {"regX": 0, "height": 142, "count": 2, "regY": -10, "width": 113 },
+          	"frames": {"regX": 0, "height": 142, "count": 2, "regY": -30, "width": 113 },
           	"animations": {
             	"stand":[0,1]
           	},
@@ -384,6 +384,21 @@ function spawnUnit(data, isCreation, row, column){
 			},
 			framerate: 4
 		});
+
+		var moveSpriteSheet = new createjs.SpriteSheet({
+            "images": [data.move],
+            "frames": {"regX": 80, "height": 142, "count": 4, "regY": 100, "width": 142 },
+            "animations": {
+              "walk":[0,1,2,3]
+            },
+            framerate: 4
+	    });
+	    unit.moveAnimation = new createjs.Sprite(moveSpriteSheet, "walk");
+	    unit.moveAnimation.x = unit.x;
+	    unit.moveAnimation.y = unit.y;
+	    unit.moveAnimation.scaleX = 0.7;
+	    unit.moveAnimation.scaleY = 0.7;
+
 
 		// Configure the hp bar of the unit
 		hp_bar = new createjs.Shape();
@@ -1112,9 +1127,9 @@ function drawStatsDisplay() {
 
 function displayStats(unit) {
 	if(unit.team === 1){
-		var drag_box = new createjs.Bitmap("graphics/stats_background_self.png");
+		var drag_box = new createjs.Bitmap("/graphics/stats_background_self.png");
 	} else {
-		var drag_box = new createjs.Bitmap("graphics/stats_background_opponent.png");
+		var drag_box = new createjs.Bitmap("/graphics/stats_background_opponent.png");
 	}
 	
 	drag_box.scaleX = 0.8;
@@ -1154,8 +1169,9 @@ function drawGame() {
 		$.each(units, function(i, value) {
 			chars.addChild(value);
 			chars.addChild(value.hp_bar);
-			sortIndices(value);
 		});
+
+		orderUnits();
 
 		changed = true;
 	});	
@@ -1499,8 +1515,8 @@ function undoHighlights() {
 
 // Move the player by a fixed amount
 function moveUnit() {
-  var playerX = movingUnit.x,
-      playerY = movingUnit.y,
+  var playerX = movingUnit.moveAnimation.x,
+      playerY = movingUnit.moveAnimation.y,
       destX = path[0][0],
       destY = path[0][1];
 
@@ -1509,15 +1525,19 @@ function moveUnit() {
 
 
   if (playerX < destX && playerY < destY) {
+  	movingUnit.moveAnimation.scaleX = -0.7;
     coefficientX = 1.0;
     coefficientY = 1.0;
   } else if (playerX > destX && playerY > destY) {
+  	movingUnit.moveAnimation.scaleX = 0.7;
     coefficientX = -1.0;
     coefficientY = -1.0;
   } else if (playerX < destX && playerY > destY) {
+  	movingUnit.moveAnimation.scaleX = -0.7;
     coefficientX = 1.0;
     coefficientY = -1.0;
   } else if (playerX > destX && playerY < destY) {
+  	movingUnit.moveAnimation.scaleX = 0.7;
     coefficientX = -1.0;
     coefficientY = 1.0;
   } 
@@ -1528,8 +1548,8 @@ function moveUnit() {
   var stepY = coefficientY * MOVEMENT_STEP / 2;
 
 
-  movingUnit.x += stepX;
-  movingUnit.y += stepY;
+  movingUnit.moveAnimation.x += stepX;
+  movingUnit.moveAnimation.y += stepY;
   movingUnit.hp_bar.x += stepX;
   movingUnit.hp_bar.y += stepY;
 
@@ -1544,8 +1564,14 @@ function moveUnit() {
   if ((playerX === destX) && (playerY === destY)) {
       path.splice(0,1);
       if (path.length == 0) {
+      	movingUnit.x = movingUnit.moveAnimation.x;
+      	movingUnit.y = movingUnit.moveAnimation.y;
 
-      	sortIndices(movingUnit);
+      	console.log(chars.getChildIndex(movingUnit.moveAnimation));
+      	chars.removeChild(movingUnit.moveAnimation);
+      	chars.addChild(movingUnit);
+
+      	orderUnits();
         movingPlayer = false;
         if (undo){
         	movingUnit.canMove = 1;
@@ -1570,9 +1596,9 @@ function moveUnit() {
 
 function sortIndices(unit) {
 	$.each(units, function(i, value) {
-		if (unit.y > value.y) {
-			if (chars.getChildIndex(unit) < chars.getChildIndex(value)) {
-				chars.swapChildren(unit, value);
+		if (unit.moveAnimation.y > value.y) {
+			if (chars.getChildIndex(unit.moveAnimation) < chars.getChildIndex(value)) {
+				chars.swapChildren(unit.moveAnimation, value);
 			}
 			if (chars.getChildIndex(unit.hp_bar) < chars.getChildIndex(value.hp_bar)) {
 				chars.swapChildren(unit.hp_bar, value.hp_bar);
@@ -1580,15 +1606,15 @@ function sortIndices(unit) {
 			if (chars.getChildIndex(unit.hp_bar) < chars.getChildIndex(value)) {
 				chars.swapChildren(unit.hp_bar, value);
 			}
-		} else if (unit.y < value.y) {
-			if (chars.getChildIndex(unit) > chars.getChildIndex(value)) {
-				chars.swapChildren(unit, value);
+		} else if (unit.moveAnimation.y < value.y) {
+			if (chars.getChildIndex(unit.moveAnimation) > chars.getChildIndex(value)) {
+				chars.swapChildren(unit.moveAnimation, value);
 			}
 			if (chars.getChildIndex(unit.hp_bar) > chars.getChildIndex(value.hp_bar)) {
 				chars.swapChildren(unit.hp_bar, value.hp_bar);
 			}
-			if (chars.getChildIndex(unit) > chars.getChildIndex(value.hp_bar)) {
-				chars.swapChildren(unit, value.hp_bar);
+			if (chars.getChildIndex(unit.moveAnimation) > chars.getChildIndex(value.hp_bar)) {
+				chars.swapChildren(unit.moveAnimation, value.hp_bar);
 			}
 		}
 	});
@@ -2061,6 +2087,10 @@ function moveCharacter(unit) {
 		var tile = event.target;
 		findPath(fromX, fromY, tile.row, tile.column, ignoreObstacle);
 
+		var index = chars.getChildIndex(unit);
+	    chars.removeChild(unit);
+	    chars.addChildAt(unit.moveAnimation, index);
+
 		serverValidate("move", selectedCharacter, [path]);
 	}]);
 }
@@ -2417,6 +2447,9 @@ function handleMove(action) {
     console.log("handleMove");
 	blockMaps[fromRow][fromCol] = 0;
     var unit = findUnitById(action.unit_id);
+    var index = chars.getChildIndex(unit);
+    chars.removeChild(unit);
+    chars.addChildAt(unit.moveAnimation, index);
 	move(unit);
 	blockMaps[toRow][toCol] = 1;
     unit.canMove = 0;
