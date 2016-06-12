@@ -2696,7 +2696,7 @@ function showKingTutorial(){
     k_instruction();
   });
   addTitleToBox("<img src=\"./i_icon.png\" style=\"line-height: 1px; vertical-align: bottom; margin-right: 5px\" height=\"20\" width=\"20\" />King");
-  addTextToBox("<p>The king is the core of the army. He has really high HP and balanced damage and range.</p><p>Normal Attack: 25</p><p>Skill: Battle Cry</p><p>(Increase all team units' base attack by 20%.)</p>");
+  addTextToBox("<p>The king is the core of the army. He has really high HP and balanced damage and range.</p><p>Normal Attack: 25</p><b style=\"color:black;\">Skill: Battle Cry</b><p>(Increase all team units' base attack by 20% for 6 turns)</p>");
   resetTheGame();
   spawnUnit(that.classStats.kingClass, true, 2, 5, 1);
   clearSelectionEffects();
@@ -2711,7 +2711,7 @@ function k_instruction(){
     removeBox();
   });
   addTitleToBox("King");
-  addTextToBox("<p>Click on your king and check the attack damage on the stats board.</p>");
+  addTextToBox("<b style=\"color:red;\">Click on your king</b> to use his skill.");
   hideButton();
   addPointerToPlayerUnit();
 }
@@ -2723,7 +2723,7 @@ function k_instruction2(){
     removeBox();
   });
   addTitleToBox("King");
-  addTextToBox("<p>King's default attack damage is 25. Now try to click on the skill button (or press 'S' on your keyboard) to use king's skill. </p>");
+  addTextToBox("Now try to <b style=\"color:red;\">click on the skill button</b> or <b style=\"color:black;\">press 'S' </b>on your keyboard to use king's skill. </p>");
   addPointerNearPlayerSkill();
 }
 
@@ -2736,7 +2736,7 @@ function k_instruction3(){
   });
   showButton();
   addTitleToBox("King");
-  addTextToBox("<p>Well done. However any unit in King's Conquest can't move or attack anymore after using the skill. So remember to move to a good position before using the skill. Now it's the enemy's turn.</p>");
+  addTextToBox("<p>Well done. However any unit in King's Conquest <b>can't move or attack anymore after using the skill</b>. So remember to move to a good position before using the skill.</p>");
 }
 
 function k_instruction4(){
@@ -2748,7 +2748,7 @@ function k_instruction4(){
   });
     addTextToButton("Next");
   addTitleToBox("King");
-  addTextToBox("<p>Excellent! Now you know how to use the king's skill.</p> <p>Try another unit by clicking on the corresponding card in the bottom left corner of the window. </p><p>Click 'Next' to play the next character.</p>");
+  addTextToBox("<p>Excellent! Now you know how to use the king's skill.</p> <p>Try another unit by clicking on the corresponding card in the bottom left corner of the window. </p><b style=\"color:red;\">Click 'Next'</b> to play the next character.");
   kingDone = 1;
   unitCards[0].removeAllEventListeners();
   toPlayList.splice(toPlayList.indexOf("king"),1);
@@ -2775,7 +2775,7 @@ function showKnightTutorial(){
   displayBox(function() {
     kt_instruction();
   });
-  addTextToBox("<p>A knight has really strong defensive abilities with his heavy armor. Because of this, knight has a short moving range compared to other classes. However knights are the best in melee combat. Be careful if they are in front of you.</p><p>Normal Attack: 40</p><p>Skill: Holy Shield</p><p>(Can block any damage from enemy once before getting destroyed.)</p>");
+  addTextToBox("<p>A knight has really strong defensive abilities with his heavy armor. Because of this, knight has a short moving range compared to other classes. However knights are the best in melee combat. Be careful if they are in front of you.</p><p>Normal Attack: 40</p><b style=\"color:black;\">Skill: Holy Shield</b><p>(Can block any damage from enemy once before getting destroyed.)</p>");
   addTitleToBox("<img src=\"./i_icon.png\" style=\"line-height: 1px; vertical-align: bottom; margin-right: 5px\" height=\"20\" width=\"20\" />Knight");
   resetTheGame();
 
@@ -2791,7 +2791,7 @@ function kt_instruction(){
     removeBox();
   });
   addTitleToBox("Knight");
-  addTextToBox("<p>Click on your Knight and check the stats board.</p>");
+  addTextToBox("<b style=\"color:red;\">Click on your Knight</b> to use his skill");
   hideButton();
   addPointerToPlayerUnit();
 }
@@ -2802,7 +2802,7 @@ function kt_instruction2(){
     removeBox();
   });
   addTitleToBox("Knight");
-  addTextToBox("<p>Now try to click on the skill button (Or press 'S' on your keyboard) to use Knight's skill. </p>");
+  addTextToBox("Now try to <b style=\"color:red;\">click on the skill button </b> or <b style=\"color:black;\">press 'S' </b>on your keyboard to use Knight's skill.");
   addPointerNearPlayerSkill();
 }
 
@@ -2816,7 +2816,7 @@ function kt_instruction3(){
   showButton();
   addTextToButton("Next");
   addTitleToBox("Knight");
-  addTextToBox("<p>Well done. If you cannot reach any unit in this turn, setting up your shield will be the best choice. Now it's the enemy's turn. Let's see your how powerful the shield is.</p>");
+  addTextToBox("Well done. If you cannot reach any unit in this turn, setting up your shield will be the best choice. <b>Now it's the enemy's turn.</b> Let's see your how powerful the shield is.");
 }
 
 function kt_instruction4(){
@@ -2827,7 +2827,7 @@ function kt_instruction4(){
   });
     addTextToButton("Next");
   addTitleToBox("Knight");
-  addTextToBox("<p>Excellent! Now you know how to use the knight's skill.</p> <p>Try another unit by clicking on the corresponding card in the bottom left corner of the window. </p><p>Click 'Next' to play the next character.</p>");
+  addTextToBox("<p>Excellent! Now you know how to use the knight's skill.</p> <p>Try another unit by clicking on the corresponding card in the bottom left corner of the window. </p><b style=\"color:red;\">Click 'Next' to play the next character.</b>");
   knightDone = 1;
   toPlayList.splice(toPlayList.indexOf("knight"),1);
   endCurrentUnitTutorial = true;
@@ -2851,7 +2851,7 @@ function showArcherTutorial(){
   displayBox(function() {
     a_instruction();
   });
-  addTextToBox("<p>An archer is the master of using the bow and arrow. The archer has a really large attack range and a high critical chance. </p> <p>Normal Attack: 20</p><p> Skill: Double Shoot</p><p>(shoots two arrows to up to two targets and the arrows will decrease the target's base attack damage by 20% for 3 turns.)</p>");
+  addTextToBox("<p>An archer is the master of using the bow and arrow. The archer has a really large attack range and a high critical chance. </p> <p>Normal Attack: 20</p><b style=\"color:black;\"> Skill: Double Shoot</b><p>(shoots two arrows to up to two targets and the arrows will decrease the target's base attack damage by 20% for 6 turns.)</p>");
   addTitleToBox("<img src=\"./i_icon.png\" style=\"line-height: 1px; vertical-align: bottom; margin-right: 5px\" height=\"20\" width=\"20\" />Archer");
   addTextToButton("Next");
   resetTheGame();
@@ -2866,7 +2866,7 @@ function a_instruction(){
     removeBox();
   });
   addTitleToBox("Archer");
-  addTextToBox("<p>Click on your Archer and check the stats board.</p>");
+  addTextToBox("<b style=\"color:red;\">Click on your Archer to use his skill</b>");
   hideButton();
   addPointerToPlayerUnit();
 }
@@ -2877,7 +2877,7 @@ function a_instruction2(){
     removeBox();
   });
   addTitleToBox("Archer");
-  addTextToBox("<p>Now try to click on the skill button (Or press 'S' on your keyboard) to use Archer's skill. </p>");
+  addTextToBox("Now try to <b style=\"color:red;\">click on the skill button </b> or <b style=\"color:black;\">press 'S'</b> on your keyboard to use Archer's skill.");
   addPointerNearPlayerSkill();
 }
 
@@ -2887,7 +2887,7 @@ function a_instruction3(){
     removeBox();
   });
   addTitleToBox("Archer");
-  addTextToBox("<p>You can see the range of your skill, click on the enemy king to give him the first hit.</p>");
+  addTextToBox("You can see the range of your skill, <b style=\"color:red;\">click on the enemy king</b> to give him the first hit.</p>");
   addPointerToEnemyUnit();
 }
 
@@ -2899,7 +2899,7 @@ function a_instruction4(){
     a_instruction5();
   });
   addTitleToBox("Archer");
-  addTextToBox("<p>Nice one. You can now give the enemy king another shoot.</p> <p>In a real game, you might use archer skill on two different units to decrease their damage</p>");
+  addTextToBox("<p>Nice one. You can now give the enemy king another shoot.</p> <b>In a real game, you might use archer skill on two different units to decrease their damage</b>");
 }
 
 function a_instruction5(){
@@ -2911,7 +2911,7 @@ function a_instruction5(){
   });
     addTextToButton("Next");
   addTitleToBox("Archer");
-  addTextToBox("<p>Excellent! Now you know how to use the archer's skill.</p> <p>Try another unit by clicking on the corresponding card in the bottom left corner of the window. </p><p>Click 'Next' to play the next character</p>");
+  addTextToBox("<p>Excellent! Now you know how to use the archer's skill.</p> <p>Try another unit by clicking on the corresponding card in the bottom left corner of the window. </p><b style=\"color:red;\">Click 'Next'</b> to play the next character");
   archerDone = 1;
   toPlayList.splice(toPlayList.indexOf("archer"),1);
   endCurrentUnitTutorial = true;
@@ -2935,7 +2935,7 @@ function showWizardTutorial(){
   displayBox(function() {
     w_instruction();
   });
-  addTextToBox("<p>A wizard uses arcane magic. Can deal really high AOE (area of effect) demage and burn the targets. However wizards are less effective in melee combat. </p> <p>Normal Attack: 15 </p><p>Skill: Burning</p><p>(maximum 5 target in a cross) and the targets lose 2% of its maximum health due to burning damage each turn.)</p>");
+  addTextToBox("<p>A wizard uses arcane magic. Can deal really high AOE (area of effect) demage and burn the targets. However wizards are less effective in melee combat. </p> <p>Normal Attack: 15 </p><b style=\"color:black;\">Skill: Fire Ball</b><p>(maximum 5 target in a cross) and the targets lose 2% of its maximum health for the next 6 turns)</p>");
   addTitleToBox("<img src=\"./i_icon.png\" style=\"line-height: 1px; vertical-align: bottom; margin-right: 5px\" height=\"20\" width=\"20\" />Wizard");
   resetTheGame();
   addTextToButton("Next");
@@ -2952,7 +2952,7 @@ function w_instruction(){
     removeBox();
   });
   addTitleToBox("Wizard");
-  addTextToBox("<p>Click on your Wizard and check the stats board.</p>");
+  addTextToBox("<b style=\"color:red;\">Click on your Wizard</b> to use his skill.");
   hideButton();
   addPointerToPlayerUnit();
 }
@@ -2964,7 +2964,7 @@ function w_instruction2(){
     removeBox();
   });
   addTitleToBox("Wizard");
-  addTextToBox("<p>Now try to click on the skill button (Or press 'S' on your keyboard) to use Wizard's skill. </p>");
+  addTextToBox("Now try to <b style=\"color:red;\">click on the skill button</b> <b style=\"color:black;\">or press 'S'</b> on your keyboard to use Wizard's skill.");
   addPointerNearPlayerSkill();
 }
 
@@ -2975,7 +2975,7 @@ function w_instruction3(){
     removeBox();
   });
   addTitleToBox("Wizard");
-  addTextToBox("<p>You can see the range of your skill, you can hit at maximum 5 units in the green cross, click on the tile in front of enemy king to cast the fire ball.</p>");
+  addTextToBox("You can see the range of your skill, you can hit at maximum 5 units in the green cross, <b style=\"color:red;\">click on the tile</b> in front of enemy king to cast the fire ball.");
 }
 
 function w_instruction4(){
@@ -2989,7 +2989,7 @@ function w_instruction4(){
   });
   showButton();
   addTitleToBox("Wizard");
-  addTextToBox("<p>Good job! Now the enemy king is burned, and will lose health in each turn for the next five turns! </p>");
+  addTextToBox("<p>Good job! Now the enemy king is burned, and will lose health in each turn for the next 6 turns! </p>");
 }
 
 function w_instruction5(){
@@ -3002,7 +3002,7 @@ function w_instruction5(){
   });
     addTextToButton("Next");
   addTitleToBox("Wizard");
-  addTextToBox("<p>Excellent! Now you know how to use the wizard's skill.</p> <p>Try another unit by clicking on the corresponding card in the bottom left corner of the window. </p><p>Click 'Next' to play the next character</p>");
+  addTextToBox("<p>Excellent! Now you know how to use the wizard's skill.</p> <p>Try another unit by clicking on the corresponding card in the bottom left corner of the window. </p><b style=\"color:red;\">Click 'Next'</b> to play the next character");
   wizardDone = 1;
   toPlayList.splice(toPlayList.indexOf("wizard"),1);
   endCurrentUnitTutorial = true;
