@@ -614,7 +614,7 @@ function drawMenuDisplay(){
 
     displayWarningBox(function(){
         if (isSpectating) {
-            window.Location.href = "../interface/";
+            window.location.href = "../interface/";
             return;
         }
         quit_game();

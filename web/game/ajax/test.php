@@ -8,6 +8,12 @@ if (!$player = $result->fetch_object()) {
 }
 $room_id = $player->room_id;
 
+/* Get room */
+$result = $db->query("SELECT * FROM rooms WHERE room_id = {$room_id}");
+$room = $result->fetch_object();
+if ($result->num_rows == 0) {
+  exit_error($ERROR_NOT_IG); //room state isn't "in game"
+}
 //Delete all units
 $db->query("DELETE FROM buff_instances");
 $db->query("DELETE FROM units WHERE room_id = {$room_id}");
