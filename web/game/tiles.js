@@ -2,6 +2,7 @@ var ICON_SCALE_FACTOR = 0.65;
 var MOVEMENT_STEP = 6.5
 
 var stage = new createjs.Stage("gameCanvas");
+var isSpectating = false;
 
 var that = this;
 var team = 0;
@@ -254,7 +255,7 @@ function spawnUnit(data, isCreation, row, column){
 	chars.removeChild(spawnAnimation);
 		var spriteSheet = new createjs.SpriteSheet({
           	"images": [data.address],
-          	"frames": {"regX": 0, "height": 142, "count": 2, "regY": -10, "width": 113 },
+          	"frames": {"regX": 0, "height": 142, "count": 2, "regY": -30, "width": 113 },
           	"animations": {
             	"stand":[0,1]
           	},
@@ -385,6 +386,21 @@ function spawnUnit(data, isCreation, row, column){
 			framerate: 4
 		});
 
+		var moveSpriteSheet = new createjs.SpriteSheet({
+            "images": [data.move],
+            "frames": {"regX": 80, "height": 142, "count": 4, "regY": 100, "width": 142 },
+            "animations": {
+              "walk":[0,1,2,3]
+            },
+            framerate: 4
+	    });
+	    unit.moveAnimation = new createjs.Sprite(moveSpriteSheet, "walk");
+	    unit.moveAnimation.x = unit.x;
+	    unit.moveAnimation.y = unit.y;
+	    unit.moveAnimation.scaleX = 0.7;
+	    unit.moveAnimation.scaleY = 0.7;
+
+
 		// Configure the hp bar of the unit
 		hp_bar = new createjs.Shape();
 		hp_bar.x = unit.x - 40;
@@ -443,7 +459,7 @@ function spawnUnit(data, isCreation, row, column){
 
 
 function initGame() {
-	
+
 	createjs.Ticker.addEventListener("tick", keyEvent);
     this.document.onkeydown = keyEvent;
 	stage.enableMouseOver(20);
@@ -539,7 +555,7 @@ function initGame() {
 	stage.setChildIndex( chars, stage.getNumChildren()-1);
 
 	drawStatsDisplay();
-	drawUnitCreationMenu();
+    drawUnitCreationMenu();
 	drawBottomInterface();
 
 
@@ -597,7 +613,11 @@ function drawMenuDisplay(){
 	  quitIcon.addEventListener("click", function(event){
 
     displayWarningBox(function(){
-      quit_game();
+        if (isSpectating) {
+            window.Location.href = "../interface/";
+            return;
+        }
+        quit_game();
     },function(){
       removeWarningBox();
     });
@@ -794,6 +814,7 @@ function drawBottomInterface()  {
 
 
 function drawUnitCreationMenu() {
+    if (isSpectating) return;
 	var listOfSources = [];
 	listOfSources.push("graphics/card/knight_card.png");
 	listOfSources.push("graphics/card/archer_card.png");
@@ -860,7 +881,7 @@ function createFloatingCards(listOfSources, correspondingUnit) {
                 unitCards[i].price = 120;
                 unitCards[i].text = new createjs.Text("$ 120", "12px 'Arial'", "#ffffff");
 				unitCards[i].addEventListener("click", function(event) {
-                    if (team != turn || isInHighlight) return;
+                    if (team != turn || isInHighlight || isSpectating) return;
                     if (currentGold < unitCards[i].price) {
 
                         return;
@@ -881,7 +902,7 @@ function createFloatingCards(listOfSources, correspondingUnit) {
                 unitCards[i].price = 120;
                 unitCards[i].text = new createjs.Text("$ 120", "12px 'Arial'", "#ffffff");
 				unitCards[i].addEventListener("click", function(event) {
-                    if (team != turn || isInHighlight) return;
+                    if (team != turn || isInHighlight || isSpectating) return;
                     var spawnTiles = findAvailableAndNonAvailableSpawnTiles();
                     highlightArea(spawnTiles[0], "graphics/tile/green_tile.png", ["click"], [function(event) {
                         var tile = event.target;
@@ -896,7 +917,7 @@ function createFloatingCards(listOfSources, correspondingUnit) {
                 unitCards[i].price = 150;
                 unitCards[i].text = new createjs.Text("$ 150", "12px 'Arial'", "#ffffff");
 				unitCards[i].addEventListener("click", function(event) {
-                    if (team != turn || isInHighlight) return;
+                    if (team != turn || isInHighlight || isSpectating) return;
                     var spawnTiles = findAvailableAndNonAvailableSpawnTiles();
                     highlightArea(spawnTiles[0], "graphics/tile/green_tile.png", ["click"], [function(event) {
                         var tile = event.target;
@@ -911,7 +932,7 @@ function createFloatingCards(listOfSources, correspondingUnit) {
                 unitCards[i].price = 200;
                 unitCards[i].text = new createjs.Text("$ 200", "12px 'Arial'", "#ffffff");
                 unitCards[i].addEventListener("click", function(event) {
-                    if (team != turn || isInHighlight) return;
+                    if (team != turn || isInHighlight || isSpectating) return;
                     var spawnTiles = findAvailableAndNonAvailableSpawnTiles(15);
                     highlightArea(spawnTiles[0], "graphics/tile/green_tile.png", ["click"], [function(event) {
                         var tile = event.target;
@@ -926,7 +947,7 @@ function createFloatingCards(listOfSources, correspondingUnit) {
                 unitCards[i].price = 300;
                 unitCards[i].text = new createjs.Text("$ 300", "12px 'Arial'", "#ffffff");
                 unitCards[i].addEventListener("click", function(event) {
-                    if (team != turn || isInHighlight) return;
+                    if (team != turn || isInHighlight || isSpectating) return;
                     var spawnTiles = findAvailableAndNonAvailableSpawnTiles();
                     highlightArea(spawnTiles[0], "graphics/tile/green_tile.png", ["click"], [function(event) {
                         var tile = event.target;
@@ -973,7 +994,13 @@ function createNewUnit(unitType, row, column) {
 
 function addEventListenersToUnit(unit) {
     unit.addEventListener("click", function(event) {
-        console.log("isInHighlight : " + isInHighlight + "  isAttacking " + isAttacking + "     isCasting " + isCasting);
+
+            if (isSpectating) {
+                clearSelectionEffects();
+                displayStats(unit);
+                return;
+            }
+
             if (isInHighlight && !isAttacking && !isCasting){
                 console.log("yomama2");
                 return;
@@ -1008,6 +1035,7 @@ function addEventListenersToUnit(unit) {
                 archerTargets.push(unit.unit_id);
                 console.log("adding units with coordinates: (" + unit.row + " " + unit.column + ") to archer targets");
                 remainingTargets--;
+                // applyBuff(7, unit);
                 if (remainingTargets == 0) {
                     undoHighlights();
                     serverValidate("skill", selectedCharacter, archerTargets);
@@ -1076,6 +1104,7 @@ function markArcherTargets(event) {
     archerTargets.push(unit.unit_id);
     console.log("adding units with coordinates: (" + unit.row + " " + unit.column + ") to archer targets");
     remainingTargets--;
+    // applyBuff(7, unit);
     if (remainingTargets == 0) {
         undoHighlights();
         serverValidate("skill", selectedCharacter, archerTargets);
@@ -1083,6 +1112,7 @@ function markArcherTargets(event) {
 }
 
 function destroyGoldDisplay() {
+    if (isSpectating) return;
 	stage.removeChild(coin_pic);
 	stage.removeChild(currentGoldDisplay);
 }
@@ -1128,16 +1158,16 @@ function displayStats(unit) {
 	bmp.y = 10;
 	bmp.x = 20; // 226
 	//stage.update();
-	var text = unit.team == team ? new createjs.Text("HP : " + getHealth(unit) + "/" + getMaxHealth(unit) + "\n" +
-		"ATK : "  + getAttack(unit) + "\n" + "RNG : " + unit.attackRange + "\n" +
+	var text = (unit.team == team || team == -1) ? new createjs.Text("HP : " + getHealth(unit) + "/" + getMaxHealth(unit) + "\n" +
+		"ATTACK : "  + getAttack(unit) + "\n" + "ATTACK RANGE : " + unit.attackRange + "\n" +
 		"SKILL : " + unit.skill +  "\n" + "CD: " + unit.skillCoolDown  + "\n" +
-		"MOV. RANGE : " + unit.moveRange + "\n" +
-		"LCK : " + getLuck(unit), "15px Arial", "#000000")
+		"MOVE RANGE : " + unit.moveRange + "\n" +
+		"LUCK : " + getLuck(unit), "15px Arial", "#000000")
 	: new createjs.Text("HP : " + getHealth(unit) + "/" + getMaxHealth(unit) + "\n" +
-		"ATK : "  + "???"  + "\n" + "RNG : " + "???" + "\n" +
+		"ATTACK : "  + "???"  + "\n" + "ATTACK RANGE : " + "???" + "\n" +
 		"SKILL : " + "???"  + "\n" +"CD: " + "???" + "\n" +
-		"MOV. RANGE : " + "???" + "\n" +
-		"LCK : " + "???", "15px Arial", "#000000");
+		"MOVE RANGE : " + "???" + "\n" +
+		"LUCK : " + "???", "15px Arial", "#000000");
 	text.y = 25;
 	text.x = 156;
 	text.textBasline = "alphabetic";
@@ -1154,8 +1184,9 @@ function drawGame() {
 		$.each(units, function(i, value) {
 			chars.addChild(value);
 			chars.addChild(value.hp_bar);
-			sortIndices(value);
 		});
+
+		orderUnits();
 
 		changed = true;
 	});	
@@ -1459,6 +1490,9 @@ function clearSelectionEffects() {
     destroyStats();
     isAttacking = false;
     isCasting = false;
+    // for (var i = 0; i < units.length; i++) {
+    //     removeBuff(7, units[i]);
+    // }
 }
 
 function destroyStats() {
@@ -1499,8 +1533,8 @@ function undoHighlights() {
 
 // Move the player by a fixed amount
 function moveUnit() {
-  var playerX = movingUnit.x,
-      playerY = movingUnit.y,
+  var playerX = movingUnit.moveAnimation.x,
+      playerY = movingUnit.moveAnimation.y,
       destX = path[0][0],
       destY = path[0][1];
 
@@ -1509,15 +1543,19 @@ function moveUnit() {
 
 
   if (playerX < destX && playerY < destY) {
+  	movingUnit.moveAnimation.scaleX = -0.7;
     coefficientX = 1.0;
     coefficientY = 1.0;
   } else if (playerX > destX && playerY > destY) {
+  	movingUnit.moveAnimation.scaleX = 0.7;
     coefficientX = -1.0;
     coefficientY = -1.0;
   } else if (playerX < destX && playerY > destY) {
+  	movingUnit.moveAnimation.scaleX = -0.7;
     coefficientX = 1.0;
     coefficientY = -1.0;
   } else if (playerX > destX && playerY < destY) {
+  	movingUnit.moveAnimation.scaleX = 0.7;
     coefficientX = -1.0;
     coefficientY = 1.0;
   } 
@@ -1528,13 +1566,15 @@ function moveUnit() {
   var stepY = coefficientY * MOVEMENT_STEP / 2;
 
 
-  movingUnit.x += stepX;
-  movingUnit.y += stepY;
+  movingUnit.moveAnimation.x += stepX;
+  movingUnit.moveAnimation.y += stepY;
   movingUnit.hp_bar.x += stepX;
   movingUnit.hp_bar.y += stepY;
 
-  draggable.x = draggable.x - stepX;
-  draggable.y = draggable.y - stepY;
+  if (team == turn) {
+    draggable.x = draggable.x - stepX;
+    draggable.y = draggable.y - stepY;
+  }
   for (var i = 0; i < movingUnit.buffs.length; i++) {
     movingUnit.buffs[i][2].x += stepX;
     movingUnit.buffs[i][2].y += stepY;
@@ -1544,8 +1584,14 @@ function moveUnit() {
   if ((playerX === destX) && (playerY === destY)) {
       path.splice(0,1);
       if (path.length == 0) {
+      	movingUnit.x = movingUnit.moveAnimation.x;
+      	movingUnit.y = movingUnit.moveAnimation.y;
 
-      	sortIndices(movingUnit);
+      	console.log(chars.getChildIndex(movingUnit.moveAnimation));
+      	chars.removeChild(movingUnit.moveAnimation);
+      	chars.addChild(movingUnit);
+
+      	orderUnits();
         movingPlayer = false;
         if (undo){
         	movingUnit.canMove = 1;
@@ -1570,9 +1616,9 @@ function moveUnit() {
 
 function sortIndices(unit) {
 	$.each(units, function(i, value) {
-		if (unit.y > value.y) {
-			if (chars.getChildIndex(unit) < chars.getChildIndex(value)) {
-				chars.swapChildren(unit, value);
+		if (unit.moveAnimation.y > value.y) {
+			if (chars.getChildIndex(unit.moveAnimation) < chars.getChildIndex(value)) {
+				chars.swapChildren(unit.moveAnimation, value);
 			}
 			if (chars.getChildIndex(unit.hp_bar) < chars.getChildIndex(value.hp_bar)) {
 				chars.swapChildren(unit.hp_bar, value.hp_bar);
@@ -1580,15 +1626,15 @@ function sortIndices(unit) {
 			if (chars.getChildIndex(unit.hp_bar) < chars.getChildIndex(value)) {
 				chars.swapChildren(unit.hp_bar, value);
 			}
-		} else if (unit.y < value.y) {
-			if (chars.getChildIndex(unit) > chars.getChildIndex(value)) {
-				chars.swapChildren(unit, value);
+		} else if (unit.moveAnimation.y < value.y) {
+			if (chars.getChildIndex(unit.moveAnimation) > chars.getChildIndex(value)) {
+				chars.swapChildren(unit.moveAnimation, value);
 			}
 			if (chars.getChildIndex(unit.hp_bar) > chars.getChildIndex(value.hp_bar)) {
 				chars.swapChildren(unit.hp_bar, value.hp_bar);
 			}
-			if (chars.getChildIndex(unit) > chars.getChildIndex(value.hp_bar)) {
-				chars.swapChildren(unit, value.hp_bar);
+			if (chars.getChildIndex(unit.moveAnimation) > chars.getChildIndex(value.hp_bar)) {
+				chars.swapChildren(unit.moveAnimation, value.hp_bar);
 			}
 		}
 	});
@@ -2061,6 +2107,10 @@ function moveCharacter(unit) {
 		var tile = event.target;
 		findPath(fromX, fromY, tile.row, tile.column, ignoreObstacle);
 
+		var index = chars.getChildIndex(unit);
+	    chars.removeChild(unit);
+	    chars.addChildAt(unit.moveAnimation, index);
+
 		serverValidate("move", selectedCharacter, [path]);
 	}]);
 }
@@ -2093,7 +2143,7 @@ function handleServerReply(data) {
         }
     }
 
-        if (fuckingAttackCounter == 2) {
+    if (fuckingAttackCounter == 2) {
         handleAttack2(fuckingAttackActionList);
     }
 
@@ -2417,6 +2467,9 @@ function handleMove(action) {
     console.log("handleMove");
 	blockMaps[fromRow][fromCol] = 0;
     var unit = findUnitById(action.unit_id);
+    var index = chars.getChildIndex(unit);
+    chars.removeChild(unit);
+    chars.addChildAt(unit.moveAnimation, index);
 	move(unit);
 	blockMaps[toRow][toCol] = 1;
     unit.canMove = 0;
