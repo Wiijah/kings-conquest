@@ -10,4 +10,6 @@ $LOGIN_FORM_DIR = "menu";
 $DOMAIN = "localhost/kingsconquest/";
 
 $DEFAULT_COUNTDOWN = 90;
+
+$COUNTDOWNS = array(45, 60, 90, 120);
 ?>
