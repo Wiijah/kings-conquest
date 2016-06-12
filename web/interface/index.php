@@ -76,6 +76,11 @@ var room_id = 0;
 <br />
 
 <div class='btn lightbox_btn js_link' data-href='avatar'>Customise Avatar</div>
+<?php
+if ($user->member_type != 'guest') {
+  echo "<div class='btn lightbox_btn js_link' data-href='settings'>Account Settings</div>";
+}
+?>
 </td></tr>
 <?php echo genProf($user); ?>
 </table>
