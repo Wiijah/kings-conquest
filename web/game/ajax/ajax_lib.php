@@ -21,18 +21,21 @@ if (!isset($_SESSION['id'])) {
 session_write_close();
 
 /* Get room participant and room ID */
-$result = $db->query("SELECT * FROM room_participants WHERE user_id = '{$user->id}' AND event = ''");
+$result = $db->query("SELECT * FROM room_participants WHERE user_id = '{$user->id}' AND event = '' ORDER BY part_id DESC LIMIT 1");
 if (!$player = $result->fetch_object()) {
- exit_error($ERROR_NOT_IG); //Error, not in room
+  exit_error($ERROR_NOT_IG); //Error, not in room
 }
 $room_id = $player->room_id;
 
+/* Exit if spectator tries to do a player action */
+if (!isset($spectate_page) && $player->colour == "spectator") {
+  exit_error($ERROR_BAD_INPUT);
+}
 
-
-/* Get room participant and room ID */
-$result = $db->query("SELECT * FROM room_participants WHERE user_id != '{$user->id}' AND event = '' AND room_id = '{$room_id}'");
+/* Get enemy room participant  */
+$result = $db->query("SELECT * FROM room_participants WHERE user_id != '{$user->id}' AND event = '' AND room_id = '{$room_id}' ORDER BY part_id DESC LIMIT 1");
 if (!$opp_player = $result->fetch_object()) {
- exit_error($ERROR_NOT_IG); //Error, not in room
+  exit_error($ERROR_NOT_IG); //Error, not in room
 }
 
 /* Get room */

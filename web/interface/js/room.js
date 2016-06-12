@@ -13,13 +13,39 @@ $(document).ready(function() {
     room_start();
   });
 
-   /* Attempt to join room (before entering pass - if any that is) */
+  $('#select_map').change(room_map);
+  $('#select_countdown').change(room_limit);
+
+  /* Attempt to join room (before entering pass - if any that is) */
   $('body').on('click', '.kick_player', function() {
     var target_id = $(this).attr("data-user-id");
     room_kick(target_id);
   });
 });
 
+function room_map() {
+  fs_load();
+  var map_id = $("#select_map").val();
+  quickPost("ajax/room_map", {room_id: room_id, map_id: map_id}, function(data, status) {
+    if (data.kc_error !== undefined) {
+      lightbox_alert("Error", data.kc_error);
+      return;
+    }
+    fs_unload();
+  });
+}
+
+function room_limit() {
+  fs_load();
+  var room_countdown = $("#select_countdown").val();
+  quickPost("ajax/room_countdown", {room_id: room_id, room_countdown: room_countdown}, function(data, status) {
+    if (data.kc_error !== undefined) {
+      lightbox_alert("Error", data.kc_error);
+      return;
+    }
+    fs_unload();
+  });
+}
 
 function room_kick(target_id) {
   console.log(target_id);
@@ -110,6 +136,8 @@ function room_refresh() {
     }
     $("#room_players").html(players_html);
     $("#info_num_players").html(players.length+"/"+max_players);
+    $("#map").html(data.map_name);
+    $("#countdown").html(data.default_countdown + " seconds");
   });
 }
 

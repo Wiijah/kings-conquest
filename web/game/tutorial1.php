@@ -53,7 +53,7 @@
       <img src="./i_icon.png" style="line-height: 1px; vertical-align: bottom; margin-right: 5px" height="20" width="20" />Tutorial 1 : Basics
     </div>
     <div id="box_body">
-      Welcome to King's Conquest. Your top priority is to kill the enemy's king to win the game. In this tutorial, you will learn how to move a unit and attack an enemy<br /><br />
+      <b style="color:red;">Welcome to King's Conquest.</b> Your top priority is to kill the enemy's king to win the game. In this tutorial, you will learn how to move a unit and attack an enemy<br /><br />
     </div>
     <div id="box_foot">
       <button type="button" id="actionButton" class="btn" ng-click="">OK</button>
@@ -80,7 +80,7 @@
       <img src="./finishTutorial.png" style="line-height: 1px; vertical-align: bottom; margin-right: 5px" height="20" width="20" />Congratulations
     </div>
     <div id="box3_body">
-      <p>Well Done! Now you know how the move and attack works in King's Conquest. In the next Chapter, you will learn how to build your own army to fight against the enemy. </p><p>Click 'Next' to Tutorial2</p>
+      <b style="color:red;">Well Done!</b> <br><br>Now you know how the move and attack works in King's Conquest. In the next Chapter, you will learn the skills of different units. <br><br><b style="color:black;">Click 'Next' to Tutorial2</b>
     </div>
     <div id="box_foot">
       <button type="button" id="quitButton" class="btn2" ng-click="">Quit</button>

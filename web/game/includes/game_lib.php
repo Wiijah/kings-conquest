@@ -3,7 +3,7 @@
 require_once '../../interface/includes/lib.php';
 
 /* Team enumerations */
-$TEAM_COLOURS = array("red" => 0, "blue" => 1);
+$TEAM_COLOURS = array("red" => 0, "blue" => 1, "spectator" => -1);
 $TEAM_RED = 0;
 $TEAM_BLUE = 1;
 
@@ -36,6 +36,9 @@ function totem($x, $y) {
 function update_unit($unit, $canMove = -1, $canAttack = -1, $outOfMoves = -1, $skillCoolDown = -1) {
   global $db;
 
+  if (!$unit) {
+    return '{"action_type" : "nothing"}';
+  }
   if ($canMove == -1) $canMove = $unit->canMove;
   if ($canAttack == -1) $canAttack = $unit->canAttack;
   if ($outOfMoves == -1) $outOfMoves = $unit->outOfMoves;
@@ -64,19 +67,30 @@ function create_unit($name, $x, $y, $team) {
 
 function init_units() {
   global $TEAM_COLOURS;
-  /* Red Team */
-  create_unit("king", 3, 2, $TEAM_COLOURS['red']);
-  create_unit("red castle", 0, 0, $TEAM_COLOURS['red']);
-  create_unit("wizard", 3, 3, $TEAM_COLOURS['red']);
-  create_unit("knight", 0, 2, $TEAM_COLOURS['red']);
-  create_unit("archer", 0, 3, $TEAM_COLOURS['red']);
+  global $room;
 
-  /* Blue Team */
-  create_unit("king", 9, 11, $TEAM_COLOURS['blue']);
-  create_unit("blue castle", 12, 13, $TEAM_COLOURS['blue']);
-  create_unit("wizard", 9, 10, $TEAM_COLOURS['blue']);
-  create_unit("knight", 12, 10, $TEAM_COLOURS['blue']);
-  create_unit("archer", 12, 11, $TEAM_COLOURS['blue']);
+  if ($room->map_id == 1) {
+    /* Red Team */
+    create_unit("king", 3, 2, $TEAM_COLOURS['red']);
+    create_unit("red castle", 0, 0, $TEAM_COLOURS['red']);
+    create_unit("wizard", 3, 3, $TEAM_COLOURS['red']);
+    create_unit("knight", 0, 2, $TEAM_COLOURS['red']);
+    create_unit("archer", 0, 3, $TEAM_COLOURS['red']);
+    /* Blue Team */
+    create_unit("king", 9, 11, $TEAM_COLOURS['blue']);
+    create_unit("blue castle", 12, 13, $TEAM_COLOURS['blue']);
+    create_unit("wizard", 9, 10, $TEAM_COLOURS['blue']);
+    create_unit("knight", 12, 10, $TEAM_COLOURS['blue']);
+    create_unit("archer", 12, 11, $TEAM_COLOURS['blue']);
+  } else {
+
+    /* Red Team */
+    create_unit("king", 11, 2, $TEAM_COLOURS['red']);
+    create_unit("red castle", 11, 1, $TEAM_COLOURS['red']);
+    /* Blue Team */
+    create_unit("king", 2, 11, $TEAM_COLOURS['blue']);
+    create_unit("blue castle", 1, 11, $TEAM_COLOURS['blue']);
+  }
 }
 
 

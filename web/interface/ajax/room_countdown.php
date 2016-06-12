@@ -4,7 +4,7 @@ require_once 'ajax_common.php';
 require_once '../../game/includes/game_lib.php';
 
 $room_id = secureInt($_POST['room_id']);
-$map_id = secureInt($_POST['map_id']);
+$room_countdown = secureInt($_POST['room_countdown']);
 
 $result = $db->query("SELECT * FROM rooms WHERE room_id = {$room_id}");
 $room = $result->fetch_object();
@@ -21,12 +21,11 @@ if (!$part = $result->fetch_object()) {
   kc_error("You are not in this room.");
 }
 
-$result = $db->query("SELECT * FROM maps WHERE map_id = '{$map_id}'");
-if (!$map = $result->fetch_object()) {
-  kc_error("You have selected an invalid map.");
+if (!in_array($room_countdown, $COUNTDOWNS)) {
+  kc_error("You have selected an invalid time limit.");
 }
 
-$db->query("UPDATE rooms SET map_id = '{$map_id}' WHERE room_id = '{$room_id}'");
+$db->query("UPDATE rooms SET default_countdown = '{$room_countdown}' WHERE room_id = '{$room_id}'");
 $db->query("UPDATE room_participants SET state = 'notready' WHERE room_id = '{$room_id}' AND state = 'ready'");
 
 echo $AJAX_SUCCESS;

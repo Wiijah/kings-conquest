@@ -1,10 +1,11 @@
 <?php
+$spectate_page = true;
 require_once 'ajax_common.php';
 
 $out = "{";
 
 /* Print map */
-$result = $db->query("SELECT * FROM maps WHERE map_id = 1");
+$result = $db->query("SELECT * FROM maps WHERE map_id = '{$room->map_id}'");
 $map = $result->fetch_object();
 
 $out .= jsonPair("main", $map->points).", ";
@@ -87,5 +88,7 @@ $out .= '}';
   
 /* Close JSON with curly brace and print the whole JSON */
 $out .= "}";
+
+$db->query("INSERT INTO opp (room_id, init, json) VALUES ('{$room_id}', '1', '{$out}')");
 echo $out;
 ?>

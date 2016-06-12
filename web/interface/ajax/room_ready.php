@@ -12,8 +12,12 @@ if ($ready != "ready" && $ready != "notready") {
 
 $result = $db->query("SELECT * FROM rooms WHERE room_id = {$room_id}");
 $room = $result->fetch_object();
-if ($result->num_rows == 0 || $room->state == 'deleted') {
-  kc_error("This room has been deleted.");
+if ($result->num_rows == 0) {
+  kc_error("This room is already deleted.");
+}
+
+if ($room->state != 'pregame') {
+  kc_error("This room is not in the pregame state.");
 }
 
 $result = $db->query("SELECT * FROM room_participants WHERE user_id = '{$user->id}' AND room_id = '{$room_id}' AND event = ''");

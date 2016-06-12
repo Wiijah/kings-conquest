@@ -7,7 +7,7 @@ $close = 1;
 
 $room_id = secureInt($_POST['id']);
 
-$result = $db->query("SELECT * FROM rooms WHERE room_id = {$room_id}");
+$result = $db->query("SELECT * FROM rooms JOIN maps USING (map_id) WHERE room_id = {$room_id}");
 $room = $result->fetch_object();
 if ($result->num_rows == 0 || $room->state == 'deleted' || $room->state == 'ended') {
   die('{"kc_error":"This room no longer exists."}');
@@ -41,6 +41,7 @@ while ($player = $result->fetch_object()) {
 
 $out .= "]"; //end of array of players
 
+$out .= ', "map_name" : "'.$room->map_name.'", "default_countdown" : '.$room->default_countdown;
 
 $out .= "}"; //end of whole JSON object
 echo $out;

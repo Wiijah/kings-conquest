@@ -14,7 +14,7 @@ if ($old_turn != $team && $is_countdown != 1) {
   exit_error(134);
 }
 
-$countdown = $time + $DEFAULT_COUNTDOWN;
+$countdown = $time + $room->default_countdown;
 
 $new_turn = ($old_turn + 1) % 2;
 
