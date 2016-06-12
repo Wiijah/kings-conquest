@@ -2873,7 +2873,7 @@ function gold_instruction(){
   });
   showMaskBox();
   addTitleToBox("<img src=\"./i_icon.png\" style=\"line-height: 1px; vertical-align: bottom; margin-right: 5px\" height=\"20\" width=\"20\" />Gold System");
-  addTextToBox("<p>You can find the current gold you have on the top right Cornor.</p><p>Each player start with 500 gold and will gain 10 gold each turn.</p><p>You can use gold to hire units to fight for you.</p>");
+  addTextToBox("You can find <b style=\"color:black;\">the current gold</b> you have on the top right Cornor.</p><p>Each player start with 500 gold and will gain 10 gold each turn.</p><p>You can use gold to hire units to fight for you.</p>");
   resetTheGame();
   spawnUnit(that.classStats.kingClass, true, 2, 6, 1);
   clearSelectionEffects();
@@ -2934,7 +2934,7 @@ function clickCard_instruction(){
     clickCard_instruction();
   });
   addTitleToBox("Choose the place to spawn the unit");
-  addTextToBox("<p>The green tiles are the position that you can choose to spawn your unit. In the real game, a good initial formation might bring you a huge advantage.</p><p>Click 'here' to spawn your dragon and give the enemies a severe AOE damage.</p>");
+  addTextToBox("<b>The green tiles are the position that you can choose to spawn your unit.</b> In the real game, a good initial formation might bring you a huge advantage.</p><b style=\"color:red;\">Click 'here'</b> to spawn your dragon and give the enemies a severe AOE damage.");
   removeAllPointer();
   addPointerToTile(5,2);
 }
@@ -2947,7 +2947,7 @@ function clickDragon(){
     clickCard_instruction();
   });
   addTitleToBox("<img src=\"./i_icon.png\" style=\"line-height: 1px; vertical-align: bottom; margin-right: 5px\" height=\"20\" width=\"20\" />Check enemy stats before attack");
-  addTextToBox("<p>Good job. Click the dragon to check its damage. </p>");
+  addTextToBox("Good job. <b style=\"color:red;\">Click the dragon</b> to check its damage.");
   removeAllPointer();
 }
 
@@ -2957,7 +2957,7 @@ function checkingDragon(){
 
   });
   addTitleToBox("<img src=\"./i_icon.png\" style=\"line-height: 1px; vertical-align: bottom; margin-right: 5px\" height=\"20\" width=\"20\" />Check enemy stats before attack");
-  addTextToBox("<p>You can see your dragon can deal 35 damages when attack. Before you attack it's better to check the remaining HP of enemy units</p><p>Click the enemy unit to see their stats</p>")
+  addTextToBox("You can see your dragon can deal <b style=\"color:red;\">35 damages</b> when attack. Before you attack it's better to check the remaining HP of enemy units<p>Click the enemy unit to see their stats</p>")
   removeAllPointer();
 }
 
@@ -2974,7 +2974,7 @@ function checking(){
   stage.mouseChildren = false;
   addTextToButton("Next");
   addTitleToBox("Check enemy stats before attack");
-  addTextToBox("<p>Each knight in enemy team has 40HP, you know your dragon's AOE damage is 35 to each unit if not critical. You almost could kill all of them in one shot.</p><p>Can you find anyway to increase your attack damage?</p>");
+  addTextToBox("Each knight in enemy team has <b style=\"color:black;\">40HP</b>, you know your dragon's AOE damage is 35 to each unit if not critical. You almost could kill all of them in one shot.</p><p>Can you find anyway to increase your attack damage?</p>");
   removeAllPointer();
 }
 var firstTimeClickKing = true;
@@ -2987,7 +2987,7 @@ function checking2(){
   stage.mouseChildren = true;
   addTextToBox("Next");
   addTitleToBox("Attack Combo");
-  addTextToBox("<p>Yeah! I know you got it. Use your king's skill to increase attack before casting dragon skill.</p><p>Click the King to use his skill</p>");
+  addTextToBox("<p>Yeah! I know you got it. Use your <b>king's skill to increase attack</b> before casting dragon skill.</p><b style=\"color:red;\">Click the King to use his skill</b>");
   removeAllPointer();
   addPointerToPlayerUnit();
 }
@@ -2998,7 +2998,7 @@ function clickKing(){
     clickKing();
   });
   addTitleToBox("Attack Combo");
-  addTextToBox("<p>Yeah! I know you got it. Use your king's skill to increase attack before casting dragon skill.</p><p>Click the King to use his skill</p>");
+  addTextToBox("<p>Yeah! I know you got it. Use your king's skill to increase attack before casting dragon skill.</p><b style=\"color:red;\">Click the King to use his skill</b>");
   removeAllPointer();
 }
 var useKingSkill = false;
@@ -3008,7 +3008,7 @@ function clickKingSkill(){
     clickKing();
   });
   addTitleToBox("Attack Combo");
-  addTextToBox("<p>Well done! Now let's casting the Icy Wind on enemy knights.</p><p>Click the dragon to use its skill</p>");
+  addTextToBox("<p>Well done! Now let's casting the Icy Wind on enemy knights.</p><b style=\"color:red;\">Click the dragon</b> to use its skill");
   removeAllPointer();
   addPointerToPlayer2Unit();
 }
@@ -3024,7 +3024,7 @@ function clickDragonSkill(){
     clickCard_instruction();
   });
   addTitleToBox("Attack Enemies");
-  addTextToBox("<p>Good job. Now, Click the dragon and use its skill</p>");
+  addTextToBox("Good job. Now, <b style=\"color:red;\">Click the dragon</b> and use its skill");
 }
 function clickToCastIcyWind(){
   removeBox();
@@ -3032,7 +3032,7 @@ function clickToCastIcyWind(){
     clickCard_instruction();
   });
   addTitleToBox("Attack Enemies");
-  addTextToBox("<p>Try to attack as many units as you can. Click here to cast your skill</p>");
+  addTextToBox("Try to attack as many units as you can. <b style=\"color:red;\">Click here </b>to cast your skill");
   removeAllPointer();
   pv_spritesheet = new createjs.SpriteSheet({
             "images": ["graphics/tutorial/pointerV.png"],
@@ -3089,7 +3089,7 @@ function moveDragon(){
   stage.mouseChildren = true;
   num = 4;
   addTitleToBox("Final Hit!");
-  addTextToBox("<p>Move your dragon and give enemy king the final hit</p>");
+  addTextToBox("<b>Move your dragon</b> and give enemy king the final hit</p>");
 }
 
 
@@ -3101,7 +3101,7 @@ function finishMoving(){
   });
   removeAllPointer();
   addTitleToBox("Final Hit!");
-  addTextToBox("<p>Move your dragon and give enemy king the final hit</p>");
+  addTextToBox("Move your dragon and <b>give enemy king the final hit</b>");
   lastAttack = true;
 }
 

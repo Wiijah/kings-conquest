@@ -53,7 +53,7 @@
       <img src="./i_icon.png" style="line-height: 1px; vertical-align: bottom; margin-right: 5px" height="20" width="20" />Tutorial 3 : Advanced
     </div>
     <div id="box_body">
-      Now you are familiar with all units. However, in King's Conquest, the battle is not just between 2 units. In this tutorial, you will learn how to create your own army, any fight with the enemy units. <br /><br />
+      Now you are familiar with all units. However, in King's Conquest, the battle is not just between 2 units. In this tutorial, you will learn how to <b>create your own army</b>, any fight with the enemy units. <br /><br />
     </div>
     <div id="box_foot">
       <button type="button" id="actionButton" class="btn" ng-click="">Next</button>
