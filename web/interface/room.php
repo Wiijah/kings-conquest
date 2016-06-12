@@ -36,12 +36,14 @@ $isOwner = $room->user_id == $user->id;
 $maps = "";
 $result = $db->query("SELECT * FROM maps ORDER BY map_id ASC");
 while ($fetch = $result->fetch_object()) {
-  $maps .= "<option value='{$fetch->map_id}'>{$fetch->map_name}</option>";
+  $selected = $fetch->map_id == $room->map_id ? " selected" : "";
+  $maps .= "<option value='{$fetch->map_id}'{$selected}>{$fetch->map_name}</option>";
 }
 
 $countdowns = "";
 foreach ($COUNTDOWNS as $value) {
-  $countdowns .= "<option value='{$value}'>{$value} seconds</option>";
+  $selected = $room->default_countdown == $value ? " selected" : "";
+  $countdowns .= "<option value='{$value}'{$selected}>{$value} seconds</option>";  
 }
 
 ?>
