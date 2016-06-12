@@ -2184,7 +2184,7 @@ function handleServerReply(data) {
             case "game_end":
                 handleGameEnd(action);
                 break;
-            case default:
+            default:
                 console.log("Yo wot alan");
                 return;
         }
