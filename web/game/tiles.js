@@ -1008,6 +1008,7 @@ function addEventListenersToUnit(unit) {
                 archerTargets.push(unit.unit_id);
                 console.log("adding units with coordinates: (" + unit.row + " " + unit.column + ") to archer targets");
                 remainingTargets--;
+                // applyBuff(7, unit);
                 if (remainingTargets == 0) {
                     undoHighlights();
                     serverValidate("skill", selectedCharacter, archerTargets);
@@ -1076,6 +1077,7 @@ function markArcherTargets(event) {
     archerTargets.push(unit.unit_id);
     console.log("adding units with coordinates: (" + unit.row + " " + unit.column + ") to archer targets");
     remainingTargets--;
+    // applyBuff(7, unit);
     if (remainingTargets == 0) {
         undoHighlights();
         serverValidate("skill", selectedCharacter, archerTargets);
@@ -1459,6 +1461,9 @@ function clearSelectionEffects() {
     destroyStats();
     isAttacking = false;
     isCasting = false;
+    // for (var i = 0; i < units.length; i++) {
+    //     removeBuff(7, units[i]);
+    // }
 }
 
 function destroyStats() {
@@ -2088,7 +2093,7 @@ function handleServerReply(data) {
         }
     }
 
-        if (fuckingAttackCounter == 2) {
+    if (fuckingAttackCounter == 2) {
         handleAttack2(fuckingAttackActionList);
     }
 
