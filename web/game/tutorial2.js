@@ -187,6 +187,7 @@ function turnStartPhase() {
                 }, 1000);
             }
             if (value.buffs[j][0] === 6) {
+
                 chars.removeChild(ice);
                 value.outOfMoves = 1;
                 var ice = new createjs.Sprite(value.forzenEffect, "ice");
@@ -275,6 +276,12 @@ function turnStartPhase() {
     setTimeout(function(){
       findPath(fromX, fromY, toX, toY);
       blockMaps[fromX][fromY] = 0;
+
+    chars.removeChild(enemyUnit);
+    draggable.addChild(enemyUnit.moveAnimation);
+    enemyUnit.moveAnimation.scaleX = -0.7;
+
+
       move();
       clearSelectionEffects();
       enemyUnit.row = toX;
@@ -362,7 +369,7 @@ function spawnUnit(data, isCreation, row, column, team){
 
     var spriteSheet = new createjs.SpriteSheet({
             "images": [data.address],
-            "frames": {"regX": 0, "height": 142, "count": 2, "regY": -10, "width": 113 },
+            "frames": {"regX": 0, "height": 142, "count": 2, "regY": -30, "width": 113 },
             "animations": {
               "stand":[0,1]
             },
@@ -500,6 +507,23 @@ function spawnUnit(data, isCreation, row, column, team){
     unit.skill_no = data.skill_no;
     unit.buffs = [];
     unit.buff_icons = [];
+
+//MOVE!!!
+      var moveSpriteSheet = new createjs.SpriteSheet({
+            "images": [data.move],
+            "frames": {"regX": 80, "height": 142, "count": 4, "regY": 100, "width": 142 },
+            "animations": {
+              "walk":[0,1,2,3]
+            },
+            framerate: 4
+    });
+    unit.moveAnimation = new createjs.Sprite(moveSpriteSheet, "walk");
+    unit.moveAnimation.x = unit.x;
+    unit.moveAnimation.y = unit.y;
+    unit.moveAnimation.scaleX = 0.7;
+    unit.moveAnimation.scaleY = 0.7;
+
+
 
     // Configure the hp bar of the unit
     hp_bar = new createjs.Shape();
@@ -1081,6 +1105,7 @@ function addEventListenersToUnit(unit) {
             if (unit.team == 0 && isDisplayingMenu && !endCurrentUnitTutorial) {
               return;
             }
+            if (endCurrentUnitTutorial) return;
             if (unit.team == 1 && unit.address == "graphics/spritesheet/stand/ss_king_stand.png" && firstClickUnit) {
               firstClickUnit = false;
               chars.removeChild(pointerVertical);
@@ -1846,13 +1871,14 @@ function undoHighlights() {
 
 // Move the player by a fixed amount
 function movePlayer() {
+  //MOVE!!!
   if (turn) {
-    var playerX = selectedCharacter.x;
-      playerY = selectedCharacter.y;
+    var playerX = selectedCharacter.moveAnimation.x;
+      playerY = selectedCharacter.moveAnimation.y;
   } else {
-    var playerX = enemyUnit.x;
-    playerY = enemyUnit.y;
     selectedCharacter = enemyUnit;
+    var playerX = selectedCharacter.moveAnimation.x;
+    playerY = selectedCharacter.moveAnimation.y;
   }
   
       destX = path[0][0],
@@ -1882,9 +1908,9 @@ function movePlayer() {
   var stepX = coefficientX * MOVEMENT_STEP;
   var stepY = coefficientY * MOVEMENT_STEP / 2;
 
-
-  selectedCharacter.x += stepX;
-  selectedCharacter.y += stepY;
+  //MOVE!!!
+  selectedCharacter.moveAnimation.x += stepX;
+  selectedCharacter.moveAnimation.y += stepY;
   selectedCharacter.hp_bar.x += stepX;
   selectedCharacter.hp_bar.y += stepY;
 
@@ -1899,6 +1925,11 @@ function movePlayer() {
   if ((playerX === destX) && (playerY === destY)) {
       path.splice(0,1);
       if (path.length == 0) {
+        //MOVE!!!
+        selectedCharacter.x = selectedCharacter.moveAnimation.x;
+      selectedCharacter.y = selectedCharacter.moveAnimation.y;
+      draggable.removeChild(selectedCharacter.moveAnimation);
+      draggable.addChild(selectedCharacter);
 
         sortIndices(selectedCharacter);
         movingPlayer = false;
@@ -2445,6 +2476,11 @@ function moveCharacter(unit) {
     var tile = event.target;
     findPath(fromX, fromY, tile.row, tile.column);
     blockMaps[fromX][fromY] = 0;
+
+    chars.removeChild(unit);
+    draggable.addChild(unit.moveAnimation);
+
+
     move();
     blockMaps[tile.row][tile.column] = 1;
     selectedCharacter.row = tile.row;

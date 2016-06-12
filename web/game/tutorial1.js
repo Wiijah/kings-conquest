@@ -294,7 +294,7 @@ function spawnUnit(data, isCreation, row, column, team){
 
     var spriteSheet = new createjs.SpriteSheet({
             "images": [data.address],
-            "frames": {"regX": 0, "height": 142, "count": 2, "regY": -10, "width": 113 },
+            "frames": {"regX": 0, "height": 142, "count": 2, "regY": -30, "width": 113 },
             "animations": {
               "stand":[0,1]
             },
@@ -303,6 +303,7 @@ function spawnUnit(data, isCreation, row, column, team){
 
     var unit = new createjs.Sprite(spriteSheet, "stand");
 
+    //move!
     
     createjs.Ticker.timingMode = createjs.Ticker.RAF; 
     createjs.Ticker.addEventListener("tick", stage);
@@ -312,6 +313,10 @@ function spawnUnit(data, isCreation, row, column, team){
     unit.attack = data.attack;
     unit.base_attack = unit.attack;
     unit.luck = data.luck;
+
+
+    //unit = unit.moveAnimation;
+
 
     var spawnSpriteSheet = new createjs.SpriteSheet({
           "images": ["graphics/spritesheet/special_unit/ss_unit_creation.png"],
@@ -419,6 +424,19 @@ function spawnUnit(data, isCreation, row, column, team){
     unit.buffs = [];
     unit.buff_icons = [];
 
+
+     var moveSpriteSheet = new createjs.SpriteSheet({
+            "images": [data.move],
+            "frames": {"regX": 80, "height": 142, "count": 4, "regY": 100, "width": 142 },
+            "animations": {
+              "walk":[0,1,2,3]
+            },
+            framerate: 4
+    });
+    unit.moveAnimation = new createjs.Sprite(moveSpriteSheet, "walk");
+    unit.moveAnimation.x = unit.x;
+    unit.moveAnimation.y = unit.y;
+
     // Configure the hp bar of the unit
     hp_bar = new createjs.Shape();
     hp_bar.x = unit.x - 40;
@@ -452,7 +470,16 @@ function spawnUnit(data, isCreation, row, column, team){
     blockMaps[unit.row][unit.column] = 1;
 
     // Add the unit and its hp bar to the stage
+      unit.moveAnimation.scaleX = 0.7;
+      unit.moveAnimation.scaleY = 0.7;
+
+
+
       draggable.addChild(unit);
+     // draggable.removeChild(unit.moveAnimation);
+
+
+
       draggable.addChild(hp_bar);
       chars.addChild(spawnAnimation);
     
@@ -1695,8 +1722,8 @@ function undoHighlights() {
 // Move the player by a fixed amount
 function movePlayer() {
   if (turn) {
-    var playerX = selectedCharacter.x;
-      playerY = selectedCharacter.y;
+    var playerX = selectedCharacter.moveAnimation.x;
+      playerY = selectedCharacter.moveAnimation.y;
   } else {
     var playerX = enemyUnit.x;
     playerY = enemyUnit.y;
@@ -1731,8 +1758,8 @@ function movePlayer() {
   var stepY = coefficientY * MOVEMENT_STEP / 2;
 
 
-  selectedCharacter.x += stepX;
-  selectedCharacter.y += stepY;
+  selectedCharacter.moveAnimation.x += stepX;
+  selectedCharacter.moveAnimation.y += stepY;
   selectedCharacter.hp_bar.x += stepX;
   selectedCharacter.hp_bar.y += stepY;
 
@@ -1745,9 +1772,17 @@ function movePlayer() {
 
 
   if ((playerX === destX) && (playerY === destY)) {
+
       path.splice(0,1);
       if (path.length == 0) {
-
+      console.log("finish move");
+      selectedCharacter.x = selectedCharacter.moveAnimation.x;
+      selectedCharacter.y = selectedCharacter.moveAnimation.y;
+      draggable.removeChild(selectedCharacter.moveAnimation);
+      draggable.addChild(selectedCharacter);
+      //unit = movingUnit;
+      //draggable.removeChild(selectedCharacter.moveAnimation);
+      //draggable.addChild(selectedCharacter);
         sortIndices(selectedCharacter);
         movingPlayer = false;
         if (undo){
@@ -2267,7 +2302,7 @@ $(function(){
     }, 10);
 })
 
-
+var movingUnit;
 function moveCharacter(unit) {
   unit.prevRow = unit.row;
   unit.prevColumn = unit.column;
@@ -2286,6 +2321,16 @@ function moveCharacter(unit) {
       move_instruction2();
     }
     blockMaps[fromX][fromY] = 0;
+    //movingUnit = unit.moveAnimation;
+    //movingUnit = unit;
+    //draggable.addChild(unit.moveAnimation);
+    //draggable.removeChild(unit);
+    //unit = unit.moveAnimation;
+    //console.log(draggable.removeChild(unit));
+      chars.removeChild(unit);
+      draggable.addChild(unit.moveAnimation);
+
+
     move();
     blockMaps[tile.row][tile.column] = 1;
     selectedCharacter.row = tile.row;

@@ -20,6 +20,7 @@
 	"classStats": {
 		"kingClass": {
 			"address": "graphics/spritesheet/stand/ss_king_stand.png",
+			"move":"graphics/spritesheet/move/ss_king_move.png",
 			"spritesheet": "graphics/spritesheet/attack/ss_king_attack.png",
 			"info": "graphics/card/king_card.png",
 			"hp" : 20,
@@ -41,6 +42,7 @@
 		},
 		"wizardClass": {
 			"address": "graphics/spritesheet/stand/ss_wizard_stand.png",
+			"move":"graphics/spritesheet/move/ss_wizard_move.png",
 			"spritesheet": "graphics/spritesheet/attack/ss_wizard_attack.png",
 			"info": "graphics/card/wizard_card.png",
 			"hp" : 200,
@@ -62,6 +64,7 @@
 		}, 
 		"archerClass": {
 			"address": "graphics/spritesheet/stand/ss_archer_stand.png",
+			"move":"graphics/spritesheet/move/ss_archer_move.png",
 			"spritesheet": "graphics/spritesheet/attack/ss_archer_attack.png",
 			"info": "graphics/card/archer_card.png",
 			"hp" : 200,
@@ -83,6 +86,7 @@
 		},
 		"knightClass": {
 			"address": "graphics/spritesheet/stand/ss_knight_stand.png",
+			"move":"graphics/spritesheet/move/ss_knight_move.png",
 			"spritesheet": "graphics/spritesheet/attack/ss_knight_attack.png",
 			"info": "graphics/card/knight_card.png",
 			"hp" : 300,
@@ -104,6 +108,7 @@
 		},
 		"dragonClass": {
 			"address": "graphics/spritesheet/stand/ss_dragon_stand.png",
+			"move":"graphics/spritesheet/move/ss_dragon_move.png",
 			"spritesheet": "graphics/spritesheet/attack/ss_dragon_attack.png",
 			"info": "graphics/card/dragon_card.png",
 			"commandable": 1,
@@ -128,6 +133,7 @@
 	"characters": {
 		"kingRed": {
 			"address": "graphics/spritesheet/stand/ss_king_stand.png",
+			"move":"graphics/spritesheet/move/ss_king_move.png",
 			"spritesheet": "graphics/spritesheet/attack/ss_king_attack.png",
 			"info": "graphics/card/king_card.png",
 			"hp" : 20,
@@ -149,6 +155,7 @@
 		},
 		"kingBlue": {
 			"address": "graphics/spritesheet/stand/ss_king_stand.png",
+			"move":"graphics/spritesheet/move/ss_king_move.png",
 			"spritesheet": "graphics/spritesheet/attack/ss_king_attack.png",
 			"info": "graphics/card/king_card.png",
 			"hp" : 20,
