@@ -2,6 +2,7 @@ var ICON_SCALE_FACTOR = 0.65;
 var MOVEMENT_STEP = 6.5
 
 var stage = new createjs.Stage("gameCanvas");
+var isSpectating = false;
 
 var that = this;
 var team = 0;
@@ -443,7 +444,7 @@ function spawnUnit(data, isCreation, row, column){
 
 
 function initGame() {
-	
+
 	createjs.Ticker.addEventListener("tick", keyEvent);
     this.document.onkeydown = keyEvent;
 	stage.enableMouseOver(20);
@@ -539,7 +540,7 @@ function initGame() {
 	stage.setChildIndex( chars, stage.getNumChildren()-1);
 
 	drawStatsDisplay();
-	drawUnitCreationMenu();
+    drawUnitCreationMenu();
 	drawBottomInterface();
 
 
@@ -597,7 +598,11 @@ function drawMenuDisplay(){
 	  quitIcon.addEventListener("click", function(event){
 
     displayWarningBox(function(){
-      quit_game();
+        if (isSpectating) {
+            window.Location.href = "../interface/";
+            return;
+        }
+        quit_game();
     },function(){
       removeWarningBox();
     });
@@ -794,6 +799,7 @@ function drawBottomInterface()  {
 
 
 function drawUnitCreationMenu() {
+    if (isSpectating) return;
 	var listOfSources = [];
 	listOfSources.push("graphics/card/knight_card.png");
 	listOfSources.push("graphics/card/archer_card.png");
@@ -860,7 +866,7 @@ function createFloatingCards(listOfSources, correspondingUnit) {
                 unitCards[i].price = 120;
                 unitCards[i].text = new createjs.Text("$ 120", "12px 'Arial'", "#ffffff");
 				unitCards[i].addEventListener("click", function(event) {
-                    if (team != turn || isInHighlight) return;
+                    if (team != turn || isInHighlight || isSpectating) return;
                     if (currentGold < unitCards[i].price) {
 
                         return;
@@ -881,7 +887,7 @@ function createFloatingCards(listOfSources, correspondingUnit) {
                 unitCards[i].price = 120;
                 unitCards[i].text = new createjs.Text("$ 120", "12px 'Arial'", "#ffffff");
 				unitCards[i].addEventListener("click", function(event) {
-                    if (team != turn || isInHighlight) return;
+                    if (team != turn || isInHighlight || isSpectating) return;
                     var spawnTiles = findAvailableAndNonAvailableSpawnTiles();
                     highlightArea(spawnTiles[0], "graphics/tile/green_tile.png", ["click"], [function(event) {
                         var tile = event.target;
@@ -896,7 +902,7 @@ function createFloatingCards(listOfSources, correspondingUnit) {
                 unitCards[i].price = 150;
                 unitCards[i].text = new createjs.Text("$ 150", "12px 'Arial'", "#ffffff");
 				unitCards[i].addEventListener("click", function(event) {
-                    if (team != turn || isInHighlight) return;
+                    if (team != turn || isInHighlight || isSpectating) return;
                     var spawnTiles = findAvailableAndNonAvailableSpawnTiles();
                     highlightArea(spawnTiles[0], "graphics/tile/green_tile.png", ["click"], [function(event) {
                         var tile = event.target;
@@ -911,7 +917,7 @@ function createFloatingCards(listOfSources, correspondingUnit) {
                 unitCards[i].price = 200;
                 unitCards[i].text = new createjs.Text("$ 200", "12px 'Arial'", "#ffffff");
                 unitCards[i].addEventListener("click", function(event) {
-                    if (team != turn || isInHighlight) return;
+                    if (team != turn || isInHighlight || isSpectating) return;
                     var spawnTiles = findAvailableAndNonAvailableSpawnTiles(15);
                     highlightArea(spawnTiles[0], "graphics/tile/green_tile.png", ["click"], [function(event) {
                         var tile = event.target;
@@ -926,7 +932,7 @@ function createFloatingCards(listOfSources, correspondingUnit) {
                 unitCards[i].price = 300;
                 unitCards[i].text = new createjs.Text("$ 300", "12px 'Arial'", "#ffffff");
                 unitCards[i].addEventListener("click", function(event) {
-                    if (team != turn || isInHighlight) return;
+                    if (team != turn || isInHighlight || isSpectating) return;
                     var spawnTiles = findAvailableAndNonAvailableSpawnTiles();
                     highlightArea(spawnTiles[0], "graphics/tile/green_tile.png", ["click"], [function(event) {
                         var tile = event.target;
@@ -973,7 +979,13 @@ function createNewUnit(unitType, row, column) {
 
 function addEventListenersToUnit(unit) {
     unit.addEventListener("click", function(event) {
-        console.log("isInHighlight : " + isInHighlight + "  isAttacking " + isAttacking + "     isCasting " + isCasting);
+
+            if (isSpectating) {
+                clearSelectionEffects();
+                displayStats(unit);
+                return;
+            }
+
             if (isInHighlight && !isAttacking && !isCasting){
                 console.log("yomama2");
                 return;
@@ -1085,6 +1097,7 @@ function markArcherTargets(event) {
 }
 
 function destroyGoldDisplay() {
+    if (isSpectating) return;
 	stage.removeChild(coin_pic);
 	stage.removeChild(currentGoldDisplay);
 }
@@ -1130,16 +1143,16 @@ function displayStats(unit) {
 	bmp.y = 10;
 	bmp.x = 20; // 226
 	//stage.update();
-	var text = unit.team == team ? new createjs.Text("HP : " + getHealth(unit) + "/" + getMaxHealth(unit) + "\n" +
-		"ATK : "  + getAttack(unit) + "\n" + "RNG : " + unit.attackRange + "\n" +
+	var text = (unit.team == team || team == -1) ? new createjs.Text("HP : " + getHealth(unit) + "/" + getMaxHealth(unit) + "\n" +
+		"ATTACK : "  + getAttack(unit) + "\n" + "ATTACK RANGE : " + unit.attackRange + "\n" +
 		"SKILL : " + unit.skill +  "\n" + "CD: " + unit.skillCoolDown  + "\n" +
-		"MOV. RANGE : " + unit.moveRange + "\n" +
-		"LCK : " + getLuck(unit), "15px Arial", "#000000")
+		"MOVE RANGE : " + unit.moveRange + "\n" +
+		"LUCK : " + getLuck(unit), "15px Arial", "#000000")
 	: new createjs.Text("HP : " + getHealth(unit) + "/" + getMaxHealth(unit) + "\n" +
-		"ATK : "  + "???"  + "\n" + "RNG : " + "???" + "\n" +
+		"ATTACK : "  + "???"  + "\n" + "ATTACK RANGE : " + "???" + "\n" +
 		"SKILL : " + "???"  + "\n" +"CD: " + "???" + "\n" +
-		"MOV. RANGE : " + "???" + "\n" +
-		"LCK : " + "???", "15px Arial", "#000000");
+		"MOVE RANGE : " + "???" + "\n" +
+		"LUCK : " + "???", "15px Arial", "#000000");
 	text.y = 25;
 	text.x = 156;
 	text.textBasline = "alphabetic";
@@ -1538,8 +1551,10 @@ function moveUnit() {
   movingUnit.hp_bar.x += stepX;
   movingUnit.hp_bar.y += stepY;
 
-  draggable.x = draggable.x - stepX;
-  draggable.y = draggable.y - stepY;
+  if (team == turn) {
+    draggable.x = draggable.x - stepX;
+    draggable.y = draggable.y - stepY;
+  }
   for (var i = 0; i < movingUnit.buffs.length; i++) {
     movingUnit.buffs[i][2].x += stepX;
     movingUnit.buffs[i][2].y += stepY;
