@@ -7,7 +7,7 @@ $TEAM_COLOURS = array("red" => 0, "blue" => 1, "spectator" => -1);
 $TEAM_RED = 0;
 $TEAM_BLUE = 1;
 
-$SELECT_UNIT = "SELECT * FROM units JOIN classes ON units.class_id = classes.class_id WHERE";
+$SELECT_UNIT = "SELECT * FROM units JOIN classes USING(class_id) WHERE";
 
 
 
@@ -233,7 +233,7 @@ function attack_unit($attacker, $target) {
 }
 
 function damageByBuff($buff, $target, $damage) {
-  global $db, $room_id, $part_id;
+  global $db, $room_id, $part_id, $player;
 
   /* Refresh target */
   $target = select_unit($target->unit_id);
