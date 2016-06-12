@@ -11,6 +11,13 @@ function isStrLenCorrect($string, $min, $max) {
 function genTitle($title) {
   return "<div class='title'><h1>{$title}</h1></div>";
 }
+
+function select_part($user_id, $room_id, $is_spectator = 0) {
+  global $db;
+  $result = $db->query("SELECT * FROM room_participants WHERE user_id = '{$user_id}' AND room_id = '{$room_id}' AND is_spectator = '{$is_spectator}' AND event = ''");
+  if (!$result) return false;
+  return $result->fetch_object();
+}
 // Password encryption
 /*$options = array(
     'salt' => "a93d92454321l3p09o6009"

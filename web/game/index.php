@@ -63,6 +63,7 @@ if ($room->state != 'ingame') { // game not started yet
   echo "var lastOppID = {$lastOppID};";
   echo "var room_id = {$room_id};";
   echo "var DEFAULT_COUNTDOWN = {$room->default_countdown};";
+  echo "var isSpectating = false;";
   ?>
       </script>
   <script src="https://code.createjs.com/createjs-2015.11.26.min.js"></script>

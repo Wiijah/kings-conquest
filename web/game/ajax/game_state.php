@@ -1,4 +1,5 @@
 <?php
+$spectate_page = true;
 require_once 'ajax_common.php';
 
 $out = "{";
@@ -87,5 +88,7 @@ $out .= '}';
   
 /* Close JSON with curly brace and print the whole JSON */
 $out .= "}";
+
+$db->query("INSERT INTO opp (room_id, init, json) VALUES ('{$room_id}', '1', '{$out}')");
 echo $out;
 ?>

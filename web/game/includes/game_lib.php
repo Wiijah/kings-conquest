@@ -3,7 +3,7 @@
 require_once '../../interface/includes/lib.php';
 
 /* Team enumerations */
-$TEAM_COLOURS = array("red" => 0, "blue" => 1);
+$TEAM_COLOURS = array("red" => 0, "blue" => 1, "spectator" => -1);
 $TEAM_RED = 0;
 $TEAM_BLUE = 1;
 
@@ -36,6 +36,9 @@ function totem($x, $y) {
 function update_unit($unit, $canMove = -1, $canAttack = -1, $outOfMoves = -1, $skillCoolDown = -1) {
   global $db;
 
+  if (!$unit) {
+    return '{"action_type" : "nothing"}';
+  }
   if ($canMove == -1) $canMove = $unit->canMove;
   if ($canAttack == -1) $canAttack = $unit->canAttack;
   if ($outOfMoves == -1) $outOfMoves = $unit->outOfMoves;
