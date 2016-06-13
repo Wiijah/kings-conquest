@@ -88,6 +88,25 @@ if ($is_replay) {
   echo "var isReplay = ".var_export($is_replay, true).";";
   ?>
       </script>
+      <?php
+echo "<script>
+function start_replay(){
+";
+if ($is_replay) {
+  $sec = 0;
+  $result = $db->query("SELECT * FROM opp WHERE init = 0 AND room_id = '{$room->room_id}' ORDER BY opp_created ASC");
+  while ($fetch = $result->fetch_object()) {
+    $sec = max(0, $fetch->opp_created - $room->game_start) * 1000;
+    $json = trim(preg_replace('/\s\s+/', ' ', $fetch->json));
+    echo "setTimeout(function(){ handleOpponent({$json}); }, {$sec});\n";
+  }
+}
+      
+echo "
+}
+</script>";
+?>
+
   <script src="https://code.createjs.com/createjs-2015.11.26.min.js"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.3/jquery.min.js"></script>
   <script src="../interface/js/common.js"></script>
@@ -112,19 +131,7 @@ if ($is_replay) {
   <canvas id="gameCanvas" width="5000px" height="5000px"></canvas>
   <script src="tiles.js"></script>
 
-<?php
-if ($is_replay) {
-  echo "<script>";
-  $sec = 0;
-  $result = $db->query("SELECT * FROM opp WHERE init = 0 AND room_id = '{$room->room_id}'");
-  while ($fetch = $result->fetch_object()) {
-    $sec = max(0, $fetch->opp_created - $room->game_start);
-    echo "setTimeout(function(){ handleOpponent({$fetch->json}); }, {$sec}000);";
-  }
-      
-  echo "</script>";
-}
-?>
+
 
   </body>
 </html>

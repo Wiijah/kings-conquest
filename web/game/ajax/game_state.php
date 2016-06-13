@@ -1,5 +1,5 @@
 <?php
-if (isset($_POST['replay']) && $_POST['replay'] == 1) {
+if (isset($_POST['replay']) && $_POST['replay'] == '1') {
   header('Access-Control-Allow-Origin: *');
   header("Content-Type: application/json; charset=UTF-8");
   require_once '../../common.php';
@@ -98,6 +98,7 @@ $out .= '}';
 /* Close JSON with curly brace and print the whole JSON */
 $out .= "}";
 
-$db->query("INSERT INTO opp (room_id, init, json) VALUES ('{$room_id}', '1', '{$out}')");
+$result = $db->query("SELECT * FROM opp WHERE room_id = '{$room_id}' AND init = '1'");
+if ($result->num_rows == 0) $db->query("INSERT INTO opp (room_id, init, json) VALUES ('{$room_id}', '1', '{$out}')");
 echo $out;
 ?>

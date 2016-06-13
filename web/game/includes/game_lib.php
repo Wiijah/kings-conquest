@@ -73,13 +73,13 @@ function init_units() {
     /* Red Team */
     create_unit("king", 3, 2, $TEAM_COLOURS['red']);
     create_unit("red castle", 0, 0, $TEAM_COLOURS['red']);
-    create_unit("wizard", 3, 3, $TEAM_COLOURS['red']);
+    create_unit("wizard", 4, 5, $TEAM_COLOURS['red']);
     create_unit("knight", 0, 2, $TEAM_COLOURS['red']);
     create_unit("archer", 0, 3, $TEAM_COLOURS['red']);
     /* Blue Team */
     create_unit("king", 9, 11, $TEAM_COLOURS['blue']);
     create_unit("blue castle", 12, 13, $TEAM_COLOURS['blue']);
-    create_unit("wizard", 9, 10, $TEAM_COLOURS['blue']);
+    create_unit("wizard", 8, 8, $TEAM_COLOURS['blue']);
     create_unit("knight", 12, 10, $TEAM_COLOURS['blue']);
     create_unit("archer", 12, 11, $TEAM_COLOURS['blue']);
   } else if ($room->map_id == 2) {
