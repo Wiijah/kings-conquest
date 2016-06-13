@@ -1757,7 +1757,11 @@ function findReachableTiles(x, y, range, ignoreWater) {
 				if (nx < 0 || nx >= mapHeight || ny < 0 || ny >= mapWidth) continue;
 
 				// Terrain check
-				if (blockMaps[nx][ny] != 0 && !ignoreWater) continue;
+				if (that.mapData[nx][ny] == 5 && /* blockMaps[nx][ny] != 0  && */ !ignoreWater) continue;
+
+                // We have unit on that tile
+                if (that.mapData[nx][ny] != 5 && blockMaps[nx][ny] != 0) continue;
+
 
 				// bounds and obstacle check here
 				if ($.inArray(nx * mapWidth + ny, marked) === -1) {
@@ -2534,6 +2538,20 @@ function handleOpponent(data) {
             case "game_end":
                 handleGameEnd(action);
                 break;
+        }
+    }
+}
+
+function changeGold(gold) {
+    currentGold = gold;
+    destroyGoldDisplay();
+    drawGoldDisplay();
+
+    for (var i = 0; i < unitCards.length; i++) {
+        if (unitCards[i].price > currentGold) {
+            greyOutCard(i);
+        } else {
+            colourCard(i);
         }
     }
 }
