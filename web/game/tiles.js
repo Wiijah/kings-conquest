@@ -1821,10 +1821,8 @@ function drawMap(data) {
 		      	img = imageNumber(terrain);
 				maps[i][j] = new createjs.Bitmap(img);
 		       	maps[i][j].name = i + "," + j + "," + tile_type + "," + tile_info_address;
-		       	maps[i][j].scaleX = 1.6;
-		       	maps[i][j].scaleY = 1.6;
-				maps[i][j].x = (j-i) * 65 - 433;
-				maps[i][j].y = (j+i) * 32.5 -328;
+				maps[i][j].x = (j-i) * 65 - 473;
+				maps[i][j].y = (j+i) * 32.5 -348;
 				maps[i][j].regX = 65;
 				maps[i][j].regY = 32.5;
 				maps[i][j].addEventListener("mouseover",mouseOver);
