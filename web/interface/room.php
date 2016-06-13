@@ -76,7 +76,16 @@ var isOwner = <?php var_export($isOwner); ?>;
 <tr><th>#</th><th>Player</th><th>Colour</th></tr>
 </table>
 </div> <!-- play_lobby box -->
+<br />
+<?php echo genTitle("Spectators In Room"); ?>
+<div class="box room_players_box">
+<table class="play_table" id="room_spectators">
+<tr><th>#</th><th>Player</th></tr>
+</table>
+</div> <!-- play_lobby box -->
 </div> <!-- play_left -->
+
+
 
 <div class="play_right">
 <?php echo genTitle("Game Info"); ?>

@@ -82,14 +82,20 @@ function init_units() {
     create_unit("wizard", 9, 10, $TEAM_COLOURS['blue']);
     create_unit("knight", 12, 10, $TEAM_COLOURS['blue']);
     create_unit("archer", 12, 11, $TEAM_COLOURS['blue']);
-  } else {
-
+  } else if ($room->map_id == 2) {
     /* Red Team */
     create_unit("king", 11, 2, $TEAM_COLOURS['red']);
     create_unit("red castle", 11, 1, $TEAM_COLOURS['red']);
     /* Blue Team */
     create_unit("king", 2, 11, $TEAM_COLOURS['blue']);
     create_unit("blue castle", 1, 11, $TEAM_COLOURS['blue']);
+  } else {
+    /* Red Team */
+    create_unit("king", 1, 1, $TEAM_COLOURS['red']);
+    create_unit("red castle", 0, 0, $TEAM_COLOURS['red']);
+    /* Blue Team */
+    create_unit("king", 11, 11, $TEAM_COLOURS['blue']);
+    create_unit("blue castle", 12, 12, $TEAM_COLOURS['blue']);
   }
 }
 
@@ -275,7 +281,7 @@ function damageByBuff($buff, $target, $damage) {
 
 function get_opponent_id() {
   global $db, $user, $room_id;
-  $result = $db->query("SELECT * FROM room_participants WHERE user_id != '{$user->id}' AND room_id = '{$room_id}'");
+  $result = $db->query("SELECT * FROM room_participants WHERE user_id != '{$user->id}' AND room_id = '{$room_id}' AND colour != 'spectator'");
   $opp = $result->fetch_object();
   return $opp->user_id;
 }

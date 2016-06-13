@@ -33,7 +33,7 @@ if (!isset($spectate_page) && $player->colour == "spectator") {
 }
 
 /* Get enemy room participant  */
-$result = $db->query("SELECT * FROM room_participants WHERE user_id != '{$user->id}' AND event = '' AND room_id = '{$room_id}' ORDER BY part_id DESC LIMIT 1");
+$result = $db->query("SELECT * FROM room_participants WHERE user_id != '{$user->id}' AND colour != 'spectator' AND event = '' AND room_id = '{$room_id}' ORDER BY part_id DESC LIMIT 1");
 if (!$opp_player = $result->fetch_object()) {
   exit_error($ERROR_NOT_IG); //Error, not in room
 }

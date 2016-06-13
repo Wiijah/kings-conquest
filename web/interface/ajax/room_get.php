@@ -31,10 +31,11 @@ $result = $db->query("SELECT * FROM room_participants JOIN users ON room_partici
 
 $comma = "";
 while ($player = $result->fetch_object()) {
-  if ($player->colour == "spectator") continue;
+  $spec = $player->colour == "spectator" ? 1 : 0;
   
   $out .= $comma.'{"user_id":"'.$player->user_id.'",
                    "player": "'.$player->username.'",
+                   "spec": '.$spec.',
                    "userlink":"'.linkUsername($player, true).'",
                    "colour": "'.$player->colour.'",
                    "state": "'.$player->state.'"}';

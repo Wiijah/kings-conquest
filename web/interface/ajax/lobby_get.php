@@ -21,7 +21,7 @@ $result = $db->query("SELECT * FROM users INNER JOIN rooms ON rooms.user_id = us
 
 $comma = "";
 while ($room = $result->fetch_object()) {
-  $result_part = $db->query("SELECT * FROM room_participants WHERE room_id = {$room->room_id} AND event = ''");
+  $result_part = $db->query("SELECT * FROM room_participants WHERE room_id = {$room->room_id} AND event = '' AND colour != 'spectator'");
   $num_of_players = $result_part->num_rows;
   $password = $room->password == "" ? 0 : 1;
 
