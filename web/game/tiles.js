@@ -392,7 +392,7 @@ function spawnUnit(data, isCreation, row, column){
             "animations": {
               "walk":[0,1,2,3]
             },
-            framerate: 8
+            framerate: 4
 	    });
 	    unit.moveAnimation = new createjs.Sprite(moveSpriteSheet, "walk");
 	    unit.moveAnimation.x = unit.x;
@@ -467,7 +467,8 @@ function initGame() {
 	chars = new createjs.Container();
 	stage.addChild(chars);
 
-	$.getJSON('ajax/game_state', function(data) {
+	var replay = isReplay ? 1 : 0;
+  rawPost('ajax/game_state', {"replay" : replay, "room_id" : room_id}, function(data) {
 		that.mapData = data['main'];
         that.classStats = data.classStats;
 		console.log("init game");
@@ -1173,7 +1174,8 @@ function displayStats(unit) {
 }
 
 function drawGame() {
-	$.getJSON('ajax/game_state', function(data) {
+  var replay = isReplay ? 1 : 0;
+	rawPost('ajax/game_state', {"replay" : replay, "room_id" : room_id}, function(data) {
 		that.mapData = data['main'];
 		that.drawMap(that.mapData);
 
@@ -1890,7 +1892,7 @@ function drawMap(data) {
 				maps[i][j].addEventListener("click", function(event) {
 					clearSelectionEffects();
 				});
-			}
+			//}
 			draggable.addChild(maps[i][j]);
 		}
 	}
@@ -2140,8 +2142,8 @@ function imageNumber(number) {
 		case 4 :
 			tile_info_address = "graphics/tile_info/tile_stone_path.png";
 			tile_type = "Stone Path";
-			//return "graphics/tile/3d_tile/stone_path.png";
 			return "graphics/tile/3d_tile/stone_path.png";
+
 		case 5 :
 			tile_info_address = "graphics/tile_info/tile_water.png";
 			tile_type = "Water";
@@ -2170,7 +2172,11 @@ function imageNumber(number) {
 		// case 5 :
 		// 	tile_info_address = "graphics/tile_info/tile_water.png";
 		// 	tile_type = "Water";
-		// 	return "graphics/tile/3d_tile/water_half.png";
+		// 	return "graphics/tile/3d_tile/ss_water.png";
+		case 5 :
+			tile_info_address = "graphics/tile_info/tile_water.png";
+			tile_type = "Water";
+			return "graphics/tile/3d_tile/water_half.png";
 		case 6 :
 			tile_info_address = "graphics/tile_info/tile_wood_bridge.png";
 			tile_type = "Wood Bridge";

@@ -12,6 +12,11 @@ function genTitle($title) {
   return "<div class='title'><h1>{$title}</h1></div>";
 }
 
+function select_user($user_id) {
+  global $db;
+  return $db->query("SELECT * FROM users WHERE id = '{$user_id}'")->fetch_object();
+}
+
 function select_part($user_id, $room_id, $is_spectator = -1) {
   global $db;
   $extra_sql = "";
@@ -72,5 +77,41 @@ function successMessage($msg) {
 
 function digitalTime($time) {
   return date("g:i:sa", strtotime($time));
+}
+
+
+function myTime($from, $target){ //declare function, seconds is the default unit
+  $return = "";
+  $unitVal = array((1), (60), (60*60), (60*60*24), (60*60*24*7), (60*60*24*(365.25/12)), (60*60*24*365.25));
+  $unit = array("second", "minute", "hour", "day", "week", "month", "year");
+  $date = "";
+  $secondsLeft = $target - $from;
+  if($secondsLeft < 0){$passed=1;}else{$passed=0;}
+  $secondsLeft = abs($secondsLeft);
+  if($secondsLeft == 0){$return = "NOW";} //the $target time is equal to the time now
+
+  $i = 6; //start with year
+  if($return == ""){
+    while($i >= 0 && $secondsLeft > 0){ // going through each of the required units
+      $timeLeft = floor($secondsLeft / $unitVal[$i]);
+
+      if($timeLeft > 1){$plural = "s";}else{$plural="";} //add plurals if appropriate
+      if($return != ""){$start = ", ";} //separate with commas if appropriate
+      
+      $secondsLeft = $secondsLeft - ($timeLeft * $unitVal[$i]);
+      if($secondsLeft < 1 && $return != ""){$start = " and ";}
+      
+      //if value is > 0, then concatenate to $return otherwise it's not necessary to
+      if($timeLeft > 0){$return .= $start.$timeLeft." ".$unit[$i].$plural;} 
+
+      $i = $i - 1;
+    } //end while loop bracket
+  } //end if ($return == "")
+  
+  //comment out or remove the next line out if you don't want it to state "ago" if the timestamp ($target) is from the past
+  //if($passed == 1){$return .= " ago";} //parameter $target is from the past
+  //if($passed == 2){$return .= " to go";} //remove the comment if you want it to state 'to go'
+  //$return .= "."; //add full stop at the end, remove this line if you don't want it to
+  return $return;
 }
 ?>

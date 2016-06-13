@@ -5,24 +5,42 @@ if (!isset($_SESSION['id'])) { //user not logged in
   header ("Location: ../{$LOGIN_FORM_DIR}");
   die();
 }
-$result = $db->query("SELECT * FROM room_participants WHERE user_id = '{$user->id}' AND event = ''");
-if (!$player = $result->fetch_object()) { //player is not in game
-  header ("Location: ../{$LOGGEDIN_DIR}/");
-  die();
-}
-$room_id = $player->room_id;
 
-$result = $db->query("SELECT * FROM rooms WHERE room_id = {$room_id}");
-$room = $result->fetch_object();
-if ($result->num_rows == 0 || $room->state == 'deleted') { //user isn't in a room
-  header ("Location: ../{$LOGGEDIN_DIR}/");
-  die();
-}
-if ($room->state != 'ingame') { // game not started yet
-  header ("Location: ../{$LOGGEDIN_DIR}/room");
-  die();
-}
+$is_replay = isset($_GET['replay']);
 
+if ($is_replay) {
+  $replay = secureInt($_GET['replay']);
+  $result = $db->query("SELECT * FROM rooms WHERE room_id = {$replay}");
+  $room = $result->fetch_object();
+  $room_id = $room->room_id;
+  if ($result->num_rows == 0) { //user isn't in a room
+    header ("Location: ../{$LOGGEDIN_DIR}/");
+    die();
+  }
+  if ($room->state != 'ended') {
+    header ("Location: ../{$LOGGEDIN_DIR}/room");
+    die();
+  }
+} else {
+  $result = $db->query("SELECT * FROM room_participants WHERE user_id = '{$user->id}' AND event = ''");
+  if (!$player = $result->fetch_object()) { //player is not in game
+    header ("Location: ../{$LOGGEDIN_DIR}/");
+    die();
+  }
+  $room_id = $player->room_id;
+
+  $result = $db->query("SELECT * FROM rooms WHERE room_id = {$room_id}");
+  $room = $result->fetch_object();
+  if ($result->num_rows == 0) { //user isn't in a room
+    header ("Location: ../{$LOGGEDIN_DIR}/");
+    die();
+  }
+
+  if ($room->state != 'ingame' && !$is_replay) { // game not started yet
+    header ("Location: ../{$LOGGEDIN_DIR}/room");
+    die();
+  }
+}
 ?>
 <html>
   <head>
@@ -61,12 +79,13 @@ if ($room->state != 'ingame') { // game not started yet
   $result = $db->query("SELECT * FROM opp WHERE room_id = '{$room_id}' AND user_id != '{$user->id}' ORDER BY opp_id DESC LIMIT 1");
   $fetch = $result->fetch_object();
   $lastOppID = $fetch ? $fetch->opp_id : "0";
-  $isSpectating = $player->colour == "spectator";
+  $isSpectating = $is_replay || $player->colour == "spectator";
 
   echo "var lastOppID = {$lastOppID};";
   echo "var room_id = {$room_id};";
   echo "var DEFAULT_COUNTDOWN = {$room->default_countdown};";
   echo "var isSpectating = ".var_export($isSpectating, true).";";
+  echo "var isReplay = ".var_export($is_replay, true).";";
   ?>
       </script>
   <script src="https://code.createjs.com/createjs-2015.11.26.min.js"></script>
@@ -74,7 +93,19 @@ if ($room->state != 'ingame') { // game not started yet
   <script src="../interface/js/common.js"></script>
   <script src="js/opp.js"></script>
 
-  </head>
+<?php
+if ($is_replay) {
+  echo "<script>";
+  $sec = 0;
+  $result = $db->query("SELECT * FROM opp WHERE init = 0 AND room_id = '{$room->room_id}'");
+  while ($fetch = $result->fetch_object()) {
+    $sec = $fetch->opp_created - $room->game_start;
+    echo "setTimeout(function(){ handleOpponent({$fetch->json}); }, {$sec}000);";
+  }
+      
+  echo "</script>";
+}
+?></head>
   <body>
       
   <link rel="stylesheet" type="text/css" href="someCss.css">
@@ -84,7 +115,7 @@ if ($room->state != 'ingame') { // game not started yet
       <img src="./warning.png" style="line-height: 1px; vertical-align: bottom; margin-right: 5px" height="20" width="20" /> System Message
     </div>
     <div id="box2_body">
-      Are you sure to quite the game? <br /><br />
+      Are you sure to quit the game? <br /><br />
     </div>
     <div id="box_foot">
       <button type="button" id="yesButton" class="btn" ng-click="">Yes</button>
