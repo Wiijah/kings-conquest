@@ -1754,7 +1754,11 @@ function findReachableTiles(x, y, range, ignoreWater) {
 				if (nx < 0 || nx >= mapHeight || ny < 0 || ny >= mapWidth) continue;
 
 				// Terrain check
-				if (blockMaps[nx][ny] != 0 && !ignoreWater) continue;
+				if (that.mapData[nx][ny] == 5 && /* blockMaps[nx][ny] != 0  && */ !ignoreWater) continue;
+
+                // We have unit on that tile
+                if (that.mapData[nx][ny] != 5 && blockMaps[nx][ny] != 0) continue;
+
 
 				// bounds and obstacle check here
 				if ($.inArray(nx * mapWidth + ny, marked) === -1) {
