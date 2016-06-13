@@ -1,5 +1,6 @@
 var ICON_SCALE_FACTOR = 0.65;
 var MOVEMENT_STEP = 6.5
+var HAS_JSON_LOADED = false;
 
 var stage = new createjs.Stage("gameCanvas");
 
@@ -459,7 +460,7 @@ function spawnUnit(data, isCreation, row, column){
 
 
 function initGame() {
-
+  console.log("Init game call");
 	createjs.Ticker.addEventListener("tick", keyEvent);
     this.document.onkeydown = keyEvent;
 	stage.enableMouseOver(20);
@@ -467,11 +468,13 @@ function initGame() {
 	chars = new createjs.Container();
 	stage.addChild(chars);
 
-	var replay = isReplay ? 1 : 0;
+	var replay = isReplay ? '1' : '0';
   rawPost('ajax/game_state', {"replay" : replay, "room_id" : room_id}, function(data) {
+    
+    console.log("init game");
 		that.mapData = data['main'];
-        that.classStats = data.classStats;
-		console.log("init game");
+    that.classStats = data.classStats;
+    console.log(JSON.stringify(data));
 		mapHeight = parseInt(data.map_dimensions.height);
 		mapWidth = parseInt(data.map_dimensions.width);
 
@@ -517,6 +520,7 @@ function initGame() {
 	   	  refreshTimer(data.countdown);
 	   	  startTimer();
 	 	}
+    HAS_JSON_LOADED = true;
 	});
 
 	stage.canvas.height = $("body").prop("clientHeight");//window.innerHeight; //$("body").prop("clientHeight");
@@ -1174,7 +1178,7 @@ function displayStats(unit) {
 }
 
 function drawGame() {
-  var replay = isReplay ? 1 : 0;
+  var replay = isReplay ? '1' : '0';
 	rawPost('ajax/game_state', {"replay" : replay, "room_id" : room_id}, function(data) {
 		that.mapData = data['main'];
 		that.drawMap(that.mapData);
@@ -1187,12 +1191,13 @@ function drawGame() {
 		orderUnits();
 
 		changed = true;
+    HAS_JSON_LOADED = true;
 	});	
 }
 
 
 $(document).ready(function() {
-    initGame()
+    initGame();
 });
 
 function createClickableImage(imgSource, x, y, callBack) {
@@ -1983,6 +1988,7 @@ function goFullScreen(){
 }
 
 function update() {
+  if (!HAS_JSON_LOADED) return;
 	if (movingPlayer === true) {
 		moveUnit();
 	}
@@ -2268,6 +2274,7 @@ function findUnitByCoordinates(row, column) {
 }
 
 function handleGoldUdpate(action) {
+  if (!HAS_JSON_LOADED) return;
     console.log(team + " " + action.team + " " + action.gold);
     if (action.team == team) {
         currentGold = action.gold;     
