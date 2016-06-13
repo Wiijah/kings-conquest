@@ -2417,6 +2417,20 @@ function handleOpponent(data) {
     }
 }
 
+function changeGold(gold) {
+    currentGold = gold;
+    destroyGoldDisplay();
+    drawGoldDisplay();
+
+    for (var i = 0; i < unitCards.length; i++) {
+        if (unitCards[i].price > currentGold) {
+            greyOutCard(i);
+        } else {
+            colourCard(i);
+        }
+    }
+}
+
 
 
 
