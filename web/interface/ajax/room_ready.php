@@ -39,8 +39,9 @@ if ($part->state == 'owner') {
   }
 
   init_units(); //create the units
-  $countdown = time() + $DEFAULT_COUNTDOWN;
-  $db->query("UPDATE rooms SET state = 'ingame', countdown = '{$countdown}' WHERE room_id = {$room_id}");
+  $time = time();
+  $countdown = $time + $room->default_countdown;
+  $db->query("UPDATE rooms SET state = 'ingame', countdown = '{$countdown}', game_start = '{$time}' WHERE room_id = {$room_id}");
 } else { //not owner, so just set ready
   $db->query("UPDATE room_participants SET state = '{$ready}' WHERE user_id = '{$user->id}'");
 }

@@ -287,10 +287,8 @@ function get_opponent_id() {
 }
 
 function gameEnd($winner, $loser, $reason) {
-  global $db;
-  global $room_id;
-  global $TEAM_COLOURS;
-
+  global $db, $room_id, $TEAM_COLOURS;
+  $time = time();
   $actions = array();
 
   /* Get winner info */
@@ -315,7 +313,7 @@ function gameEnd($winner, $loser, $reason) {
 
   /* Update room and room participants */
   $db->query("UPDATE room_participants SET event = 'ended' WHERE room_id = '{$room_id}' AND event = ''");
-  $db->query("UPDATE rooms SET state = 'ended', winner = '$winner->id', elo_won = {$elo_won}, elo_lost = {$elo_lost} WHERE room_id = '{$room_id}'");
+  $db->query("UPDATE rooms SET state = 'ended', winner = '$winner->id', elo_won = {$elo_won}, elo_lost = {$elo_lost}, game_end = {$time} WHERE room_id = '{$room_id}'");
 
   /* Update user profiles */
   $db->query("UPDATE users SET wins = wins + 1, kp = kp + 1000, elo = elo + {$elo_won} WHERE id = '{$winner->id}'");
@@ -338,7 +336,8 @@ function oppInsert($json) {
   global $player;
   $team = $player->colour == "red" ? 0 : 1;
   $json = secureStr($json);
+  $time = time();
 
-  $db->query("INSERT INTO opp (room_id, user_id, team, json) VALUES ('{$room_id}', '{$user->id}', '{$team}', '{$json}')");
+  $db->query("INSERT INTO opp (room_id, user_id, team, json, opp_created) VALUES ('{$room_id}', '{$user->id}', '{$team}', '{$json}', '{$time}')");
 }
 ?>

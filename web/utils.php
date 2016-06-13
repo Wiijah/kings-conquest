@@ -12,6 +12,11 @@ function genTitle($title) {
   return "<div class='title'><h1>{$title}</h1></div>";
 }
 
+function select_user($user_id) {
+  global $db;
+  return $db->query("SELECT * FROM users WHERE id = '{$user_id}'")->fetch_object();
+}
+
 function select_part($user_id, $room_id, $is_spectator = -1) {
   global $db;
   $extra_sql = "";
