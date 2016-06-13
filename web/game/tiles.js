@@ -1795,7 +1795,7 @@ function drawMap(data) {
 	for (i = 0; i < mapHeight; i++) {
 		for (j = 0; j < mapWidth; j++) {
 			var terrain = data[i][j];
-            if (terrain == 5 || terrain == 5.1 || terrain == 5.2) blockMaps[i][j] = 1;
+            if (terrain == 5 || terrain == 5.1 ||terrain == 5.12|| terrain == 5.2 || terrain == 5.22) blockMaps[i][j] = 1;
             if (terrain == 5) {
             	img = imageNumber(terrain);
 		       var spriteSheet = new createjs.SpriteSheet({
@@ -1804,7 +1804,7 @@ function drawMap(data) {
 		               "animations": {
 		               "water":[0,1]
 		               },
-		               framerate: 2
+		               framerate: 3
 		           });
 		       	maps[i][j] = new createjs.Sprite(spriteSheet, "water");
 		       	maps[i][j].name = i + "," + j + "," + tile_type + "," + tile_info_address;
@@ -1817,7 +1817,23 @@ function drawMap(data) {
 				maps[i][j].addEventListener("click", function(event) {
 					clearSelectionEffects();
 				});
-            } else if (terrain == 5.1) {
+            } else if (terrain == 1.1) {
+		      	img = imageNumber(terrain);
+				maps[i][j] = new createjs.Bitmap(img);
+		       	maps[i][j].name = i + "," + j + "," + tile_type + "," + tile_info_address;
+		       	maps[i][j].scaleX = 1.6;
+		       	maps[i][j].scaleY = 1.6;
+				maps[i][j].x = (j-i) * 65 - 433;
+				maps[i][j].y = (j+i) * 32.5 -328;
+				maps[i][j].regX = 65;
+				maps[i][j].regY = 32.5;
+				maps[i][j].addEventListener("mouseover",mouseOver);
+				maps[i][j].addEventListener("mouseout", mouseOut);
+				maps[i][j].addEventListener("click", function(event) {
+					clearSelectionEffects();
+				});
+		      
+		      }else if (terrain == 5.1 || terrain == 5.12) {
 		       img = imageNumber(terrain);
 		       var spriteSheet = new createjs.SpriteSheet({
 		               "images": [img],
@@ -1839,11 +1855,11 @@ function drawMap(data) {
 					clearSelectionEffects();
 				});
 		      
-		      }else if (terrain == 5.2) {
+		      }else if (terrain == 5.2 || terrain == 5.22) {
 		       img = imageNumber(terrain);
 		       var spriteSheet = new createjs.SpriteSheet({
 		               "images": [img],
-		               "frames": {"regX": 0, "height": 1200, "count": 10, "regY": 0, "width": 165 },
+		               "frames": {"regX": 30, "height": 1200, "count": 10, "regY": 20, "width": 165 },
 		               "animations": {
 		               "water":[0,1,2,3,4,5,6,7,8,9]
 		               },
@@ -2109,6 +2125,10 @@ function imageNumber(number) {
 			tile_info_address = "graphics/tile_info/tile_mud.png";
 			tile_type = "Mud";
 			return "graphics/tile/3d_tile/mud2.png";
+		case 1.1 :
+			tile_info_address = "graphics/tile_info/tile_mud.png";
+			tile_type = "Mud";
+			return "graphics/tile/3d_tile/rock2.png";
 		case 2 :
 			tile_info_address = "graphics/tile_info/tile_stone_bridge.png";
 			tile_type = "Stone Bridge";
@@ -2132,11 +2152,21 @@ function imageNumber(number) {
 			tile_type = "Water";
 			//return "graphics/tile/3d_tile/ss_water.png";
 			return "graphics/tile/3d_tile/waterTest.png";
+		case 5.12 :
+			tile_info_address = "graphics/tile_info/tile_water.png";
+			tile_type = "Water";
+			//return "graphics/tile/3d_tile/ss_water.png";
+			return "graphics/tile/3d_tile/waterTest2.png";
 		case 5.2 :
 			tile_info_address = "graphics/tile_info/tile_water.png";
 			tile_type = "Water";
 			//return "graphics/tile/3d_tile/ss_water.png";
 			return "graphics/tile/3d_tile/water_test2.png";
+		case 5.22 :
+			tile_info_address = "graphics/tile_info/tile_water.png";
+			tile_type = "Water";
+			//return "graphics/tile/3d_tile/ss_water.png";
+			return "graphics/tile/3d_tile/water_test3.png";
 		// case 5 :
 		// 	tile_info_address = "graphics/tile_info/tile_water.png";
 		// 	tile_type = "Water";
