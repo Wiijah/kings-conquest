@@ -1,6 +1,5 @@
 var ICON_SCALE_FACTOR = 0.65;
 var MOVEMENT_STEP = 6.5
-var HAS_JSON_LOADED = false;
 
 var stage = new createjs.Stage("gameCanvas");
 
@@ -393,7 +392,7 @@ function spawnUnit(data, isCreation, row, column){
             "animations": {
               "walk":[0,1,2,3]
             },
-            framerate: 4
+            framerate: 8
 	    });
 	    unit.moveAnimation = new createjs.Sprite(moveSpriteSheet, "walk");
 	    unit.moveAnimation.x = unit.x;
@@ -460,7 +459,7 @@ function spawnUnit(data, isCreation, row, column){
 
 
 function initGame() {
-  console.log("Init game call");
+
 	createjs.Ticker.addEventListener("tick", keyEvent);
     this.document.onkeydown = keyEvent;
 	stage.enableMouseOver(20);
@@ -468,13 +467,10 @@ function initGame() {
 	chars = new createjs.Container();
 	stage.addChild(chars);
 
-	var replay = isReplay ? '1' : '0';
-  rawPost('ajax/game_state', {"replay" : replay, "room_id" : room_id}, function(data) {
-    
-    console.log("init game");
+	$.getJSON('ajax/game_state', function(data) {
 		that.mapData = data['main'];
-    that.classStats = data.classStats;
-    console.log(JSON.stringify(data));
+        that.classStats = data.classStats;
+		console.log("init game");
 		mapHeight = parseInt(data.map_dimensions.height);
 		mapWidth = parseInt(data.map_dimensions.width);
 
@@ -520,7 +516,6 @@ function initGame() {
 	   	  refreshTimer(data.countdown);
 	   	  startTimer();
 	 	}
-    HAS_JSON_LOADED = true;
 	});
 
 	stage.canvas.height = $("body").prop("clientHeight");//window.innerHeight; //$("body").prop("clientHeight");
@@ -1178,8 +1173,7 @@ function displayStats(unit) {
 }
 
 function drawGame() {
-  var replay = isReplay ? '1' : '0';
-	rawPost('ajax/game_state', {"replay" : replay, "room_id" : room_id}, function(data) {
+	$.getJSON('ajax/game_state', function(data) {
 		that.mapData = data['main'];
 		that.drawMap(that.mapData);
 
@@ -1191,13 +1185,12 @@ function drawGame() {
 		orderUnits();
 
 		changed = true;
-    HAS_JSON_LOADED = true;
 	});	
 }
 
 
 $(document).ready(function() {
-    initGame();
+    initGame()
 });
 
 function createClickableImage(imgSource, x, y, callBack) {
@@ -1806,7 +1799,89 @@ function drawMap(data) {
 	for (i = 0; i < mapHeight; i++) {
 		for (j = 0; j < mapWidth; j++) {
 			var terrain = data[i][j];
-            if (terrain == 5) blockMaps[i][j] = 1;
+            if (terrain == 5 || terrain == 5.1 ||terrain == 5.12|| terrain == 5.2 || terrain == 5.22) blockMaps[i][j] = 1;
+            if (terrain == 5) {
+            	img = imageNumber(terrain);
+		       var spriteSheet = new createjs.SpriteSheet({
+		               "images": [img],
+		               "frames": {"regX": 0, "height": 130, "count": 2, "regY": 0, "width": 130 },
+		               "animations": {
+		               "water":[0,1]
+		               },
+		               framerate: 3
+		           });
+		       	maps[i][j] = new createjs.Sprite(spriteSheet, "water");
+		       	maps[i][j].name = i + "," + j + "," + tile_type + "," + tile_info_address;
+				maps[i][j].x = (j-i) * 65 + 540;
+				maps[i][j].y = (j+i) * 32.5 + 220;
+				maps[i][j].regX = 65;
+				maps[i][j].regY = 32.5;
+				maps[i][j].addEventListener("mouseover",mouseOver);
+				maps[i][j].addEventListener("mouseout", mouseOut);
+				maps[i][j].addEventListener("click", function(event) {
+					clearSelectionEffects();
+				});
+            } else if (terrain == 1.1) {
+		      	img = imageNumber(terrain);
+				maps[i][j] = new createjs.Bitmap(img);
+		       	maps[i][j].name = i + "," + j + "," + tile_type + "," + tile_info_address;
+		       	maps[i][j].scaleX = 1.6;
+		       	maps[i][j].scaleY = 1.6;
+				maps[i][j].x = (j-i) * 65 - 433;
+				maps[i][j].y = (j+i) * 32.5 -328;
+				maps[i][j].regX = 65;
+				maps[i][j].regY = 32.5;
+				maps[i][j].addEventListener("mouseover",mouseOver);
+				maps[i][j].addEventListener("mouseout", mouseOut);
+				maps[i][j].addEventListener("click", function(event) {
+					clearSelectionEffects();
+				});
+		      
+		      }else if (terrain == 5.1 || terrain == 5.12) {
+		       img = imageNumber(terrain);
+		       var spriteSheet = new createjs.SpriteSheet({
+		               "images": [img],
+		               "frames": {"regX": 0, "height": 1200, "count": 10, "regY": 0, "width": 165 },
+		               "animations": {
+		               "water":[0,1,2,3,4,5,6,7,8,9]
+		               },
+		               framerate: 3
+		           });
+		       	maps[i][j] = new createjs.Sprite(spriteSheet, "water");
+		       	maps[i][j].name = i + "," + j + "," + tile_type + "," + tile_info_address;
+				maps[i][j].x = (j-i) * 65 + 540;
+				maps[i][j].y = (j+i) * 32.5 + 220;
+				maps[i][j].regX = 65;
+				maps[i][j].regY = 32.5;
+				maps[i][j].addEventListener("mouseover",mouseOver);
+				maps[i][j].addEventListener("mouseout", mouseOut);
+				maps[i][j].addEventListener("click", function(event) {
+					clearSelectionEffects();
+				});
+		      
+		      }else if (terrain == 5.2 || terrain == 5.22) {
+		       img = imageNumber(terrain);
+		       var spriteSheet = new createjs.SpriteSheet({
+		               "images": [img],
+		               "frames": {"regX": 30, "height": 1200, "count": 10, "regY": 20, "width": 165 },
+		               "animations": {
+		               "water":[0,1,2,3,4,5,6,7,8,9]
+		               },
+		               framerate: 3
+		           });
+		       	maps[i][j] = new createjs.Sprite(spriteSheet, "water");
+		       	maps[i][j].name = i + "," + j + "," + tile_type + "," + tile_info_address;
+				maps[i][j].x = (j-i) * 65 + 540;
+				maps[i][j].y = (j+i) * 32.5 + 220;
+				maps[i][j].regX = 65;
+				maps[i][j].regY = 32.5;
+				maps[i][j].addEventListener("mouseover",mouseOver);
+				maps[i][j].addEventListener("mouseout", mouseOut);
+				maps[i][j].addEventListener("click", function(event) {
+					clearSelectionEffects();
+				});
+		      
+		      } else {
 				img = imageNumber(terrain);
 				maps[i][j] = new createjs.Bitmap(img);
 				maps[i][j].name = i + "," + j + "," + tile_type + "," + tile_info_address;
@@ -1819,7 +1894,7 @@ function drawMap(data) {
 				maps[i][j].addEventListener("click", function(event) {
 					clearSelectionEffects();
 				});
-			//}
+			}
 			draggable.addChild(maps[i][j]);
 		}
 	}
@@ -1992,7 +2067,6 @@ function goFullScreen(){
 }
 
 function update() {
-  if (!HAS_JSON_LOADED) return;
 	if (movingPlayer === true) {
 		moveUnit();
 	}
@@ -2055,6 +2129,10 @@ function imageNumber(number) {
 			tile_info_address = "graphics/tile_info/tile_mud.png";
 			tile_type = "Mud";
 			return "graphics/tile/3d_tile/mud2.png";
+		case 1.1 :
+			tile_info_address = "graphics/tile_info/tile_mud.png";
+			tile_type = "Mud";
+			return "graphics/tile/3d_tile/rock2.png";
 		case 2 :
 			tile_info_address = "graphics/tile_info/tile_stone_bridge.png";
 			tile_type = "Stone Bridge";
@@ -2066,15 +2144,37 @@ function imageNumber(number) {
 		case 4 :
 			tile_info_address = "graphics/tile_info/tile_stone_path.png";
 			tile_type = "Stone Path";
+			//return "graphics/tile/3d_tile/stone_path.png";
 			return "graphics/tile/3d_tile/stone_path.png";
-		// case 5 :
-		// 	tile_info_address = "graphics/tile_info/tile_water.png";
-		// 	tile_type = "Water";
-		// 	return "graphics/tile/3d_tile/ss_water.png";
 		case 5 :
 			tile_info_address = "graphics/tile_info/tile_water.png";
 			tile_type = "Water";
-			return "graphics/tile/3d_tile/water_half.png";
+			//return "graphics/tile/3d_tile/ss_water.png";
+			return "graphics/tile/3d_tile/ss_water.png";
+		case 5.1 :
+			tile_info_address = "graphics/tile_info/tile_water.png";
+			tile_type = "Water";
+			//return "graphics/tile/3d_tile/ss_water.png";
+			return "graphics/tile/3d_tile/waterTest.png";
+		case 5.12 :
+			tile_info_address = "graphics/tile_info/tile_water.png";
+			tile_type = "Water";
+			//return "graphics/tile/3d_tile/ss_water.png";
+			return "graphics/tile/3d_tile/waterTest2.png";
+		case 5.2 :
+			tile_info_address = "graphics/tile_info/tile_water.png";
+			tile_type = "Water";
+			//return "graphics/tile/3d_tile/ss_water.png";
+			return "graphics/tile/3d_tile/water_test2.png";
+		case 5.22 :
+			tile_info_address = "graphics/tile_info/tile_water.png";
+			tile_type = "Water";
+			//return "graphics/tile/3d_tile/ss_water.png";
+			return "graphics/tile/3d_tile/water_test3.png";
+		// case 5 :
+		// 	tile_info_address = "graphics/tile_info/tile_water.png";
+		// 	tile_type = "Water";
+		// 	return "graphics/tile/3d_tile/water_half.png";
 		case 6 :
 			tile_info_address = "graphics/tile_info/tile_wood_bridge.png";
 			tile_type = "Wood Bridge";
@@ -2278,7 +2378,6 @@ function findUnitByCoordinates(row, column) {
 }
 
 function handleGoldUdpate(action) {
-  if (!HAS_JSON_LOADED) return;
     console.log(team + " " + action.team + " " + action.gold);
     if (action.team == team) {
         currentGold = action.gold;     
