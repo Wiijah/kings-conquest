@@ -1,9 +1,9 @@
 <?php
-if (isset($_POST['replay'])) {
+if (isset($_GET['replay'])) {
   header('Access-Control-Allow-Origin: *');
   header("Content-Type: application/json; charset=UTF-8");
   require_once '../../common.php';
-  $room_id = secureInt($_POST['room_id']);
+  $room_id = secureInt($_GET['room_id']);
   $result = $db->query("SELECT * FROM opp WHERE room_id = '{$room_id}' AND init = '1'");
   $fetch = $result->fetch_object();
   die($fetch->json);

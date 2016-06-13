@@ -468,7 +468,7 @@ function initGame() {
 	stage.addChild(chars);
 
 	var replay = isReplay ? 1 : 0;
-  rawPost('ajax/game_state', {"replay" : replay, "room_id" : room_id}, function(data) {
+  $.getJSON('ajax/game_state?replay='+replay+'&room_id='+room_id, function(data) {
 		that.mapData = data['main'];
         that.classStats = data.classStats;
 		console.log("init game");
@@ -1175,7 +1175,7 @@ function displayStats(unit) {
 
 function drawGame() {
   var replay = isReplay ? 1 : 0;
-	rawPost('ajax/game_state', {"replay" : replay, "room_id" : room_id}, function(data) {
+  $.getJSON('ajax/game_state?replay='+replay+'&room_id='+room_id, function(data) {
 		that.mapData = data['main'];
 		that.drawMap(that.mapData);
 
