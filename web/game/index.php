@@ -92,20 +92,7 @@ if ($is_replay) {
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.3/jquery.min.js"></script>
   <script src="../interface/js/common.js"></script>
   <script src="js/opp.js"></script>
-
-<?php
-if ($is_replay) {
-  echo "<script>";
-  $sec = 0;
-  $result = $db->query("SELECT * FROM opp WHERE init = 0 AND room_id = '{$room->room_id}'");
-  while ($fetch = $result->fetch_object()) {
-    $sec = $fetch->opp_created - $room->game_start;
-    echo "setTimeout(function(){ handleOpponent({$fetch->json}); }, {$sec}000);";
-  }
-      
-  echo "</script>";
-}
-?></head>
+</head>
   <body>
       
   <link rel="stylesheet" type="text/css" href="someCss.css">
@@ -124,6 +111,21 @@ if ($is_replay) {
   </div>
   <canvas id="gameCanvas" width="5000px" height="5000px"></canvas>
   <script src="tiles.js"></script>
+
+<?php
+if ($is_replay) {
+  echo "<script>";
+  $sec = 0;
+  $result = $db->query("SELECT * FROM opp WHERE init = 0 AND room_id = '{$room->room_id}'");
+  while ($fetch = $result->fetch_object()) {
+    $sec = max(1000, $fetch->opp_created - $room->game_start);
+    echo "setTimeout(function(){ handleOpponent({$fetch->json}); }, {$sec}000);";
+  }
+      
+  echo "</script>";
+}
+?>
+
   </body>
 </html>
 

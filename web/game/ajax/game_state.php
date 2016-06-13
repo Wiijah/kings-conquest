@@ -1,16 +1,14 @@
 <?php
-if (isset($_GET['replay'])) {
+if (isset($_POST['replay']) && $_POST['replay'] == 1) {
   header('Access-Control-Allow-Origin: *');
   header("Content-Type: application/json; charset=UTF-8");
   require_once '../../common.php';
-  $room_id = secureInt($_GET['room_id']);
+  $room_id = secureInt($_POST['room_id']);
   $result = $db->query("SELECT * FROM opp WHERE room_id = '{$room_id}' AND init = '1'");
   $fetch = $result->fetch_object();
   die($fetch->json);
 }
-
 $spectate_page = true;
-
 require_once 'ajax_common.php';
 
 $out = "{";
