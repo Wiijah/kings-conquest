@@ -20,19 +20,19 @@ if ($room->state != 'pregame') {
   kc_error("This room is not in the pregame state.");
 }
 
-$result = $db->query("SELECT * FROM room_participants WHERE user_id = '{$user->id}' AND room_id = '{$room_id}' AND event = ''");
+$result = $db->query("SELECT * FROM room_participants WHERE user_id = '{$user->id}' AND room_id = '{$room_id}' AND event = '' AND colour != 'spectator'");
 if (!$part = $result->fetch_object()) {
-  kc_error("You are not in this room.");
+  kc_error("You are not a player in this room.");
 }
 
 if ($part->state == 'owner') {
-  $result = $db->query("SELECT * FROM room_participants WHERE room_id = '{$room_id}' AND event = ''");
+  $result = $db->query("SELECT * FROM room_participants WHERE room_id = '{$room_id}' AND event = '' AND colour != 'spectator'");
   $num_of_players = $result->num_rows;
   if ($num_of_players < $room->max_players) {
     kc_error("There are not enough players in this room for you to start the game.");
   }
 
-  $result = $db->query("SELECT * FROM room_participants WHERE room_id = '{$room_id}' AND event = '' AND state = 'ready'");
+  $result = $db->query("SELECT * FROM room_participants WHERE room_id = '{$room_id}' AND event = '' AND state = 'ready' AND colour != 'spectator'");
   $num_of_players_ready = $result->num_rows + 1; // +1 since the owner is always ready
   if ($num_of_players_ready < $num_of_players) {
     kc_error("All players need to be ready before you can start the game.");

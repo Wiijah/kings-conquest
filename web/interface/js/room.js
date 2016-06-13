@@ -89,6 +89,7 @@ function room_ready() {
     $("#btn_ready").attr("data-ready", ready);
   });
 }
+
 function room_refresh_periodically() {
   room_refresh();
   setTimeout("room_refresh_periodically()", 800);
@@ -115,6 +116,10 @@ function room_refresh() {
     console.log(data);
     var extraCols = isOwner ? '<th style="width: 130px">Kick</th>': '';
     var players_html = '<tr><th>#</th><th>Player</th><th>Colour</th>'+extraCols+'</tr>';
+    var spectators_html = '<tr><th>#</th><th>Player</th>'+extraCols+'</tr>';
+
+    var num_of_players = 0;
+    var num_of_spectators = 0;
 
     for (var i = 0; i < players.length; i++) {
       var row_number = i + 1;
@@ -123,7 +128,16 @@ function room_refresh() {
       var extraData = "";
       if (isOwner) extraData += players[i].user_id != user_id ? "<td><a class='kick_player' data-user-id='"+players[i].user_id+"'>Kick</a></td>": '<td>-</td>';
       
-      players_html += "<tr><td>"+row_number+"</td><td style='position: relative'>"+user_link+state_html_array[players[i].state]+"</td><td>"+players[i].colour+"</td>"+extraData+"</tr>";
+      if (players[i].spec == 0) {
+        num_of_players++;
+        players_html += "<tr><td>"+num_of_players+"</td><td style='position: relative'>"+user_link+state_html_array[players[i].state]+"</td><td>"+players[i].colour+"</td>"+extraData+"</tr>";
+      } else {
+        num_of_spectators++;
+        spectators_html += "<tr><td>"+num_of_spectators+"</td><td>"+user_link+"</td>"+extraData+"</tr>";
+      }
+      
+
+
       if (players[i].user_id == user_id) {
         if (players[i].state == 'ready') {
           $("#btn_ready").html("Cancel Ready");
@@ -135,7 +149,9 @@ function room_refresh() {
       }
     }
     $("#room_players").html(players_html);
-    $("#info_num_players").html(players.length+"/"+max_players);
+    $("#room_spectators").html(spectators_html);
+
+    $("#info_num_players").html(num_of_players+"/"+max_players);
     $("#map").html(data.map_name);
     $("#countdown").html(data.default_countdown + " seconds");
   });

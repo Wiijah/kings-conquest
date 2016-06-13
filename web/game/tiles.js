@@ -613,10 +613,6 @@ function drawMenuDisplay(){
 	  quitIcon.addEventListener("click", function(event){
 
     displayWarningBox(function(){
-        if (isSpectating) {
-            window.location.href = "../interface/";
-            return;
-        }
         quit_game();
     },function(){
       removeWarningBox();
@@ -2508,8 +2504,8 @@ function handleGameEnd(action) {
     gameEnd = true;
     var reason = "";
     if (action.reason == "king_death") reason = "By death of king.";
-    if (action.reason == "quit_game" && team == action.winner) reason = "Your opponent rage quitted.";
-    if (action.reason == "quit_game" && team != action.winner) reason = "You left the game.";
+    if (action.reason == "quit_game" && team == action.winner) reason = "Victory by loser rage quitting.";
+    if (action.reason == "quit_game" && team != action.winner) reason = "Victory by loser rage quitting.";
 
     var text = action.winner == 0 ? "Red player victory" : "Blue player victory";
     var color = action.winner == 0 ? "#ff5555" : "#00cdff";

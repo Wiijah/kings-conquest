@@ -7,7 +7,7 @@ $TEAM_COLOURS = array("red" => 0, "blue" => 1, "spectator" => -1);
 $TEAM_RED = 0;
 $TEAM_BLUE = 1;
 
-$SELECT_UNIT = "SELECT * FROM units JOIN classes ON units.class_id = classes.class_id WHERE";
+$SELECT_UNIT = "SELECT * FROM units JOIN classes USING(class_id) WHERE";
 
 
 
@@ -82,14 +82,20 @@ function init_units() {
     create_unit("wizard", 9, 10, $TEAM_COLOURS['blue']);
     create_unit("knight", 12, 10, $TEAM_COLOURS['blue']);
     create_unit("archer", 12, 11, $TEAM_COLOURS['blue']);
-  } else {
-
+  } else if ($room->map_id == 2) {
     /* Red Team */
     create_unit("king", 11, 2, $TEAM_COLOURS['red']);
     create_unit("red castle", 11, 1, $TEAM_COLOURS['red']);
     /* Blue Team */
     create_unit("king", 2, 11, $TEAM_COLOURS['blue']);
     create_unit("blue castle", 1, 11, $TEAM_COLOURS['blue']);
+  } else {
+    /* Red Team */
+    create_unit("king", 1, 1, $TEAM_COLOURS['red']);
+    create_unit("red castle", 0, 0, $TEAM_COLOURS['red']);
+    /* Blue Team */
+    create_unit("king", 11, 11, $TEAM_COLOURS['blue']);
+    create_unit("blue castle", 12, 12, $TEAM_COLOURS['blue']);
   }
 }
 
@@ -233,7 +239,7 @@ function attack_unit($attacker, $target) {
 }
 
 function damageByBuff($buff, $target, $damage) {
-  global $db, $room_id, $part_id;
+  global $db, $room_id, $part_id, $player;
 
   /* Refresh target */
   $target = select_unit($target->unit_id);
@@ -275,7 +281,7 @@ function damageByBuff($buff, $target, $damage) {
 
 function get_opponent_id() {
   global $db, $user, $room_id;
-  $result = $db->query("SELECT * FROM room_participants WHERE user_id != '{$user->id}' AND room_id = '{$room_id}'");
+  $result = $db->query("SELECT * FROM room_participants WHERE user_id != '{$user->id}' AND room_id = '{$room_id}' AND colour != 'spectator'");
   $opp = $result->fetch_object();
   return $opp->user_id;
 }
