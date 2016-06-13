@@ -1777,10 +1777,13 @@ function movePlayer() {
       path.splice(0,1);
       if (path.length == 0) {
       console.log("finish move");
+
       selectedCharacter.x = selectedCharacter.moveAnimation.x;
       selectedCharacter.y = selectedCharacter.moveAnimation.y;
       draggable.removeChild(selectedCharacter.moveAnimation);
       draggable.addChild(selectedCharacter);
+      
+      addPointerNearPlayerAttack();
       //unit = movingUnit;
       //draggable.removeChild(selectedCharacter.moveAnimation);
       //draggable.addChild(selectedCharacter);
@@ -2319,7 +2322,7 @@ function moveCharacter(unit) {
     }
     if (!moveTutorialDone) {
       removeAllPointer();
-      move_instruction2();
+      attack_instruction1()
     }
     blockMaps[fromX][fromY] = 0;
     //movingUnit = unit.moveAnimation;
@@ -2649,35 +2652,35 @@ var moveTutorialDone = false;
 function move_instruction1(){
   removeBox();
   displayBox(function() {
-    move_instruction2();
+    attack_instruction1();
   });
   addTitleToBox("Move");
   addTextToBox("Good! Now you can see the gree tiles are the moving range of your king. Let's try to move your king closer to the enemy! <b style=\"color:red;\">Click on the tile</b> to move.</p>");
   addPointerToTile(2, 2);
 }
 
-function move_instruction2(){
-  removeBox();
-  displayBox(function() {
-    attack_instruction1();
-    moveTutorialDone = true;
-  });
-  showButton();
-  addTitleToBox("Move");
-  addTextToBox("<p> Well done! And you can see the move button becomes grey now, <b>each unit only can move once each turn.</b> </p></p>The enemy king doesn't have much HP left, let's give him a fatal attack.</p>");
-}
+// function move_instruction2(){
+//   removeBox();
+//   displayBox(function() {
+//     attack_instruction1();
+//   });
+//   showButton();
+//   addTitleToBox("Move");
+//   addTextToBox("<p> Well done! And you can see the move button becomes grey now, <b>each unit only can move once each turn.</b> </p></p>The enemy king doesn't have much HP left, let's give him a fatal attack.</p>");
+// }
 
 // Attack Tutorial
 var attackTutorialDone = false;
 function attack_instruction1(){
+
+  moveTutorialDone = true;
   removeBox();
   displayBox(function() {
     removeBox();
   });
   hideButton();
-  addPointerNearPlayerAttack();
   addTitleToBox("Attack");
-  addTextToBox("<b style=\"color:red;\">Click on the Attack Button</b> or <b style=\"color:black;\">press 'A' </b>on your keyboard to attack.</p>");
+  addTextToBox("<p> Well done! And you can see the move button becomes grey now, <b>each unit only can move once each turn.</b> </p></p>The enemy king doesn't have much HP left, let's give him a fatal attack.</p><b style=\"color:red;\">Click on the Attack Button</b> or <b style=\"color:black;\">press 'A' </b>on your keyboard to attack.</p>");
 }
 
 function attack_instruction2(){
