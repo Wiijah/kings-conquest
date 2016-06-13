@@ -140,6 +140,9 @@ function updateTut() {
 function nothing() {}
 
 function handle_ajax_error(jqXHR, textStatus, errorThrown) {
+console.log("ajax er" + JSON.stringify(jqXHR));
+console.log("ajax er" + JSON.stringify(textStatus));
+console.log("ajax er" + JSON.stringify(errorThrown));
    //lightbox_alert("Server Error", "There was an error connecting to the server. Please try again later.");
 }
 
