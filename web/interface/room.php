@@ -99,7 +99,7 @@ var isOwner = <?php var_export($isOwner); ?>;
 <?php echo genTitle("Game Info"); ?>
 <div class="room_data box small_box">
 <table class="play_table">
-<tr><td class="play_avatar" colspan="2"><img src="map_img?map_id=<?php echo $room->map_id; ?>&modified=<?php echo $room->last_modified; ?>" id="map_img" /></td></tr>
+<tr><td class="play_avatar" colspan="2"><img src="map_img?map_id=<?php echo $room->map_id; ?>" id="map_img" /></td></tr>
 <tr><th>Game Name</th><td><?php echo secureOutput($room->name); ?></td></tr>
 <tr><th>Room Owner</th><td><?php echo $room->username; ?></td></tr>
 
