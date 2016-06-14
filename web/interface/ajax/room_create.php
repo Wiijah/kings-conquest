@@ -34,10 +34,15 @@ $result = $db->query("INSERT INTO rooms (name, password, user_id, map_id, map_js
     ('{$room_name}', '{$room_pass}', '{$user->id}', '{$map->map_id}', '{$map->points}')");
 $room_id = $db->insert_id;
 
+$db->query("DELETE FROM units WHERE room_id = '{$room_id}'");
+$db->query("DELETE FROM buff_instances WHERE room_id = '{$room_id}'");
+$db->query("DELETE FROM opp WHERE room_id = '{$room_id}'");
+$db->query("DELETE FROM chat WHERE room_id = '{$room_id}'");
+$db->query("DELETE FROM room_participants WHERE room_id = '{$room_id}'");
+
 // automatically have the user join the room it has made
 $db->query("INSERT INTO room_participants (user_id, room_id, colour, state) VALUES
     ('{$user->id}', '{$room_id}', 'red', 'owner')");
-
 
 // create the event that you joined the room
 $message = "{$user->username} joined the room.";

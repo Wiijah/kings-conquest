@@ -6,10 +6,12 @@ $FONT = '../fonts/BebasNeue Regular.ttf';
 
 $map_id = secureInt($_GET['map_id']);
 
-$WIDTH = 30;
-$MARGIN = ((600 - $WIDTH * 13) / 14);
+$DIM = 182;
 
-$im = imagecreatetruecolor(600, 600);
+$WIDTH = $DIM / 20;
+$MARGIN = (($DIM - $WIDTH * 13) / 14);
+
+$im = imagecreatetruecolor($DIM, $DIM);
 
 $result = $db->query("SELECT * FROM maps WHERE map_id = '{$map_id}'");
 if (!$fetch = $result->fetch_object()) die("Invalid map.");
