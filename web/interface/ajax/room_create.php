@@ -23,14 +23,21 @@ if ($result->num_rows > 0) {
   kc_error("You cannot join a room if you are already in a room.");
 }
 
+
+$result = $db->query("SELECT * FROM maps WHERE map_id = '1'");
+if (!$map = $result->fetch_object()) {
+  kc_error("A server error has occurred.");
+}
+
 // insert new room and get the room's ID
-$result = $db->query("INSERT INTO rooms (name, password, user_id) VALUES
-    ('{$room_name}', '{$room_pass}', '{$user->id}')");
+$result = $db->query("INSERT INTO rooms (name, password, user_id, map_id, map_json) VALUES
+    ('{$room_name}', '{$room_pass}', '{$user->id}', '{$map->map_id}', '{$map->points}')");
 $room_id = $db->insert_id;
 
 // automatically have the user join the room it has made
 $db->query("INSERT INTO room_participants (user_id, room_id, colour, state) VALUES
     ('{$user->id}', '{$room_id}', 'red', 'owner')");
+
 
 // create the event that you joined the room
 $message = "{$user->username} joined the room.";

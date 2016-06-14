@@ -6,7 +6,7 @@ include 'includes/logout_container.php';
 include 'includes/logo.php';
 require_once 'includes/back_container.php';
 
-$close = 3;
+$close = 4;
 ?>
 
 <div class="small_container friends_container">

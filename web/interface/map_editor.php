@@ -23,7 +23,7 @@ var map_id = <?php echo $map->map_id; ?>;
 
 <div class="small_container friends_container">
 <?php
-echo genBreadcrumbs(array("Lobby|index", "Map Editor"));
+echo genBreadcrumbs(array("Lobby|index", "Custom Maps|custom_maps", "Map Editor"));
 ?>
 
 

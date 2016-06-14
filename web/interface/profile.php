@@ -26,6 +26,10 @@ if ($close == 1) {
   $text = "Back To Leaderboards";
   $link = "leaderboard";
   $breadcrumbs = genBreadcrumbs(array("Lobby|index", "Leaderboards|leaderboard", "Profile Of {$prof->username}"))."<br />";
+} else if ($close == 4) {
+  $text = "Back To Match History";
+  $link = "match_history";
+  $breadcrumbs = genBreadcrumbs(array("Lobby|index", "Match History|match_history", "Profile Of {$prof->username}"));
 } else {
   $breadcrumbs = genBreadcrumbs(array("Lobby|index", "Profile Of {$prof->username}"))."<br />";
 }
