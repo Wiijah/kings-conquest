@@ -1725,8 +1725,12 @@ function findPath(fromX, fromY, toX, toY, ignoreObstacle) {
 
 // A call back function that highlights all the possible definitions 
 // when a character is clicked.
-function findReachableTiles(x, y, range, ignoreWater) {
-    if (typeof(ignoreWater) === "undefined") ignoreWater = false;
+function findReachableTiles(x, y, range, ignoreObstacle, isDragon) {
+    if (typeof(ignoreObstacle) == "undefined") ignoreObstacle = false;
+    if (typeof(isDragon) == "undefined") isDragon = false;
+
+    console.log(ignoreObstacle + " " + isDragon);
+
 	var q = [];
 	var start = [x, y, 0];
 	var marked = [];
@@ -1757,15 +1761,19 @@ function findReachableTiles(x, y, range, ignoreWater) {
 				if (nx < 0 || nx >= mapHeight || ny < 0 || ny >= mapWidth) continue;
 
 				// Terrain check
-				if (that.mapData[nx][ny] == 5 && /* blockMaps[nx][ny] != 0  && */ !ignoreWater) continue;
+				if ( blockMaps[nx][ny] != 0 && !ignoreObstacle) continue;
 
-                // We have unit on that tile
-                if (that.mapData[nx][ny] != 5 && blockMaps[nx][ny] != 0) continue;
 
 
 				// bounds and obstacle check here
 				if ($.inArray(nx * mapWidth + ny, marked) === -1) {
-					marked.push(nx * mapWidth + ny);
+                    if (isDragon) {
+                        if (findUnitByCoordinates(nx, ny) == null) {
+                            marked.push(nx * mapWidth + ny);
+                        }
+                    } else {
+                        marked.push(nx * mapWidth + ny);
+                    }
 					q.push([nx, ny, d]);
 				}
 				
@@ -2217,8 +2225,8 @@ $(function(){
 function moveCharacter(unit) {
   	unit.prevRow = unit.row;
  	unit.prevColumn = unit.column;
-    var ignoreObstacle = unit.skill == "Icy Wind" ? true : false
-	var reachableTiles = findReachableTiles(unit.row, unit.column, unit.moveRange, ignoreObstacle);
+    var ignoreObstacle = unit.skill == "Icy Wind" ? true : false;
+	var reachableTiles = findReachableTiles(unit.row, unit.column, unit.moveRange, ignoreObstacle, ignoreObstacle);
 	highlightArea(reachableTiles, "graphics/tile/green_tile.png", ["click"], [function(event) {
 		// server request
 		var fromX = selectedCharacter.row;
@@ -2314,6 +2322,7 @@ function serverValidate(type, unit, additionalArgs) {
     if (type === "move") {
         console.log(path);
 
+
         console.log(unit.unit_id);
         rawPost("ajax/move_unit", {"unit_id" : String(unit.unit_id), "path" : JSON.stringify(path)}, handleServerReply);
     }
@@ -2372,7 +2381,7 @@ function findUnitById(id) {
             return units[i];
         }
     }
-    console.log("Cannot find unit with id: " + id);
+    // console.log("Cannot find unit with id: " + id);
     return null;
 }
 
@@ -2382,7 +2391,7 @@ function findUnitByCoordinates(row, column) {
             return units[i];
         }
     }
-    console.log("Cannot find unit with coordinates: " + row + " " + column);
+    // console.log("Cannot find unit with coordinates: " + row + " " + column);
     return null;
 }
 
