@@ -154,7 +154,7 @@ function room_refresh() {
 
     $("#info_num_players").html(num_of_players+"/"+max_players);
     $("#map").html(data.map_name);
-    $("#map_img").attr("src", "map_img?map_id="+data.map_id+"&modified="+data.map_modified);
+    if ($("#map_img").attr("src") != "map_img?map_id="+data.map_id) $("#map_img").attr("src", "map_img?map_id="+data.map_id);
     $("#countdown").html(data.default_countdown + " seconds");
   });
 }
