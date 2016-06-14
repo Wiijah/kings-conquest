@@ -26,7 +26,7 @@ Here you can see the custom maps you've made.<br />
 <tr><th>Map Name</th><th>Preview</th><th>Edit Map</th></tr>
 <?php
 $i = 0;
-$result = $db->query("SELECT * FROM custom_maps WHERE user_id = '{$user->id}' ORDER BY last_modified DESC");
+$result = $db->query("SELECT * FROM maps WHERE user_id = '{$user->id}' ORDER BY last_modified DESC");
 while ($fetch = $result->fetch_object()) {
   echo "<tr><td>".$fetch->map_name."</td><td> </td><td><a href='map_editor?map_id={$fetch->map_id}'>Edit Map</a></td></tr>";
 }

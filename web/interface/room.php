@@ -31,14 +31,22 @@ include 'includes/logo.php';
 
 $max_players = 2;
 
-$isOwner = $room->user_id == $user->id;
+$isOwner = $part->state == 'owner';
 
 $maps = "";
-$result = $db->query("SELECT * FROM maps ORDER BY map_id ASC");
+$result = $db->query("SELECT * FROM maps WHERE user_id = '0' ORDER BY map_id ASC");
 while ($fetch = $result->fetch_object()) {
   $selected = $fetch->map_id == $room->map_id ? " selected" : "";
   $maps .= "<option value='{$fetch->map_id}'{$selected}>{$fetch->map_name}</option>";
 }
+$result = $db->query("SELECT * FROM maps WHERE user_id = {$user->id} ORDER BY map_id ASC");
+if ($result->num_rows != 0) $maps = "<optgroup label='Provided Maps'>{$maps}</optgroup><optgroup label='Custom Maps'>";
+while ($fetch = $result->fetch_object()) {
+  $selected = $fetch->map_id == $room->map_id ? " selected" : "";
+  $maps .= "<option value='{$fetch->map_id}'{$selected}>{$fetch->map_name}</option>";
+}
+if ($result->num_rows != 0) $maps .= "</optgroup>";
+
 
 $countdowns = "";
 foreach ($COUNTDOWNS as $value) {
@@ -91,7 +99,7 @@ var isOwner = <?php var_export($isOwner); ?>;
 <?php echo genTitle("Game Info"); ?>
 <div class="room_data box small_box">
 <table class="play_table">
-<tr><td class="play_avatar" colspan="2"><img src="images/the_bridge.png" /></td></tr>
+<tr><td class="play_avatar" colspan="2"><img src="map_img?map_id=<?php echo $room->map_id; ?>&modified=<?php echo $room->last_modified; ?>" id="map_img" /></td></tr>
 <tr><th>Game Name</th><td><?php echo secureOutput($room->name); ?></td></tr>
 <tr><th>Room Owner</th><td><?php echo $room->username; ?></td></tr>
 

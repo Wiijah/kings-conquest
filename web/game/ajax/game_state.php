@@ -13,13 +13,11 @@ require_once 'ajax_common.php';
 
 $out = "{";
 
-/* Print map */
-$result = $db->query("SELECT * FROM maps WHERE map_id = '{$room->map_id}'");
-$map = $result->fetch_object();
+$points = $room->map_json;
 
-$out .= jsonPair("main", $map->points).", ";
+$out .= jsonPair("main", $points).", ";
+$map_object = json_decode($points, true);
 
-$map_object = json_decode($map->points, true);
 $width = count($map_object[0]);
 $height = count($map_object);
 

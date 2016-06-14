@@ -68,6 +68,7 @@ function create_unit($name, $x, $y, $team) {
 function init_units() {
   global $TEAM_COLOURS;
   global $room;
+  global $db;
 
   if ($room->map_id == 1) {
     /* Red Team */
@@ -89,14 +90,27 @@ function init_units() {
     /* Blue Team */
     create_unit("king", 2, 11, $TEAM_COLOURS['blue']);
     create_unit("blue castle", 1, 11, $TEAM_COLOURS['blue']);
-  } else {
+  } else if ($room->map_id == 3) {
     /* Red Team */
     create_unit("king", 1, 1, $TEAM_COLOURS['red']);
     create_unit("red castle", 0, 0, $TEAM_COLOURS['red']);
     /* Blue Team */
     create_unit("king", 11, 11, $TEAM_COLOURS['blue']);
     create_unit("blue castle", 12, 12, $TEAM_COLOURS['blue']);
+  } else {
+    $map = $db->query("SELECT * FROM maps WHERE map_id = '{$room->map_id}'")->fetch_object();
+    $red_king = json_decode($map->red_king);
+    $red_castle = json_decode($map->red_castle);
+    $blue_king = json_decode($map->blue_king);
+    $blue_castle = json_decode($map->blue_castle);
+
+    create_unit("king", $red_king[1], $red_king[0], $TEAM_COLOURS['red']);
+    create_unit("red castle", $red_castle[1], $red_castle[0], $TEAM_COLOURS['red']);
+
+    create_unit("king", $blue_king[1], $blue_king[0], $TEAM_COLOURS['blue']);
+    create_unit("blue castle", $blue_castle[1], $blue_castle[0], $TEAM_COLOURS['blue']);
   }
+
 }
 
 

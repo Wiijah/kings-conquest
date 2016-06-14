@@ -10,7 +10,7 @@ if (!isStrLenCorrect($map_name, 3, 20)) {
 
 $map_name = secureStr($map_name);
 
-$result = $db->query("SELECT * FROM custom_maps WHERE map_name = '{$map_name}'");
+$result = $db->query("SELECT * FROM maps WHERE map_name = '{$map_name}'");
 
 if ($result->num_rows > 0) {
   kc_error("The map name you entered was already taken. Please pick another map name.");
@@ -32,7 +32,7 @@ $points = '
  "12":[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 }';
 
-$db->query("INSERT INTO custom_maps (map_name, points, user_id, last_modified) VALUES
+$db->query("INSERT INTO maps (map_name, points, user_id, last_modified) VALUES
     ('{$map_name}', '{$points}', '{$user->id}', '".time()."')");
 echo '{"map_id": '.$db->insert_id.'}';
 ?>

@@ -68,6 +68,7 @@ var room_id = 0;
 <div class="play_btn btn js_link" data-href="shop">Shop</div>
 <div class="play_btn btn js_link" data-href="leaderboard">Leaderboard</div>
 <div class="play_btn btn js_link" data-href="custom_maps">Custom Maps</div>
+<div class="play_btn btn js_link" data-href="match_history">Match History</div>
 
 
 <?php echo genTitle("Your Profile"); ?>

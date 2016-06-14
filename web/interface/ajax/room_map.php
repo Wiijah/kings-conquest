@@ -25,8 +25,9 @@ $result = $db->query("SELECT * FROM maps WHERE map_id = '{$map_id}'");
 if (!$map = $result->fetch_object()) {
   kc_error("You have selected an invalid map.");
 }
+$db->query("UPDATE rooms SET map_id = '{$map_id}', map_json = '{$map->points}' WHERE room_id = '{$room_id}'");
 
-$db->query("UPDATE rooms SET map_id = '{$map_id}' WHERE room_id = '{$room_id}'");
+
 $db->query("UPDATE room_participants SET state = 'notready' WHERE room_id = '{$room_id}' AND state = 'ready'");
 
 echo $AJAX_SUCCESS;

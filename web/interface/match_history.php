@@ -23,7 +23,7 @@ Here you can view your match history.<br />
 <?php echo genTitle("ELO Rating List"); ?>
 <div class="box center">
 <table class="play_table lobby">
-<tr><th>Game Name</th><th>Winner</th><th>Loser</th><th>View Full Match Details</th></tr>
+<tr><th>Game Name</th><th>Game Started</th><th>Winner</th><th>Loser</th><th>View Full Match Details</th></tr>
 <?php
 $i = 0;
 $result = $db->query("SELECT * FROM room_participants JOIN rooms USING (room_id) WHERE room_participants.user_id = {$user->id} AND colour != 'spectator' AND event = 'ended' ORDER BY part_id DESC");
@@ -35,7 +35,7 @@ while ($room = $result->fetch_object()) {
   if (!$loser_part) continue;
 
   $loser = select_user($loser_part->user_id);
-  echo "<tr><td>".secureOutput($room->name)."</td><td>".linkUsername($winner)."</td><td>".linkUsername($loser)."</td><td><a href='game_stats?room_id={$room->room_id}'>View Details</a></tr>";
+  echo "<tr><td>".secureOutput($room->name)."</td><td>".unixDate($room->game_start)."</td><td>".linkUsername($winner)."</td><td>".linkUsername($loser)."</td><td><a href='game_stats?room_id={$room->room_id}'>View Details</a></tr>";
 }
 ?>
 </table>

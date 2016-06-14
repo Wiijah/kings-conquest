@@ -3,7 +3,7 @@ $title = "Map Editor";
 require_once 'includes/header_checks.php';
 
 $map_id = secureInt($_GET['map_id']);
-$result = $db->query("SELECT * FROM custom_maps WHERE map_id = '{$map_id}'");
+$result = $db->query("SELECT * FROM maps WHERE map_id = '{$map_id}'");
 if (!$result || !($map = $result->fetch_object()) || $map->user_id != $user->id) {
   header ("Location: index");
   die();
@@ -47,7 +47,7 @@ Select a tile below and then click on the grid below.
 <div class='map_tile' id='tile_103' style='background-color: #FFF' data-tile='103'><span class='map_letter blue'>C</span></div>
 <?php
 for ($i = 0; $i < count($TILES); $i++) {
-  if ($TILES[$i][1] == "") continue;
+  if (count($TILES[$i]) > 2) continue;
   echo "<div class='map_tile' id='tile_{$i}' style='background-color: #{$TILES[$i][1]}' data-tile='{$i}'></div>";
 }
 ?>

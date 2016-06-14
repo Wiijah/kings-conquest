@@ -15,7 +15,7 @@ $blue_castle = secureStr($_POST['blue_castle']);
 
 $points = json_decode($_POST['points'], true);
 
-$result = $db->query("SELECT * FROM custom_maps WHERE user_id = '{$user->id}' AND map_id = '{$map_id}'");
+$result = $db->query("SELECT * FROM maps WHERE user_id = '{$user->id}' AND map_id = '{$map_id}'");
 if ($result->num_rows == 0) {
   kc_error("Invalid map.");
 }
@@ -26,12 +26,12 @@ if (!isStrLenCorrect($map_name, 3, 20)) {
 
 $map_name = secureStr($map_name);
 
-$result = $db->query("SELECT * FROM custom_maps WHERE map_name = '{$map_name}'");
+$result = $db->query("SELECT * FROM maps WHERE map_name = '{$map_name}'");
 $fetch = $result->fetch_object();
 if ($fetch && $fetch->map_id != $map_id) {
   kc_error("The map name you entered was already taken. Please pick another map name.");
 }
 
-$db->query("UPDATE custom_maps SET map_name = '{$map_name}', points = '{$map_points}', last_modified = '".time()."', red_king = '{$red_king}', red_castle = '{$red_castle}', blue_king = '{$blue_king}', blue_castle = '{$blue_castle}' WHERE map_id = '{$map_id}'");
+$db->query("UPDATE maps SET map_name = '{$map_name}', points = '{$map_points}', last_modified = '".time()."', red_king = '{$red_king}', red_castle = '{$red_castle}', blue_king = '{$blue_king}', blue_castle = '{$blue_castle}' WHERE map_id = '{$map_id}'");
 echo $AJAX_SUCCESS;
 ?>

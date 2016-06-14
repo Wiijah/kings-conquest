@@ -56,6 +56,9 @@ function ratio($a, $b) {
 function formatSQLDate($date) {
   return date('d<\s\u\p>S</\s\u\p> F Y', strtotime($date));
 }
+function unixDate($date) {
+  return date('d<\s\u\p>S</\s\u\p> F Y - g:i:sa', $date);
+}
 //check if a string contains a substring
 function contains($haystack, $needle) {
   return $needle == "" || (strpos($haystack, $needle) !== false);
@@ -85,6 +88,9 @@ function myTime($from, $target){ //declare function, seconds is the default unit
   $unitVal = array((1), (60), (60*60), (60*60*24), (60*60*24*7), (60*60*24*(365.25/12)), (60*60*24*365.25));
   $unit = array("second", "minute", "hour", "day", "week", "month", "year");
   $date = "";
+  $start = "";
+  $plural = "";
+  
   $secondsLeft = $target - $from;
   if($secondsLeft < 0){$passed=1;}else{$passed=0;}
   $secondsLeft = abs($secondsLeft);

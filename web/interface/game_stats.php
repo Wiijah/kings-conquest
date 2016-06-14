@@ -3,7 +3,7 @@ $title = "Game Ended";
 require_once 'includes/header_checks.php';
 
 $room_id = secureStr($_GET['room_id']);
-$result = $db->query("SELECT * FROM rooms WHERE room_id = '{$room_id}' AND state = 'ended'");
+$result = $db->query("SELECT * FROM rooms JOIN maps USING (map_id) WHERE room_id = '{$room_id}' AND state = 'ended'");
 $room = $result->fetch_object();
 
 if (!$room) {
@@ -47,15 +47,16 @@ lightbox_alert("Achievement Earned!", "From this game, you have earned the follo
 <table class="play_table">
 <tr>
 <td class="prof_avatar" colspan="2">
-<img src="images/the_bridge.png" />
+<img src="map_img?map_id=<?php echo $room->map_id; ?>" />
 <br />
 <div class='btn lightbox_btn js_link' data-href='../game/?replay=<?php echo $room->room_id; ?>'>Watch Replay</div>
 </td>
 </tr>
 
 <tr><th style='width: 50%'>Room Name</th><td><?php echo secureOutput($room->name); ?></td></tr>
-<tr><th>Map</th><td>The Bridge</td></tr>
+<tr><th>Map</th><td><?php echo $room->map_name; ?></td></tr>
 <tr><th>Number of Players</th><td>2</td></tr>
+<tr><th>Game Duration</th><td><?php echo myTime($room->game_start, $room->game_end); ?></td></tr>
 </table>
 </div><br />
 
