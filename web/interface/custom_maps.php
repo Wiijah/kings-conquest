@@ -23,12 +23,12 @@ Here you can see the custom maps you've made.<br />
 <?php echo genTitle("Your Maps"); ?>
 <div class="box center">
 <table class="play_table lobby">
-<tr><th>Map Name</th><th>Preview</th><th>Edit Map</th></tr>
+<tr><th>Map</th><th>Edit Map</th></tr>
 <?php
 $i = 0;
 $result = $db->query("SELECT * FROM maps WHERE user_id = '{$user->id}' ORDER BY last_modified DESC");
 while ($fetch = $result->fetch_object()) {
-  echo "<tr><td>".$fetch->map_name."</td><td> </td><td><a href='map_editor?map_id={$fetch->map_id}'>Edit Map</a></td></tr>";
+  echo "<tr><td><br />".$fetch->map_name."<br /><br /><img src='map_img?map_id=".$fetch->map_id."&modified=".$fetch->last_modified."' style='width: 150px' /><br /><br /></td><td><a href='map_editor?map_id={$fetch->map_id}'>Edit Map</a></td></tr>";
 }
 ?>
 </table>
