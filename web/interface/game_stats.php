@@ -2,7 +2,7 @@
 $title = "Game Ended";
 require_once 'includes/header_checks.php';
 
-$room_id = secureStr($_GET['room_id']);
+$room_id = secureInt($_GET['room_id']);
 $result = $db->query("SELECT * FROM rooms JOIN maps USING (map_id) WHERE room_id = '{$room_id}' AND state = 'ended'");
 $room = $result->fetch_object();
 
