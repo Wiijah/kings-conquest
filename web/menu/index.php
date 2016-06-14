@@ -101,7 +101,7 @@ Best viewed with Chrome and with both eyes open.
   <br /><br />
   <div class="white_line"></div>
   <br />Don't have an account? Click <a class="goto_register">here</a> to register!
-  <br />Forgot your password? Click <a>here</a>.
+  <!--<br />Forgot your password? Click <a>here</a>.-->
   </div>
   <div class="goto_home_btn goto_home">Home</div>
 </div>
