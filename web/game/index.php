@@ -96,6 +96,7 @@ if ($is_replay) {
   $sec = 0;
   $result = $db->query("SELECT * FROM opp WHERE init = 0 AND room_id = '{$room->room_id}' ORDER BY opp_created ASC");
   while ($fetch = $result->fetch_object()) {
+    if ($fetch->opp_created < $room->game_start) continue;
     $sec = max(0, $fetch->opp_created - $room->game_start) * 1000;
     $json = trim(preg_replace('/\s\s+/', ' ', $fetch->json));
     echo "setTimeout(function(){ handleOpponent({$json}); }, {$sec});\n";
