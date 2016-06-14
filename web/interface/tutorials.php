@@ -18,7 +18,7 @@ echo genBreadcrumbs(array("Lobby|index", "Tutorials"));
 <?php echo genTitle("Tutorials"); ?>
 <div class="box standard_box center">
 Welcome to the tutorials section.<br />
-For tutorials concerning gameplay, you can try out the four interactive tutorials below.<br /><br />
+For tutorials concerning gameplay, you can try out the three interactive tutorials below.<br /><br />
 
 
     <div class='btn lightbox_btn goto_tut' data-href='../game/tutorial1' data-tut="1">1. Basics<?php if ($user->tutorial >= 2) echo $crown; ?></div>

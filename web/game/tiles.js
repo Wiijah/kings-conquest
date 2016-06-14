@@ -1,5 +1,6 @@
 var ICON_SCALE_FACTOR = 0.65;
-var MOVEMENT_STEP = 6.5
+var MOVEMENT_STEP = 6.5;
+var HAS_JSON_LOADED = false;
 
 var stage = new createjs.Stage("gameCanvas");
 
@@ -467,7 +468,8 @@ function initGame() {
 	chars = new createjs.Container();
 	stage.addChild(chars);
 
-	$.getJSON('ajax/game_state', function(data) {
+  var replay = isReplay ? '1' : '0';
+	rawPost('ajax/game_state', {"room_id": room_id, "replay" : replay}, function(data) {
 		that.mapData = data['main'];
         that.classStats = data.classStats;
 		console.log("init game");
@@ -516,6 +518,8 @@ function initGame() {
 	   	  refreshTimer(data.countdown);
 	   	  startTimer();
 	 	}
+    HAS_JSON_LOADED = true;
+    start_replay();
 	});
 
 	stage.canvas.height = $("body").prop("clientHeight");//window.innerHeight; //$("body").prop("clientHeight");
@@ -1107,13 +1111,17 @@ function markArcherTargets(event) {
     }
 }
 
+var isGoldDisplayed = false;
 function destroyGoldDisplay() {
-    if (isSpectating) return;
+  if (!isGoldDisplayed) return;
 	stage.removeChild(coin_pic);
 	stage.removeChild(currentGoldDisplay);
+  isGoldDisplayed = false;
 }
 
 function drawGoldDisplay() {
+  destroyGoldDisplay();
+  isGoldDisplayed = true;
 	coin_pic = new createjs.Bitmap("graphics/coin.png");
 	coin_pic.x = stage.canvas.width - 170;
 	coin_pic.y = 10;
@@ -1154,7 +1162,7 @@ function displayStats(unit) {
 	bmp.y = 10;
 	bmp.x = 20; // 226
 	//stage.update();
-	var text = (unit.team == team || team == -1) ? new createjs.Text("HP : " + getHealth(unit) + "/" + getMaxHealth(unit) + "\n" +
+	var text = (unit.team == team || isSpectating) ? new createjs.Text("HP : " + getHealth(unit) + "/" + getMaxHealth(unit) + "\n" +
 		"ATTACK : "  + getAttack(unit) + "\n" + "ATTACK RANGE : " + unit.attackRange + "\n" +
 		"SKILL : " + unit.skill +  "\n" + "CD: " + unit.skillCoolDown  + "\n" +
 		"MOVE RANGE : " + unit.moveRange + "\n" +
@@ -1173,7 +1181,8 @@ function displayStats(unit) {
 }
 
 function drawGame() {
-	$.getJSON('ajax/game_state', function(data) {
+  var replay = isReplay ? '1' : '0';
+  rawPost('ajax/game_state', {"room_id": room_id, "replay" : replay}, function(data) {
 		that.mapData = data['main'];
 		that.drawMap(that.mapData);
 
@@ -1185,6 +1194,7 @@ function drawGame() {
 		orderUnits();
 
 		changed = true;
+    HAS_JSON_LOADED = true;
 	});	
 }
 
@@ -1210,7 +1220,7 @@ function createClickableImage(imgSource, x, y, callBack) {
 
 // Show the action menu next to a player (when selected)
 function showActionMenuNextToPlayer(unit) {
-
+  if (isSpectating) return;
 
 	menuBackground = new createjs.Bitmap("graphics/ingame_menu/new_ingame_bg2.png");
 	menuBackground.x = unit.x + 43;
@@ -1833,10 +1843,8 @@ function drawMap(data) {
 		      	img = imageNumber(terrain);
 				maps[i][j] = new createjs.Bitmap(img);
 		       	maps[i][j].name = i + "," + j + "," + tile_type + "," + tile_info_address;
-		       	maps[i][j].scaleX = 1.6;
-		       	maps[i][j].scaleY = 1.6;
-				maps[i][j].x = (j-i) * 65 - 433;
-				maps[i][j].y = (j+i) * 32.5 -328;
+				maps[i][j].x = (j-i) * 65 - 473;
+				maps[i][j].y = (j+i) * 32.5 -348;
 				maps[i][j].regX = 65;
 				maps[i][j].regY = 32.5;
 				maps[i][j].addEventListener("mouseover",mouseOver);
@@ -2075,6 +2083,7 @@ function goFullScreen(){
 }
 
 function update() {
+  if (!HAS_JSON_LOADED) return;
 	if (movingPlayer === true) {
 		moveUnit();
 	}
@@ -2387,20 +2396,22 @@ function findUnitByCoordinates(row, column) {
 }
 
 function handleGoldUdpate(action) {
+
+  if (!HAS_JSON_LOADED) return;
     console.log(team + " " + action.team + " " + action.gold);
-    if (action.team == team) {
-        currentGold = action.gold;     
+    if (action.team == team && !isSpectating || action.team == turn && isSpectating) {
+      currentGold = action.gold;     
 
-		for (var i = 0; i < unitCards.length; i++) {
-			if (unitCards[i].price > currentGold) {
-				greyOutCard(i);
-			} else {
-				colourCard(i);
-			}
-		}
+  		for (var i = 0; i < unitCards.length; i++) {
+  			if (unitCards[i].price > currentGold) {
+  				greyOutCard(i);
+  			} else {
+  				colourCard(i);
+  			}
+  		}
 
-        destroyGoldDisplay();
-        drawGoldDisplay();   
+      destroyGoldDisplay();
+      drawGoldDisplay();   
     }
 
     //  var matrix = new createjs.ColorMatrix().adjustSaturation(100);

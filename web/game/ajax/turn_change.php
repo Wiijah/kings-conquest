@@ -59,7 +59,7 @@ while ($unit = $result->fetch_object()) {
 }
 
 /* Heal units via Totem */
-$result = $db->query("SELECT * FROM units JOIN classes USING (class_id) WHERE room_id = '{$room_id}' AND name='totem' AND team = '{$old_turn}'");
+$result = $db->query("SELECT * FROM units JOIN classes USING (class_id) WHERE room_id = '{$room_id}' AND name='totem' AND team = '{$new_turn}'");
 while ($totem = $result->fetch_object()) {
   $result2 = $db->query("SELECT * FROM units WHERE room_id = '{$room_id}' AND team = '{$totem->team}' AND unit_id != {$totem->unit_id} AND ".totem($totem->x, $totem->y));
   while ($unit = $result2->fetch_object()) {
