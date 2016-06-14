@@ -1002,7 +1002,7 @@ function addEventListenersToUnit(unit) {
             }
 
             if (isInHighlight && !isAttacking && !isCasting){
-                console.log("yomama2");
+                // console.log("yomama2");
                 return;
             }
             if (!movingPlayer && !isAttacking && !isCasting) {
@@ -1033,7 +1033,7 @@ function addEventListenersToUnit(unit) {
                     if (i == highlighted.length - 1) return;
                 }
                 archerTargets.push(unit.unit_id);
-                console.log("adding units with coordinates: (" + unit.row + " " + unit.column + ") to archer targets");
+                // console.log("adding units with coordinates: (" + unit.row + " " + unit.column + ") to archer targets");
                 remainingTargets--;
                 // applyBuff(7, unit);
                 if (remainingTargets == 0) {
@@ -1102,7 +1102,7 @@ function markArcherTargets(event) {
     var unit = findUnitByCoordinates(event.target.row, event.target.column);
     if (unit == null) return;
     archerTargets.push(unit.unit_id);
-    console.log("adding units with coordinates: (" + unit.row + " " + unit.column + ") to archer targets");
+    // console.log("adding units with coordinates: (" + unit.row + " " + unit.column + ") to archer targets");
     remainingTargets--;
     // applyBuff(7, unit);
     if (remainingTargets == 0) {
@@ -1228,8 +1228,8 @@ function showActionMenuNextToPlayer(unit) {
 	menuBackground.scaleX = 0.7;
     menuBackground.scaleY = 0.7;
 
-    console.log(unit.unit_id);
-    console.log(unit.outOfMoves);
+    // console.log(unit.unit_id);
+    // console.log(unit.outOfMoves);
 
 	moveSource = unit.canMove === 1 && unit.outOfMoves === 0 ? "graphics/ingame_menu/new_move.png"
 								    : "graphics/ingame_menu/new_move_gray.png";
@@ -1289,7 +1289,7 @@ function showActionMenuNextToPlayer(unit) {
 
 
 function cast(skillName, unit) {
-    console.log(skillName);
+    // console.log(skillName);
 	switch (skillName) {
 		case "Battle Cry": // King's skill
             serverValidate("skill", unit, []);
@@ -1468,7 +1468,7 @@ function attack(attacker, target, dmg, isCritical) {
 			
 		showDamage(target, isCritical == 1 ? 2 : 1, dmg);
 		target.hp -= dmg;
-        console.log("new hp: " + target.hp);
+        // console.log("new hp: " + target.hp);
 		updateHP_bar(target);
 		
 		var damageAnimation = new createjs.Sprite(attacker.damageEffect, "damage");
@@ -1593,7 +1593,7 @@ function moveUnit() {
       	movingUnit.x = movingUnit.moveAnimation.x;
       	movingUnit.y = movingUnit.moveAnimation.y;
 
-      	console.log(chars.getChildIndex(movingUnit.moveAnimation));
+      	// console.log(chars.getChildIndex(movingUnit.moveAnimation));
       	chars.removeChild(movingUnit.moveAnimation);
       	chars.addChild(movingUnit);
 
@@ -1729,7 +1729,6 @@ function findReachableTiles(x, y, range, ignoreObstacle, isDragon) {
     if (typeof(ignoreObstacle) == "undefined") ignoreObstacle = false;
     if (typeof(isDragon) == "undefined") isDragon = false;
 
-    console.log(ignoreObstacle + " " + isDragon);
 
 	var q = [];
 	var start = [x, y, 0];
@@ -1985,9 +1984,8 @@ function keyEvent(event) {
             }
             break;
         case 67: 
-            console.log(gameEnd);
+            // console.log(gameEnd);
             if (gameEnd) {
-                console.log("yomama");
                 window.location.href = '../interface/game_stats?room_id='+room_id;
             } else {
         	   draggable.x = 0;
@@ -2032,7 +2030,7 @@ function keyEvent(event) {
 			break;
 		case 32: //space
              if (isSpectating) return;
-            console.log(undoMove.length);
+            // console.log(undoMove.length);
 			if(undoMove.length != 0){
 				if(!archerSkillDone){
 					selectedCharacter.skillCoolDown = 0;
@@ -2044,8 +2042,8 @@ function keyEvent(event) {
 				var fromY = selectedCharacter.column;
 				var toX = selectedCharacter.prevRow;
 				var toY = selectedCharacter.prevColumn;
-				console.log("current row:" + fromX + ", current column:" + fromY);
-				console.log("prev row:" + toX + ", prev column:" + toY);
+				// console.log("current row:" + fromX + ", current column:" + fromY);
+				// console.log("prev row:" + toX + ", prev column:" + toY);
 				findPath(fromX, fromY, toX, toY);
                 serverValidate("move", selectedCharacter, [path]);
 				// blockMaps[fromX][fromY] = 0;
@@ -2253,7 +2251,7 @@ function handleApplyBuff(action) {
 function handleServerReply(data) {
     console.log(data);
     if (data.error_code != 0) {
-        console.log("ERROR");
+        // console.log("ERROR");
         return;
     }
 
@@ -2275,7 +2273,7 @@ function handleServerReply(data) {
     }
 
     for (var i = 0; i < data.actions.length; i++) {
-        console.log("i: " + i);
+
         var action = data.actions[i];
         switch (action.action_type) {
             case "update_unit":
@@ -2310,7 +2308,6 @@ function handleServerReply(data) {
                 handleGameEnd(action);
                 break;
             default:
-                console.log("Yo wot alan");
                 return;
         }
     }
@@ -2318,12 +2315,7 @@ function handleServerReply(data) {
 
 
 function serverValidate(type, unit, additionalArgs) {
-    console.log(type);
     if (type === "move") {
-        console.log(path);
-
-
-        console.log(unit.unit_id);
         rawPost("ajax/move_unit", {"unit_id" : String(unit.unit_id), "path" : JSON.stringify(path)}, handleServerReply);
     }
     if (type === "create") {
@@ -2335,12 +2327,10 @@ function serverValidate(type, unit, additionalArgs) {
     }
 
     if (type === "turn_change") {
-        console.log("validate change");
         rawPost("ajax/turn_change", {"countdown" : additionalArgs[0]}, handleServerReply);
     }
 
     if (type === "skill") {
-        console.log(unit.skill);
         if (unit.skill === "Battle Cry" || unit.skill === "Shield") { // King and knight spell
             rawPost("ajax/cast_unit", {"caster_id": unit.unit_id}, handleServerReply);
         }
@@ -2350,7 +2340,6 @@ function serverValidate(type, unit, additionalArgs) {
         }
 
         if (unit.skill === "Double Shoot") { // Arher spell
-            console.log("id1: " + archerTargets[0] + "id2: " + archerTargets[1]);
             rawPost("ajax/cast_unit", {"caster_id": unit.unit_id, "target_id": archerTargets[0], "target_id2":archerTargets[1]}, handleServerReply);
         }
 
@@ -2398,7 +2387,6 @@ function findUnitByCoordinates(row, column) {
 function handleGoldUdpate(action) {
 
   if (!HAS_JSON_LOADED) return;
-    console.log(team + " " + action.team + " " + action.gold);
     if (action.team == team && !isSpectating || action.team == turn && isSpectating) {
       currentGold = action.gold;     
 
@@ -2662,7 +2650,6 @@ function handleCreate(action) {
 }
 
 function greyOutCard(index) {
-	console.log("FCK");
 	if (unitCreationMenu.getChildIndex(greyUnitCards[index]) == -1) {
 		unitCreationMenu.removeChild(unitCards[index]);
 		unitCreationMenu.addChild(greyUnitCards[index]);
