@@ -5,8 +5,6 @@ include 'includes/header.php';
 include 'includes/logout_container.php';
 include 'includes/logo.php';
 require_once 'includes/back_container.php';
-
-$close = 3;
 ?>
 
 <div class="small_container friends_container">
@@ -18,7 +16,7 @@ echo genBreadcrumbs(array("Lobby|index", "Custom Maps"));
 <div class="box standard_box center">
 Here you can see the custom maps you've made.<br />
 
-<div class="btn lightbox_btn js_link" data-href="map_editor">New Map</div>
+<div class="btn lightbox_btn lightbox_open" data-lb="new_map">New Map</div>
 </div> 
 <br />
 
@@ -30,8 +28,7 @@ Here you can see the custom maps you've made.<br />
 $i = 0;
 $result = $db->query("SELECT * FROM custom_maps WHERE user_id = '{$user->id}' ORDER BY last_modified DESC");
 while ($fetch = $result->fetch_object()) {
-
-  echo "<tr><td>".$fetch->map_name."</td><td> </td><td>Edit Map</td></tr>";
+  echo "<tr><td>".$fetch->map_name."</td><td> </td><td><a href='map_editor?map_id={$fetch->map_id}'>Edit Map</a></td></tr>";
 }
 ?>
 </table>

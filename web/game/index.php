@@ -121,7 +121,7 @@ echo "
       <img src="./warning.png" style="line-height: 1px; vertical-align: bottom; margin-right: 5px" height="20" width="20" /> System Message
     </div>
     <div id="box2_body">
-      Are you sure to quit the game? <br /><br />
+      Are you sure to quit the game?<br /><br />
     </div>
     <div id="box_foot">
       <button type="button" id="yesButton" class="btn" ng-click="">Yes</button>

@@ -1,21 +1,31 @@
 <?php
 $title = "Map Editor";
 require_once 'includes/header_checks.php';
+
+$map_id = secureInt($_GET['map_id']);
+$result = $db->query("SELECT * FROM custom_maps WHERE map_id = '{$map_id}'");
+if (!$result || !($map = $result->fetch_object()) || $map->user_id != $user->id) {
+  header ("Location: index");
+  die();
+}
+
+$points = json_decode($map->points, true);
+
 include 'includes/header.php';
 include 'includes/logout_container.php';
 include 'includes/logo.php';
 require_once 'includes/back_container.php';
-
-$close = 3;
 ?>
 <script>
 var TILES = <?php echo json_encode($TILES); ?>;
+var map_id = <?php echo $map->map_id; ?>;
 </script>
 
 <div class="small_container friends_container">
 <?php
 echo genBreadcrumbs(array("Lobby|index", "Map Editor"));
 ?>
+
 
 <?php echo genTitle("Your Map"); ?>
 <div class="box standard_box center">
@@ -26,7 +36,7 @@ Here you can create your own map for multiplayer.
 <?php echo genTitle("Map Editor"); ?>
 <div class="box standard_box center">
 Map Name:<br />
-<input type="text" class="text" name="map_name" placeholder="Map Name" /><br /><br />
+<input type="text" class="text" id="form_map_name" placeholder="Map Name" value="<?php echo $map->map_name; ?>"/><br /><br />
 
 Select a tile below and then click on the grid below.
 
@@ -46,14 +56,20 @@ for ($i = 0; $i < count($TILES); $i++) {
 <?php
 for ($y = 0; $y < $MAP_X_SIZE; $y++) {
   for ($x = 0; $x < $MAP_Y_SIZE; $x++) {
+    $tile2 = 0; $innerHTML = ""; $class = "";
+    if ("[{$x}, {$y}]" == $map->red_king) {$tile2 = 100;$innerHTML = "<span class='tile_letter red'>K</span>";}
+    if ("[{$x}, {$y}]" == $map->red_castle) {$tile2 = 101;$innerHTML = "<span class='tile_letter red'>C</span>";}
+    if ("[{$x}, {$y}]" == $map->blue_king) {$tile2 = 102;$innerHTML = "<span class='tile_letter blue'>K</span>";}
+    if ("[{$x}, {$y}]" == $map->blue_castle) {$tile2 = 103;$innerHTML = "<span class='tile_letter blue'>C</span>";}
+    if ($tile2 != 0) $class = " tile_".$tile2;
 
-    echo "<div class='map_cell' id='tile_{$x}_{$y}' data-x='{$x}' data-y='{$y}' data-tile='0' data-tile2='0' style='background-color: #{$TILES[0][1]}'></div>";
+    echo "<div class='map_cell{$class}' id='tile_{$x}_{$y}' data-x='{$x}' data-y='{$y}' data-tile='{$points[$y][$x]}' data-tile2='{$tile2}' style='background-color: #{$TILES[$points[$y][$x]][1]}'>{$innerHTML}</div>";
   }
   echo "<div class='clear_float'></div>";
 }
 ?>
 </div>
-<div class="btn lightbox_btn">Save Map</div>
+<div class="btn lightbox_btn" id="save_map">Save Map</div>
 </div>
 
 <?php include 'includes/footer.php'; ?>
