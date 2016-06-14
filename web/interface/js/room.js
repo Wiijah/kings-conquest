@@ -26,6 +26,7 @@ $(document).ready(function() {
 function room_map() {
   fs_load();
   var map_id = $("#select_map").val();
+  $("#map_img").attr("src", "map_img?map_id="+map_id);
   quickPost("ajax/room_map", {room_id: room_id, map_id: map_id}, function(data, status) {
     if (data.kc_error !== undefined) {
       lightbox_alert("Error", data.kc_error);
