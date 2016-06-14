@@ -2179,7 +2179,7 @@ function imageNumber(number) {
 			tile_info_address = "graphics/tile_info/tile_water.png";
 			tile_type = "Water";
 			//return "graphics/tile/3d_tile/ss_water.png";
-			return "graphics/tile/3d_tile/water_test3.png";
+			return "graphics/tile/3d_tile/water_test4.png";
 		// case 5 :
 		// 	tile_info_address = "graphics/tile_info/tile_water.png";
 		// 	tile_type = "Water";
