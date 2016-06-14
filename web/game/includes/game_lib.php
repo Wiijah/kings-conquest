@@ -70,6 +70,8 @@ function init_units() {
   global $room;
   global $db;
 
+  $db->query("DELETE FROM units WHERE room_id = '{$room_id}'");
+  
   if ($room->map_id == 1) {
     /* Red Team */
     create_unit("king", 3, 2, $TEAM_COLOURS['red']);
