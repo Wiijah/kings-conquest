@@ -1,0 +1,53 @@
+.map_tile {
+  position: relative;
+  display: inline-block;
+  width: 30px;
+  height: 30px;
+  border-radius: 8.5px;
+  margin: 5px;
+  border: 1px solid #FFF;
+  cursor: pointer;
+}
+.map_tile:hover {
+  opacity: 0.8;
+}
+.map_cell {
+  position: relative;
+  display: inline-block;
+  width: 30px;
+  height: 30px;
+  border: 1px solid #FFF;
+  margin: 0;
+  cursor: pointer;
+}
+.map_cell:hover {
+  opacity: 0.8;
+}
+.clear_float {
+  clear: both;
+}
+.map_holder {
+  margin: 0 auto;
+  font-size: 0;
+}
+.map_active {
+  border: 3px solid #FFA600;
+}
+.tile_letter {
+  position: absolute;
+  top: 0px;
+  left: 7px;
+  font-size: 26px;
+}
+.map_letter {
+  position: absolute;
+  top: 1px;
+  left: 9px;
+  font-size: 26px;
+}
+.red {
+  color: #FF0000;
+}
+.blue {
+  color: #0096ff;
+}

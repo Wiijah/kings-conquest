@@ -1,4 +1,6 @@
 <?php
+require_once 'map.php';
+
 $ELO_COLOURS = array(
   2800 => array('FFD100', 'King'),
   2500 => array('FF2626', 'Legendary'),

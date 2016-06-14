@@ -12,10 +12,12 @@
   <link rel="stylesheet" href="css/friends.css">
   <link rel="stylesheet" href="css/tutorial.css">
   <link rel="stylesheet" href="css/avatar.css">
+  <link rel="stylesheet" href="css/map.css">
   <link rel="stylesheet" href="../fonts/fonts.css">
 
   <!-- JS -->
   <script src="../utils/jquery.js"></script>
+  <script src="js/map.js"></script>
   <script src="js/common.js"></script>
   <script src="js/style.js"></script>
   <script src="js/lightbox.js"></script>
