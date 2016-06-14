@@ -60,7 +60,7 @@ lightbox_alert("Achievement Earned!", "From this game, you have earned the follo
 </table>
 </div><br />
 
-<?php echo genTitle("Winner"); ?>
+<?php echo genTitle("Winner - ".ucfirst($winner_part->colour)." Player")); ?>
 <div class="box">
 <table class="play_table">
 <tr><td class="prof_avatar" colspan="2"><img src="<?php echo getAvatarURL($winner->id); ?>" /></td></tr>
@@ -72,7 +72,7 @@ lightbox_alert("Achievement Earned!", "From this game, you have earned the follo
 </table>
 </div> <br />
 
-<?php echo genTitle("Loser"); ?>
+<?php echo genTitle("Loser - ".ucfirst($loser_part->colour)." Player"); ?>
 <div class="box">
 <table class="play_table">
 <tr><td class="prof_avatar" colspan="2"><img src="<?php echo getAvatarURL($loser->id); ?>" /></td></tr>
