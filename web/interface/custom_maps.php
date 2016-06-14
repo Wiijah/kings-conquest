@@ -14,6 +14,8 @@ echo genBreadcrumbs(array("Lobby|index", "Custom Maps"));
 
 <?php echo genTitle("Custom Maps"); ?>
 <div class="box standard_box center">
+<img src="images/map.png" class="avatar" />
+<br /><br />
 Here you can see the custom maps you've made.<br />
 
 <div class="btn lightbox_btn lightbox_open" data-lb="new_map">New Map</div>
