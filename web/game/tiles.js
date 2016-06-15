@@ -893,7 +893,7 @@ function createFloatingCards(listOfSources, correspondingUnit) {
                 unitCards[i].text = new createjs.Text("$ 120", "12px 'Arial'", "#ffffff");
 				unitCards[i].addEventListener("click", function(event) {
                     if (team != turn || isInHighlight || isSpectating) return;
-                    if (currentGold < unitCards[i].price) {
+                    if (currentGold < 120) {
 
                         return;
                     } 
