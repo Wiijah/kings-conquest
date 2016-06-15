@@ -3,20 +3,17 @@
 require_once 'ajax_common.php';
 
 $room_name = trim($_POST['room_name']);
-$room_pass = ($_POST['room_pass']);
+$room_pass = $_POST['room_pass'];
 
 /* Input is checked client-side before posting, however, if the client decides to modify client-side checking, then
    an arbitrary but valid values are substituted in */
 if (!isStrLenCorrect($room_name, 3, 20)) {
   $room_name = "Join Me";
 }
-if (!isStrLenCorrect($room_pass, 0, 20)) {
-  $room_pass = "";
-}
 
 /* secureStr only after checking the length due to htmlentities */
 $room_name = secureStr($room_name);
-if ($room_pass != "") $room_pass = hashPass($room_name);
+if ($room_pass != "") $room_pass = hashPass($room_pass);
 
 $result = $db->query("SELECT * FROM room_participants WHERE user_id = {$user->id} AND event = '' AND colour != 'spectator'");
 if ($result->num_rows > 0) {

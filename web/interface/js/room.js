@@ -2,6 +2,8 @@ var room_exists = true;
 
 var ready_locked = true; //TODO
 
+var left_room = false;
+
 $(document).ready(function() {
   room_refresh_periodically();
   $('body').on('click', '#btn_leave', function() {
@@ -104,7 +106,7 @@ function room_refresh() {
   quickPost("ajax/room_get", {id: room_id}, function(data, status){
     if (session_expired || !room_exists) return;
 
-    if (data.kc_error !== undefined) {
+    if (data.kc_error !== undefined && !left_room) {
       room_exists = false;
       disablePage("index");
       lightbox_alert("Room Deleted", data.kc_error);
@@ -162,6 +164,7 @@ function room_refresh() {
 
 /* Make the player leave the room */
 function room_leave() {
+  left_room = true;
   fs_load();
   quickPost("ajax/room_leave", {room_id: room_id}, function(data, status) {
     window.location.href = 'index';
