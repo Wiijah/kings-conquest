@@ -1,4 +1,4 @@
-var room_pass = "";
+var room_pw = "";
 var room_pass_id = 0;
 
 $(document).ready(function() {
@@ -16,7 +16,7 @@ $(document).ready(function() {
   $('body').on('click', '.join_room', function() {
     var room_id = $(this).attr("data-room-id");
     var spectate = $(this).attr("data-spectate");
-    room_pass = "";
+    room_pw = "";
     var pass_required = $(this).attr("data-password") == 1;
     if (pass_required) {
       room_pass_id = room_id;
@@ -28,7 +28,7 @@ $(document).ready(function() {
 
   /* Join room after clicking password form button */
   $('body').on('click', '#lightbox_btn_enter_room', function() {
-    room_pass = $("#join_pass").val();
+    room_pw = $("#join_pass").val();
     join_room(room_pass_id);
   });
 
@@ -62,7 +62,7 @@ function lobby_refresh() {
 /* Join a room */
 function join_room(room_id, spectate) {
   fs_load();
-  quickPost("ajax/room_join", {"room_id": room_id, "room_pass": room_pass, "spectate": spectate}, function(data, status){
+  quickPost("ajax/room_join", {"room_id": room_id, "room_pass": room_pw, "spectate": spectate}, function(data, status){
     if (session_expired) return;
     
     // server side error checking
