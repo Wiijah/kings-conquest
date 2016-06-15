@@ -129,6 +129,7 @@ function jsonUnit($unit) {
       '.jsonStr("address", $unit->address).','.
         jsonStr("spritesheet", $unit->spritesheet).','.
         jsonStr("move", $unit->move).','.
+        jsonStr("name", $unit->name).','.
         jsonPair("unit_id", $unit->unit_id).','.
         jsonStr("info", $unit->info).','.
         jsonPair("hp", $unit->hp).','.

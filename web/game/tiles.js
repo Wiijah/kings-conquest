@@ -458,6 +458,10 @@ function spawnUnit(data, isCreation, row, column){
 	addEventListenersToUnit(unit);
 }
 
+var red_cas_x;
+var red_cas_y;
+var blue_cas_x;
+var blue_cas_y;
 
 function initGame() {
 
@@ -511,6 +515,13 @@ function initGame() {
 		//should only spawn 2 kings and castles
 		$.each(data.characters, function(i, value) {
 			// console.log(data.characters[i].x);
+      if (data.characters[i].name == "red castle") {
+        red_cas_x = data.characters[i].x;
+        red_cas_y = data.characters[i].y;
+      } else if (data.characters[i].name == "blue castle") {
+        blue_cas_x = data.characters[i].x;
+        blue_cas_y = data.characters[i].y;
+      }
 			spawnUnit(data.characters[i], false);
 		});
         // turnStartPhase();
@@ -831,18 +842,18 @@ function drawUnitCreationMenu() {
 
 
 function findAvailableAndNonAvailableSpawnTiles(range) {
-   if (typeof(range) == "undefined") range = 3;
+   if (typeof(range) == "undefined") range = 2;
    var availableSpawnTiles = [];
    var nonAvailableSpawnTiles = [];
-   var originX = team == 0 ? 0 : 12;
-   var originY = team == 0 ? 0 : 13;
+   var originX = team == 0 ? red_cas_x : blue_cas_x;
+   var originY = team == 0 ? red_cas_y : blue_cas_y;
    var di = team == 0 ? 1 : -1;
    var dj = team == 0 ? 1 : -1;
 
-   for (var i = 0; i < range; i++) {
-       if (originX + i * di >= mapHeight || originX + i * di < 0) break;
-       for (var j = 0; j < range; j++) {
-           if (originY + j * dj >= mapWidth || originY + j * dj < 0) break;
+   for (var i = 0 - range; i <= range; i++) {
+       if (originX + i * di >= mapHeight || originX + i * di < 0) continue;
+       for (var j = 0 - range; j <= range; j++) {
+           if (originY + j * dj >= mapWidth || originY + j * dj < 0) continue;
            if (blockMaps[originX + i * di][originY + j * dj] === 0) {
                availableSpawnTiles.push([originX + i * di, originY + j * dj]);
            } else {
