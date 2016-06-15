@@ -10,7 +10,6 @@ $room_id = secureInt($_POST['id']);
 $result = $db->query("SELECT * FROM rooms WHERE room_id = {$room_id}");
 $room = $result->fetch_object();
 if ($result->num_rows == 0 || $room->state == 'deleted' || $room->state == 'ended') {
-  sleep(1);
   die('{"kc_error":"This room no longer exists."}');
 }
 if ($room->state == 'ingame') {
