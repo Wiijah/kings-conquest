@@ -1,5 +1,5 @@
 /* Globally defined constants */
-var FADE_SP = 300; 
+var FADE_SP = 300;  
 var LOADING_ANIM = '<img src="images/loading_white.png" class="loading_middle" />';
 
 /* Globally defined variables */
